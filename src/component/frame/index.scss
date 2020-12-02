@@ -1,0 +1,115 @@
+/*
+ *                   江城子 . 程序员之歌
+ * 
+ *               十年生死两茫茫，写程序，到天亮。
+ *                   千行代码，Bug何处藏。
+ *               纵使上线又怎样，朝令改，夕断肠。
+ * 
+ *               领导每天新想法，天天改，日日忙。
+ *                   相顾无言，惟有泪千行。
+ *               每晚灯火阑珊处，夜难寐，加班狂。
+ * 
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-11-18 19:39:04
+ * @LastEditTime: 2020-12-02 18:47:26
+ * @Description: 
+ * @FilePath: \teacher-development\src\component\frame\index.scss
+ */
+
+#Frame {
+    position: relative;
+    width: 100vw;
+    min-width: 1290px;
+    height: 100vh;
+    // background-color: rgba($color: #ff6600, $alpha: 0.2);
+    .Frame-topBar-1 {
+        position: relative;
+        width: 100%;
+        height: 64px;
+        background: url(./images/image-top-bg.png) no-repeat right center / 100% 64px;
+        // background-image: linear-gradient(90deg, #0084ff 0%, #0d49f2 100%), linear-gradient(#0045ac, #0045ac);
+        // &::before {
+        //     position: absolute;
+        //     content: '';
+        //     width: 100%;
+        //     height: 64px;
+        //     right: 0;
+        //     top: 0;
+        //     background: url(./images/image-top-bg.png) no-repeat right center / contain;
+        // }
+        .Frame-logo {
+            position: absolute;
+            width: 239px;
+            height: 51px;
+            bottom: 0;
+            left: 19px;
+        }
+    }
+    .Frame-contain {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 64px);
+        .Frame-contain-left {
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            width: 200px;
+            height: 100%;
+            // background-image: linear-gradient(165deg, #064575 0%, #085286 50%, #0d75b0 100%), linear-gradient(#4976f7, #4976f7);
+        }
+        .Frame-contain-right {
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 200px);
+            height: 100%;
+            .tab-nav-bar {
+                height: 48px;
+                border-bottom: 1px solid #0b99ff;
+                margin: 0;
+                .ant-tabs-ink-bar {
+                    height: 100%;
+                }
+                .ant-tabs-tab {
+                    z-index: 2;
+                    padding: 0 40px 0 20px;
+                    color: #666666;
+                    margin: 0;
+                    &.ant-tabs-tab-active {
+                        color: #fff;
+                        .ant-tabs-tab-btn {
+                            color: #fff;
+                            .tab-close-btn {
+                                background: url(./images/icon-close-active.png)no-repeat center center/contain;
+                            }
+                        }
+                    }
+                    .ant-tabs-tab-btn {
+                        position: relative;
+                        &:focus {
+                            color: #fff;
+                        }
+                        .tab-name {}
+                        .tab-close-btn {
+                            position: absolute;
+                            width: 14px;
+                            height: 14px;
+                            right: -20px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            -webkit-transform: translateY(-50%);
+                            -moz-transform: translateY(-50%);
+                            -ms-transform: translateY(-50%);
+                            -o-transform: translateY(-50%);
+                            background: url(./images/icon-close.png)no-repeat center center/contain;
+                        }
+                    }
+                    // &:active{
+                    // }
+                }
+            }
+        }
+    }
+}
