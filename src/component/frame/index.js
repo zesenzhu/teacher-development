@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-02 19:34:58
+ * @LastEditTime: 2020-12-02 22:02:09
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -55,7 +55,8 @@ import React, {
 } from "react";
 import "./index.scss";
 import { NavLink, withRouter } from "react-router-dom";
-// import { getQueryVariable } from "../../util/public";
+import { getDataStorage } from "../../util/public";
+import { LogOut } from "../../util/connect";
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
 import { Loading } from "../../component/common";
@@ -82,11 +83,17 @@ function Frame(props, ref) {
     children,
     history,
     location,
+    search,
   } = props;
   // 是否初始化
   let [Init, setInit] = useState(true);
   // 身份信息
   let [Identity, setIdentity] = useState(false);
+  // 用户信息
+  let [UserInfo, setUserInfo] = useState(false);
+  // 基础平台信息
+  let [BasePlatFormMsg, setBasePlatFormMsg] = useState(false);
+
   // 骨架外层loading
   let [FrameLoading, setFrameLoading] = useState(true);
   // 平台信息
@@ -162,6 +169,8 @@ function Frame(props, ref) {
         if (data.identityDetail) {
           //true表示该身份有效
           setIdentity(data.identityDetail);
+          data.userInfo && setUserInfo(data.userInfo);
+          data.basePlatformMsg && setBasePlatFormMsg(data.BasePlatFormMsg);
 
           setInit(true);
           typeof pageInit === "function" && pageInit(data);
@@ -194,12 +203,12 @@ function Frame(props, ref) {
   }, [platMsg, leftMenu]);
   // 测试输出副作用
   useEffect(() => {
-    console.log(props, ComponentList);
+    console.log(TabList);
     // props.children.map((child, index) => {
     //   console.log(child.type);
     // });
     return () => {};
-  }, [props, ComponentList]);
+  }, [TabList]);
   useEffect(() => {
     // 默认的才有tab
     if (checkType("default")) {
@@ -250,7 +259,7 @@ function Frame(props, ref) {
             // 当component的param是存在，但路由没有传，则照常打开窗口，逻辑使用者处理
             return (
               props.tabid === tab.props.tabid &&
-              (!props.param || !Path[1] || Path[1] === tab.props.param)
+              (!props.param || Path[1] === tab.props.param)
             );
           })
         ) {
@@ -262,15 +271,18 @@ function Frame(props, ref) {
             }
           }
           // 如果有param，替换param
+          let obj = {};
           if (child.props.param) {
-            child.props.param = Path[1];
+            obj.param = Path[1];
+            obj.tabid = Path[0];
           }
-          TabList.push(child);
-          // console.log(TabList);
+          TabList.push({ ...child, props: { ...props, ...obj } });
+          console.log(TabList);
           setTabList(TabList);
         }
-        setTabActive(Path[0]+(Path[1]?'-'+Path[1]:''));
+        setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
       });
+    // console.log(Path, ComponentList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Path, ComponentList]);
   // 对type字段解析，查看是否包含
@@ -281,6 +293,10 @@ function Frame(props, ref) {
   useImperativeHandle(ref, () => ({
     // pageInit,
   }));
+  // bar跳转
+  const routeTo = (active, param) => {
+    history.push("/" + active.split("|")[0] + (param ? "/" + param : ""));
+  };
   return (
     <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
       <div id="Frame" className={`Frame ${className ? className : ""}`}>
@@ -290,6 +306,47 @@ function Frame(props, ref) {
               className="Frame-logo"
               style={{ background: `url(${PlatMsg.logo})` }}
             ></i>
+            {UserInfo ? (
+              <div className={"Frame-userMsg"}>
+                <i
+                  className="user-pic"
+                  style={{
+                    background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
+                  }}
+                  onClick={() => {
+                    window.open(
+                      BasePlatFormMsg.WebRootUrl +
+                        "/html/personalMgr/?lg_tk" +
+                        getDataStorage("token") +
+                        "#/"
+                    );
+                  }}
+                >
+                  {" "}
+                </i>
+                <span title={UserInfo.UserName} className={"user-name"}>
+                  {UserInfo.UserName}
+                </span>
+                <span
+                  className="user-iden"
+                  style={{
+                    background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
+                  }}
+                >
+                  {Identity.IdentityCode.includes("IC1")
+                    ? Identity.IdentityName
+                    : ""}
+                </span>
+                <span
+                  className="logout"
+                  onClick={() => {
+                    LogOut({});
+                  }}
+                ></span>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         ) : (
           ""
@@ -320,13 +377,31 @@ function Frame(props, ref) {
                       <>
                         <DefaultTabBar
                           {...props}
-                          // onTabClick={(key, e) => {
-                          //   // console.log(key, e);
-                          //   // setTabActive(key);
-                          // }}
-                          className="tab-nav-bar"
+                          onTabClick={(key, e) => {
+                            // setTabActive(key);
+                            console.log(TabList, key);
+                            TabList.forEach((child) => {
+                              let route = key.split("|");
+                              if (
+                                route[0] === child.props.tabid &&
+                                route[1] === child.props.param
+                              ) {
+                                // 通过路由修改
+                                routeTo(key, child.props.param);
+                                return true;
+                              }
+                              return false;
+                            });
+                          }}
+                          className={`tab-nav-bar ${
+                            search ? "haveSearch" : ""
+                          }`}
                         ></DefaultTabBar>
-                        <div id="search"></div>
+                        {search ? (
+                          <div className="search-context">{search}</div>
+                        ) : (
+                          ""
+                        )}
                       </>
                     );
                   }}
@@ -351,10 +426,14 @@ function Frame(props, ref) {
                                 if (TabList.length <= 1) {
                                   return;
                                 }
-                                let active = TabActive;
-                                let param = "";
+                                let active = TabActive.split("|")[0];
+                                // let activeParam = TabActive.split("|")[1];
+                                let param = TabActive.split("|")[1];
                                 // 如果是删当前，选中往前移
-                                if (props.tabid === active) {
+                                if (
+                                  props.tabid === active &&
+                                  props.param === param
+                                ) {
                                   let activeBar = {};
                                   if (index === TabList.length - 1) {
                                     //最后往前移
@@ -367,7 +446,10 @@ function Frame(props, ref) {
                                 }
                                 let List = [];
                                 TabList.forEach((tab) => {
-                                  if (tab.props.tabid !== props.tabid) {
+                                  if (
+                                    tab.props.tabid !== props.tabid ||
+                                    tab.props.param !== props.param
+                                  ) {
                                     List.push(tab);
                                   }
                                 });
@@ -376,14 +458,14 @@ function Frame(props, ref) {
                                 // 更新列表
                                 setTabList(List);
                                 // 通过路由修改
-                                history.push(
-                                  "/" + active + (param ? "/" + param : "")
-                                );
+                                routeTo(active, param);
                               }}
                             ></i>
                           </div>
                         }
-                        key={props.tabid+(props.param?'-'+props.param:'')}
+                        key={
+                          props.tabid + (props.param ? "|" + props.param : "")
+                        }
                       >
                         {children}
                       </TabPane>

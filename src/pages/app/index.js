@@ -8,7 +8,7 @@ import React, {
   // useCallback,
   memo,
   useEffect,
-  // useState,
+  useState,
   // useImperativeHandle,
   // useRef,
   forwardRef,
@@ -25,11 +25,20 @@ import {
 // let { get } = fetch;
 function App(props, ref) {
   // let commonData = useSelector((state) => state.commonData);
+  const { history } = props;
   let dispatch = useDispatch();
-
+  const [SchoolID, setSchoolID] = useState("各校师资");
   useEffect(() => {
-    // console.log(props);
-  }, [props]);
+    let a = 0;
+    let time = setInterval(() => {
+      history.push("/schoolResource/" + Math.round(Math.random() * 1000));
+      setSchoolID("蓝鸽学校-" + Math.round(Math.random() * 1000));
+      a++;
+      if (a > 10) {
+        clearInterval(time);
+      }
+    }, 3000);
+  }, []);
   useEffect(() => {
     dispatch({ type: commonActions.COMMON_SET_TEST });
     // get({
@@ -38,10 +47,10 @@ function App(props, ref) {
     // });
     return () => {};
   }, [dispatch]);
+  // console.log(SchoolID);
   return (
-    <Frame type={"default"}>
-      123
-      <div tabid={"schoolResource"} tabname={"各校师资"} param={"123"}>
+    <Frame type={"default"} search={<div>搜索</div>}>
+      <div tabid={"schoolResource"} tabname={SchoolID} param={"SchoolID"}>
         各校师资
       </div>
       <div

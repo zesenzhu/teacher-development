@@ -1,0 +1,67 @@
+/*
+ *                        .::::.
+ *                      .::::::::.
+ *                     :::::::::::
+ *                  ..:::::::::::'
+ *               '::::::::::::'
+ *                 .::::::::::
+ *            '::::::::::::::..
+ *                 ..::::::::::::.
+ *               ``::::::::::::::::
+ *                ::::``:::::::::'        .:::.
+ *               ::::'   ':::::'       .::::::::.
+ *             .::::'      ::::     .:::::::'::::.
+ *            .:::'       :::::  .:::::::::' ':::::.
+ *           .::'        :::::.:::::::::'      ':::::.
+ *          .::'         ::::::::::::::'         ``::::.
+ *      ...:::           ::::::::::::'              ``::.
+ *     ````':.          ':::::::::'                  ::::..
+ *                        '.:::::'                    ':'````..
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-02 21:43:44
+ * @LastEditTime: 2020-12-02 21:44:04
+ * @Description: 
+ * @FilePath: \teacher-development\src\component\common\mixin.scss
+ */
+
+
+/*公共minix start*/
+
+@mixin textOverFlow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin flex {
+    display: flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+}
+
+@mixin justify-content($dir) {
+    justify-content: $dir;
+    -ms-flex-pack: $dir;
+}
+
+@mixin flex-direction($dir) {
+    flex-direction: $dir;
+    -ms-flex-direction: $dir;
+}
+
+@mixin align-items($dir) {
+    align-items: $dir;
+    -ms-flex-align: $dir;
+}
+
+@mixin flex-wrap($dir) {
+    flex-wrap: $dir;
+    -ms-flex-wrap: $dir;
+}
+
+
+/*公共mixin end*/
