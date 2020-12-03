@@ -29,15 +29,15 @@ function App(props, ref) {
   let dispatch = useDispatch();
   const [SchoolID, setSchoolID] = useState("各校师资");
   useEffect(() => {
-    let a = 0;
-    let time = setInterval(() => {
-      history.push("/schoolResource/" + Math.round(Math.random() * 1000));
-      setSchoolID("蓝鸽学校-" + Math.round(Math.random() * 1000));
-      a++;
-      if (a > 10) {
-        clearInterval(time);
-      }
-    }, 3000);
+    // let a = 0;
+    // let time = setInterval(() => {
+    //   history.push("/schoolResource/" + Math.round(Math.random() * 1000));
+    //   setSchoolID("蓝鸽学校-" + Math.round(Math.random() * 1000));
+    //   a++;
+    //   if (a > 10) {
+    //     clearInterval(time);
+    //   }
+    // }, 3000);
   }, []);
   useEffect(() => {
     dispatch({ type: commonActions.COMMON_SET_TEST });
