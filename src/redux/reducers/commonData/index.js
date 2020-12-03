@@ -12,14 +12,70 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-11-17 15:23:45
+ * @LastEditTime: 2020-12-03 13:50:46
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
+import Icon_1 from "./images/icon-select-1.png";
+import Icon_2 from "./images/icon-select-2.png";
+import Icon_3 from "./images/icon-select-3.png";
+import Icon_4 from "./images/icon-select-4.png";
+import Icon_5 from "./images/icon-select-5.png";
 import { commonActions } from "../../actions";
 const commonData = (
   state = {
     alert: false,
+    leftMenu: [
+      {
+        key: "teacherBaseMsg",
+        name: "师资统计分析",
+        icon: Icon_1,
+        children: [
+          {
+            key: "teacherBaseMsg",
+            name: "教师基本信息",
+          },
+          {
+            key: "workMsg",
+            name: "教师工作量",
+          },
+          {
+            key: "teachingAbility",
+            name: "教师教学能力",
+          },
+          {
+            key: "informationizeAbility",
+            name: "教师信息化能力",
+          },
+          {
+            key: "schoolResource",
+            name: "各校师资",
+          },
+        ],
+      },
+      {
+        key: "teacherPersona",
+        name: "教师画像查询",
+        icon: Icon_2,
+        children: [],
+      },
+      {
+        key: "teacherRecruit",
+        name: "教师招聘计划管理",
+        icon: Icon_3,
+        children: [],
+      },
+      {
+        key: "teacherTrain",
+        name: "教师培训计划管理",
+        icon: Icon_4,
+        children: [],
+      },
+      { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
+    ],
+    userInfo: {},
+    identity: {},
+    basePlatFormMsg: {},
   },
   actions
 ) => {
@@ -28,9 +84,21 @@ const commonData = (
       return Object.assign({}, state, {
         alert: true,
       });
+    case commonActions.COMMON_SET_IDENTITY:
+      return Object.assign({}, state, {
+        identity: actions.data,
+      });
+    case commonActions.COMMON_SET_USER_INFO:
+      return Object.assign({}, state, {
+        userInfo: actions.data,
+      });
+    case commonActions.COMMON_SET_BASE_PLAT_FORM_MSG:
+      return Object.assign({}, state, {
+        basePlatFormMsg: actions.data,
+      });
 
     default:
-      return state
+      return state;
   }
 };
 export default commonData;

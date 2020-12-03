@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-03 10:17:01
+ * @LastEditTime: 2020-12-03 13:54:24
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -54,22 +54,22 @@ import React, {
   forwardRef,
 } from "react";
 import "./index.scss";
-import {   withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
 import { Loading } from "../../component/common";
-import Icon_1 from "./images/icon-select-1.png";
-import Icon_2 from "./images/icon-select-2.png";
-import Icon_3 from "./images/icon-select-3.png";
-import Icon_4 from "./images/icon-select-4.png";
-import Icon_5 from "./images/icon-select-5.png";
-import LeftMenu from "./leftMenu";
- 
-import Tab from './Tab';
-import TopBar from './TopBar'
- 
 
+import LeftMenu from "./leftMenu";
+
+import Tab from "./Tab";
+import TopBar from "./TopBar";
+
+/**
+ * @description: frame的children的属性需要包含tabid，tabname，可有param
+ * @param {*}
+ * @return {*}
+ */
 function Frame(props, ref) {
   // type控制显示骨架类型，不存在或false则界面loading
   // type:*default:默认模式，存在左侧菜单和默认头部，children为中部内容区
@@ -83,7 +83,7 @@ function Frame(props, ref) {
     platMsg,
     leftMenu,
     children,
- 
+
     search,
   } = props;
   // 是否初始化
@@ -100,56 +100,13 @@ function Frame(props, ref) {
   // 平台信息
   let [PlatMsg, setPlatMsg] = useState({ logo });
   // 左侧菜单
-  let [MenuList, setMenuList] = useState([
-    {
-      key: "teacherBaseMsg",
-      name: "师资统计分析",
-      icon: Icon_1,
-      children: [
-        {
-          key: "teacherBaseMsg",
-          name: "教师基本信息",
-        },
-        {
-          key: "workMsg",
-          name: "教师工作量",
-        },
-        {
-          key: "teachingAbility",
-          name: "教师教学能力",
-        },
-        {
-          key: "informationizeAbility",
-          name: "教师信息化能力",
-        },
-        {
-          key: "schoolResource",
-          name: "各校师资",
-        },
-      ],
-    },
-    { key: "teacherPersona", name: "教师画像查询", icon: Icon_2, children: [] },
-    {
-      key: "teacherRecruit",
-      name: "教师招聘计划管理",
-      icon: Icon_3,
-      children: [],
-    },
-    {
-      key: "teacherTrain",
-      name: "教师培训计划管理",
-      icon: Icon_4,
-      children: [],
-    },
-    { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
-  ]);
- 
+  let [MenuList, setMenuList] = useState([]);
+
   // reduce
   // const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
- 
- 
+
   // let { ComponentList, TabList } = state;
   // 页面初始化副作用，依赖moduleID，pageInit,type
   useEffect(() => {
@@ -174,7 +131,9 @@ function Frame(props, ref) {
         // type && setFrameLoading(true); //加载完毕，去掉laoding，需要type存在
       }
     );
-  }, [  moduleID, type]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moduleID, type]);
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -196,12 +155,11 @@ function Frame(props, ref) {
   }, [platMsg, leftMenu]);
   // 测试输出副作用
   useEffect(() => {
-    
     // props.children.map((child, index) => {
     //   console.log(child.type);
     // });
     return () => {};
-  }, [ ]);
+  }, []);
   useEffect(() => {
     // 默认的才有tab
     if (checkType("default")) {
@@ -234,7 +192,7 @@ function Frame(props, ref) {
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, type]);
- 
+
   // 对type字段解析，查看是否包含
   const checkType = (key = null) => {
     return typeof type === "string" && type.includes(key);
@@ -243,12 +201,17 @@ function Frame(props, ref) {
   useImperativeHandle(ref, () => ({
     // pageInit,
   }));
-   
+
   return (
     <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
       <div id="Frame" className={`Frame ${className ? className : ""}`}>
         {checkType("default") ? (
-           <TopBar userInfo={UserInfo} basePlatFormMsg={BasePlatFormMsg} platMsg={PlatMsg} identity={Identity}></TopBar>
+          <TopBar
+            userInfo={UserInfo}
+            basePlatFormMsg={BasePlatFormMsg}
+            platMsg={PlatMsg}
+            identity={Identity}
+          ></TopBar>
         ) : (
           ""
         )}
@@ -271,9 +234,10 @@ function Frame(props, ref) {
           >
             {Init ? (
               ComponentList instanceof Array && ComponentList.length > 0 ? (
-                 <Tab componentList={ComponentList} search={search} type={type}>
-                   {children}
-                 </Tab> ) : (
+                <Tab componentList={ComponentList} search={search} type={type}>
+                  {children}
+                </Tab>
+              ) : (
                 children
               )
             ) : (

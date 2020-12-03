@@ -23,7 +23,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 09:17:03
- * @LastEditTime: 2020-12-03 10:08:04
+ * @LastEditTime: 2020-12-03 14:22:34
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\TopBar\index.js
  */
@@ -31,7 +31,7 @@ import React, {
   //   useCallback,
   memo,
   useEffect,
-    useState,
+  useState,
   //   useImperativeHandle,
   //   useMemo,
   //   useReducer,
@@ -51,19 +51,20 @@ function TopBar(props, ref) {
     platMsg: PlatMsg,
     identity: Identity,
   } = props;
-  const [Time,setTime] =  useState('');
+  const [Time, setTime] = useState("");
   useEffect(() => {
     let Interval = setInterval(() => {
       let Moment = moment();
-      let now =  Moment.format("YYYY-MM-DD") +
-      " " +
-      Moment.format("dddd") +
-      " " +
-      Moment.format("hh:mm")
-      console.log(
-        now
-      );
-      setTime(now)
+      let now =
+        Moment.format("YYYY-MM-DD") +
+        "  " +
+        Moment.format("dddd") +
+        "  " +
+        Moment.format("hh:mm");
+      // console.log(
+      //   now
+      // );
+      setTime(now);
     }, 1000);
     return () => {
       clearInterval(Interval);
@@ -134,7 +135,7 @@ function TopBar(props, ref) {
           帮助
         </span>
       </div>
-      {Time?<div className="Frame-time">{Time}</div>:''}
+      {Time ? <div className="Frame-time">{Time}</div> : ""}
     </div>
   );
 }

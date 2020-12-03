@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-11-27 10:50:42
+ * @LastEditTime: 2020-12-03 14:18:05
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\index.js
  */
@@ -55,13 +55,12 @@ import React, {
   forwardRef,
 } from "react";
 import { NavLink } from "react-router-dom";
-function Test(props,ref) {
+function Test(props, ref) {
   // console.log(props);
-  return (
-    <div>
-      555
-    </div>
-  );
+  let { tabid, tabname,children } = props;
+  return <div className='test'>{(tabid, tabname)}
+  <input type='text'></input>
+  </div>;
 }
 
 const mapStateToProps = (state) => {

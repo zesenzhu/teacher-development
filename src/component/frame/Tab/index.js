@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-03 10:18:02
+ * @LastEditTime: 2020-12-03 14:01:08
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -151,7 +151,7 @@ function Tab(props, ref) {
           <TabPane
             tab={
               // <NavLink to={"/" + props.tabid} className="tab-name">
-              <div>
+              <div className='tabname' title={props.tabname}>
                 {props.tabname}
                 <i
                   className="tab-close-btn"
