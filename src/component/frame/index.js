@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-02 22:02:09
+ * @LastEditTime: 2020-12-03 10:17:01
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -46,17 +46,16 @@ import React, {
   useEffect,
   useState,
   useImperativeHandle,
-  useMemo,
-  useReducer,
-  createContext,
-  useContext,
+  // useMemo,
+  // useReducer,
+  // createContext,
+  // useContext,
   //   useRef,
   forwardRef,
 } from "react";
 import "./index.scss";
-import { NavLink, withRouter } from "react-router-dom";
-import { getDataStorage } from "../../util/public";
-import { LogOut } from "../../util/connect";
+import {   withRouter } from "react-router-dom";
+
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
 import { Loading } from "../../component/common";
@@ -66,13 +65,16 @@ import Icon_3 from "./images/icon-select-3.png";
 import Icon_4 from "./images/icon-select-4.png";
 import Icon_5 from "./images/icon-select-5.png";
 import LeftMenu from "./leftMenu";
-import { Tabs } from "antd";
-let { TabPane } = Tabs;
+ 
+import Tab from './Tab';
+import TopBar from './TopBar'
+ 
 
 function Frame(props, ref) {
   // type控制显示骨架类型，不存在或false则界面loading
   // type:*default:默认模式，存在左侧菜单和默认头部，children为中部内容区
   // *default-no-left:没有左侧区域，只有中间区域
+  // search为tab的搜索区域，undefined则不会出现
   const {
     type,
     pageInit,
@@ -81,8 +83,7 @@ function Frame(props, ref) {
     platMsg,
     leftMenu,
     children,
-    history,
-    location,
+ 
     search,
   } = props;
   // 是否初始化
@@ -142,21 +143,13 @@ function Frame(props, ref) {
     },
     { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
   ]);
-  // 设置标签选择
-  const [TabActive, setTabActive] = useState("");
+ 
   // reduce
   // const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
-  const [TabList, setTabList] = useState([]);
-  // 路径
-  const Path = useMemo(() => {
-    // console.log(location);
-
-    return location && typeof location.pathname === "string"
-      ? location.pathname.substr(1).split("/")
-      : "";
-  }, [location]);
+ 
+ 
   // let { ComponentList, TabList } = state;
   // 页面初始化副作用，依赖moduleID，pageInit,type
   useEffect(() => {
@@ -170,7 +163,7 @@ function Frame(props, ref) {
           //true表示该身份有效
           setIdentity(data.identityDetail);
           data.userInfo && setUserInfo(data.userInfo);
-          data.basePlatformMsg && setBasePlatFormMsg(data.BasePlatFormMsg);
+          data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
 
           setInit(true);
           typeof pageInit === "function" && pageInit(data);
@@ -181,7 +174,7 @@ function Frame(props, ref) {
         // type && setFrameLoading(true); //加载完毕，去掉laoding，需要type存在
       }
     );
-  }, [pageInit, moduleID, type]);
+  }, [  moduleID, type]);
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -203,12 +196,12 @@ function Frame(props, ref) {
   }, [platMsg, leftMenu]);
   // 测试输出副作用
   useEffect(() => {
-    console.log(TabList);
+    
     // props.children.map((child, index) => {
     //   console.log(child.type);
     // });
     return () => {};
-  }, [TabList]);
+  }, [ ]);
   useEffect(() => {
     // 默认的才有tab
     if (checkType("default")) {
@@ -241,50 +234,7 @@ function Frame(props, ref) {
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, type]);
-  // 标签页
-  useEffect(() => {
-    // console.log(Path, ComponentList, TabList);
-    // 查是否存在compoent
-    Path instanceof Array &&
-      Path.length > 0 &&
-      ComponentList instanceof Array &&
-      ComponentList.forEach((child, index) => {
-        let { props } = child;
-        // 路由匹配包含，同事看tablist是否存在,尽量不要tabid有字符一样
-        if (
-          Path[0].includes(props.tabid) &&
-          !TabList.some((tab) => {
-            // id一样，如果没有param就返回true，如果有param就看param是否一样，一样就true
-            // 返回true说明tab是已经存在了这个tab，不会加，只会跳到对应的tab页
-            // 当component的param是存在，但路由没有传，则照常打开窗口，逻辑使用者处理
-            return (
-              props.tabid === tab.props.tabid &&
-              (!props.param || Path[1] === tab.props.param)
-            );
-          })
-        ) {
-          // tab数量最多10个，多了就删前面的
-          if (TabList.length >= 10) {
-            let len = TabList.length;
-            for (let i = 0; i < len - 9; i++) {
-              TabList.shift();
-            }
-          }
-          // 如果有param，替换param
-          let obj = {};
-          if (child.props.param) {
-            obj.param = Path[1];
-            obj.tabid = Path[0];
-          }
-          TabList.push({ ...child, props: { ...props, ...obj } });
-          console.log(TabList);
-          setTabList(TabList);
-        }
-        setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
-      });
-    // console.log(Path, ComponentList);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Path, ComponentList]);
+ 
   // 对type字段解析，查看是否包含
   const checkType = (key = null) => {
     return typeof type === "string" && type.includes(key);
@@ -293,61 +243,12 @@ function Frame(props, ref) {
   useImperativeHandle(ref, () => ({
     // pageInit,
   }));
-  // bar跳转
-  const routeTo = (active, param) => {
-    history.push("/" + active.split("|")[0] + (param ? "/" + param : ""));
-  };
+   
   return (
     <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
       <div id="Frame" className={`Frame ${className ? className : ""}`}>
         {checkType("default") ? (
-          <div className="Frame-topBar-1">
-            <i
-              className="Frame-logo"
-              style={{ background: `url(${PlatMsg.logo})` }}
-            ></i>
-            {UserInfo ? (
-              <div className={"Frame-userMsg"}>
-                <i
-                  className="user-pic"
-                  style={{
-                    background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
-                  }}
-                  onClick={() => {
-                    window.open(
-                      BasePlatFormMsg.WebRootUrl +
-                        "/html/personalMgr/?lg_tk" +
-                        getDataStorage("token") +
-                        "#/"
-                    );
-                  }}
-                >
-                  {" "}
-                </i>
-                <span title={UserInfo.UserName} className={"user-name"}>
-                  {UserInfo.UserName}
-                </span>
-                <span
-                  className="user-iden"
-                  style={{
-                    background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
-                  }}
-                >
-                  {Identity.IdentityCode.includes("IC1")
-                    ? Identity.IdentityName
-                    : ""}
-                </span>
-                <span
-                  className="logout"
-                  onClick={() => {
-                    LogOut({});
-                  }}
-                ></span>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
+           <TopBar userInfo={UserInfo} basePlatFormMsg={BasePlatFormMsg} platMsg={PlatMsg} identity={Identity}></TopBar>
         ) : (
           ""
         )}
@@ -370,109 +271,9 @@ function Frame(props, ref) {
           >
             {Init ? (
               ComponentList instanceof Array && ComponentList.length > 0 ? (
-                <Tabs
-                  activeKey={TabActive}
-                  renderTabBar={(props, DefaultTabBar) => {
-                    return (
-                      <>
-                        <DefaultTabBar
-                          {...props}
-                          onTabClick={(key, e) => {
-                            // setTabActive(key);
-                            console.log(TabList, key);
-                            TabList.forEach((child) => {
-                              let route = key.split("|");
-                              if (
-                                route[0] === child.props.tabid &&
-                                route[1] === child.props.param
-                              ) {
-                                // 通过路由修改
-                                routeTo(key, child.props.param);
-                                return true;
-                              }
-                              return false;
-                            });
-                          }}
-                          className={`tab-nav-bar ${
-                            search ? "haveSearch" : ""
-                          }`}
-                        ></DefaultTabBar>
-                        {search ? (
-                          <div className="search-context">{search}</div>
-                        ) : (
-                          ""
-                        )}
-                      </>
-                    );
-                  }}
-                >
-                  {TabList.map((child, index) => {
-                    let { children, props } = child;
-                    return (
-                      <TabPane
-                        tab={
-                          // <NavLink to={"/" + props.tabid} className="tab-name">
-                          <div>
-                            {props.tabname}
-                            <i
-                              className="tab-close-btn"
-                              onClick={(e) => {
-                                // 阻止合成事件的冒泡
-                                e.stopPropagation();
-                                // 阻止与原生事件的冒泡
-                                e.nativeEvent.stopImmediatePropagation();
-                                // console.log(e);
-                                // 一个不许删
-                                if (TabList.length <= 1) {
-                                  return;
-                                }
-                                let active = TabActive.split("|")[0];
-                                // let activeParam = TabActive.split("|")[1];
-                                let param = TabActive.split("|")[1];
-                                // 如果是删当前，选中往前移
-                                if (
-                                  props.tabid === active &&
-                                  props.param === param
-                                ) {
-                                  let activeBar = {};
-                                  if (index === TabList.length - 1) {
-                                    //最后往前移
-                                    activeBar = TabList[TabList.length - 2];
-                                  } else {
-                                    activeBar = TabList[index + 1];
-                                  }
-                                  active = activeBar.props.tabid;
-                                  param = activeBar.props.param;
-                                }
-                                let List = [];
-                                TabList.forEach((tab) => {
-                                  if (
-                                    tab.props.tabid !== props.tabid ||
-                                    tab.props.param !== props.param
-                                  ) {
-                                    List.push(tab);
-                                  }
-                                });
-                                // 更新活动
-                                // setTabActive(active);
-                                // 更新列表
-                                setTabList(List);
-                                // 通过路由修改
-                                routeTo(active, param);
-                              }}
-                            ></i>
-                          </div>
-                        }
-                        key={
-                          props.tabid + (props.param ? "|" + props.param : "")
-                        }
-                      >
-                        {children}
-                      </TabPane>
-                    );
-                  })}
-                </Tabs>
-              ) : (
+                 <Tab componentList={ComponentList} search={search} type={type}>
+                   {children}
+                 </Tab> ) : (
                 children
               )
             ) : (

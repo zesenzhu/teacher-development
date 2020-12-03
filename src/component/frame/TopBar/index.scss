@@ -1,0 +1,168 @@
+/*
+ *                        _oo0oo_
+ *                       o8888888o
+ *                       88" . "88
+ *                       (| -_- |)
+ *                       0\  =  /0
+ *                     ___/`---'\___
+ *                   .' \\|     |// '.
+ *                  / \\|||  :  |||// \
+ *                 / _||||| -:- |||||- \
+ *                |   | \\\  - /// |   |
+ *                | \_|  ''\---/''  |_/ |
+ *                \  .-\__  '-'  ___/-. /
+ *              ___'. .'  /--.--\  `. .'___
+ *           ."" '<  `.___\_<|>_/___.' >' "".
+ *          | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *          \  \ `_.   \_ __\ /__ _/   .-` /  /
+ *      =====`-.____`.___ \_____/___.-`___.-'=====
+ *                        `=---='
+ * 
+ * 
+ *      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ *            佛祖保佑       永不宕机     永无BUG
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-03 09:17:11
+ * @LastEditTime: 2020-12-03 10:09:41
+ * @Description: 
+ * @FilePath: \teacher-development\src\component\frame\TopBar\index.scss
+ */
+
+@import "../../common/mixin.scss";
+.Frame-topBar-1 {
+    position: relative;
+    width: 100%;
+    height: 64px;
+    background: url(./images/image-top-bg.png) no-repeat right center / 100% 64px;
+    // background-image: linear-gradient(90deg, #0084ff 0%, #0d49f2 100%), linear-gradient(#0045ac, #0045ac);
+    // &::before {
+    //     position: absolute;
+    //     content: '';
+    //     width: 100%;
+    //     height: 64px;
+    //     right: 0;
+    //     top: 0;
+    //     background: url(./images/image-top-bg.png) no-repeat right center / contain;
+    // }
+    .Frame-logo {
+        position: absolute;
+        width: 239px;
+        height: 51px;
+        bottom: 0;
+        left: 19px;
+    }
+    &>div {
+        position: relative;
+        float: right;
+        height: 100%;
+        line-height: 64px;
+        padding: 0 10px;
+        &::after {
+            content: "";
+            position: absolute;
+            right: -0.5px;
+            top: 50%;
+            height: 12px;
+            width: 0;
+            opacity: 0.32;
+            border-left: 1px solid #c6d7e4;
+            transform: translateY(-6px);
+            -webkit-transform: translateY(-6px);
+            -moz-transform: translateY(-6px);
+            -ms-transform: translateY(-6px);
+            -o-transform: translateY(-6px);
+        }
+        &:first-of-type {
+            &::after {
+                display: none;
+            }
+        }
+    }
+    .Frame-userMsg {
+        float: right;
+        height: 100%;
+        line-height: 64px;
+        // &::after {
+        //     display: none;
+        // }
+        .user-pic {
+            display: inline-block;
+            vertical-align: middle;
+            width: 28px;
+            height: 28px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            -ms-border-radius: 50%;
+            -o-border-radius: 50%;
+            -webkit-border-radius: 50%;
+        }
+        .user-iden {
+            display: inline-block;
+            vertical-align: middle;
+            width: 84px;
+            height: 16px;
+            line-height: 16px;
+            margin: 0 5px;
+            text-align: center;
+            font-size: 10px;
+            color: #ffffff;
+            @include textOverFlow();
+        }
+        .user-name {
+            display: inline-block;
+            max-width: 100px;
+            font-size: 14px;
+            vertical-align: middle;
+            color: #feffff;
+            opacity: 0.85;
+            // margin: 0 4px 0 8px;
+            @include textOverFlow;
+        }
+        .logout {
+            display: inline-block;
+            vertical-align: middle;
+            width: 14px;
+            margin-right: 24px;
+            height: 14px;
+            background: url(./images/icon-logout.png) no-repeat center center/14px 14px;
+            cursor: pointer;
+        }
+    }
+    .Frame-open {
+        float: right;
+        height: 100%;
+        line-height: 64px;
+        span {
+            margin: 0 10px;
+            font-size: 14px;
+            font-weight: normal;
+            font-stretch: normal;
+            letter-spacing: 0px;
+            color: #ffffff;
+            opacity: 0.85;
+            padding-left: 18px;
+            cursor: pointer;
+            &:hover {
+                opacity: 1;
+            }
+            &.open-msg {
+                background: url(./images/icon-msg.png) no-repeat left center / 14px 14px;
+            }
+            &.open-help {
+                background: url(./images/icon-help.png) no-repeat left center / 14px 14px;
+            }
+        }
+    }
+    .Frame-time {
+        font-size: 14px;
+        color: #ffffff;
+        opacity: 0.85;
+        padding: 0 20px;
+    }
+}

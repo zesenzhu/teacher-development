@@ -1,0 +1,80 @@
+/*
+ *                   江城子 . 程序员之歌
+ * 
+ *               十年生死两茫茫，写程序，到天亮。
+ *                   千行代码，Bug何处藏。
+ *               纵使上线又怎样，朝令改，夕断肠。
+ * 
+ *               领导每天新想法，天天改，日日忙。
+ *                   相顾无言，惟有泪千行。
+ *               每晚灯火阑珊处，夜难寐，加班狂。
+ * 
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-03 08:40:14
+ * @LastEditTime: 2020-12-03 08:59:04
+ * @Description: 
+ * @FilePath: \teacher-development\src\component\frame\Tab\index.scss
+ */
+
+@import "../../common/mixin.scss";
+.tab-nav-bar {
+    height: 49px;
+    // line-height: 48px;
+    border-bottom: 1px solid #0b99ff;
+    margin: 0;
+    //
+    &.haveSearch {
+        padding-right: 210px;
+    }
+    .ant-tabs-nav-wrap .ant-tabs-ink-bar {
+        height: 100%;
+    }
+    .ant-tabs-tab {
+        z-index: 2;
+        padding: 0 40px 0 20px;
+        color: #666666;
+        margin: 0;
+        &.ant-tabs-tab-active {
+            color: #fff;
+            .ant-tabs-tab-btn {
+                color: #fff;
+                .tab-close-btn {
+                    background: url(./images/icon-close-active.png) no-repeat center center/contain;
+                }
+            }
+        }
+        .ant-tabs-tab-btn {
+            position: relative;
+            &:focus {
+                color: inherit;
+            }
+            .tab-name {}
+            .tab-close-btn {
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                right: -20px;
+                top: 50%;
+                transform: translateY(-50%);
+                -webkit-transform: translateY(-50%);
+                -moz-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
+                -o-transform: translateY(-50%);
+                background: url(./images/icon-close.png) no-repeat center center/contain;
+            }
+        }
+        // &:active{
+        // }
+    }
+}
+
+.search-context {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100%;
+    line-height: 48px;
+}

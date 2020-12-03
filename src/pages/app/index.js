@@ -48,8 +48,12 @@ function App(props, ref) {
     return () => {};
   }, [dispatch]);
   // console.log(SchoolID);
+  // 初始化方法
+  const pageInit =(data)=>{
+console.log(data)
+  }
   return (
-    <Frame type={"default"} search={<div>搜索</div>}>
+    <Frame pageInit={pageInit} type={"default"} search={<div>搜索</div>}>
       <div tabid={"schoolResource"} tabname={SchoolID} param={"SchoolID"}>
         各校师资
       </div>

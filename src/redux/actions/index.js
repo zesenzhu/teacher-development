@@ -16,15 +16,19 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:14:09
- * @LastEditTime: 2020-11-17 15:10:39
+ * @LastEditTime: 2020-12-03 10:22:35
  * @Description:
  * @FilePath: \teacher-development\src\redux\actions\index.js
  */
 
 import CommonActions from "./commonActions";
+import HandleActions from "./handleActions";
+import MainActions from "./mainActions";
 export let commonActions = CommonActions;
+export let handleActions = HandleActions;
+export let mainActions = MainActions;
 const actions = {
-  commonActions,
+  commonActions,mainActions,handleActions
 };
 
 export default actions;

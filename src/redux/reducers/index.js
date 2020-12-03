@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:02:50
- * @LastEditTime: 2020-11-17 14:20:42
+ * @LastEditTime: 2020-12-03 10:23:27
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\index.js
  */
@@ -24,10 +24,12 @@
 import { combineReducers } from "redux";
 
 import commonData from "./commonData";
+import handleData from './handleData';
+import mainData from './mainData'
 export const initialState = {};
 
 let rootReducers = combineReducers({
-  commonData,
+  commonData,handleData,mainData,
   // UIState,
   PublicState: {},
 });
