@@ -16,7 +16,8 @@ import React, {
 import { commonActions } from "../../redux/actions";
 // import fetch from "../../util/fetch";
 // import config from "../../util/ipConfig";
-import Frame, { Tab } from "../../component/frame";
+import Frame from "../../component/frame";
+import Bar from "../../component/Bar";
 import {
   withRouter,
   // , Route, Switch, NavLink
@@ -34,8 +35,6 @@ function App(props, ref) {
   const [SchoolName, setSchoolName] = useState("各校师资");
   const [TeacherName, setTeacherName] = useState("教师画像查询");
   useEffect(() => {
-    
-    console.log(location);
     // 没有就默认给个
     if (
       location.pathname === "/" &&
@@ -47,19 +46,19 @@ function App(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, leftMenu]);
   useEffect(() => {
-    let a = 0;
-    let time = setInterval(() => {
-      history.push("/schoolResource/" + Math.round(Math.random() * 1000));
-      setSchoolName("蓝鸽学校-" + Math.round(Math.random() * 1000));
-      a++;
-      if (a > 10) {
-        clearInterval(time);
-      }
-    }, 3000);
-    return () => {
-      clearInterval(time);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // let a = 0;
+    // let time = setInterval(() => {
+    //   history.push("/schoolResource/" + Math.round(Math.random() * 1000));
+    //   setSchoolName("蓝鸽学校-" + Math.round(Math.random() * 1000));
+    //   a++;
+    //   if (a > 10) {
+    //     clearInterval(time);
+    //   }
+    // }, 3000);
+    // return () => {
+    //   clearInterval(time);
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     dispatch({ type: commonActions.COMMON_SET_TEST });
@@ -72,7 +71,7 @@ function App(props, ref) {
   // console.log(SchoolName);
   // 初始化方法
   const pageInit = (data) => {
-    console.log(data);
+    // console.log(data);
     // 保证返回的data包含identityDetail，userInfo，basePlatformMsg
     dispatch({
       type: commonActions.COMMON_SET_IDENTITY,
@@ -96,7 +95,20 @@ function App(props, ref) {
         {SchoolName}
       </Test>
       <div tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
-        教师信息化能力
+        <Bar
+          barName={"教师信息化能力"}
+          topContext={
+            <div
+              onClick={() => {
+                console.log("sdas");
+              }}
+            >
+              123
+            </div>
+          }
+        >
+          {" "}
+        </Bar>
       </div>
       <div tabid={"teachingAbility"} tabname={"教师教学能力"}>
         教师教学能力

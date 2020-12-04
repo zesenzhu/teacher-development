@@ -13,60 +13,62 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:40:14
- * @LastEditTime: 2020-12-03 08:59:04
+ * @LastEditTime: 2020-12-04 09:56:14
  * @Description: 
  * @FilePath: \teacher-development\src\component\frame\Tab\index.scss
  */
 
 @import "../../common/mixin.scss";
-.tab-nav-bar {
-    height: 49px;
-    // line-height: 48px;
-    border-bottom: 1px solid #0b99ff;
-    margin: 0;
-    //
-    &.haveSearch {
-        padding-right: 210px;
-    }
-    .ant-tabs-nav-wrap .ant-tabs-ink-bar {
-        height: 100%;
-    }
-    .ant-tabs-tab {
-        z-index: 2;
-        padding: 0 40px 0 20px;
-        color: #666666;
+.ant-tabs {
+    .tab-nav-bar {
+        height: 49px;
+        // line-height: 48px;
+        border-bottom: 1px solid #0b99ff;
         margin: 0;
-        &.ant-tabs-tab-active {
-            color: #fff;
-            .ant-tabs-tab-btn {
+        //
+        &.haveSearch {
+            padding-right: 210px;
+        }
+        .ant-tabs-nav-wrap .ant-tabs-ink-bar {
+            height: 100%;
+        }
+        .ant-tabs-tab {
+            z-index: 2;
+            padding: 0 40px 0 20px;
+            color: #666666;
+            margin: 0;
+            &.ant-tabs-tab-active {
                 color: #fff;
-                .tab-close-btn {
-                    background: url(./images/icon-close-active.png) no-repeat center center/contain;
+                .ant-tabs-tab-btn {
+                    color: #fff;
+                    .tab-close-btn {
+                        background: url(./images/icon-close-active.png) no-repeat center center/contain;
+                    }
                 }
             }
-        }
-        .ant-tabs-tab-btn {
-            position: relative;
-            &:focus {
-                color: inherit;
+            .ant-tabs-tab-btn {
+                position: relative;
+                &:focus {
+                    color: inherit;
+                }
+                .tab-name {}
+                .tab-close-btn {
+                    position: absolute;
+                    width: 14px;
+                    height: 14px;
+                    right: -20px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    -webkit-transform: translateY(-50%);
+                    -moz-transform: translateY(-50%);
+                    -ms-transform: translateY(-50%);
+                    -o-transform: translateY(-50%);
+                    background: url(./images/icon-close.png) no-repeat center center/contain;
+                }
             }
-            .tab-name {}
-            .tab-close-btn {
-                position: absolute;
-                width: 14px;
-                height: 14px;
-                right: -20px;
-                top: 50%;
-                transform: translateY(-50%);
-                -webkit-transform: translateY(-50%);
-                -moz-transform: translateY(-50%);
-                -ms-transform: translateY(-50%);
-                -o-transform: translateY(-50%);
-                background: url(./images/icon-close.png) no-repeat center center/contain;
-            }
+            // &:active{
+            // }
         }
-        // &:active{
-        // }
     }
 }
 

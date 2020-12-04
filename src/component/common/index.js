@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-11-20 14:33:41
+ * @LastEditTime: 2020-12-04 14:28:43
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
@@ -1497,8 +1497,8 @@ class Empty extends React.Component {
         : "noTitle",
     };
   }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+   componentWillReceiveProps(nextProps) {
     const { style } = nextProps;
 
     this.setState({

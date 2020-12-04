@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-03 13:54:24
+ * @LastEditTime: 2020-12-04 14:10:19
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -58,7 +58,7 @@ import { withRouter } from "react-router-dom";
 
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
-import { Loading } from "../../component/common";
+import { Loading, Empty } from "../../component/common";
 
 import LeftMenu from "./leftMenu";
 
