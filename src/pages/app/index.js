@@ -72,16 +72,27 @@ function App(props, ref) {
   // 初始化方法
   const pageInit = (data) => {
     // console.log(data);
+    // if (data.role.version === "noPower") {
+    //   //无权限
+    // } else {
     // 保证返回的data包含identityDetail，userInfo，basePlatformMsg
     dispatch({
       type: commonActions.COMMON_SET_IDENTITY,
       data: data.identityDetail,
     });
-    dispatch({ type: commonActions.COMMON_SET_USER_INFO, data: data.userInfo });
+    dispatch({
+      type: commonActions.COMMON_SET_USER_INFO,
+      data: data.userInfo,
+    });
     dispatch({
       type: commonActions.COMMON_SET_BASE_PLAT_FORM_MSG,
       data: data.basePlatformMsg,
     });
+    dispatch({
+      type: commonActions.COMMON_SET_ROLE_MSG,
+      data: data.role,
+    });
+    // }
   };
 
   return (

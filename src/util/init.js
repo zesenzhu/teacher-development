@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-19 15:15:20
- * @LastEditTime: 2020-11-27 17:52:04
+ * @LastEditTime: 2020-12-07 14:09:51
  * @Description: 平台初始化的逻辑
  * @FilePath: \teacher-development\src\util\init.js
  */
@@ -70,7 +70,12 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
           //有用户信息才能继续下面的工作
           if (userInfo) {
             let identityDetail = await getIdentityDetail(moduleID);
-            success({ identityDetail, basePlatformMsg: data, userInfo });
+            success({
+              identityDetail,
+              basePlatformMsg: data,
+              userInfo,
+              role: setUnifyRole(userInfo, identityDetail, data),
+            });
           } else {
             error();
           }
@@ -86,10 +91,103 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
     }
   });
 };
+
+/**
+ * @description: 处理用户信息，统一角色身份，返回统一后的教育局端、高校端的各种身份
+ * @param {*userInfo:后台返回的用户个人信息，*identity：后台返回的身份信息,*baseMsg:平台基础信息}
+ * @return {*}
+ */
+const setUnifyRole = (userInfo, identity, baseMsg) => {
+  ////*version:教育局：education，教育局学校：education-school，高校：university,高校学院：university-academy
+  // *identityCode:身份code,*identityName:身份名称，*userType:用户类型（旧的身份识别，保留），*userClass：用户类型2
+  // baseMsg.ProductUseRange:学校场景
+  // 1：单个专业英语院校，
+  // 2：单个普通大学，
+  // 3：单个中小学校，
+  // 4：多个中小学，
+  // 5：单个中职学校，
+  // 6：单个高职学校，
+  // 7：多个大学，
+  // 8：多个中职学校，
+  // 9：多个高职学校。
+  let Role = {
+    version: "noPower",
+    identityCode: "",
+    identityName: "",
+    userType: "",
+    userClass: "",
+  };
+  try {
+    let { ProductUseRange } = baseMsg;
+    let { IdentityCode, IdentityName } = identity;
+    Role.userType = userInfo.UserType;
+    Role.userClass = userInfo.UserClass;
+    Role.identityCode = IdentityCode;
+    Role.identityName = IdentityName;
+
+    ProductUseRange = parseInt(ProductUseRange);
+    let version = "noPower";
+    // 根据身份和产品类型判断显示的版本
+    switch (ProductUseRange) {
+      // 1，2，6：单个大学，为高校版本学校端
+      case 1:
+      case 2:
+      case 6:
+        //非学院管理员
+        if (IdentityCode !== "IC0008") {
+          //学校
+          version = "university";
+        } else if (IdentityCode === "IC0008") {
+          //学院
+          version = "university-academy";
+        }
+        break;
+      // 3,5:单个中小学，为教育局版本学校端
+      case 3:
+      case 5:
+        // if (IdentityCode.includes("IC000")) {
+        //学校
+        version = "education-school";
+        // } else {
+        //   version = 'noPower'; //无权限进入
+        // }
+        break;
+      // 4,8:多个中小学，为教育局版本教育局端
+      case 4:
+      case 8:
+        version = "education-school";
+        //非g管理员
+        if (IdentityCode.includes("IC000")) {
+          //code之后会有
+          //教育局
+          version = "education";
+        }
+        // else if (IdentityCode === "IC0008") {
+        //   //教育局
+        //   version = "education";
+        // }
+        // else {
+        //   version = 'noPower'; //无权限进入
+        // }
+        break;
+      default:
+        version = "noPower";
+    }
+    Role.version = version;
+    // if ( ProductUseRange === 1||) {
+    // }
+  } catch (e) {
+    console.error(e);
+  }
+  return Role;
+};
 /**
  * @description: 获取用户身份信息详情
- * @param {*}
- * @return {*}
+ * @param {*模块id,不传则是所有的都可以}
+ * @return {*{IconUrl: "http://192.168.129.1:30101/lgftp/Power/IC0001.png"
+              IdentityCode: "IC0001"
+              IdentityName: "学校管理员"
+              IsPreset: true}}
  */
 const getIdentityDetail = async (moduleID = "") => {
   let lg_ic = getQueryVariable("lg_ic"); //获取url上的身份id，

@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-04 14:10:19
+ * @LastEditTime: 2020-12-07 14:10:08
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -115,8 +115,9 @@ function Frame(props, ref) {
       moduleID,
       (data) => {
         //成功
-        console.log(data);
-        if (data.identityDetail) {
+        // console.log(data);
+        
+        if (data.identityDetail && data.role.version !== "noPower") {
           //true表示该身份有效
           setIdentity(data.identityDetail);
           data.userInfo && setUserInfo(data.userInfo);
@@ -125,6 +126,10 @@ function Frame(props, ref) {
           setInit(true);
           typeof pageInit === "function" && pageInit(data);
           type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
+        } else {
+          //身份无效
+          // console.log('无效')
+          document.location.href = data.basePlatformMsg.WebRootUrl + "/Error.aspx?errcode=E011";
         }
       },
       () => {

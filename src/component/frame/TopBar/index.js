@@ -23,7 +23,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 09:17:03
- * @LastEditTime: 2020-12-03 14:22:34
+ * @LastEditTime: 2020-12-07 09:23:40
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\TopBar\index.js
  */
@@ -55,12 +55,15 @@ function TopBar(props, ref) {
   useEffect(() => {
     let Interval = setInterval(() => {
       let Moment = moment();
-      let now =
-        Moment.format("YYYY-MM-DD") +
-        "  " +
-        Moment.format("dddd") +
-        "  " +
-        Moment.format("hh:mm");
+      let now = (
+        <>
+          {Moment.format("YYYY-MM-DD")}
+          <span className={"time-space"}></span>
+          {Moment.format("dddd")}
+          <span className={"time-space"}></span>
+          {Moment.format("hh:mm")}
+        </>
+      );
       // console.log(
       //   now
       // );

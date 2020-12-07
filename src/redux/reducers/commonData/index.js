@@ -76,6 +76,7 @@ const commonData = (
     userInfo: {},
     identity: {},
     basePlatFormMsg: {},
+    roleMsg: {},
   },
   actions
 ) => {
@@ -95,6 +96,10 @@ const commonData = (
     case commonActions.COMMON_SET_BASE_PLAT_FORM_MSG:
       return Object.assign({}, state, {
         basePlatFormMsg: actions.data,
+      });
+    case commonActions.COMMON_SET_ROLE_MSG:
+      return Object.assign({}, state, {
+        roleMsg: actions.data,
       });
 
     default:

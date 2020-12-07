@@ -26,7 +26,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 09:17:11
- * @LastEditTime: 2020-12-03 10:09:41
+ * @LastEditTime: 2020-12-07 09:24:51
  * @Description: 
  * @FilePath: \teacher-development\src\component\frame\TopBar\index.scss
  */
@@ -164,5 +164,10 @@
         color: #ffffff;
         opacity: 0.85;
         padding: 0 20px;
+        .time-space {
+            display: inline-block;
+            width: 6px;
+            vertical-align: top;
+        }
     }
 }
