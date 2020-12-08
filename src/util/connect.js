@@ -26,7 +26,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 15:49:51
- * @LastEditTime: 2020-11-30 09:15:12
+ * @LastEditTime: 2020-12-07 14:39:16
  * @Description: token查询掉线机制
  * @FilePath: \teacher-development\src\util\connect.js
  */
@@ -360,7 +360,7 @@ const checkToken = (
       method: "tokenCheck",
       success: (data) => {
         if (data && data.data && data.data.result) {
-          console.log("success");
+          // console.log("success");
 
           tokenSuccess(token);
           success();

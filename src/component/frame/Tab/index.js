@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-03 14:01:08
+ * @LastEditTime: 2020-12-08 08:41:48
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -26,25 +26,27 @@ import React, {
   memo,
   useEffect,
   useState,
-//   useImperativeHandle,
+  //   useImperativeHandle,
   useMemo,
-//   useReducer,
-//   createContext,
-//   useContext,
+  //   useReducer,
+  //   createContext,
+  // useContext,
   //   useRef,
   forwardRef,
 } from "react";
-import {   withRouter } from "react-router-dom";
-
+import { withRouter } from "react-router-dom";
+// import {frameContext} from '../index'
 import "./index.scss";
+import { handleRoute } from "../../../util/public";
 import { Tabs } from "antd";
 let { TabPane } = Tabs;
+
 function Tab(props, ref) {
   const {
     // type,
 
     // className,
-    componentList:ComponentList,
+    componentList: ComponentList,
     // children,
     history,
     location,
@@ -55,14 +57,18 @@ function Tab(props, ref) {
   // reduce
   // const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
-//   const [ComponentList, setComponentList] = useState(componentList);
+  //   const [ComponentList, setComponentList] = useState(componentList);
   const [TabList, setTabList] = useState([]);
+  const [, setTabListLength] = useState(TabList.length);
+
+  // const { state, dispatch } = useContext(frameContext);
+  // console.log(state)
   // 路径
   const Path = useMemo(() => {
     // console.log(location);
 
     return location && typeof location.pathname === "string"
-      ? location.pathname.substr(1).split("/")
+      ? handleRoute(location.pathname)
       : "";
   }, [location]);
 
@@ -76,17 +82,25 @@ function Tab(props, ref) {
       ComponentList.forEach((child, index) => {
         let { props } = child;
         // 路由匹配包含，同事看tablist是否存在,尽量不要tabid有字符一样
+        // console.log(props.paramList);
         if (
           Path[0].includes(props.tabid) &&
           !TabList.some((tab) => {
             // id一样，如果没有param就返回true，如果有param就看param是否一样，一样就true
             // 返回true说明tab是已经存在了这个tab，不会加，只会跳到对应的tab页
             // 当component的param是存在，但路由没有传，则照常打开窗口，逻辑使用者处理
+
             return (
               props.tabid === tab.props.tabid &&
               (!props.param || Path[1] === tab.props.param)
             );
           })
+          //  &&
+          // // paramList为限制二级路由的列表，如果路由出现不在列表的，不允许打开
+          // (!props.paramList ||
+          //   props.paramList.find((param) => {
+          //     return !Path[1] || param.key === Path[1];
+          //   }))
         ) {
           // tab数量最多10个，多了就删前面的
           if (TabList.length >= 10) {
@@ -101,8 +115,15 @@ function Tab(props, ref) {
             obj.param = Path[1];
             obj.tabid = Path[0];
           }
+          // if(props.paramList){
+          //   props.paramList.some((param) => {
+          //     obj.tabname = param.title;
+          //     return param.key === (Path[1]?Path[1]:'');
+          //   })
+          // }
           TabList.push({ ...child, props: { ...props, ...obj } });
           setTabList(TabList);
+          setTabListLength(TabList.length);
         }
         setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
       });
@@ -113,31 +134,32 @@ function Tab(props, ref) {
   const routeTo = (active, param) => {
     history.push("/" + active.split("|")[0] + (param ? "/" + param : ""));
   };
- 
+
   return (
     <Tabs
       activeKey={TabActive}
       renderTabBar={(props, DefaultTabBar) => {
+        // console.log(TabList, TabList.length);
+
         return (
           <>
             <DefaultTabBar
               {...props}
-              onTabClick={(key, e) => {
-                // setTabActive(key);
-                console.log(TabList, key);
-                TabList.forEach((child) => {
-                  let route = key.split("|");
-                  if (
-                    route[0] === child.props.tabid &&
-                    route[1] === child.props.param
-                  ) {
-                    // 通过路由修改
-                    routeTo(key, child.props.param);
-                    return true;
-                  }
-                  return false;
-                });
-              }}
+              // onTabClick={(key, e) => {
+              //   // setTabActive(key);
+              //   TabList.forEach((child) => {
+              //     let route = key.split("|");
+              //     if (
+              //       route[0] === child.props.tabid &&
+              //       route[1] === child.props.param
+              //     ) {
+              //       // 通过路由修改
+              //       routeTo(key, child.props.param);
+              //       return true;
+              //     }
+              //     return false;
+              //   });
+              // }}
               className={`tab-nav-bar ${search ? "haveSearch" : ""}`}
             ></DefaultTabBar>
             {search ? <div className="search-context">{search}</div> : ""}
@@ -151,8 +173,29 @@ function Tab(props, ref) {
           <TabPane
             tab={
               // <NavLink to={"/" + props.tabid} className="tab-name">
-              <div className='tabname' title={props.tabname}>
-                {props.tabname}
+              <div
+                className="tabname"
+                title={props.tabname}
+                onClick={(key, e) => {
+                  // setTabActive(key);
+                  // let route = key.split("|");
+
+                  routeTo(child.props.tabid, child.props.param);
+                  // TabList.forEach((child) => {
+                  //   let route = key.split("|");
+                  //   if (
+                  //     route[0] === child.props.tabid &&
+                  //     route[1] === child.props.param
+                  //   ) {
+                  //     // 通过路由修改
+                  //     routeTo(key, child.props.param);
+                  //     return true;
+                  //   }
+                  //   return false;
+                  // });
+                }}
+              >
+                {props.tabname }
                 <i
                   className="tab-close-btn"
                   onClick={(e) => {

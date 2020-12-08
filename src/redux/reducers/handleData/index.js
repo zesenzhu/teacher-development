@@ -12,25 +12,33 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-03 10:23:10
+ * @LastEditTime: 2020-12-07 19:32:22
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\handleData\index.js
  */
 import { handleActions } from "../../actions";
 const handleData = (
   state = {
-    alert: false,
+    teacherRecruitMsg: {
+      tabName: "教师招聘计划管理",
+      tabId: "teacherRecruit",
+      component: "home",
+      params: [
+        { key: "", title: "教师招聘计划管理" },
+        { key: "publish", title: "发布招聘计划" },
+      ],
+    },
   },
   actions
 ) => {
   switch (actions.type) {
-    // case commonActions.COMMON_SET_TEST:
-    //   return Object.assign({}, state, {
-    //     alert: true,
-    //   });
+    case handleActions.COMMON_SET_TEACHER_RECRUIT_MSG:
+      return Object.assign({}, state, {
+        teacherRecruitMsg: { ...state.teacherRecruitMsg, ...actions.data },
+      });
 
     default:
-      return state
+      return state;
   }
 };
 export default handleData;

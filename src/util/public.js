@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 09:01:40
- * @LastEditTime: 2020-12-01 20:45:03
+ * @LastEditTime: 2020-12-07 18:31:30
  * @Description:
  * @FilePath: \teacher-development\src\util\public.js
  */
@@ -434,13 +434,13 @@ export const UrlGetIcon = (url) => {
 
 /**
  * @description: 数组遍历，下级是对象切存在下级字段可进行深层遍历
- * @param {*array:遍历的数组，*key:代表下级的对象字段,*callback:查找的回调}
+ * @param {*array:遍历的数组，*childrenKey:代表下级的对象字段,*callback:查找的回调}
  * @return {*}
  */
 export const deepMap = (
   array,
-  key,
   callback = () => {},
+  childrenKey = "children",
   level = 1,
   parent = []
 ) => {
@@ -450,8 +450,14 @@ export const deepMap = (
 
   array.forEach((child, index) => {
     callback({ child, index, level, parent });
-    if (child[key] instanceof Array) {
-      deepMap(child[key], key, callback, level + 1, [child].concat(parent));
+    if (child[childrenKey] instanceof Array) {
+      deepMap(
+        child[childrenKey],
+        callback,
+        childrenKey,
+        level + 1,
+        [child].concat(parent)
+      );
     }
   });
 };
@@ -752,4 +758,13 @@ export const getDataStorage = (key, haveLocalStorage = false) => {
     value = JSON.parse(value);
   } catch (e) {}
   return value;
+};
+
+/**
+ * @description: 处理路由pathname,返回数组
+ * @param {*}
+ * @return {*}
+ */
+export const handleRoute = (pathname) => {
+  return pathname.substr(1).split("/");
 };

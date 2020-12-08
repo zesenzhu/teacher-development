@@ -13,7 +13,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:40:14
- * @LastEditTime: 2020-12-04 09:56:14
+ * @LastEditTime: 2020-12-07 21:26:33
  * @Description: 
  * @FilePath: \teacher-development\src\component\frame\Tab\index.scss
  */
@@ -37,6 +37,7 @@
             padding: 0 40px 0 20px;
             color: #666666;
             margin: 0;
+            cursor: auto;
             &.ant-tabs-tab-active {
                 color: #fff;
                 .ant-tabs-tab-btn {
@@ -48,6 +49,7 @@
             }
             .ant-tabs-tab-btn {
                 position: relative;
+                cursor: pointer;
                 &:focus {
                     color: inherit;
                 }

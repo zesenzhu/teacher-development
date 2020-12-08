@@ -21,7 +21,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 15:10:38
- * @LastEditTime: 2020-12-01 20:49:23
+ * @LastEditTime: 2020-12-07 18:31:38
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\leftMenu\index.js
  */
@@ -66,7 +66,7 @@ function MenuLink(props, ref) {
     // 控制当下级箭头操作时在不影响路由的前提下可控isactive
     // setRouteAgain(true);
     let Path = location && location.pathname ? location.pathname : "";
-    deepMap(List, "children", ({child, index, level,parent}) => {
+    deepMap(List,   ({child, index, level,parent}) => {
       if (level === 1) {
         if (Path.includes(child.key) || selectMenu === child.key) {
           setSelectMenu(false)

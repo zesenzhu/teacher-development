@@ -43,15 +43,19 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:14:26
- * @LastEditTime: 2020-12-03 10:20:23
+ * @LastEditTime: 2020-12-07 16:27:28
  * @Description:
  * @FilePath: \teacher-development\src\redux\actions\handleActions.js
  */
 
-// const COMMON_SET_TEST = "COMMON_SET_TEST";
-
-
+const COMMON_SET_TEACHER_RECRUIT_MSG = "COMMON_SET_TEACHER_RECRUIT_MSG";
+const setTeacherRecruitMsg = (data) => {
+  return (dispatch, getProp) => {
+    dispatch({ type: COMMON_SET_TEACHER_RECRUIT_MSG, data });
+  };
+};
 const actions = {
-  // COMMON_SET_TEST,
+  COMMON_SET_TEACHER_RECRUIT_MSG,
+  setTeacherRecruitMsg,
 };
 export default actions;

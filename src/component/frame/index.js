@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-07 14:10:08
+ * @LastEditTime: 2020-12-07 17:21:18
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -47,8 +47,8 @@ import React, {
   useState,
   useImperativeHandle,
   // useMemo,
-  // useReducer,
-  // createContext,
+  useReducer,
+  createContext,
   // useContext,
   //   useRef,
   forwardRef,
@@ -58,13 +58,29 @@ import { withRouter } from "react-router-dom";
 
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
-import { Loading, Empty } from "../../component/common";
+import { Loading } from "../../component/common";
 
 import LeftMenu from "./leftMenu";
 
 import Tab from "./Tab";
 import TopBar from "./TopBar";
+// 创建frame的context
+export const frameContext = createContext();
+const initState = {
+  tabIds: {},
+  id: 1,
+};
+const frameReducer = (state, actions) => {
+  switch (actions.type) {
+    case "ADD_ID_COUNT":
+      return Object.assign({}, state, {
+        id: state.id + 1,
+      });
 
+    default:
+      return state;
+  }
+};
 /**
  * @description: frame的children的属性需要包含tabid，tabname，可有param
  * @param {*}
@@ -103,7 +119,7 @@ function Frame(props, ref) {
   let [MenuList, setMenuList] = useState([]);
 
   // reduce
-  // const [state, dispatch] = useReducer(frameReducer, initState);
+  const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
 
@@ -116,7 +132,7 @@ function Frame(props, ref) {
       (data) => {
         //成功
         // console.log(data);
-        
+
         if (data.identityDetail && data.role.version !== "noPower") {
           //true表示该身份有效
           setIdentity(data.identityDetail);
@@ -129,7 +145,8 @@ function Frame(props, ref) {
         } else {
           //身份无效
           // console.log('无效')
-          document.location.href = data.basePlatformMsg.WebRootUrl + "/Error.aspx?errcode=E011";
+          document.location.href =
+            data.basePlatformMsg.WebRootUrl + "/Error.aspx?errcode=E011";
         }
       },
       () => {
@@ -208,50 +225,56 @@ function Frame(props, ref) {
   }));
 
   return (
-    <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
-      <div id="Frame" className={`Frame ${className ? className : ""}`}>
-        {checkType("default") ? (
-          <TopBar
-            userInfo={UserInfo}
-            basePlatFormMsg={BasePlatFormMsg}
-            platMsg={PlatMsg}
-            identity={Identity}
-          ></TopBar>
-        ) : (
-          ""
-        )}
-        <div
-          className={`Frame-contain  ${
-            checkType("no-left") ? "Frame-contain-2" : ""
-          }`}
-        >
-          {type === "default" ? (
-            <div className="Frame-contain-left">
-              <LeftMenu list={MenuList}></LeftMenu>
-            </div>
+    <frameContext.Provider value={{state,dispatch}}>
+      <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
+        <div id="Frame" className={`Frame ${className ? className : ""}`}>
+          {checkType("default") ? (
+            <TopBar
+              userInfo={UserInfo}
+              basePlatFormMsg={BasePlatFormMsg}
+              platMsg={PlatMsg}
+              identity={Identity}
+            ></TopBar>
           ) : (
             ""
           )}
           <div
-            className={`Frame-contain-right ${
-              checkType("no-left") ? "only-center" : ""
+            className={`Frame-contain  ${
+              checkType("no-left") ? "Frame-contain-2" : ""
             }`}
           >
-            {Init ? (
-              ComponentList instanceof Array && ComponentList.length > 0 ? (
-                <Tab componentList={ComponentList} search={search} type={type}>
-                  {children}
-                </Tab>
-              ) : (
-                children
-              )
+            {type === "default" ? (
+              <div className="Frame-contain-left">
+                <LeftMenu list={MenuList}></LeftMenu>
+              </div>
             ) : (
               ""
             )}
+            <div
+              className={`Frame-contain-right ${
+                checkType("no-left") ? "only-center" : ""
+              }`}
+            >
+              {Init ? (
+                ComponentList instanceof Array && ComponentList.length > 0 ? (
+                  <Tab
+                    componentList={ComponentList}
+                    search={search}
+                    type={type}
+                  >
+                    {children}
+                  </Tab>
+                ) : (
+                  children
+                )
+              ) : (
+                ""
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </Loading>
+      </Loading>
+    </frameContext.Provider>
   );
 }
 export default withRouter(memo(forwardRef(Frame)));
