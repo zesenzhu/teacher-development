@@ -21,7 +21,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 15:10:38
- * @LastEditTime: 2020-12-07 18:31:38
+ * @LastEditTime: 2020-12-08 19:13:48
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\leftMenu\index.js
  */
@@ -38,7 +38,7 @@ import React, {
 } from "react";
 import { withRouter, NavLink } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
-import { deepMap } from "../../../util/public";
+import { deepMap, handleRoute } from "../../../util/public";
 import "./index.scss";
 // 在listen中无法做到list的实时更新，唯有做这个全局变量进行更新
 // let List = [];
@@ -60,21 +60,27 @@ function MenuLink(props, ref) {
 
   // 下级开关
   const [routeAgain, setRouteAgain] = useState(true);
+  const [Path, setPath] = useState([]);
 
   //  路由监听
   useEffect(() => {
     // 控制当下级箭头操作时在不影响路由的前提下可控isactive
     // setRouteAgain(true);
-    let Path = location && location.pathname ? location.pathname : "";
-    deepMap(List,   ({child, index, level,parent}) => {
+    let Path = handleRoute(location.pathname);
+    setPath(Path);
+    // let Path = location && location.pathname ? location.pathname : "";
+    deepMap(List, ({ child, index, level, parent }) => {
       if (level === 1) {
-        if (Path.includes(child.key) || selectMenu === child.key) {
-          setSelectMenu(false)
+        if (
+          Path.some((path) => child.key === path) ||
+          selectMenu === child.key
+        ) {
+          setSelectMenu(false);
           setOpenMenu(child.key);
         }
       } else if (level === 2) {
-        if (Path.includes(child.key)) {
-          setSelectMenu(parent[level-2].key);
+        if (Path.some((path) => child.key === path)) {
+          setSelectMenu(parent[level - 2].key);
         }
       }
     });
@@ -83,7 +89,7 @@ function MenuLink(props, ref) {
   return (
     List instanceof Array &&
     List.map((child, index) => {
-      let { key, name, icon, children } = child;
+      let { key, name, icon, children, params } = child;
       // icon:*false,表示不要图标且位置也不要，*undefined,表示使用默认标点,
       // *true,保留图标位置，但不要图标,*string,图标url
       // children:是否有下一级，非array或array length为0不做渲染
@@ -101,7 +107,14 @@ function MenuLink(props, ref) {
             <NavLink
               isActive={(match, location) => {
                 // 选择下级的话就必定上级选中
-                if (match || selectMenu === key) {
+                if (
+                  match ||
+                  selectMenu === key ||
+                  (params instanceof Array &&
+                    params.some((param) => {
+                      return param.key === Path[0];
+                    }))
+                ) {
                   // 一级级选中后影响一级选中
                   // setSelectMenu(false);
                   // 路由变化的open才能使用

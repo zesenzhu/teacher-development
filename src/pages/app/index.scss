@@ -40,3 +40,22 @@
         transform: rotate(360deg);
     }
 }
+
+
+/**
+ * @description: 基础样式
+ * @param {*}
+ * @return {*}
+ */
+
+.lg-btn {
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+    padding: 0 13px;
+    color: #fefefe;
+    border-radius: 3px;
+}

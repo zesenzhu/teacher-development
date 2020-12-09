@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-07 17:21:18
+ * @LastEditTime: 2020-12-08 19:44:11
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -204,6 +204,7 @@ function Frame(props, ref) {
           children: child,
           props: {
             ...child.props,
+            redirect:'/'+(child.props.redirect?child.props.redirect:leftMenu[0]?leftMenu[0].key:'')
           },
         });
       });
@@ -213,7 +214,7 @@ function Frame(props, ref) {
 
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children, type]);
+  }, [children, type,leftMenu]);
 
   // 对type字段解析，查看是否包含
   const checkType = (key = null) => {

@@ -21,7 +21,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-02 21:43:44
- * @LastEditTime: 2020-12-04 10:02:01
+ * @LastEditTime: 2020-12-08 14:50:53
  * @Description: 
  * @FilePath: \teacher-development\src\component\common\mixin.scss
  */
@@ -71,6 +71,17 @@
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     -o-transform: translateY(-50%);
+}
+
+// 垂直水平居中
+@mixin center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
 }
 
 

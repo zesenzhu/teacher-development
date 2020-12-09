@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-08 08:41:48
+ * @LastEditTime: 2020-12-08 20:22:42
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -39,6 +39,8 @@ import { withRouter } from "react-router-dom";
 import "./index.scss";
 import { handleRoute } from "../../../util/public";
 import { Tabs } from "antd";
+import { Scrollbars } from "react-custom-scrollbars";
+
 let { TabPane } = Tabs;
 
 function Tab(props, ref) {
@@ -76,13 +78,16 @@ function Tab(props, ref) {
   useEffect(() => {
     // console.log(Path, ComponentList, TabList);
     // 查是否存在compoent
+    let resetRoute = "";
+
     Path instanceof Array &&
       Path.length > 0 &&
       ComponentList instanceof Array &&
       ComponentList.forEach((child, index) => {
         let { props } = child;
         // 路由匹配包含，同事看tablist是否存在,尽量不要tabid有字符一样
-        // console.log(props.paramList);
+        // 是否重定向，当节点设置了mustParam的时候，path没有param则会重定向到指定的redirct路径，没设置redirct则重定向到该节点key
+        resetRoute = props.tabid === Path[0] && props.mustparam && !Path[1];
         if (
           Path[0].includes(props.tabid) &&
           !TabList.some((tab) => {
@@ -94,7 +99,8 @@ function Tab(props, ref) {
               props.tabid === tab.props.tabid &&
               (!props.param || Path[1] === tab.props.param)
             );
-          })
+          }) &&
+          !resetRoute
           //  &&
           // // paramList为限制二级路由的列表，如果路由出现不在列表的，不允许打开
           // (!props.paramList ||
@@ -125,8 +131,17 @@ function Tab(props, ref) {
           setTabList(TabList);
           setTabListLength(TabList.length);
         }
-        setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
+        if (resetRoute) {
+          resetRoute = props.redirect;
+          // history.push(props.redirect);
+        }
       });
+
+    if (resetRoute) {
+      history.push(resetRoute);
+    } else {
+      setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
+    }
     // console.log(Path, ComponentList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Path, ComponentList]);
@@ -195,7 +210,7 @@ function Tab(props, ref) {
                   // });
                 }}
               >
-                {props.tabname }
+                {props.tabname}
                 <i
                   className="tab-close-btn"
                   onClick={(e) => {
@@ -244,7 +259,7 @@ function Tab(props, ref) {
             }
             key={props.tabid + (props.param ? "|" + props.param : "")}
           >
-            {children}
+           <Scrollbars>{children}</Scrollbars> 
           </TabPane>
         );
       })}

@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-07 19:39:02
+ * @LastEditTime: 2020-12-08 19:04:39
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -64,7 +64,11 @@ const commonData = (
         name: "教师招聘计划管理",
         icon: Icon_3,
         children: [],
-        
+        // 除了左侧菜单的其它合法一级路由,打开这个路由，左侧会对应打开所属的节点
+        params: [
+          { key: "publishRecruit", title: "发布招聘计划" },
+          { key: "editRecruit", title: "编辑招聘计划" },
+        ],
       },
       {
         key: "teacherTrain",
@@ -74,6 +78,11 @@ const commonData = (
       },
       { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
     ],
+
+    // params: [
+    //   { key: "publish", title: "发布招聘计划" },
+    //   { key: "edit", title: "发布招聘计划" },
+    // ],
     userInfo: {},
     identity: {},
     basePlatFormMsg: {},

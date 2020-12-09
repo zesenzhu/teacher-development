@@ -1,4 +1,4 @@
-import "./index.css";
+import "./index.scss";
 import {
   connect,
   // useSelector,
@@ -31,7 +31,7 @@ function App(props, ref) {
   const {
     history,
     location,
-    commonData: { leftMenu },
+    commonData: { leftMenu, params },
     handleData: {
       teacherRecruitMsg: {
         tabName: recruitName,
@@ -53,32 +53,41 @@ function App(props, ref) {
       // history.push("/" + leftMenu[0].key);
       controlRoute(leftMenu[0].key);
       return;
-    } else if (
-      Path[0] === recruitId &&
-      Path[1] &&
-      !recruitParams.find((child) => {
-        return child.key === Path[1];
-      })
-    ) {
-      //教师招聘计划管理,默认
-      // console.log(Path)
-      controlRoute(Path[0]);
-      // setRecruitName()
-      return;
     }
+    // else if (
+    //   Path[0] === recruitId &&
+    //   Path[1] &&
+    //   !recruitParams.find((child) => {
+    //     return child.key === Path[1];
+    //   })
+    // ) {
+    //   //教师招聘计划管理,默认
+    //   // console.log(Path)
+    //   controlRoute(Path[0]);
+    //   // setRecruitName()
+    //   return;
+    // }
 
     //遍历下path[0]是否存在leftmenushang
     let isExist = false;
     deepMap(leftMenu, (child) => {
-      // console.log();
-      if (child.child.key === Path[0]) {
+       
+      if (
+        child.child.key === Path[0] ||
+        (child.child.params instanceof Array &&
+          child.child.params.some((param) => Path[0] === param.key))
+      ) {
         isExist = true;
       }
     });
-    console.log(isExist);
+    // isExist = !isExist
+    //   ? params.some((child) => {
+    //       return child.key === Path[0];
+    //     })
+    //   : isExist;
     // 不存在
     if (!isExist) {
-      controlRoute(leftMenu[0].key);
+      // controlRoute(leftMenu[0].key);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, leftMenu]);
@@ -191,6 +200,12 @@ function App(props, ref) {
       </div>
       <div tabid={"notice"} tabname={"通知公告"}>
         通知公告
+      </div>
+      <div tabid={"publishRecruit"} tabname={"发布招聘计划"}>
+        发布招聘计划
+      </div>
+      <div tabid={"editRecruit"} tabname={"编辑招聘计划"} param={"id"} mustparam redirect={'teacherRecruit'}>
+        编辑招聘计划
       </div>
     </Frame>
   );
