@@ -24,7 +24,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 18:30:14
- * @LastEditTime: 2020-12-08 21:40:06
+ * @LastEditTime: 2020-12-09 13:56:19
  * @Description: table请求的hooks
  * @FilePath: \teacher-development\src\hooks\useTableRequest.js
  */
@@ -44,19 +44,37 @@ export default function useTableRequest(query = {}, api) {
     total: 10,
     pageSize: 10,
     pageIndex: 1,
+    isError: false,
   });
+  // 保存是否在请求的状态
+  const [loading, setLoading] = useState(false);
   /* 请求数据 ,数据处理逻辑根后端协调着来 */
   const getList = useMemo(() => {
     return async (payload) => {
-      if (!api) return;
-      //  请求
-      const data = await api(payload || { ...query, ...pageOptions });
-      const res = await data.json();
+      setLoading(true);
+      payload = payload || { ...query, ...pageOptions };
 
-      if (res.StatusCode === 200) {
+      if (!api) {
+        //api无效，静态更改前端数据
+        setTableData({
+          ...tableData,
+          pageSize: payload.pageSize,
+          pageIndex: payload.pageIndex,
+        });
+        fisrtRequest.current = true;
+
+        return;
+      }
+      //  请求,需要提前处理好json转换和处理成tableData的数据结构
+      const data = await api(payload);
+      // const res = await data.json();
+      if (data.StatusCode === 200) {
         setTableData(data.data);
         fisrtRequest.current = true;
+      } else {
+        setTableData({ isError: true });
       }
+      setLoading(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -81,12 +99,10 @@ export default function useTableRequest(query = {}, api) {
   /* 处理分页逻辑 */
   const handerChange = useMemo(
     () => (options) => {
-        console.log(options,pageOptions)
       return setPageOptions({ ...query, ...pageOptions, ...options });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [pageOptions, query]
   );
-  console.log(pageOptions);
-  return [tableData, handerChange, getList];
+  return [tableData, handerChange, getList, loading];
 }

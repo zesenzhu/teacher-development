@@ -71,7 +71,6 @@ function App(props, ref) {
     //遍历下path[0]是否存在leftmenushang
     let isExist = false;
     deepMap(leftMenu, (child) => {
-       
       if (
         child.child.key === Path[0] ||
         (child.child.params instanceof Array &&
@@ -182,16 +181,9 @@ function App(props, ref) {
       </div>
       <Recruit
         tabid={recruitId}
-        tabname={
-          recruitParams.find((child) => {
-            return child.key === (Path[1] ? Path[1] : "");
-          }) &&
-          recruitParams.find((child) => {
-            return child.key === (Path[1] ? Path[1] : "");
-          }).title
-        }
-        param={"pageName"}
-        paramList={recruitParams}
+        tabname={"教师招聘计划管理"}
+        param={"home"}
+        // paramList={recruitParams}
       >
         教师招聘计划管理
       </Recruit>
@@ -201,10 +193,16 @@ function App(props, ref) {
       <div tabid={"notice"} tabname={"通知公告"}>
         通知公告
       </div>
-      <div tabid={"publishRecruit"} tabname={"发布招聘计划"}>
+      <Recruit tabid={"publishRecruit"} tabname={"发布招聘计划"} param={"publish"}>
         发布招聘计划
-      </div>
-      <div tabid={"editRecruit"} tabname={"编辑招聘计划"} param={"id"} mustparam redirect={'teacherRecruit'}>
+      </Recruit>
+      <div
+        tabid={"editRecruit"}
+        tabname={"编辑招聘计划"}
+        param={"id"}
+        mustparam={"true"}
+        redirect={"teacherRecruit"}
+      >
         编辑招聘计划
       </div>
     </Frame>

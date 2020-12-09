@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 09:01:40
- * @LastEditTime: 2020-12-07 18:31:30
+ * @LastEditTime: 2020-12-09 16:41:31
  * @Description:
  * @FilePath: \teacher-development\src\util\public.js
  */
@@ -768,3 +768,29 @@ export const getDataStorage = (key, haveLocalStorage = false) => {
 export const handleRoute = (pathname) => {
   return pathname.substr(1).split("/");
 };
+
+/**
+ * @description: 项目检查input输入
+ * @param {*}
+ * @return {*}
+ */
+export function checkInput({ value, regular, success, error }) {
+  let fun = () => {};
+  value = value || "";
+  regular = regular || /^[A-Za-z0-9_()\u4e00-\u9fa5-]{0,100}$/;
+  success = success || fun;
+  error = error || fun;
+
+  if (value === "") {
+    error(true);
+    return;
+  }
+  // 普通：[A-Za-z0-9_()\u4e00-\u9fa5-]
+  // 严格：  /^[a-zA-Z0-9_\u4e00-\u9fa5][a-zA-Z0-9_\u4e00-\u9fa5 ]{0,48}[a-zA-Z0-9_\u4e00-\u9fa5]$|^[a-zA-Z0-9_\u4e00-\u9fa5]{1,50}$/
+  let Test = regular.test(value);
+  if (Test) {
+    success();
+  } else {
+    error(false);
+  }
+}

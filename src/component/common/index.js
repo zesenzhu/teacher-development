@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-12-04 14:28:43
+ * @LastEditTime: 2020-12-09 15:57:26
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
@@ -36,6 +36,7 @@ import {
   Table as AntTable,
   Pagination as AntPagination,
   Button as AntdButton,
+  Tooltip,
 } from "antd";
 
 moment.locale("zh-cn");
@@ -1497,8 +1498,8 @@ class Empty extends React.Component {
         : "noTitle",
     };
   }
- // eslint-disable-next-line react-hooks/exhaustive-deps
-   componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  componentWillReceiveProps(nextProps) {
     const { style } = nextProps;
 
     this.setState({
@@ -1771,7 +1772,7 @@ export class ErrorAlert extends React.Component {
 // 暂时不能用
 export const withAlert = (Component) => {
   if (!(Component instanceof Object)) {
-    console.log("Component 不是组件:"+Component);
+    console.log("Component 不是组件:" + Component);
     return;
   }
   let AlertDom = document.getElementById("alert");
@@ -1785,6 +1786,20 @@ export const withAlert = (Component) => {
   }
   ReactDOM.render(Component, AlertDom);
 };
+
+/**
+ * @description: 错误提示
+ * @param {*}
+ * @return {*}
+ */
+function Tip(props) {
+  let { className, children, ...reset } = props;
+  return (
+    <Tooltip getPopupContainer={(e)=>e.parentNode} placement={'right'} overlayClassName={`lg-tip ${className ? className : ""}`} {...reset}>
+      {children}
+    </Tooltip>
+  );
+}
 const PagiNation = memo(PageComponent);
 const Alert = memo(AppAlert);
 const DropDown = memo(DropComponent);
@@ -1799,5 +1814,5 @@ export {
   CheckBoxGroup,
   CheckBox,
   RadioGroup,
-  Radio,
+  Radio,Tip
 };

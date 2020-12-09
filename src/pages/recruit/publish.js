@@ -35,33 +35,54 @@
  *
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
- * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-09 14:34:41
+ * @Date: 2020-12-07 16:08:21
+ * @LastEditTime: 2020-12-09 14:35:08
  * @Description:
- * @FilePath: \teacher-development\src\component\temple\index.js
+ * @FilePath: \teacher-development\src\pages\recruit\publish.js
  */
 
+import { connect } from "react-redux";
 import React, {
-  //   useCallback,
+  useCallback,
   memo,
-  useEffect,
-  useState,
+  //   useEffect,
+  // useState,
   // useImperativeHandle,
-  // useMemo,
-  // useReducer,
-  // createContext,
-  // useContext,
-  //   useRef,
+  useRef,
+  useContext,
   forwardRef,
 } from "react";
 import "./index.scss";
-//   import { Search, Empty } from "../common";
-
-function Editor(props, ref) {
-  let { className, ...reset } = props;
+import { withRouter } from "react-router-dom";
+// import { handleActions } from "../../redux/actions";
+import Editor from "../../component/editor";
+import { Context } from "./reducer";
+// import { getCruitList } from "../../api/recruit";
+//   import { NavLink } from "react-router-dom";
+function Publish(props, ref) {
+  let {
+    teacherRecruitMsg: { tabId },
+    history,
+    dispatch,
+  } = props;
+  let { state, setDispatch } = useContext(Context);
 
   return (
-    <div className={`lg-editor ${className ? className : ""}`} {...reset}></div>
+    <div className=" Reacruit-context Publish-context Recruit-publish">
+      <div className="context-top  ">
+        <span className=" title-1">发布招聘计划</span>
+        <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
+      </div>
+      <Editor></Editor>
+    </div>
   );
 }
-export default memo(forwardRef(Editor));
+
+const mapStateToProps = (state) => {
+  let {
+    handleData: { teacherRecruitMsg },
+    commonData: { roleMsg },
+  } = state;
+  return { teacherRecruitMsg, roleMsg };
+};
+export default connect(mapStateToProps)(withRouter(memo(forwardRef(Publish))));

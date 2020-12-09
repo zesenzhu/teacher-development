@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-08 21:37:21
+ * @LastEditTime: 2020-12-09 17:00:05
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -46,7 +46,7 @@ import React, {
   memo,
   useEffect,
   useState,
-  // useImperativeHandle,
+  useImperativeHandle,
   // useMemo,
   // useReducer,
   // createContext,
@@ -58,38 +58,67 @@ import "./index.scss";
 import { Table, Empty, Loading, PagiNation } from "../common";
 import useTableRequest from "../../hooks/useTableRequest";
 function $Table(props, ref) {
-  let { className, loading, tip, opacity, ...reset } = props;
-  let { dataSource } = reset;
+  let {
+    className,
+    loading: outLoading,
+    tip,
+    opacity,
+    query: Query,
+    api,
+    ...reset
+  } = props;
+  // let { dataSource } = reset;
   /* 控制表格查询条件 */
-  const [query, setQuery] = useState({});
+  const [query, setQuery] = useState(typeof Query === "object" ? Query : {});
   // tableData：列表数据，handerChange:更改查询的条件，getList：获取数据
-  const [tableData, handerChange] = useTableRequest(query);
-  const { pageIndex, pageSize, total, list } = tableData;
-  console.log(pageIndex, pageSize, total,list);
+  const [tableData, handerChange, getList, loading] = useTableRequest(
+    query,
+    api
+  );
+  const { pageIndex, pageSize, total, list, isError } = tableData;
+  useEffect(() => {
+    setQuery(Query);
+  }, [Query]);
+  useImperativeHandle(ref, () => ({
+    getList,data:tableData
+  }));
   return (
     <Loading
-      spinning={loading instanceof Boolean ? loading : false}
+      spinning={
+        outLoading !== undefined
+          ? outLoading instanceof Boolean
+            ? outLoading
+            : false
+          : loading
+      }
       tip={tip ? tip : "加载中..."}
       opacity={opacity ? opacity : false}
     >
       <div className={`lg-table-box ${className ? className : ""}`}>
-        {dataSource instanceof Array && dataSource.length > 0 ? (
+        {!isError && list instanceof Array && list.length > 0 ? (
           <>
-            <Table pagination={false} className={`lg-table`} {...reset}></Table>
+            <Table
+              dataSource={list}
+              pagination={false}
+              className={`lg-table`}
+              {...reset}
+            ></Table>
             <PagiNation
               showQuickJumper
               showSizeChanger
-              onShowSizeChange={(Current, pageSize) => {
-                console.log(pageSize)
-                handerChange({ pageSize });
-              }}
+              // onShowSizeChange={(Current, pageSize) => {
+              //   console.log(pageSize);
+              //   handerChange({ pageSize });
+              // }}
               pageSize={pageSize}
               current={pageIndex}
               hideOnSinglePage={total === 0 ? true : false}
               total={total}
-              // onChange={(pageIndex) => {
-              //   handerChange({ pageIndex });
-              // }}
+              onChange={(pageIndex, pageSize) => {
+                console.log(pageIndex, pageSize);
+
+                handerChange({ pageIndex, pageSize });
+              }}
             ></PagiNation>
           </>
         ) : (

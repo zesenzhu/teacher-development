@@ -23,7 +23,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 15:17:40
- * @LastEditTime: 2020-12-07 19:26:42
+ * @LastEditTime: 2020-12-09 14:06:43
  * @Description: 招聘计划管理,可复用，所以尽量不要用reduce全局状态处理
  * @FilePath: \teacher-development\src\pages\recruit\index.js
  */
@@ -38,32 +38,46 @@ import React, {
   memo,
   useEffect,
   useState,
+  useReducer,
   // useImperativeHandle,
   // useRef,
   forwardRef,
 } from "react";
 import Home from "./home";
+import Publish from "./publish";
 import "./index.scss";
-import { handleRoute } from "../../util/public";
+// import { handleRoute } from "../../util/public";
 import { withRouter } from "react-router-dom";
+import { Reducer, Context, initState } from "./reducer";
 function Recruit(props, ref) {
   let {
-    teacherRecruitMsg:{
-        params
-    } ,
+    teacherRecruitMsg: { params },
     location,
+    param, //param控制显示的模块
   } = props;
   const [Component, setComponent] = useState("");
-  useEffect(() => {
-    let { pathname } = location;
-    let path = handleRoute(pathname)[1]?handleRoute(pathname)[1]:'home';
-    console.log(pathname,handleRoute(pathname)[1],path)
+  const [state, setDispatch] = useReducer(Reducer, initState);
 
-    setComponent(path);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // let { pathname } = location;
+    // let path = handleRoute(pathname)[1]?handleRoute(pathname)[1]:'home';
+    // console.log(pathname,handleRoute(pathname)[1],path)
+    // setComponent(path);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
- 
-  return <div className="Recruit">{Component === "home"||Component === "" ? <Home></Home> : ""}</div>;
+  useEffect(() => {
+    setComponent(param);
+  }, [param]);
+  return (
+    <Context.Provider value={{ state, setDispatch }}>
+      <div className="Recruit">
+        {Component === "home" || Component === "" ? <Home></Home> : ""}
+        {Component === "publish" ? <Publish></Publish> : ""}
+        {Component === "edit" ? <Home></Home> : ""}
+        {Component === "details" ? <Home></Home> : ""}
+      </div>
+    </Context.Provider>
+  );
 }
 
 const mapStateToProps = (state) => {
