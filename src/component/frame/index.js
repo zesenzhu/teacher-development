@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-12 19:19:17
+ * @LastEditTime: 2020-12-13 11:30:04
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -95,14 +95,21 @@ function Frame(props, ref) {
   // search为tab的搜索区域，undefined则不会出现
   const {
     type,
+    // 初始化回调
     pageInit,
     className,
     moduleID,
+    // 平台信息，头部的logo和名称
     platMsg,
+    // 左侧菜单，结构看leftmenu里面注释
     leftMenu,
     children,
+    // 主动获取frame当前的活动标签页，回调函数
     getActiveTab,
-    tabPorps,onContentresize,
+    // 控制tab的props，与antd的tabs一样配置
+    tabPorps,
+    // 回调函数，获取标签页主要区域的宽高
+    onContentresize,
     search,
   } = props;
   // 是否初始化
@@ -250,7 +257,7 @@ function Frame(props, ref) {
   );
   // 保存活动的tab
   useEffect(() => {
-    getActiveTab(activeTab);
+   typeof getActiveTab === 'function'&&getActiveTab(activeTab);
     // dispatch(handleActions.setActiveTab(activeTab));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);

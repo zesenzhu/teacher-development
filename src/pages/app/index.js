@@ -13,6 +13,7 @@ import React, {
   // useImperativeHandle,
   useRef,
   forwardRef,
+  useLayoutEffect,
 } from "react";
 import { commonActions, handleActions } from "../../redux/actions";
 // import fetch from "../../util/fetch";
@@ -50,7 +51,9 @@ function App(props, ref) {
   // const [tabRef,setTabRef]
   // frame的ref
   const frameRef = useRef({});
-  useEffect(() => {
+  // 在这做路由做配置，监听路由变化不合法的时候给它做合法方案
+
+  useLayoutEffect(() => {
     let Path = handleRoute(location.pathname);
     setPath(Path);
     // 没有就默认给个
@@ -80,6 +83,8 @@ function App(props, ref) {
     // }
 
     //遍历下path[0]是否存在leftmenushang
+    // 这个是为了控制不在左侧上出现的id，但要挂载某个菜单上的操作
+
     let isExist = false;
     deepMap(leftMenu, (child) => {
       if (
@@ -96,11 +101,17 @@ function App(props, ref) {
     //     })
     //   : isExist;
     // 不存在
-    if (!isExist) {
-      // controlRoute(leftMenu[0].key);
+
+    if (!isExist&& leftMenu.length > 0) {
+      // 第一次进来的时候frame还没挂载，所以为undefined，需要自己控制，后面不是undefined了可以使用frame返回的方法
+
+      frameRef.current.removeTab
+        ? RemoveTab("", "", leftMenu[0].key)
+        : controlRoute(leftMenu[0].key);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, leftMenu]);
+  // 测试tab功能，可以删掉
   useEffect(() => {
     // let a = 0;
     // let time = setInterval(() => {
@@ -116,14 +127,7 @@ function App(props, ref) {
     // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    dispatch({ type: commonActions.COMMON_SET_TEST });
-    // get({
-    //   url:
-    //     "http://192.168.129.1:30103/UserMgr/UserInfoMgr/GetStudentToPage?schoolID=S27-511-AF57&pageIndex=0&pageSize=10&sortFiled=UserID",
-    // });
-    return () => {};
-  }, [dispatch]);
+
   // 手动路由控制
   function controlRoute() {
     let path = "";
@@ -134,7 +138,7 @@ function App(props, ref) {
   }
   // 初始化方法
   const pageInit = (data) => {
-    // 保证返回的data包含identityDetail，userInfo，basePlatformMsg
+    // 保证返回的data包含identityDetail，userInfo，basePlatformMsg，role
     dispatch({
       type: commonActions.COMMON_SET_IDENTITY,
       data: data.identityDetail,
@@ -154,17 +158,20 @@ function App(props, ref) {
     // }
   };
   // // 移除tab
-  const RemoveTab = useCallback(
+  const RemoveTab =
+    // useCallback(
     (...arg) => {
       // console.log(frameRef)
       // if(frameRef.current.tabList.length===1){
       //   controlRoute(leftMenu[0].key);
       // }
-      frameRef.current.removeTab(...arg);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [frameRef.current.removeTab,frameRef.current.tabList]
-  );
+      typeof frameRef.current.removeTab === "function" &&
+        frameRef.current.removeTab(...arg);
+    };
+  // ,
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [frameRef.current.removeTab, frameRef.current.tabList]
+  // );
   // 保存活动的tab,实时获取
   const getActiveTab = (activeTab) => {
     dispatch(handleActions.setActiveTab(activeTab));

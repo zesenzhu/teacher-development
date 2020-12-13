@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-12 19:25:21
+ * @LastEditTime: 2020-12-13 11:57:21
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -43,7 +43,7 @@ import { handleRoute, autoAlert } from "../../../util/public";
 import { Tabs } from "antd";
 import { Scrollbars } from "react-custom-scrollbars";
 import { frameContext } from "../index";
-import {debounce} from '../../../util/public'
+import { debounce } from "../../../util/public";
 let { TabPane } = Tabs;
 
 function Tab(props, ref) {
@@ -170,6 +170,8 @@ function Tab(props, ref) {
     (rmTabid, reParam, nextTabid, nextParam) => {
       if (TabList.length <= 1) {
         // autoAlert({ })
+        // routeTo(ComponentList[0].props.tabid,ComponentList[0].props.param);
+
         return;
       }
       let tabIndex = 0;
@@ -244,10 +246,10 @@ function Tab(props, ref) {
 
       dispatch({ type: "RESIZE_CONTENT", data: height });
     };
-    window.addEventListener("resize",debounce(resize,500) , false);
+    window.addEventListener("resize", debounce(resize, 500), false);
 
     return () => {
-      window.removeEventListener("resize", debounce(resize,500));
+      window.removeEventListener("resize", debounce(resize, 500));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

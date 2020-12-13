@@ -25,7 +25,61 @@
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\leftMenu\index.js
  */
-
+// leftmenu数据结构
+// leftMenu: [
+//   {
+//     key: "teacherBaseMsg",
+//     name: "师资统计分析",
+//     icon: Icon_1,
+//     children: [
+//       {
+//         key: "teacherBaseMsg",
+//         name: "教师基本信息",
+//       },
+//       {
+//         key: "workMsg",
+//         name: "教师工作量",
+//       },
+//       {
+//         key: "teachingAbility",
+//         name: "教师教学能力",
+//       },
+//       {
+//         key: "informationizeAbility",
+//         name: "教师信息化能力",
+//       },
+//       {
+//         key: "schoolResource",
+//         name: "各校师资",
+//       },
+//     ],
+//   },
+//   {
+//     key: "teacherPersona",
+//     name: "教师画像查询",
+//     icon: Icon_2,
+//     children: [],
+//   },
+//   {
+//     key: "teacherRecruit",
+//     name: "教师招聘计划管理",
+//     icon: Icon_3,
+//     children: [],
+//     // 除了左侧菜单的其它合法一级路由,打开这个路由，左侧会对应打开所属的节点
+//     params: [
+//       { key: "publishRecruit", title: "发布招聘计划" },
+//       { key: "editRecruit", title: "编辑招聘计划" },
+//       { key: "recruitDetail", title: "招聘计划详情" },
+//     ],
+//   },
+//   {
+//     key: "teacherTrain",
+//     name: "教师培训计划管理",
+//     icon: Icon_4,
+//     children: [],
+//   },
+//   { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
+// ],
 import React, {
   // useCallback,
   memo,
