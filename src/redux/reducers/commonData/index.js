@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-08 19:04:39
+ * @LastEditTime: 2020-12-11 09:33:42
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -68,6 +68,7 @@ const commonData = (
         params: [
           { key: "publishRecruit", title: "发布招聘计划" },
           { key: "editRecruit", title: "编辑招聘计划" },
+          { key: "recruitDetail", title: "招聘计划详情" },
         ],
       },
       {
@@ -87,10 +88,15 @@ const commonData = (
     identity: {},
     basePlatFormMsg: {},
     roleMsg: {},
+    contentHW: { height: 0, width: 0 },
   },
   actions
 ) => {
   switch (actions.type) {
+    case commonActions.COMMON_SET_CONTENT_HW:
+      return Object.assign({}, state, {
+        contentHW: { ...state.contentHW, ...actions.data },
+      });
     case commonActions.COMMON_SET_TEST:
       return Object.assign({}, state, {
         alert: true,

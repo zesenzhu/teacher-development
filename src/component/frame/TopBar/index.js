@@ -90,7 +90,7 @@ function TopBar(props, ref) {
             onClick={() => {
               BasePlatFormMsg &&
                 window.open(
-                  BasePlatFormMsg.WebRootUrl +
+                  BasePlatFormMsg.BasicWebRootUrl +
                     "/html/personalMgr/?lg_tk" +
                     getDataStorage("token") +
                     "#/"

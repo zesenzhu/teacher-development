@@ -5,15 +5,16 @@ import {
   useDispatch,
 } from "react-redux";
 import React, {
-  // useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
+  // useMemo,
   // useImperativeHandle,
-  // useRef,
+  useRef,
   forwardRef,
 } from "react";
-import { commonActions } from "../../redux/actions";
+import { commonActions, handleActions } from "../../redux/actions";
 // import fetch from "../../util/fetch";
 // import config from "../../util/ipConfig";
 import Frame from "../../component/frame";
@@ -45,6 +46,10 @@ function App(props, ref) {
   const [TeacherName, setTeacherName] = useState("教师画像查询");
   // const [RecruitName, setRecruitName] = useState(recruitName);
   const [Path, setPath] = useState([]);
+  // 存frame返回的数据
+  // const [tabRef,setTabRef]
+  // frame的ref
+  const frameRef = useRef({});
   useEffect(() => {
     let Path = handleRoute(location.pathname);
     setPath(Path);
@@ -52,6 +57,12 @@ function App(props, ref) {
     if (!Path[0] && leftMenu instanceof Array && leftMenu.length > 0) {
       // history.push("/" + leftMenu[0].key);
       controlRoute(leftMenu[0].key);
+      return;
+    } else if (Path[0] === "recruitDetail" && !Path[1]) {
+      //教师招聘计划管理,默认
+      // console.log(Path)
+      controlRoute(recruitId);
+      // setRecruitName()
       return;
     }
     // else if (
@@ -142,13 +153,48 @@ function App(props, ref) {
     });
     // }
   };
-  // console.log(recruitParams.find((child)=>{return child.key===(Path[1]?Path[1]:'')}).title)
+  // // 移除tab
+  const RemoveTab = useCallback(
+    (...arg) => {
+      // console.log(frameRef)
+      // if(frameRef.current.tabList.length===1){
+      //   controlRoute(leftMenu[0].key);
+      // }
+      frameRef.current.removeTab(...arg);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [frameRef.current.removeTab,frameRef.current.tabList]
+  );
+  // 保存活动的tab,实时获取
+  const getActiveTab = (activeTab) => {
+    dispatch(handleActions.setActiveTab(activeTab));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
+
   return (
     <Frame
       pageInit={pageInit}
       type={"default"}
       leftMenu={leftMenu}
       search={<div>搜索</div>}
+      ref={frameRef}
+      getActiveTab={getActiveTab}
+      onContentresize={(height, width) => {
+        // 获取主区域的宽高
+        console.log(height, width);
+        dispatch({
+          type: commonActions.COMMON_SET_CONTENT_HW,
+          data: { height, width },
+        });
+      }}
+      tabPorps={{
+        onChange: (e) => {
+          console.log(e);
+        },
+        onEdit: (e, action) => {
+          console.log(e, action);
+        },
+      }}
     >
       <Test tabid={"schoolResource"} tabname={SchoolName} param={"SchoolID"}>
         {SchoolName}
@@ -193,8 +239,21 @@ function App(props, ref) {
       <div tabid={"notice"} tabname={"通知公告"}>
         通知公告
       </div>
-      <Recruit tabid={"publishRecruit"} tabname={"发布招聘计划"} param={"publish"}>
+      <Recruit
+        tabid={"publishRecruit"}
+        tabname={"发布招聘计划"}
+        param={"publish"}
+        removeTab={RemoveTab}
+      >
         发布招聘计划
+      </Recruit>
+      <Recruit
+        tabid={"recruitDetail"}
+        tabname={"招聘计划详情"}
+        param={"detail"}
+        removeTab={RemoveTab}
+      >
+        招聘计划详情
       </Recruit>
       <div
         tabid={"editRecruit"}

@@ -50,7 +50,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:07
- * @LastEditTime: 2020-12-08 21:34:15
+ * @LastEditTime: 2020-12-11 09:39:20
  * @Description: 
  * @FilePath: \teacher-development\src\component\table\index.scss
  */
@@ -122,6 +122,7 @@
                 .table-title {
                     // width: 102px;
                     color: #333333;
+                    cursor: pointer;
                 }
                 .table-source {
                     color: #81370f;

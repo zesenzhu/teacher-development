@@ -59,7 +59,7 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
 
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
   // session暂无基础平台链接，先写死；
-  let { WebRootUrl: baseIP } =
+  let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
@@ -155,7 +155,7 @@ export function LogOut({ baseIP, sysID }) {
   baseIP = baseIP
     ? baseIP
     : getDataStorage("BasePlatformMsg") instanceof Object
-    ? getDataStorage("BasePlatformMsg").WebRootUrl
+    ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
     : "";
   let token = URL_TOKEN || SESSION_TOKEN || LOCAL_TOKEN;
 
@@ -191,11 +191,11 @@ export function LogOut({ baseIP, sysID }) {
 
 const loginApi = ({ baseIP, token, method, sysID, success, error }) => {
   if (baseIP) {
-    const { WebRootUrl } =
+    const { BasicWebRootUrl } =
       getDataStorage("BasePlatformMsg") instanceof Object
         ? getDataStorage("BasePlatformMsg")
         : {};
-    baseIP = WebRootUrl;
+    baseIP = BasicWebRootUrl;
   }
 
   const ajax = $.ajax({
@@ -275,7 +275,7 @@ export const getUserInfo = async (
   baseIP = baseIP
     ? baseIP
     : getDataStorage("BasePlatformMsg") instanceof Object
-    ? getDataStorage("BasePlatformMsg").WebRootUrl
+    ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
     : "";
   return new Promise((resolve) => {
     if (!token) {

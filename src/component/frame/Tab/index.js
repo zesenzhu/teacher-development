@@ -16,31 +16,34 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-08 20:22:42
+ * @LastEditTime: 2020-12-12 19:25:21
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
 
 import React, {
-  //   useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
-  //   useImperativeHandle,
+  useImperativeHandle,
   useMemo,
+  useLayoutEffect,
   //   useReducer,
   //   createContext,
-  // useContext,
-  //   useRef,
-  forwardRef,
+  useContext,
+  useRef,
+  // forwardRef,
 } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory, useLocation } from "react-router-dom";
 // import {frameContext} from '../index'
 import "./index.scss";
-import { handleRoute } from "../../../util/public";
+import $ from "jquery";
+import { handleRoute, autoAlert } from "../../../util/public";
 import { Tabs } from "antd";
 import { Scrollbars } from "react-custom-scrollbars";
-
+import { frameContext } from "../index";
+import {debounce} from '../../../util/public'
 let { TabPane } = Tabs;
 
 function Tab(props, ref) {
@@ -50,10 +53,15 @@ function Tab(props, ref) {
     // className,
     componentList: ComponentList,
     // children,
-    history,
-    location,
+    // history,
+    // location,
+    onContentresize,
+    // 传回来的tab的props，跟antd的Tab一样
+    tabPorps,
     search,
   } = props;
+  const history = useHistory();
+  const location = useLocation();
   // 设置标签选择
   const [TabActive, setTabActive] = useState("");
   // reduce
@@ -63,8 +71,7 @@ function Tab(props, ref) {
   const [TabList, setTabList] = useState([]);
   const [, setTabListLength] = useState(TabList.length);
 
-  // const { state, dispatch } = useContext(frameContext);
-  // console.log(state)
+  const { state, dispatch } = useContext(frameContext);
   // 路径
   const Path = useMemo(() => {
     // console.log(location);
@@ -79,6 +86,7 @@ function Tab(props, ref) {
     // console.log(Path, ComponentList, TabList);
     // 查是否存在compoent
     let resetRoute = "";
+    let tabkey = Path[0] + (Path[1] ? "|" + Path[1] : "");
 
     Path instanceof Array &&
       Path.length > 0 &&
@@ -121,6 +129,8 @@ function Tab(props, ref) {
             obj.param = Path[1];
             obj.tabid = Path[0];
           }
+          obj.tabkey = tabkey;
+
           // if(props.paramList){
           //   props.paramList.some((param) => {
           //     obj.tabname = param.title;
@@ -140,7 +150,7 @@ function Tab(props, ref) {
     if (resetRoute) {
       history.push(resetRoute);
     } else {
-      setTabActive(Path[0] + (Path[1] ? "|" + Path[1] : ""));
+      setTabActive(tabkey);
     }
     // console.log(Path, ComponentList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,9 +159,102 @@ function Tab(props, ref) {
   const routeTo = (active, param) => {
     history.push("/" + active.split("|")[0] + (param ? "/" + param : ""));
   };
+  // 移除tab
+  const removeTab = useCallback(
+    /**
+     * @description: *rmTabid:要移除的tabid,为'',undefined,null时删除当前tab，*reParam：有二级的时候要匹配的二级路由
+     * nextTabid,nextParam:要route到自己想到的位置时，
+     * @param {*}
+     * @return {*}
+     */
+    (rmTabid, reParam, nextTabid, nextParam) => {
+      if (TabList.length <= 1) {
+        // autoAlert({ })
+        return;
+      }
+      let tabIndex = 0;
+      let active = TabActive.split("|")[0];
+      // let activeParam = TabActive.split("|")[1];
+      let param = TabActive.split("|")[1];
+      if (!rmTabid) {
+        rmTabid = active;
+        reParam = param;
+      }
+      //不传rmTabid，表示移除当前tab 如果是删当前，选中往前移
+      if (rmTabid === active && reParam === param) {
+        let activeBar = {};
+        // 找到该tab的位置
+        TabList.some((child, index) => {
+          if (child.props.tabid === active && child.props.param === param) {
+            tabIndex = index;
+            return true;
+          }
+          return false;
+        });
+        if (tabIndex === TabList.length - 1) {
+          //最后往前移
+          activeBar = TabList[TabList.length - 2];
+        } else {
+          activeBar = TabList[tabIndex + 1];
+        }
+        active = activeBar.props.tabid;
+        param = activeBar.props.param;
+      }
+      let List = [];
+      TabList.forEach((tab) => {
+        if (tab.props.tabid !== rmTabid || tab.props.param !== reParam) {
+          List.push(tab);
+        }
+      });
+      // 更新活动
+      // setTabActive(active);
+      // 更新列表
+      setTabList(List);
 
+      // 通过路由修改
+      routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [TabList, TabActive]
+  );
+  // 向外部传值
+  useImperativeHandle(
+    ref,
+    () => ({
+      activeTab: TabActive,
+      tabList: TabList,
+      removeTab,
+      // removeActiveTab: () => {
+      //   removeTab(TabActive);
+      // },
+    }),
+    [TabActive, TabList, removeTab]
+  );
+  // 获取可视区域高度
+  useLayoutEffect(() => {
+    let tabContent = $(".Frame-contain-right  .ant-tabs-content-holder");
+    let height = tabContent.height();
+    let width = tabContent.width();
+    typeof onContentresize === "function" && onContentresize(height, width);
+    dispatch({ type: "RESIZE_CONTENT", data: height });
+    let resize = (e) => {
+      let height = tabContent.height();
+      let width = tabContent.width();
+      typeof onContentresize === "function" && onContentresize(height, width);
+
+      dispatch({ type: "RESIZE_CONTENT", data: height });
+    };
+    window.addEventListener("resize",debounce(resize,500) , false);
+
+    return () => {
+      window.removeEventListener("resize", debounce(resize,500));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // console.log(ref)
   return (
     <Tabs
+      {...tabPorps}
       activeKey={TabActive}
       renderTabBar={(props, DefaultTabBar) => {
         // console.log(TabList, TabList.length);
@@ -219,51 +322,52 @@ function Tab(props, ref) {
                     // 阻止与原生事件的冒泡
                     e.nativeEvent.stopImmediatePropagation();
                     // console.log(e);
-                    // 一个不许删
-                    if (TabList.length <= 1) {
-                      return;
-                    }
-                    let active = TabActive.split("|")[0];
-                    // let activeParam = TabActive.split("|")[1];
-                    let param = TabActive.split("|")[1];
-                    // 如果是删当前，选中往前移
-                    if (props.tabid === active && props.param === param) {
-                      let activeBar = {};
-                      if (index === TabList.length - 1) {
-                        //最后往前移
-                        activeBar = TabList[TabList.length - 2];
-                      } else {
-                        activeBar = TabList[index + 1];
-                      }
-                      active = activeBar.props.tabid;
-                      param = activeBar.props.param;
-                    }
-                    let List = [];
-                    TabList.forEach((tab) => {
-                      if (
-                        tab.props.tabid !== props.tabid ||
-                        tab.props.param !== props.param
-                      ) {
-                        List.push(tab);
-                      }
-                    });
-                    // 更新活动
-                    // setTabActive(active);
-                    // 更新列表
-                    setTabList(List);
-                    // 通过路由修改
-                    routeTo(active, param);
+                    removeTab(props.tabid, props.param);
+                    // // 一个不许删
+                    // if (TabList.length <= 1) {
+                    //   return;
+                    // }
+                    // let active = TabActive.split("|")[0];
+                    // // let activeParam = TabActive.split("|")[1];
+                    // let param = TabActive.split("|")[1];
+                    // // 如果是删当前，选中往前移
+                    // if (props.tabid === active && props.param === param) {
+                    //   let activeBar = {};
+                    //   if (index === TabList.length - 1) {
+                    //     //最后往前移
+                    //     activeBar = TabList[TabList.length - 2];
+                    //   } else {
+                    //     activeBar = TabList[index + 1];
+                    //   }
+                    //   active = activeBar.props.tabid;
+                    //   param = activeBar.props.param;
+                    // }
+                    // let List = [];
+                    // TabList.forEach((tab) => {
+                    //   if (
+                    //     tab.props.tabid !== props.tabid ||
+                    //     tab.props.param !== props.param
+                    //   ) {
+                    //     List.push(tab);
+                    //   }
+                    // });
+                    // // 更新活动
+                    // // setTabActive(active);
+                    // // 更新列表
+                    // setTabList(List);
+                    // // 通过路由修改
+                    // routeTo(active, param);
                   }}
                 ></i>
               </div>
             }
-            key={props.tabid + (props.param ? "|" + props.param : "")}
+            key={props.tabkey}
           >
-           <Scrollbars>{children}</Scrollbars> 
+            <Scrollbars>{children}</Scrollbars>
           </TabPane>
         );
       })}
     </Tabs>
   );
 }
-export default withRouter(memo(forwardRef(Tab)));
+export default memo(React.forwardRef(Tab));

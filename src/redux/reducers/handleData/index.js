@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-07 19:32:22
+ * @LastEditTime: 2020-12-10 16:22:02
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\handleData\index.js
  */
@@ -28,10 +28,15 @@ const handleData = (
         { key: "publish", title: "发布招聘计划" },
       ],
     },
+    activeTab: "",
   },
   actions
 ) => {
   switch (actions.type) {
+    case handleActions.COMMON_SET_ACTIVE_TAB:
+      return Object.assign({}, state, {
+        activeTab: actions.data,
+      });
     case handleActions.COMMON_SET_TEACHER_RECRUIT_MSG:
       return Object.assign({}, state, {
         teacherRecruitMsg: { ...state.teacherRecruitMsg, ...actions.data },

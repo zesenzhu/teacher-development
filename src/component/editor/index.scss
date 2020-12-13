@@ -50,7 +50,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:07
- * @LastEditTime: 2020-12-09 20:24:50
+ * @LastEditTime: 2020-12-10 11:43:08
  * @Description: 
  * @FilePath: \teacher-development\src\component\editor\index.scss
  */
@@ -155,6 +155,43 @@
         &:focus {
             box-shadow: none;
             border-color: rgb(88, 151, 237);
+        }
+    }
+    .editor-handle {
+        margin-top: 28px;
+        text-align: center;
+        line-height: 36px;
+        li {
+            margin: 0 8px;
+            cursor: pointer;
+            display: inline-block;
+            opacity: 0.9;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        .handle-preview {
+            padding: 0 2px;
+            font-size: 16px;
+            line-height: 18px;
+            text-decoration: underline;
+            color: #0099ff;
+        }
+        .handle-btn {
+            padding: 0 25px;
+            font-size: 16px;
+            color: #fefefe;
+            height: 36px;
+            border-radius: 18px;
+        }
+        .handle-draft {
+            background-image: linear-gradient(90deg, #39d7ff 0%, #009cff 100%), linear-gradient(#a1adb4, #a1adb4);
+        }
+        .handle-publish {
+            background-image: linear-gradient(90deg, #3bcd3b 0%, #2fb22f 100%), linear-gradient(#a1adb4, #a1adb4);
+        }
+        .handle-cancel {
+            background-image: linear-gradient(90deg, #ff586c 0%, #ff7b9d 100%), linear-gradient( #a1adb4, #a1adb4);
         }
     }
 }

@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-09 17:00:05
+ * @LastEditTime: 2020-12-10 20:01:07
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -63,25 +63,29 @@ function $Table(props, ref) {
     loading: outLoading,
     tip,
     opacity,
-    query: Query,
+    query,
+    // : Query
     api,
+    prepare,
     ...reset
   } = props;
   // let { dataSource } = reset;
   /* 控制表格查询条件 */
-  const [query, setQuery] = useState(typeof Query === "object" ? Query : {});
+  // const [query, setQuery] = useState(typeof Query === "object" ? Query : {});
   // tableData：列表数据，handerChange:更改查询的条件，getList：获取数据
-  const [tableData, handerChange, getList, loading] = useTableRequest(
+  const [tableData, handerChange, getList, loading,reloadList] = useTableRequest(
     query,
-    api
+    api,
+    prepare
   );
-  const { pageIndex, pageSize, total, list, isError } = tableData;
-  useEffect(() => {
-    setQuery(Query);
-  }, [Query]);
+  const { PageIndex, PageSize, Total, List, IsError } = tableData;
+  // useEffect(() => {
+  //   console.log(query)
+  // }, [query]);
   useImperativeHandle(ref, () => ({
-    getList,data:tableData
-  }));
+    getList,reloadList,
+    data: tableData,
+  }),[getList,tableData,reloadList]);
   return (
     <Loading
       spinning={
@@ -95,10 +99,10 @@ function $Table(props, ref) {
       opacity={opacity ? opacity : false}
     >
       <div className={`lg-table-box ${className ? className : ""}`}>
-        {!isError && list instanceof Array && list.length > 0 ? (
+        {!IsError && List instanceof Array && List.length > 0 ? (
           <>
             <Table
-              dataSource={list}
+              dataSource={List}
               pagination={false}
               className={`lg-table`}
               {...reset}
@@ -106,16 +110,15 @@ function $Table(props, ref) {
             <PagiNation
               showQuickJumper
               showSizeChanger
-              // onShowSizeChange={(Current, pageSize) => {
-              //   console.log(pageSize);
-              //   handerChange({ pageSize });
+              // onShowSizeChange={(Current, PageSize) => {
+              //   console.log(PageSize);
+              //   handerChange({ PageSize });
               // }}
-              pageSize={pageSize}
-              current={pageIndex}
-              hideOnSinglePage={total === 0 ? true : false}
-              total={total}
+              PageSize={PageSize}
+              current={PageIndex}
+              hideOnSinglePage={Total === 0 ? true : false}
+              total={Total}
               onChange={(pageIndex, pageSize) => {
-                console.log(pageIndex, pageSize);
 
                 handerChange({ pageIndex, pageSize });
               }}

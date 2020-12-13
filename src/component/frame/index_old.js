@@ -336,7 +336,7 @@ import React, {
                     }}
                     onClick={() => {
                       BasePlatFormMsg&& window.open(
-                        BasePlatFormMsg.WebRootUrl +
+                        BasePlatFormMsg.BasicWebRootUrl +
                           "/html/personalMgr/?lg_tk" +
                           getDataStorage("token") +
                           "#/"

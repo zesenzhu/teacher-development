@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 09:01:40
- * @LastEditTime: 2020-12-09 16:41:31
+ * @LastEditTime: 2020-12-12 10:41:05
  * @Description:
  * @FilePath: \teacher-development\src\util\public.js
  */
@@ -77,7 +77,9 @@
 // import { func } from "prop-types";
 
 // import config from "./config";
-
+import React from "react";
+import ReactDOM from "react-dom";
+import { ErrorAlert } from "../component/common";
 //对象深度对比
 export const deepCompare = (x, y) => {
   var i, l, leftChain, rightChain;
@@ -794,3 +796,202 @@ export function checkInput({ value, regular, success, error }) {
     error(false);
   }
 }
+
+/**
+ * @description: 获取alert节点
+ * @param {*}
+ * @return {*}
+ */
+export function getAlertDom() {
+  let AlertDom = document.getElementById("alert");
+  if (!AlertDom) {
+    //alert节点不存在，创建一个
+    let body = document.getElementsByTagName("body")[0];
+    let alert = document.createElement("div");
+    alert.setAttribute("id", "alert");
+    body.appendChild(alert);
+    AlertDom = document.getElementById("alert");
+  }
+  return AlertDom;
+}
+/**
+ * @description: 打开提示框，自动挂载
+ * @param {*}
+ * @return {*}
+ */
+export const autoAlert = ({ title, type, autoHide }) => {
+  title = title || "服务器出现未知异常，请重试或联系管理员";
+
+  let AlertDom = getAlertDom();
+  ReactDOM.render(
+    // eslint-disable-next-line react/react-in-jsx-scope
+    <ErrorAlert
+      key={"alert-400-" + Math.round(Math.random() * 10000)}
+      show={true}
+      title={title}
+      type={type}
+      autoHide={autoHide}
+    />,
+    AlertDom
+  );
+};
+/**
+ * @description: 防抖，适用滚动、resize
+ * @param {*}
+ * @return {*}
+ */
+export function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(fn, delay);
+  };
+}
+// 分析文件类型
+export const constructFileType = (fileName) => {
+  //moduleType:plan,preview
+  let VideoType = [
+    "avi",
+    "asf",
+    "wmv",
+    "avs",
+    "flv",
+    "mkv",
+    "mov",
+    "3gp",
+    "mp4",
+    "mpg",
+    "mpeg",
+    "dat",
+    "ogm",
+    "vob",
+    "rm",
+    "rmvb",
+    "ts",
+    "tp",
+    "ifo",
+    "nsv",
+    "m4v",
+    "m3u8",
+    "3gpp",
+    "3gpp2",
+    "divx",
+    "f4v",
+    "ram",
+    "v8",
+    "swf",
+    "m2v",
+    "asx",
+    "ndivx",
+    "xvid",
+  ];
+  let AudioType = [
+    "mp3",
+    "aac",
+    "wav",
+    "cda",
+    "flac",
+    "m4a",
+    "mid",
+    "mka",
+    "mp2",
+    "mpa",
+    "mpc",
+    "ape",
+    "ofr",
+    "ogg",
+    "ra",
+    "wv",
+    "tta",
+    "ac3",
+    "dts",
+    "wma",
+    "midi",
+  ];
+  // 压缩文件类型
+  let CompressType = [
+    "rar",
+    "zip",
+    "7z",
+    "arj",
+    "cab",
+    "lzh",
+    "ace",
+    "gz",
+    "uue",
+    "bz2",
+    "jar",
+    "iso",
+  ];
+  let PicType = ["jpeg", "jpg", "tiff", "raw", "bmp", "gif", "png"];
+  let type = "file"; //默认教案集
+  let isDecide = false;
+  if (typeof fileName === "string") {
+    let index = fileName.lastIndexOf(".");
+    if (index === -1) {
+      // 不存在，表示是单纯的字符串，使用教案集
+      // if(moduleType==='plan')
+      // type = "plan";
+      // else {
+      type = "unknown";
+      // }
+    } else {
+      let FileType = fileName.slice(index + 1).toLowerCase();
+      VideoType.some((child) => {
+        if (child === FileType) {
+          //视屏
+          type = "video";
+          isDecide = true;
+        }
+        return child === FileType
+      });
+      AudioType.some((child) => {
+        //音频
+        if (child === FileType) {
+          type = "audio";
+          isDecide = true;
+        return child === FileType
+        }
+        return child === FileType
+      });
+      PicType.some((child) => {
+        //图片
+        if (child === FileType) {
+          type = "pic";
+          isDecide = true;
+        }
+        return child === FileType
+      });
+      CompressType.some((child) => {
+        //压缩
+        if (child === FileType) {
+          type = "zip";
+          isDecide = true;
+        }
+        return child === FileType
+      });
+      if (!isDecide) {
+        //前面不匹配
+
+        if (FileType === "doc" || FileType === "docx") {
+          type = "doc";
+        } else if (FileType === "xls" || FileType === "xlsx") {
+          type = "excel";
+        } else if (FileType === "ppt"  ) {
+          type = "ppt";
+        } else if (FileType === "pdf") {
+          type = "pdf";
+        } else if (FileType === "html" || FileType === "xml") {
+          type = "html";
+        } else if (FileType === "txt") {
+          type = "txt";
+        } else {
+          type = "unknown";
+        }
+      }
+    }
+  }
+  return type;
+};

@@ -26,7 +26,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-09 10:25:40
- * @LastEditTime: 2020-12-09 10:40:56
+ * @LastEditTime: 2020-12-10 18:45:47
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\reducer.js
  */
@@ -45,6 +45,7 @@ import React, {
 export const Context = createContext();
 export const initState = {
   keyword: "",
+  compoent:'1'
 };
 export const Reducer = (state, actions) => {
   switch (actions.type) {

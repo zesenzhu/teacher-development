@@ -21,7 +21,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 16:56:48
- * @LastEditTime: 2020-12-02 13:44:47
+ * @LastEditTime: 2020-12-10 15:28:59
  * @Description: fetch基础配置
  * @FilePath: \teacher-development\src\util\fetch.js
  */
@@ -31,13 +31,12 @@ import "es6-promise";
 import CryptoJS from "crypto-js";
 import md5 from "md5";
 import $ from "jquery";
-import { Alert
-  // ,withAlert
- } from "../component/common";
+
 import React from "react";
 import ReactDOM from "react-dom";
 // import { urlRemLg_tk } from "./public";
-
+import { ErrorAlert } from "../component/common";
+import { getAlertDom } from "./public";
 const COMMONKEY = "123456789";
 const TESTKEY = "abcdefgabcdefg12";
 
@@ -100,7 +99,7 @@ let fetchService = {
       cache: "no-cache", //*no-cache,default,reload,force-cache,only-ifcached,此项为缓存相关配置
       credentials: "omit", //*include(携带cookie)、same-origin(cookie同源携带)、omit(不携带)
       ...config,
-    })
+    });
     // result.then((res) => {
     //   //做提前处理
     //   let clone = res.clone();
@@ -119,7 +118,7 @@ let fetchService = {
         advanceFetch(res, advance);
       }
     });
-    return result
+    return result;
   },
   post: ({ url, header, body, securityLevel, config, advance }) => {
     // header["Content-Type"] = "application/json";
@@ -140,7 +139,7 @@ let fetchService = {
       header["Content-Type"] && header["Content-Type"] === "application/json"
         ? "json"
         : "default";
-     let result =fetch(AESEncryptionUrl(url, TESTKEY, securityLevel), {
+    let result = fetch(AESEncryptionUrl(url, TESTKEY, securityLevel), {
       method: "POST",
       headers: {
         Accept: "application/json, text/plain, */*", //请求头，代表的、发送端（客户端）希望接收的数据类型
@@ -157,7 +156,7 @@ let fetchService = {
       credentials: "omit", //*include(携带cookie)、same-origin(cookie同源携带)、omit(不携带)
       body: AESEncryptionBody(body, TESTKEY, securityLevel, content_type), //此处需要和headers里的"Content-Type"相对应
       ...config,
-    })
+    });
     result.then((res) => {
       //做提前处理
       if (advance) {
@@ -165,7 +164,7 @@ let fetchService = {
       }
     });
 
-    return result
+    return result;
   },
 };
 // fecth Advance 提前处理函数
@@ -287,18 +286,18 @@ function advanceFetch(res, advance) {
  * @param {*}
  * @return {*}
  */
-function getAlertDom() {
-  let AlertDom = document.getElementById("alert");
-  if (!AlertDom) {
-    //alert节点不存在，创建一个
-    let body = document.getElementsByTagName("body")[0];
-    let alert = document.createElement("div");
-    alert.setAttribute("id", "alert");
-    body.appendChild(alert);
-    AlertDom = document.getElementById("alert");
-  }
-  return AlertDom;
-}
+// function getAlertDom() {
+//   let AlertDom = document.getElementById("alert");
+//   if (!AlertDom) {
+//     //alert节点不存在，创建一个
+//     let body = document.getElementsByTagName("body")[0];
+//     let alert = document.createElement("div");
+//     alert.setAttribute("id", "alert");
+//     body.appendChild(alert);
+//     AlertDom = document.getElementById("alert");
+//   }
+//   return AlertDom;
+// }
 //请求安全，根据安全级别SecurityLevel返回token+签名
 function requestSecure(params, securityKey, SecurityLevel = 1) {
   let token = sessionStorage.getItem("token") || getQueryVariable("lg_tk");
@@ -306,7 +305,7 @@ function requestSecure(params, securityKey, SecurityLevel = 1) {
 
   if (!token && SecurityLevel !== 1) {
     console.log("token无效，请重新登录"); //后期会进行无token的事件操作
-    return '';
+    return "";
   }
 
   if (SecurityLevel === 1) {
@@ -441,53 +440,53 @@ function getQueryVariable(variable) {
   return false;
 }
 
-// 根据statuscode进行不同alter操作
-class ErrorAlert extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: props.show,
-    };
-  }
+// // 根据statuscode进行不同alter操作
+// class ErrorAlert extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       show: props.show,
+//     };
+//   }
 
-  onOk = () => {
-    let { onOk } = this.props;
-    typeof onOk === "function" && onOk();
-    this.setState({
-      show: false,
-    });
-  };
+//   onOk = () => {
+//     let { onOk } = this.props;
+//     typeof onOk === "function" && onOk();
+//     this.setState({
+//       show: false,
+//     });
+//   };
 
-  onCancel = () => {
-    let { onCancel } = this.props;
-    typeof onCancel === "function" && onCancel();
-    this.setState({
-      show: false,
-    });
-  };
-  onClose = () => {
-    let { onClose } = this.props;
-    typeof onClose === "function" && onClose();
-    this.setState({
-      show: false,
-    });
-  };
+//   onCancel = () => {
+//     let { onCancel } = this.props;
+//     typeof onCancel === "function" && onCancel();
+//     this.setState({
+//       show: false,
+//     });
+//   };
+//   onClose = () => {
+//     let { onClose } = this.props;
+//     typeof onClose === "function" && onClose();
+//     this.setState({
+//       show: false,
+//     });
+//   };
 
-  render() {
-    // console.log(this.state.show)
-    return (
-      <Alert
-        show={this.state.show}
-        type="btn-error"
-        title={this.props.title}
-        onOk={this.onOk}
-        onCancel={this.onCancel}
-        onClose={this.onClose}
-        cancelShow={"n"}
-      ></Alert>
-    );
-  }
-}
+//   render() {
+//     // console.log(this.state.show)
+//     return (
+//       <Alert
+//         show={this.state.show}
+//         type="btn-error"
+//         title={this.props.title}
+//         onOk={this.onOk}
+//         onCancel={this.onCancel}
+//         onClose={this.onClose}
+//         cancelShow={"n"}
+//       ></Alert>
+//     );
+//   }
+// }
 
 //AES加密传输参数：post
 function AESEncryptionBody(

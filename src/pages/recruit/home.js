@@ -36,24 +36,26 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-09 16:59:56
+ * @LastEditTime: 2020-12-11 09:38:53
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\home.js
  */
 
 import { connect } from "react-redux";
 import React, {
-  useCallback,
+  // useCallback,
   memo,
-  //   useEffect,
-  // useState,
-  // useImperativeHandle,
+  useEffect,
+  useMemo,
+  useState,
+  useImperativeHandle,
   useRef,
   useContext,
   forwardRef,
+  useLayoutEffect,
 } from "react";
 import "./index.scss";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory, useLocation } from "react-router-dom";
 // import { handleActions } from "../../redux/actions";
 import HomeTop from "../../component/homeTop";
 import Table from "../../component/table";
@@ -63,16 +65,29 @@ import { getCruitList } from "../../api/recruit";
 function Home(props, ref) {
   let {
     teacherRecruitMsg: { tabId },
-    history,
+    roleMsg: { schoolID, collegeID, selectLevel },
+    // history,
+    activeTab,
     dispatch,
   } = props;
+  let history = useHistory();
+  let location = useLocation();
   let {
     state: { keyword },
     setDispatch,
   } = useContext(Context);
-
+  const [query, setQuery] = useState({
+    keyword,
+    schoolID,
+    collegeID,
+    selectLevel,
+  });
   // 获取table组件的ref
-  const tableRef = useRef(null);
+  const tableRef = useRef({});
+  // 草稿数量
+  const [draft, setDraft] = useState(0);
+  // 初始请求
+  const initGet = useRef(false);
   // table 的宽度最小为1040，各个列的width按这个来算1040/1200*设计图的width
   let widthRate = 1040 / 1200;
   let columns = [
@@ -93,11 +108,18 @@ function Home(props, ref) {
     {
       title: "标题",
       width: 494 * widthRate,
-      dataIndex: "title",
+      // dataIndex: "title",
       render: (data) => {
+        let { title, RID } = data;
         return (
-          <span className="table-title" title={data}>
-            {data}
+          <span
+            onClick={() => {
+              history.push("/recruitDetail/" + RID);
+            }}
+            className="table-title"
+            title={title}
+          >
+            {title}
           </span>
         );
       },
@@ -157,88 +179,40 @@ function Home(props, ref) {
       },
     },
   ];
-  // let data = [
-  //   {
-  //     key: 0,
-  //     index: "011111111111111",
-  //     title:
-  //       "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局辖区教育局辖区教育局",
-  //     publisher: "祝泽森祝泽森祝泽森",
-  //     time: "2020-08-29 13:59 020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 1,
-  //     index: "02",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 2,
-  //     index: "03",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 3,
-  //     index: "02",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 4,
-  //     index: "03",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 5,
-  //     index: "02",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 6,
-  //     index: "03",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 7,
-  //     index: "02",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  //   {
-  //     key: 8,
-  //     index: "03",
-  //     title: "2020年广州市白云区中小学及幼儿园聘任制教师招聘320名计划",
-  //     source: "辖区教育局",
-  //     publisher: "祝泽森",
-  //     time: "2020-08-29 13:59",
-  //   },
-  // ];
 
-  const getList = useCallback(
-    (args) => {
-      tableRef.current.getList(args);
-    },
-    [tableRef]
-  );
+  useEffect(() => {
+    // console.log(keyword, selectLevel);
+    selectLevel && setQuery({ keyword, schoolID, collegeID, selectLevel });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectLevel]);
+
+  // 设置草稿数量
+  useLayoutEffect(() => {
+    setDraft(
+      tableRef.current.data && tableRef.current.data.Draft
+        ? tableRef.current.data.Draft
+        : 0
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableRef.current]);
+  // 刷新
+
+  useLayoutEffect(() => {
+    let { pathname } = location;
+    //第一次进来不请求
+    if (!initGet.current) {
+      initGet.current = true;
+    } else {
+      if (pathname === "/teacherRecruit") tableRef.current.reloadList();
+      // console.log(pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
+  // console.log(keyword)
+  useImperativeHandle(ref, () => ({
+    reloadList: tableRef.current.reloadList,
+  }));
   return (
     <div className="Reacruit-context Recruit-home">
       <HomeTop
@@ -248,11 +222,12 @@ function Home(props, ref) {
             history.push("/publishRecruit");
           },
         }}
-        draft={{ title: "草稿箱", count: 5 }}
+        draft={{ title: "草稿箱", count: draft }}
         search={{
           onSearch: (value) => {
             // console.log(value)
             setDispatch({ type: "SET_KEY_WORD", data: value });
+            setQuery({ schoolID, collegeID, keyword: value, selectLevel });
           },
         }}
       ></HomeTop>
@@ -260,7 +235,8 @@ function Home(props, ref) {
         className="Reacruit-table"
         columns={columns}
         // dataSource={data}
-        query={{ keyword }}
+        prepare={!!query.selectLevel}
+        query={query}
         ref={tableRef}
         api={getCruitList}
       ></Table>
@@ -274,9 +250,11 @@ function Home(props, ref) {
 
 const mapStateToProps = (state) => {
   let {
-    handleData: { teacherRecruitMsg },
+    handleData: { teacherRecruitMsg, activeTab },
     commonData: { roleMsg },
   } = state;
-  return { teacherRecruitMsg, roleMsg };
+  return { teacherRecruitMsg, roleMsg, activeTab };
 };
-export default connect(mapStateToProps)(withRouter(memo(forwardRef(Home))));
+export default connect(mapStateToProps, null, null, { forwardRef: true })(
+  memo(forwardRef(Home))
+);

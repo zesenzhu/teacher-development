@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-12-09 15:57:26
+ * @LastEditTime: 2020-12-10 16:34:36
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
@@ -1499,11 +1499,11 @@ class Empty extends React.Component {
     };
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  componentWillReceiveProps(nextProps) {
-    const { style } = nextProps;
+   componentDidMount(nextProps) {
+    const { style,title } = this.props;
 
     this.setState({
-      title: nextProps.title,
+      title:  title,
       style: style,
     });
     this.selectType(this.state.type);
@@ -1545,10 +1545,10 @@ class Empty extends React.Component {
       className_1: className_1,
     });
   };
-
-  componentWillMount() {
-    this.selectType(this.state.type);
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // UNSAFE_componentWillMount() {
+  //   this.selectType(this.state.type);
+  // }
 
   render() {
     return (
@@ -1722,9 +1722,17 @@ export class ErrorAlert extends React.Component {
     super(props);
     this.state = {
       show: props.show,
+      autoHide:props.autoHide?props.autoHide:false,
+      type:props.autoHide?'warn':props.type?props.type:'btn-error',
     };
   }
-
+// componentWillReceiveProps(nextProps){
+//   this.setState({
+//     // show: nextProps.show,
+//     autoHide:nextProps.autoHide?nextProps.autoHide:false,
+//     type:nextProps.autoHide?'warn':nextProps.type?nextProps.type:'btn-error',
+//   })  
+// }
   onOk = () => {
     let { onOk } = this.props;
     typeof onOk === "function" && onOk();
@@ -1753,12 +1761,16 @@ export class ErrorAlert extends React.Component {
     return (
       <Alert
         show={this.state.show}
-        type="btn-error"
+        type={this.state.type}
         title={this.props.title}
         onOk={this.onOk}
         onCancel={this.onCancel}
         onClose={this.onClose}
         cancelShow={"n"}
+        // onHide={()=>{
+        //   console.log(this.state.autoHide)
+        //   this.state.autoHide&&this.onClose()
+        // }}
       ></Alert>
     );
   }

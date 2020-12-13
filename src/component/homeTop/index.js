@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 11:27:30
- * @LastEditTime: 2020-12-08 13:51:26
+ * @LastEditTime: 2020-12-10 19:57:01
  * @Description: 招聘计划管理和培训计划管理头部
- * @FilePath: \teacher-development\src\component\HomeTop\index.js
+ * @FilePath: \teacher-development\src\component\homeTop\index.js
  */
 
 import React, {
@@ -103,6 +103,8 @@ function HomeTop(props, ref) {
           }}
           onCancelSearch={(e) => {
             setSearchValue("");
+            typeof search.onSearch === "function" &&
+              search.onSearch('');
           }}
         ></Search>
       ) : (

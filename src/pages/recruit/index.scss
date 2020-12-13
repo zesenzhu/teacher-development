@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 15:50:09
- * @LastEditTime: 2020-12-09 14:27:43
+ * @LastEditTime: 2020-12-10 21:53:46
  * @Description: 
  * @FilePath: \teacher-development\src\pages\recruit\index.scss
  */
@@ -48,4 +48,13 @@
     }
 }
 
-.Recruit-publish {}
+.Recruit-publish {
+    position: relative;
+    height: 100%;
+}
+
+.Recruit-preview-box {
+    background: #fff;
+}
+
+.Recruit-Datail {}

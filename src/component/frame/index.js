@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-08 19:44:11
+ * @LastEditTime: 2020-12-12 19:19:17
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -50,11 +50,14 @@ import React, {
   useReducer,
   createContext,
   // useContext,
-  //   useRef,
+  useRef,
   forwardRef,
+  useLayoutEffect,
+  ForwardedRef,
 } from "react";
 import "./index.scss";
 import { withRouter } from "react-router-dom";
+import $ from "jquery";
 
 import logo from "./images/image-top-name.png";
 import { init } from "../../util/init";
@@ -67,14 +70,13 @@ import TopBar from "./TopBar";
 // 创建frame的context
 export const frameContext = createContext();
 const initState = {
-  tabIds: {},
-  id: 1,
+  contentHeight: 0,
 };
 const frameReducer = (state, actions) => {
   switch (actions.type) {
-    case "ADD_ID_COUNT":
+    case "RESIZE_CONTENT":
       return Object.assign({}, state, {
-        id: state.id + 1,
+        contentHeight: actions.data,
       });
 
     default:
@@ -99,25 +101,28 @@ function Frame(props, ref) {
     platMsg,
     leftMenu,
     children,
-
+    getActiveTab,
+    tabPorps,onContentresize,
     search,
   } = props;
   // 是否初始化
-  let [Init, setInit] = useState(true);
+  let [Init, setInit] = useState(false);
   // 身份信息
   let [Identity, setIdentity] = useState(false);
   // 用户信息
   let [UserInfo, setUserInfo] = useState(false);
   // 基础平台信息
   let [BasePlatFormMsg, setBasePlatFormMsg] = useState(false);
-
+  // 可用区域高度
+  // const [contentHeight, setContentHeight] = useState(0);
   // 骨架外层loading
   let [FrameLoading, setFrameLoading] = useState(true);
   // 平台信息
   let [PlatMsg, setPlatMsg] = useState({ logo });
   // 左侧菜单
   let [MenuList, setMenuList] = useState([]);
-
+  // tab的ref；
+  const tabRef = useRef({});
   // reduce
   const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
@@ -146,7 +151,7 @@ function Frame(props, ref) {
           //身份无效
           // console.log('无效')
           document.location.href =
-            data.basePlatformMsg.WebRootUrl + "/Error.aspx?errcode=E011";
+            data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E011";
         }
       },
       () => {
@@ -204,7 +209,13 @@ function Frame(props, ref) {
           children: child,
           props: {
             ...child.props,
-            redirect:'/'+(child.props.redirect?child.props.redirect:leftMenu[0]?leftMenu[0].key:'')
+            redirect:
+              "/" +
+              (child.props.redirect
+                ? child.props.redirect
+                : leftMenu[0]
+                ? leftMenu[0].key
+                : ""),
           },
         });
       });
@@ -214,19 +225,38 @@ function Frame(props, ref) {
 
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children, type,leftMenu]);
+  }, [children, type, leftMenu]);
 
   // 对type字段解析，查看是否包含
   const checkType = (key = null) => {
     return typeof type === "string" && type.includes(key);
   };
+  let { activeTab, tabList, removeTab } = tabRef.current;
   // 返回方法，外部使用
-  useImperativeHandle(ref, () => ({
-    // pageInit,
-  }));
+  useImperativeHandle(
+    ref,
+    () => {
+ 
+
+      return {
+        // pageInit,
+        activeTab,
+        tabList,
+        removeTab,
+        contentHeight:state.contentHeight
+      };
+    },
+    [activeTab, tabList, removeTab,state.contentHeight]
+  );
+  // 保存活动的tab
+  useEffect(() => {
+    getActiveTab(activeTab);
+    // dispatch(handleActions.setActiveTab(activeTab));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   return (
-    <frameContext.Provider value={{state,dispatch}}>
+    <frameContext.Provider value={{ state, dispatch }}>
       <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
         <div id="Frame" className={`Frame ${className ? className : ""}`}>
           {checkType("default") ? (
@@ -259,9 +289,12 @@ function Frame(props, ref) {
               {Init ? (
                 ComponentList instanceof Array && ComponentList.length > 0 ? (
                   <Tab
+                    tabPorps={tabPorps}
+                    ref={tabRef}
                     componentList={ComponentList}
                     search={search}
                     type={type}
+                    onContentresize={onContentresize}
                   >
                     {children}
                   </Tab>
@@ -278,4 +311,4 @@ function Frame(props, ref) {
     </frameContext.Provider>
   );
 }
-export default withRouter(memo(forwardRef(Frame)));
+export default memo(forwardRef(Frame));

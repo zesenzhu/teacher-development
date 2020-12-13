@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-19 15:15:20
- * @LastEditTime: 2020-12-07 14:09:51
+ * @LastEditTime: 2020-12-10 09:36:07
  * @Description: 平台初始化的逻辑
  * @FilePath: \teacher-development\src\util\init.js
  */
@@ -120,13 +120,19 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
   try {
     let { ProductUseRange } = baseMsg;
     let { IdentityCode, IdentityName } = identity;
-    Role.userType = userInfo.UserType;
-    Role.userClass = userInfo.UserClass;
+    Role.userType = parseInt(userInfo.UserType);
+    Role.userClass = parseInt(userInfo.UserClass);
     Role.identityCode = IdentityCode;
     Role.identityName = IdentityName;
 
     ProductUseRange = parseInt(ProductUseRange);
     let version = "noPower";
+    // 中小学教育局端没有学校id，用户信息拿到什么就传什么
+    let schoolID = userInfo.SchoolID ? userInfo.SchoolID : "";
+    // 学院id，大学有用
+    let collegeID = userInfo.CollegeID ? userInfo.CollegeID : "";
+    // 控制级别：1教育局，2学校，3学院
+    let selectLevel = 2;
     // 根据身份和产品类型判断显示的版本
     switch (ProductUseRange) {
       // 1，2，6：单个大学，为高校版本学校端
@@ -137,9 +143,11 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         if (IdentityCode !== "IC0008") {
           //学校
           version = "university";
+          selectLevel = 2;
         } else if (IdentityCode === "IC0008") {
           //学院
           version = "university-academy";
+          selectLevel = 3;
         }
         break;
       // 3,5:单个中小学，为教育局版本学校端
@@ -148,6 +156,8 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         // if (IdentityCode.includes("IC000")) {
         //学校
         version = "education-school";
+        selectLevel = 2;
+
         // } else {
         //   version = 'noPower'; //无权限进入
         // }
@@ -156,11 +166,14 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       case 4:
       case 8:
         version = "education-school";
+        selectLevel = 2;
+
         //非g管理员
         if (IdentityCode.includes("IC000")) {
           //code之后会有
           //教育局
           version = "education";
+          selectLevel = 1;
         }
         // else if (IdentityCode === "IC0008") {
         //   //教育局
@@ -173,7 +186,8 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       default:
         version = "noPower";
     }
-    Role.version = version;
+    // Role.version = version;
+    Role = {...Role,version,selectLevel,collegeID,schoolID}
     // if ( ProductUseRange === 1||) {
     // }
   } catch (e) {
@@ -241,7 +255,7 @@ const GetIdentityTypeByCode = async (IdentityCodes) => {
   const { SchoolID } = getDataStorage("UserInfo")
     ? getDataStorage("UserInfo")
     : {};
-  let { WebRootUrl: baseIP } =
+  let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
@@ -309,7 +323,7 @@ const IdentityRecognition = (
 
 const goErrorPage = (errcode) => {
   //  保证这个基础平台的信息是存在才能用
-  let { WebRootUrl: baseIP } =
+  let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
@@ -320,7 +334,7 @@ const ValidateIdentity = async (IdentityCode, ModuleID) => {
   const { UserID } = getDataStorage("UserInfo")
     ? getDataStorage("UserInfo")
     : {};
-  let { WebRootUrl: baseIP } =
+  let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
@@ -349,7 +363,7 @@ const getIdentityList = async () => {
   const { UserID } = getDataStorage("UserInfo")
     ? getDataStorage("UserInfo")
     : {};
-  let { WebRootUrl: baseIP } =
+  let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
@@ -373,7 +387,7 @@ const getIdentityList = async () => {
  * @return {*promise}
  */
 export const getBasePlatformMsg = async (keys = []) => {
-  let url = BasicProxy + "/Global/GetBaseInfoForPages";
+  let url = BasicProxy + "/Global/GetBaseInfo";
   let BasePlatformMsg = getDataStorage("BasePlatformMsg"); //具体有什么字段这里不做判断，外部判断
   let json = "";
   let isExist = true;

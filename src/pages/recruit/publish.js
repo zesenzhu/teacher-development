@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-09 14:35:08
+ * @LastEditTime: 2020-12-12 19:15:02
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\publish.js
  */
@@ -46,43 +46,172 @@ import React, {
   useCallback,
   memo,
   //   useEffect,
-  // useState,
+  useState,
   // useImperativeHandle,
   useRef,
   useContext,
   forwardRef,
 } from "react";
 import "./index.scss";
+import { Carousel, Tabs } from "antd";
 import { withRouter } from "react-router-dom";
 // import { handleActions } from "../../redux/actions";
 import Editor from "../../component/editor";
 import { Context } from "./reducer";
+import { Loading } from "../../component/common";
+import FileDetail from "../../component/fileDetail";
+import { publishRecruit } from "../../api/recruit";
+let { TabPane } = Tabs;
 // import { getCruitList } from "../../api/recruit";
 //   import { NavLink } from "react-router-dom";
 function Publish(props, ref) {
   let {
     teacherRecruitMsg: { tabId },
+    removeTab,
+    activeTab,
+    contentHW,
     history,
+    roleMsg: { schoolID, collegeID, selectLevel },
+
     dispatch,
   } = props;
   let { state, setDispatch } = useContext(Context);
-
+  // 转到预览
+  const [preview, setPreview] = useState(false);
+  // 转到预览
+  const [ActiveTab, setActiveTab] = useState("publish");
+  // 加载
+  const [loading, setLoading] = useState(false);
+  // previewData
+  const [previewData, setPreviewData] = useState({
+    Title: "测试",
+    Issue: "测试",
+    ReleaseTime: "测试",
+    Content: "测试",
+    FileList: [],
+  });
+  // 轮播方法
+  // const CarouselRef = useRef(null);
+  console.log(preview);
+  // 发布
+  const publish = useCallback(
+    (RStatus=1) => {
+      // *RStatus:状态：0草稿；1正式发布
+      setLoading(true);
+      // FileName:FileList[0].FileName,
+      // FileUrl:FileList[0].FileUrl,
+      // FileSize:FileList[0].FileSize,
+      // setTimeout(() => {
+      publishRecruit({
+        previewData,
+        SchoolID: schoolID,
+        CollegeID: collegeID,
+        SelectLevel: selectLevel,
+        RStatus 
+      }).then(({ result }) => {
+        if (result) removeTab("", "", "teacherRecruit");
+        else {
+          setLoading(false);
+        }
+      });
+      // }, 3000);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [previewData, removeTab]
+  );
   return (
-    <div className=" Reacruit-context Publish-context Recruit-publish">
-      <div className="context-top  ">
-        <span className=" title-1">发布招聘计划</span>
-        <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
-      </div>
-      <Editor></Editor>
-    </div>
+    // <Carousel ref={CarouselRef} dots={false}>
+    <Loading opacity={0.5} spinning={loading}>
+      <Tabs
+        activeKey={ActiveTab}
+        renderTabBar={() => {
+          return "";
+        }}
+      >
+        <TabPane tab="publish" key="publish">
+          <div
+            // style={{ display: `${preview ? "none" : "block"}` }}
+            className=" Reacruit-context Publish-context Recruit-publish"
+          >
+            <div className="context-top  ">
+              <span className=" title-1">发布招聘计划</span>
+              <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
+            </div>
+            <Editor
+              preview={{
+                onClick: (data) => {
+                  // data:{title, source, main}
+                  // setPreviewData({Title:data.title, Issue:'测试', ReleaseTime:'测试', Content:'测试', FileList:[]})
+                  setPreviewData(data);
+                  setPreview(true);
+                  setActiveTab("preview");
+
+                  // CarouselRef.current.next();
+                },
+              }}
+              draft={{
+                onClick: () => {
+                  // setLoading(true);
+
+                  // setTimeout(() => {
+                  //   removeTab("", "", "teacherRecruit");
+                  // }, 3000);
+                  publish(0);
+                },
+              }}
+              publish={{
+                onClick: () => {
+                  publish(1);
+                },
+              }}
+              cancel={{
+                onClick: () => {
+                  removeTab("", "", "teacherRecruit");
+                },
+              }}
+            ></Editor>
+          </div>
+        </TabPane>
+        <TabPane tab="preview" key="preview">
+          {preview ? (
+            <div className="Recruit-preview-box">
+              <div
+                style={{ height: contentHW.height + "px" }}
+                // onClick={() => {
+                //   // CarouselRef.current.prev();
+                //   setPreview(false);
+                //   setActiveTab('publish');
+
+                // }}
+              >
+                <FileDetail
+                  schema={"preview"}
+                  type={"recruit"}
+                  previewData={previewData}
+                  onReturn={() => {
+                    setPreview(false);
+                    setActiveTab("publish");
+                  }}
+                  onComfirm={() => {
+                    publish(1);
+                  }}
+                ></FileDetail>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+        </TabPane>
+      </Tabs>
+    </Loading>
   );
 }
 
 const mapStateToProps = (state) => {
   let {
     handleData: { teacherRecruitMsg },
-    commonData: { roleMsg },
+    commonData: { roleMsg, contentHW },
   } = state;
-  return { teacherRecruitMsg, roleMsg };
+  return { teacherRecruitMsg, roleMsg, contentHW };
 };
 export default connect(mapStateToProps)(withRouter(memo(forwardRef(Publish))));
