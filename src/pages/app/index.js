@@ -264,15 +264,17 @@ function App(props, ref) {
       >
         招聘计划详情
       </Recruit>
-      <div
+      <Recruit
         tabid={"editRecruit"}
         tabname={"编辑招聘计划"}
-        param={"id"}
+        param={"edit"}
         mustparam={"true"}
         redirect={"teacherRecruit"}
+        removeTab={RemoveTab}
+
       >
         编辑招聘计划
-      </div>
+      </Recruit>
     </Frame>
   );
 }

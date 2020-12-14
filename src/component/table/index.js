@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-14 09:26:09
+ * @LastEditTime: 2020-12-14 19:58:11
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -47,7 +47,7 @@ import React, {
   useEffect,
   useState,
   useImperativeHandle,
-  // useMemo,
+  useMemo,
   // useReducer,
   // createContext,
   // useContext,
@@ -65,6 +65,7 @@ function $Table(props, ref) {
     opacity,
     query,
     // : Query
+    pageProps,
     api,
     prepare,
     onDataChange,
@@ -85,6 +86,9 @@ function $Table(props, ref) {
   // useEffect(() => {
   //   console.log(query)
   // }, [query]);
+  const PageProps = useMemo(() => {
+    return pageProps instanceof Object ? pageProps : {};
+  }, [pageProps]);
   useImperativeHandle(
     ref,
     () => ({
@@ -134,8 +138,12 @@ function $Table(props, ref) {
               hideOnSinglePage={Total === 0 ? true : false}
               total={Total}
               onChange={(pageIndex, pageSize) => {
-                handerChange({ pageIndex, pageSize });
+                handerChange({
+                  pageIndex,
+                  pageSize: PageProps.showSizeChanger ? pageSize : PageSize,
+                });
               }}
+              {...PageProps}
             ></PagiNation>
           </>
         ) : (

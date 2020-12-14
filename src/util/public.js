@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 09:01:40
- * @LastEditTime: 2020-12-12 10:41:05
+ * @LastEditTime: 2020-12-14 21:29:16
  * @Description:
  * @FilePath: \teacher-development\src\util\public.js
  */
@@ -819,7 +819,7 @@ export function getAlertDom() {
  * @param {*}
  * @return {*}
  */
-export const autoAlert = ({ title, type, autoHide }) => {
+export const autoAlert = ({ title, type, autoHide ,...other}) => {
   title = title || "服务器出现未知异常，请重试或联系管理员";
 
   let AlertDom = getAlertDom();
@@ -831,6 +831,7 @@ export const autoAlert = ({ title, type, autoHide }) => {
       title={title}
       type={type}
       autoHide={autoHide}
+      {...other}
     />,
     AlertDom
   );
@@ -995,3 +996,36 @@ export const constructFileType = (fileName) => {
   }
   return type;
 };
+
+
+/**
+ * @description: 文件大小
+ * @param {*}
+ * @return {*}
+ */
+export const calculateFileSize = (fileSize) => {
+  let unit = ['B','KB','M','G','T'];
+  let i = unit.length-1;
+  let myUnit = 'B'
+  for(i;i>=0;i--){
+      if(fileSize/Math.pow(1024,i)>=1){
+          myUnit = unit[i];
+          break;
+      }
+  }
+  let str = Math.round(fileSize/Math.pow(1024,i)*100)/100;
+  let Size = str.toString()+myUnit;
+  // // console.log(i,myUnit,Size)
+  return Size;
+  
+}
+
+/**
+ * @description: 获取平台的token，先url，后session，最后local，如果都没有，直接掉线
+ * @param {*}
+ * @return {*}
+ */
+export const getToken = ()=>{
+  let token = getQueryVariable('lg_tk')||getDataStorage('token')||getDataStorage('token',true);
+  return token
+} 

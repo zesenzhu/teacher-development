@@ -36,14 +36,14 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-14 11:19:01
+ * @LastEditTime: 2020-12-14 21:41:57
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\home.js
  */
 
 import { connect } from "react-redux";
 import React, {
-  // useCallback,
+  useCallback,
   memo,
   useEffect,
   useMemo,
@@ -60,7 +60,8 @@ import { withRouter, useHistory, useLocation } from "react-router-dom";
 import HomeTop from "../../component/homeTop";
 import Table from "../../component/table";
 import { Context } from "./reducer";
-import { getCruitList } from "../../api/recruit";
+import { getCruitList, deleteRecruit } from "../../api/recruit";
+import { autoAlert } from "../../util/public";
 //   import { NavLink } from "react-router-dom";
 function Home(props, ref) {
   let {
@@ -172,8 +173,32 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-handle">
-            <span className="table-btn btn-edit">编辑</span>
-            <span className="table-btn btn-delete">删除</span>
+            <span
+              className="table-btn btn-edit"
+              onClick={() => {
+                history.push("/editRecruit/" + data.RID);
+              }}
+            >
+              编辑
+            </span>
+            <span
+              className="table-btn btn-delete"
+              onClick={() => {
+                autoAlert({
+                  title: "确定删除该招聘计划?",
+                  type: "btn-warn",
+                  cancelShow: true,
+                  onOk: () => {
+                    DeleteRecruit(
+                      { RIDs: data.RID },
+                      tableRef.current.reloadList
+                    );
+                  },
+                });
+              }}
+            >
+              删除
+            </span>
           </span>
         );
       },
@@ -203,7 +228,7 @@ function Home(props, ref) {
         return (
           <span
             onClick={() => {
-              history.push("/recruitDetail/" + RID);
+              // history.push("/recruitDetail/" + RID);
             }}
             className="table-title"
             title={title}
@@ -236,13 +261,56 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-handle">
-            <span className="table-btn btn-edit">编辑</span>
-            <span className="table-btn btn-delete">删除</span>
+            <span
+              className="table-btn btn-edit"
+              onClick={() => {
+                history.push("/editRecruit/" + data.RID);
+              }}
+            >
+              编辑
+            </span>
+            <span
+              className="table-btn btn-delete"
+              onClick={() => {
+                // autoAlert({
+                //   title: "确定删除该草稿?",
+                //   type: "btn-warn",
+                //   cancelShow: true,
+                //   onOk: () => {
+                //     DeleteRecruit({ RIDs: data.RID }, () => {
+                //       tableRef.current.reloadList();
+
+                //       homeTopRef.current.reloadDraft();
+                //     });
+                //   },
+                // });
+                DeleteRecruit({ RIDs: data.RID }, () => {
+                  tableRef.current.reloadList();
+
+                  homeTopRef.current.reloadDraft();
+                });
+              }}
+            >
+              删除
+            </span>
           </span>
         );
       },
     },
   ];
+  // 删除
+  const DeleteRecruit = useCallback(
+    (param, success = () => {}, error = () => {}) => {
+      deleteRecruit(param).then((res) => {
+        if (res.result) {
+          success();
+        } else {
+          error();
+        }
+      });
+    },
+    []
+  );
   // useEffect(() => {
   //   console.log(keyword, selectLevel);
   //   selectLevel && setQuery({ keyword, schoolID, collegeID, selectLevel });
@@ -278,9 +346,12 @@ function Home(props, ref) {
   useImperativeHandle(ref, () => ({
     reloadList: tableRef.current.reloadList,
   }));
+  //
+  const homeTopRef = useRef(null);
   return (
     <div className="Reacruit-context Recruit-home">
       <HomeTop
+        ref={homeTopRef}
         publish={{
           title: "发布招聘计划",
           onClick: () => {

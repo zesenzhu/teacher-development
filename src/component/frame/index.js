@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-13 11:30:04
+ * @LastEditTime: 2020-12-14 11:28:49
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -151,9 +151,10 @@ function Frame(props, ref) {
           data.userInfo && setUserInfo(data.userInfo);
           data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
 
-          setInit(true);
           typeof pageInit === "function" && pageInit(data);
           type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
+          setInit(true);
+
         } else {
           //身份无效
           // console.log('无效')

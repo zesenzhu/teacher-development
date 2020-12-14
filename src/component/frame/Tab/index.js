@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-14 09:00:49
+ * @LastEditTime: 2020-12-14 18:44:46
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -187,10 +187,10 @@ function Tab(props, ref) {
           setTabList(List);
 
           // 通过路由修改
-          routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+          routeTo(nextTabid || active, nextTabid?nextParam:param);
           onlyOne(active, param);
         } else {
-          routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+          routeTo(nextTabid || active, nextTabid?nextParam:param);
           // rmTabid&&removeTab(rmTabid,reParam)
         }
 
@@ -234,7 +234,7 @@ function Tab(props, ref) {
       setTabList(List);
 
       // 通过路由修改
-      routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+      routeTo(nextTabid || active, nextTabid?nextParam:param);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [TabList, TabActive]

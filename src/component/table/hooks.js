@@ -24,7 +24,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 18:30:14
- * @LastEditTime: 2020-12-14 11:16:58
+ * @LastEditTime: 2020-12-14 11:25:56
  * @Description: table请求的hooks
  * @FilePath: \teacher-development\src\component\table\hooks.js
  */
@@ -111,7 +111,7 @@ export  function useTableRequest(query = {}, api, prepare = true) {
       setIsUnMount(true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query,prepare]);
   /* 处理分页逻辑 */
   const handerChange = useMemo(
     () => (options) => {

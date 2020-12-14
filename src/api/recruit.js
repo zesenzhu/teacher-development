@@ -25,7 +25,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-09 11:46:56
- * @LastEditTime: 2020-12-14 09:56:16
+ * @LastEditTime: 2020-12-14 21:22:43
  * @Description:
  * @FilePath: \teacher-development\src\api\recruit.js
  */
@@ -187,6 +187,7 @@ export function publishRecruit(payload = {}) {
     .post({
       url,
       securityLevel: 2,
+      header: { "Content-Type": "application/json" },
       body: {
         SchoolID,
         CollegeID,
@@ -197,6 +198,103 @@ export function publishRecruit(payload = {}) {
         ReleaseTime,
         Content,
         FileList,
+      },
+    })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        return {
+          result: true,
+        };
+      } else {
+        return { result: false };
+      }
+    });
+}
+// 编辑招聘
+/**
+ * @description: http://192.168.129.1:8033/showdoc/web/#/21?page_id=2078
+ * @param {*}
+ * @return {*}
+ */
+export function editRecruit(payload = {}) {
+  //   {
+  //     "SchoolID":"xxx",    //发布者所属学校ID
+  //     "CollegeID":"xxx",    //发布者所属学院ID
+  //     "Title":"关于2020年白云区教师培训计划",    //标题
+  //     "Issue":"白云中学",                    //来源
+  //     "RStatus":0,                        //状态：0草稿；1正式发布
+  //     "Content":"关于2020年白云区教师培训计划如下",    //正文
+  //     "FileList":[{
+  //         "FileName":"培训计划行程.xls",
+  //         "FileUrl":"xxxxxxxxxxxxx",
+  //         "FileSize":"23.4M"                //文件大小
+  //     }，{
+  //         "FileName":"培训计划宿舍安排.xls",
+  //         "FileUrl":"xxxxxxxxxxxxx",
+  //         "FileSize":"23.4M"                //文件大小
+  //     }]
+  // }
+
+  let {
+    // SchoolID,
+    // CollegeID,
+    // SelectLevel,
+    RStatus,
+    Title,
+    Issue,
+    RID,
+    // ReleaseTime,
+    Content,
+    FileList,
+  } = payload;
+  let url = BasicProxy + `/Recruitment/Edit`;
+
+  return fetch
+    .post({
+      url,
+      securityLevel: 2,
+      header: { "Content-Type": "application/json" },
+      body: {
+        // SchoolID,
+        // CollegeID,
+        // SelectLevel,
+        RStatus,
+        Title,
+        RID,
+        Issue,
+        // ReleaseTime,
+        Content,
+        FileList,
+      },
+    })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        return {
+          result: true,
+        };
+      } else {
+        return { result: false };
+      }
+    });
+}
+// 删除
+/**
+ * @description: http://192.168.129.1:8033/showdoc/web/#/21?page_id=2080
+ * @param {*}
+ * @return {*}
+ */
+export function deleteRecruit(payload = {}) {
+  let { RIDs } = payload;
+  let url = BasicProxy + `/Recruitment/Delete`;
+
+  return fetch
+    .post({
+      url,
+      securityLevel: 2,
+      body: {
+        RIDs,
       },
     })
     .then((res) => res.json())

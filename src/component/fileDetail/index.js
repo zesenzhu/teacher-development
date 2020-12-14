@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-12 18:25:06
+ * @LastEditTime: 2020-12-14 21:22:53
  * @Description:
  * @FilePath: \teacher-development\src\component\fileDetail\index.js
  */
@@ -45,6 +45,7 @@ import React, {
   //   useCallback,
   memo,
   useEffect,
+  useMemo,
   useState,
   useLayoutEffect,
   // useImperativeHandle,
@@ -62,7 +63,7 @@ import $ from "jquery";
 import useDetailRequest from "../../hooks/useDetailRequest";
 import { getRecruitDetail } from "../../api/recruit";
 import { Loading, Empty } from "../common";
-import { constructFileType } from "../../util/public";
+import { constructFileType, getDataStorage } from "../../util/public";
 function FileDetail(props, ref) {
   // *type:分为recruit招聘、train培训,默认招聘
   // *schema:模式：preview预览,detail详情
@@ -110,6 +111,12 @@ function FileDetail(props, ref) {
     if (Content) $(preRef.current).html(Content);
     // $("detail-content").html(Content);
   }, [Content]);
+  // 文件上传路径
+
+  const fileIP = useMemo(() => {
+    let BasePlatformMsg = getDataStorage("BasePlatformMsg");
+    return BasePlatformMsg instanceof Object && BasePlatformMsg.ResHttpRootUrl;
+  }, []);
   return (
     <Scrollbars>
       <Loading
@@ -179,8 +186,16 @@ function FileDetail(props, ref) {
                     <div className="fb-content">
                       {FileList.map((child, index) => {
                         let { FileName, FileUrl, FileSize } = child;
-                        let filename = FileName.split(".");
-                        // constructFileType
+                        // let filename = FileName.split(".");
+                        let Index = FileName.lastIndexOf(".");
+                        let filename = [];
+
+                        if (Index === -1) {
+                          filename = [FileName, ""];
+                        }
+                        filename[0] = FileName.slice(0, Index);
+                        filename[1] = FileName.slice(Index);
+                      
                         return (
                           <div
                             key={index}
@@ -192,19 +207,24 @@ function FileDetail(props, ref) {
                               {filename[0]}
                             </span>
                             <span className="file-type" title={FileName}>
-                              .{filename[1]}
+                              {filename[1]}
                             </span>
                             <span className="file-size" title={FileSize}>
                               [{FileSize}]
                             </span>
-                            <span
+                            <a
+                              href={fileIP + FileUrl}
+                              // ref={'noreferrer'}
+                              download={filename[0]}
+                              // eslint-disable-next-line react/jsx-no-target-blank
+                              target="_blank"
                               className="file-download"
-                              onClick={() => {
-                                window.open(FileUrl);
-                              }}
+                              // onClick={() => {
+                              //   window.open(fileIP+FileUrl);
+                              // }}
                             >
                               下载
-                            </span>
+                            </a>
                           </div>
                         );
                       })}

@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 11:27:30
- * @LastEditTime: 2020-12-14 10:19:20
+ * @LastEditTime: 2020-12-14 21:39:00
  * @Description: 招聘计划管理和培训计划管理头部
  * @FilePath: \teacher-development\src\component\homeTop\index.js
  */
@@ -46,7 +46,7 @@ import React, {
   memo,
   useEffect,
   useState,
-  // useImperativeHandle,
+  useImperativeHandle,
   // useMemo,
   // useReducer,
   // createContext,
@@ -72,12 +72,17 @@ function HomeTop(props, ref) {
   } = props;
   const [SearchValue, setSearchValue] = useState("");
   // 设置显示的boolean
-  const [visible,setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   // 草稿的ref
   const tableRef = useRef({});
   useEffect(() => {
     search.value !== undefined && setSearchValue(search.value);
   }, [search]);
+  useImperativeHandle(ref, () => ({
+    reloadDraft: () => {
+      tableRef.current.reloadList();
+    },
+  }));
   return (
     <div className={`home-top ${className ? className : ""}`} {...reset}>
       {publish ? (
@@ -101,8 +106,8 @@ function HomeTop(props, ref) {
           overlayClassName={`draft-box`}
           trigger={"click"}
           // destroyTooltipOnHide={true}
-          onVisibleChange={(visible)=>{
-            setVisible(visible)
+          onVisibleChange={(visible) => {
+            setVisible(visible);
           }}
           title={
             <Scrollbars autoHeight autoHeightMax={590} autoHide>
@@ -115,6 +120,7 @@ function HomeTop(props, ref) {
                 onDataChange={(data) => {}}
                 ref={tableRef}
                 api={draft.api}
+                pageProps={{ showSizeChanger: false }}
               ></Table>
             </Scrollbars>
           }
@@ -123,9 +129,8 @@ function HomeTop(props, ref) {
             className="lg-btn  btn-draft"
             onClick={(e) => {
               // 如果是显示的时候点击，不请求
-              if(!visible){
+              if (!visible) {
                 tableRef.current.reloadList && tableRef.current.reloadList();
-
               }
               typeof draft.onClick === "function" && publish.onClick();
             }}

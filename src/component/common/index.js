@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-12-10 16:34:36
+ * @LastEditTime: 2020-12-14 21:35:27
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
@@ -1766,7 +1766,7 @@ export class ErrorAlert extends React.Component {
         onOk={this.onOk}
         onCancel={this.onCancel}
         onClose={this.onClose}
-        cancelShow={"n"}
+        cancelShow={this.props.cancelShow?'y':"n"}
         // onHide={()=>{
         //   console.log(this.state.autoHide)
         //   this.state.autoHide&&this.onClose()
