@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-12 19:15:02
+ * @LastEditTime: 2020-12-14 10:44:46
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\publish.js
  */
@@ -95,19 +95,21 @@ function Publish(props, ref) {
   console.log(preview);
   // 发布
   const publish = useCallback(
-    (RStatus=1) => {
+    (data) => {
       // *RStatus:状态：0草稿；1正式发布
       setLoading(true);
+      let {FileList,...other} = data
       // FileName:FileList[0].FileName,
       // FileUrl:FileList[0].FileUrl,
       // FileSize:FileList[0].FileSize,
       // setTimeout(() => {
       publishRecruit({
-        previewData,
         SchoolID: schoolID,
         CollegeID: collegeID,
         SelectLevel: selectLevel,
-        RStatus 
+        RStatus: 1,FileList,
+        ...previewData,
+        ...other,
       }).then(({ result }) => {
         if (result) removeTab("", "", "teacherRecruit");
         else {
@@ -150,23 +152,28 @@ function Publish(props, ref) {
                 },
               }}
               draft={{
-                onClick: () => {
+                onClick: (data) => {
                   // setLoading(true);
 
                   // setTimeout(() => {
                   //   removeTab("", "", "teacherRecruit");
                   // }, 3000);
-                  publish(0);
+                  setPreviewData(data);
+
+                  publish({...data,RStatus:0});
                 },
               }}
               publish={{
-                onClick: () => {
-                  publish(1);
+                onClick: (data) => {
+                  publish({...data,RStatus:1});
                 },
               }}
               cancel={{
                 onClick: () => {
-                  removeTab("", "", "teacherRecruit");
+                  removeTab("", "", "teacherRecruit", "", (active, param) => {
+                    console.log(active, param);
+                    // history.push('/teacherRecruit')
+                  });
                 },
               }}
             ></Editor>
@@ -192,8 +199,8 @@ function Publish(props, ref) {
                     setPreview(false);
                     setActiveTab("publish");
                   }}
-                  onComfirm={() => {
-                    publish(1);
+                  onComfirm={(data) => {
+                    publish({...data,RStatus:1});
                   }}
                 ></FileDetail>
               </div>

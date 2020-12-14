@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-11 15:22:09
+ * @LastEditTime: 2020-12-14 11:07:06
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\detail.js
  */
@@ -70,7 +70,7 @@ function Datail(props, ref) {
     removeTab,
     activeTab,
     contentHW,
-    location,
+    location,id,
     history,
     dispatch,
   } = props;
@@ -90,7 +90,7 @@ function Datail(props, ref) {
         setID(Path[1]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, []);
   return (
     <Loading opacity={0.5} spinning={loading}>
       <div

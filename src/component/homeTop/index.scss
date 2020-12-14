@@ -26,9 +26,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 11:27:41
- * @LastEditTime: 2020-12-08 13:40:07
+ * @LastEditTime: 2020-12-14 10:10:34
  * @Description: 
- * @FilePath: \teacher-development\src\component\HomeTop\index.scss
+ * @FilePath: \teacher-development\src\component\homeTop\index.scss
  */
 
 .home-top {
@@ -74,5 +74,11 @@
         border: solid 1px #dedede;
         height: 30px;
         line-height: 30px;
+    }
+}
+
+.draft-box {
+    .ant-tooltip-inner {
+        padding-bottom: 16px;
     }
 }

@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-13 11:57:21
+ * @LastEditTime: 2020-12-14 09:00:49
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -167,17 +167,36 @@ function Tab(props, ref) {
      * @param {*}
      * @return {*}
      */
-    (rmTabid, reParam, nextTabid, nextParam) => {
-      if (TabList.length <= 1) {
-        // autoAlert({ })
-        // routeTo(ComponentList[0].props.tabid,ComponentList[0].props.param);
-
+    (rmTabid, reParam, nextTabid, nextParam, onlyOne) => {
+      if (TabList.length <= 0) {
         return;
       }
+      let List = [];
+
       let tabIndex = 0;
       let active = TabActive.split("|")[0];
       // let activeParam = TabActive.split("|")[1];
       let param = TabActive.split("|")[1];
+      if (TabList.length === 1) {
+        // 当一个的时候，rmTabid有值，说明是先移除当前节点，再添加下一节点
+        if (typeof onlyOne === "function") {
+          // 更新活动
+          // setTabActive(active);
+
+          // 更新列表
+          setTabList(List);
+
+          // 通过路由修改
+          routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+          onlyOne(active, param);
+        } else {
+          routeTo(nextTabid || active, (nextTabid && nextParam) || param);
+          // rmTabid&&removeTab(rmTabid,reParam)
+        }
+
+        return;
+      }
+
       if (!rmTabid) {
         rmTabid = active;
         reParam = param;
@@ -202,7 +221,7 @@ function Tab(props, ref) {
         active = activeBar.props.tabid;
         param = activeBar.props.param;
       }
-      let List = [];
+      // let List = [];
       TabList.forEach((tab) => {
         if (tab.props.tabid !== rmTabid || tab.props.param !== reParam) {
           List.push(tab);
@@ -210,6 +229,7 @@ function Tab(props, ref) {
       });
       // 更新活动
       // setTabActive(active);
+
       // 更新列表
       setTabList(List);
 

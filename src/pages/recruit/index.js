@@ -23,7 +23,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 15:17:40
- * @LastEditTime: 2020-12-11 10:00:45
+ * @LastEditTime: 2020-12-14 11:07:15
  * @Description: 招聘计划管理,可复用，所以尽量不要用reduce全局状态处理
  * @FilePath: \teacher-development\src\pages\recruit\index.js
  */
@@ -56,7 +56,7 @@ function Recruit(props, ref) {
     location,
     activeTab,
     removeTab,
-
+    tabid,
     param, //param控制显示的模块
   } = props;
   const [Component, setComponent] = useState("");
@@ -67,7 +67,17 @@ function Recruit(props, ref) {
   useEffect(() => {
     setComponent(param);
   }, [param]);
-
+  // console.log(param,Component)
+  // useEffect(() => {
+  //   // console.log(location)
+  //    //   if (location.pathname) {
+  //   //     let Path = handleRoute(location.pathname);
+  //   //     Path[0] === "recruitDetail" &&
+  //   //       Path[1] &&
+  //   //       Path[1] !== ID &&
+  //   //       setID(Path[1]);
+  //   //   }
+  // }, [])
   return (
     <Context.Provider value={{ state, setDispatch }}>
       <div className="Recruit">
@@ -86,7 +96,7 @@ function Recruit(props, ref) {
           ""
         )}
 
-        {Component === "detail" ? <Detail></Detail> : ""}
+        {tabid === "recruitDetail" ? <Detail></Detail> : ""}
         {Component === "edit" ? <Home></Home> : ""}
         {Component === "details" ? <Home></Home> : ""}
       </div>

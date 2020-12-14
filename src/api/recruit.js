@@ -25,7 +25,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-09 11:46:56
- * @LastEditTime: 2020-12-12 19:08:40
+ * @LastEditTime: 2020-12-14 09:56:16
  * @Description:
  * @FilePath: \teacher-development\src\api\recruit.js
  */
@@ -187,7 +187,7 @@ export function publishRecruit(payload = {}) {
     .post({
       url,
       securityLevel: 2,
-      abody: {
+      body: {
         SchoolID,
         CollegeID,
         SelectLevel,

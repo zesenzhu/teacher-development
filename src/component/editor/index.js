@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-12 18:16:38
+ * @LastEditTime: 2020-12-14 10:43:22
  * @Description:招聘和培训共用的编辑区域组件，发布编辑
  * @FilePath: \teacher-development\src\component\editor\index.js
  */
@@ -309,7 +309,21 @@ function Editor(props, ref) {
           <li
             className="handle-btn handle-draft"
             onClick={() => {
-              checkAll(draft.onClick);
+              checkAll(draft.onClick.bind(this, {
+                Title: title,
+                Issue: source,
+                Content: main,
+                ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
+                FileList: [
+                  {
+                    FileID: 0,
+                    FileName: "招聘岗位.xls", //文件名称
+                    FileUrl: "xxxxxxxxxxxxx", //文件路径
+                    FileSize: "23.4M", //文件大小
+                    DeleteFlag: 0, //文件删除标识
+                  },
+                ],
+              }));
             }}
           >
             暂存为草稿
@@ -321,7 +335,21 @@ function Editor(props, ref) {
           <li
             className="handle-btn handle-publish"
             onClick={() => {
-              checkAll(publish.onClick);
+              checkAll(publish.onClick.bind(this, {
+                Title: title,
+                Issue: source,
+                Content: main,
+                ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
+                FileList: [
+                  {
+                    FileID: 0,
+                    FileName: "招聘岗位.xls", //文件名称
+                    FileUrl: "xxxxxxxxxxxxx", //文件路径
+                    FileSize: "23.4M", //文件大小
+                    DeleteFlag: 0, //文件删除标识
+                  },
+                ],
+              }));
             }}
           >
             确认发布

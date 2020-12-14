@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-10 20:01:07
+ * @LastEditTime: 2020-12-14 09:26:09
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -56,7 +56,7 @@ import React, {
 } from "react";
 import "./index.scss";
 import { Table, Empty, Loading, PagiNation } from "../common";
-import useTableRequest from "../../hooks/useTableRequest";
+import { useTableRequest } from "./hooks";
 function $Table(props, ref) {
   let {
     className,
@@ -67,25 +67,40 @@ function $Table(props, ref) {
     // : Query
     api,
     prepare,
+    onDataChange,
     ...reset
   } = props;
   // let { dataSource } = reset;
   /* 控制表格查询条件 */
   // const [query, setQuery] = useState(typeof Query === "object" ? Query : {});
   // tableData：列表数据，handerChange:更改查询的条件，getList：获取数据
-  const [tableData, handerChange, getList, loading,reloadList] = useTableRequest(
-    query,
-    api,
-    prepare
-  );
+  const [
+    tableData,
+    handerChange,
+    getList,
+    loading,
+    reloadList,
+  ] = useTableRequest(query, api, prepare);
   const { PageIndex, PageSize, Total, List, IsError } = tableData;
   // useEffect(() => {
   //   console.log(query)
   // }, [query]);
-  useImperativeHandle(ref, () => ({
-    getList,reloadList,
-    data: tableData,
-  }),[getList,tableData,reloadList]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getList,
+      reloadList,
+      data: tableData,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getList, tableData, reloadList, Total]
+  );
+  // 监听tableData的变化
+  useEffect(() => {
+    // console.log(tableData);
+    // 实时更新data给使用者
+    typeof onDataChange === "function" && onDataChange(tableData);
+  }, [tableData, onDataChange]);
   return (
     <Loading
       spinning={
@@ -119,7 +134,6 @@ function $Table(props, ref) {
               hideOnSinglePage={Total === 0 ? true : false}
               total={Total}
               onChange={(pageIndex, pageSize) => {
-
                 handerChange({ pageIndex, pageSize });
               }}
             ></PagiNation>

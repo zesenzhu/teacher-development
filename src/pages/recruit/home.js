@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-11 09:38:53
+ * @LastEditTime: 2020-12-14 11:19:01
  * @Description:
  * @FilePath: \teacher-development\src\pages\recruit\home.js
  */
@@ -179,22 +179,86 @@ function Home(props, ref) {
       },
     },
   ];
+  let draftColumns = [
+    {
+      title: "序号",
+      dataIndex: "index",
+      align: "center",
+      width: 102 * widthRate,
+      textWrap: "word-break",
+      render: (data) => {
+        return (
+          <span className="table-index" title={data}>
+            {data}
+          </span>
+        );
+      },
+    },
+    {
+      title: "标题",
+      width: 300 * widthRate,
+      // dataIndex: "title",
+      render: (data) => {
+        let { title, RID } = data;
+        return (
+          <span
+            onClick={() => {
+              history.push("/recruitDetail/" + RID);
+            }}
+            className="table-title"
+            title={title}
+          >
+            {title}
+          </span>
+        );
+      },
+    },
 
-  useEffect(() => {
-    // console.log(keyword, selectLevel);
-    selectLevel && setQuery({ keyword, schoolID, collegeID, selectLevel });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectLevel]);
+    {
+      title: "最后一次编辑时间",
+      align: "center",
+      width: 172 * widthRate,
+      dataIndex: "UpdateTime",
+      render: (data) => {
+        return (
+          <span className="table-time" title={data}>
+            {data}
+          </span>
+        );
+      },
+    },
+    {
+      title: "操作",
+      align: "center",
+      width: 200 * widthRate,
+
+      // dataIndex: "time",
+      render: (data) => {
+        return (
+          <span className="table-handle">
+            <span className="table-btn btn-edit">编辑</span>
+            <span className="table-btn btn-delete">删除</span>
+          </span>
+        );
+      },
+    },
+  ];
+  // useEffect(() => {
+  //   console.log(keyword, selectLevel);
+  //   selectLevel && setQuery({ keyword, schoolID, collegeID, selectLevel });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // 设置草稿数量
-  useLayoutEffect(() => {
-    setDraft(
-      tableRef.current.data && tableRef.current.data.Draft
-        ? tableRef.current.data.Draft
-        : 0
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableRef.current]);
+  // useLayoutEffect(() => {
+  //   console.log(tableRef.current, tableRef);
+  //   setDraft(
+  //     tableRef.current.data && tableRef.current.data.Draft
+  //       ? tableRef.current.data.Draft
+  //       : 0
+  //   );
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tableRef.current]);
   // 刷新
 
   useLayoutEffect(() => {
@@ -203,8 +267,9 @@ function Home(props, ref) {
     if (!initGet.current) {
       initGet.current = true;
     } else {
-      if (pathname === "/teacherRecruit") tableRef.current.reloadList();
-      // console.log(pathname);
+      if (pathname === "/teacherRecruit") {
+        tableRef.current.reloadList();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
@@ -222,7 +287,13 @@ function Home(props, ref) {
             history.push("/publishRecruit");
           },
         }}
-        draft={{ title: "草稿箱", count: draft }}
+        draft={{
+          title: "草稿箱",
+          count: draft,
+          query: { selectLevel, schoolID, collegeID, rStatus: 0 },
+          api: getCruitList,
+          columns: draftColumns,
+        }}
         search={{
           onSearch: (value) => {
             // console.log(value)
@@ -237,6 +308,9 @@ function Home(props, ref) {
         // dataSource={data}
         prepare={!!query.selectLevel}
         query={query}
+        onDataChange={(data) => {
+          setDraft(data && data.Draft ? data.Draft : 0);
+        }}
         ref={tableRef}
         api={getCruitList}
       ></Table>

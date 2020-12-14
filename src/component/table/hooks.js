@@ -24,13 +24,13 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 18:30:14
- * @LastEditTime: 2020-12-14 09:25:19
+ * @LastEditTime: 2020-12-14 11:16:58
  * @Description: table请求的hooks
- * @FilePath: \teacher-development\src\hooks\useTableRequest.js
+ * @FilePath: \teacher-development\src\component\table\hooks.js
  */
 
 import { useEffect, useState, useRef, useMemo } from "react";
-export default function useTableRequest(query = {}, api, prepare = true) {
+export  function useTableRequest(query = {}, api, prepare = true) {
   // *prepare:是否准备好了，默认是，可以直接请求
   /* 是否是第一次请求 */
   const fisrtRequest = useRef(false);
@@ -90,18 +90,16 @@ export default function useTableRequest(query = {}, api, prepare = true) {
   }, []);
   /* 改变分页，重新请求数据 */
   useEffect(() => {
-    // console.log(query);
     fisrtRequest.current &&
       getList({
-        ...pageOptions,
         ...query,
+        ...pageOptions,
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageOptions]);
   /* 改变查询条件。重新请求数据 */
   useEffect(() => {
-    // console.log(query)
     prepare &&
       getList({
         ...pageOptions,
@@ -113,11 +111,11 @@ export default function useTableRequest(query = {}, api, prepare = true) {
       setIsUnMount(true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, prepare]);
+  }, [query]);
   /* 处理分页逻辑 */
   const handerChange = useMemo(
     () => (options) => {
-      return setPageOptions({ ...pageOptions, ...query, ...options });
+      return setPageOptions({ ...query, ...pageOptions, ...options });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [pageOptions, query]

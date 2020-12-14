@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 11:27:30
- * @LastEditTime: 2020-12-10 19:57:01
+ * @LastEditTime: 2020-12-14 10:19:20
  * @Description: 招聘计划管理和培训计划管理头部
  * @FilePath: \teacher-development\src\component\homeTop\index.js
  */
@@ -51,15 +51,30 @@ import React, {
   // useReducer,
   // createContext,
   // useContext,
-  //   useRef,
+  useRef,
   forwardRef,
 } from "react";
 import "./index.scss";
 import { Search, Empty } from "../common";
+import { Tooltip } from "antd";
+import Table from "../table";
+import { Scrollbars } from "react-custom-scrollbars";
 
 function HomeTop(props, ref) {
-  let { className, publish, children, draft, search, ...reset } = props;
+  let {
+    className,
+    publish,
+    children,
+    draft,
+    search,
+    tableProps,
+    ...reset
+  } = props;
   const [SearchValue, setSearchValue] = useState("");
+  // 设置显示的boolean
+  const [visible,setVisible] = useState(false)
+  // 草稿的ref
+  const tableRef = useRef({});
   useEffect(() => {
     search.value !== undefined && setSearchValue(search.value);
   }, [search]);
@@ -78,15 +93,47 @@ function HomeTop(props, ref) {
         ""
       )}
       {draft ? (
-        <span
-          className="lg-btn  btn-draft"
-          onClick={(e) => {
-            typeof draft.onClick === "function" && publish.onClick();
+        <Tooltip
+          getPopupContainer={(e) => e.parentNode}
+          placement={"bottomRight"}
+          // visible={tableProps?}
+          color={"#fff"}
+          overlayClassName={`draft-box`}
+          trigger={"click"}
+          // destroyTooltipOnHide={true}
+          onVisibleChange={(visible)=>{
+            setVisible(visible)
           }}
+          title={
+            <Scrollbars autoHeight autoHeightMax={590} autoHide>
+              <Table
+                className="Reacruit-table"
+                columns={draft.columns}
+                // dataSource={data}
+                prepare={!!draft.query.selectLevel}
+                query={draft.query}
+                onDataChange={(data) => {}}
+                ref={tableRef}
+                api={draft.api}
+              ></Table>
+            </Scrollbars>
+          }
         >
-          {draft.title ? draft.title : "草稿箱"}
-          {draft.count || draft.count === 0 ? <>[{draft.count}]</> : ""}
-        </span>
+          <span
+            className="lg-btn  btn-draft"
+            onClick={(e) => {
+              // 如果是显示的时候点击，不请求
+              if(!visible){
+                tableRef.current.reloadList && tableRef.current.reloadList();
+
+              }
+              typeof draft.onClick === "function" && publish.onClick();
+            }}
+          >
+            {draft.title ? draft.title : "草稿箱"}
+            {draft.count || draft.count === 0 ? <>[{draft.count}]</> : ""}
+          </span>
+        </Tooltip>
       ) : (
         ""
       )}
@@ -103,8 +150,7 @@ function HomeTop(props, ref) {
           }}
           onCancelSearch={(e) => {
             setSearchValue("");
-            typeof search.onSearch === "function" &&
-              search.onSearch('');
+            typeof search.onSearch === "function" && search.onSearch("");
           }}
         ></Search>
       ) : (

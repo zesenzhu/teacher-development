@@ -45,6 +45,7 @@ function App(props, ref) {
   let dispatch = useDispatch();
   const [SchoolName, setSchoolName] = useState("各校师资");
   const [TeacherName, setTeacherName] = useState("教师画像查询");
+  const [RecruitDetail, setRecruitDetail] = useState("detailID");
   // const [RecruitName, setRecruitName] = useState(recruitName);
   const [Path, setPath] = useState([]);
   // 存frame返回的数据
@@ -61,10 +62,13 @@ function App(props, ref) {
       // history.push("/" + leftMenu[0].key);
       controlRoute(leftMenu[0].key);
       return;
-    } else if (Path[0] === "recruitDetail" && !Path[1]) {
+    } else if (Path[0] === "recruitDetail") {
       //教师招聘计划管理,默认
-      // console.log(Path)
-      controlRoute(recruitId);
+      if (Path[1]) {
+        // setRecruitDetail(Path[1]);
+      } else {
+        controlRoute(recruitId);
+      }
       // setRecruitName()
       return;
     }
@@ -102,11 +106,10 @@ function App(props, ref) {
     //   : isExist;
     // 不存在
 
-    if (!isExist&& leftMenu.length > 0) {
+    if (!isExist && leftMenu.length > 0) {
       // 第一次进来的时候frame还没挂载，所以为undefined，需要自己控制，后面不是undefined了可以使用frame返回的方法
-
       frameRef.current.removeTab
-        ? RemoveTab("", "", leftMenu[0].key)
+        ? RemoveTab("", "")
         : controlRoute(leftMenu[0].key);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,7 +135,7 @@ function App(props, ref) {
   function controlRoute() {
     let path = "";
     for (let key in arguments) {
-      path += "/" + arguments[key];
+      path += arguments[key] ? "/" + arguments[key] : "";
     }
     history.push(path);
   }
@@ -177,7 +180,6 @@ function App(props, ref) {
     dispatch(handleActions.setActiveTab(activeTab));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
-
   return (
     <Frame
       pageInit={pageInit}
@@ -257,7 +259,7 @@ function App(props, ref) {
       <Recruit
         tabid={"recruitDetail"}
         tabname={"招聘计划详情"}
-        param={"detail"}
+        param={'detail'}
         removeTab={RemoveTab}
       >
         招聘计划详情

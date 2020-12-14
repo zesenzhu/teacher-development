@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-11 10:02:50
- * @LastEditTime: 2020-12-11 15:51:18
+ * @LastEditTime: 2020-12-14 10:50:24
  * @Description: 招聘，培训详情请求hooks
  * @FilePath: \teacher-development\src\hooks\useDetailRequest.js
  */
