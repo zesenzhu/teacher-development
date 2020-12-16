@@ -19,13 +19,14 @@ import { commonActions, handleActions } from "../../redux/actions";
 // import fetch from "../../util/fetch";
 // import config from "../../util/ipConfig";
 import Frame from "../../component/frame";
-import Bar from "../../component/Bar";
+import Bar from "../../component/bar";
 import {
   withRouter,
   // , Route, Switch, NavLink
 } from "react-router-dom";
-import Test from "../teachersStatisticAnalysis";
+import Analysis from "../teachersStatisticAnalysis";
 import Recruit from "../recruit";
+import Train from "../train";
 import { handleRoute, deepMap } from "../../util/public";
 // let { get } = fetch;
 function App(props, ref) {
@@ -158,6 +159,9 @@ function App(props, ref) {
       type: commonActions.COMMON_SET_ROLE_MSG,
       data: data.role,
     });
+// 根据版本级别，显示不同的左侧
+    dispatch(commonActions.SetLeftMenu(data.role.level));
+
     // }
   };
   // // 移除tab
@@ -205,9 +209,9 @@ function App(props, ref) {
         },
       }}
     >
-      <Test tabid={"schoolResource"} tabname={SchoolName} param={"SchoolID"}>
+      <Analysis tabid={"schoolResource"} tabname={SchoolName} param={"SchoolID"}>
         {SchoolName}
-      </Test>
+      </Analysis>
       <div tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
         <Bar
           barName={"教师信息化能力"}
@@ -222,18 +226,18 @@ function App(props, ref) {
           }
         ></Bar>
       </div>
-      <div tabid={"teachingAbility"} tabname={"教师教学能力"}>
+      <Analysis tabid={"teachingAbility"} tabname={"教师教学能力"}>
         教师教学能力
-      </div>
-      <div tabid={"workMsg"} tabname={"教师工作量"}>
+      </Analysis>
+      <Analysis tabid={"workMsg"} tabname={"教师工作量"}>
         教师工作量
-      </div>
-      <div tabid={"teacherBaseMsg"} tabname={"教师基本信息"}>
+      </Analysis>
+      <Analysis tabid={"teacherBaseMsg"} tabname={"教师基本信息"}>
         教师基本信息
-      </div>
-      <div tabid={"teacherPersona"} tabname={TeacherName} param={"TeacherID"}>
+      </Analysis>
+      <Analysis tabid={"teacherPersona"} tabname={TeacherName} param={"TeacherID"}>
         {TeacherName}
-      </div>
+      </Analysis>
       <Recruit
         tabid={recruitId}
         tabname={"教师招聘计划管理"}
@@ -242,9 +246,7 @@ function App(props, ref) {
       >
         教师招聘计划管理
       </Recruit>
-      <div tabid={"teacherTrain"} tabname={"教师培训计划管理"}>
-        教师培训计划管理
-      </div>
+
       <div tabid={"notice"} tabname={"通知公告"}>
         通知公告
       </div>
@@ -259,7 +261,7 @@ function App(props, ref) {
       <Recruit
         tabid={"recruitDetail"}
         tabname={"招聘计划详情"}
-        param={'detail'}
+        param={"detail"}
         removeTab={RemoveTab}
       >
         招聘计划详情
@@ -271,10 +273,38 @@ function App(props, ref) {
         mustparam={"true"}
         redirect={"teacherRecruit"}
         removeTab={RemoveTab}
-
       >
         编辑招聘计划
       </Recruit>
+      <Train tabid={"teacherTrain"} tabname={"教师培训计划管理"} param={"home"}>
+        教师培训计划管理
+      </Train>
+      <Train
+        tabid={"publishTrain"}
+        tabname={"发布培训计划"}
+        param={"publish"}
+        removeTab={RemoveTab}
+      >
+        发布培训计划
+      </Train>
+      <Train
+        tabid={"trainDetail"}
+        tabname={"培训计划详情"}
+        param={"detail"}
+        removeTab={RemoveTab}
+      >
+        培训计划详情
+      </Train>
+      <Train
+        tabid={"editTrain"}
+        tabname={"编辑培训计划"}
+        param={"edit"}
+        mustparam={"true"}
+        redirect={"teacherTrain"}
+        removeTab={RemoveTab}
+      >
+        编辑培训计划
+      </Train>
     </Frame>
   );
 }

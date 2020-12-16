@@ -50,7 +50,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:07
- * @LastEditTime: 2020-12-11 09:39:20
+ * @LastEditTime: 2020-12-15 15:00:12
  * @Description: 
  * @FilePath: \teacher-development\src\component\table\index.scss
  */
@@ -132,6 +132,17 @@
                 }
                 .table-time {
                     color: #999999;
+                }
+                .table-limit {
+                    color: #333333;
+                }
+                .table-activity {
+                    &.table-activity-0 {
+                        color: #4a9e54;
+                    }
+                    &.table-activity-1 {
+                        color: #d8562e;
+                    }
                 }
                 .table-handle {
                     .table-btn {

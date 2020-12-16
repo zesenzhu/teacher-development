@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-19 15:15:20
- * @LastEditTime: 2020-12-10 09:36:07
+ * @LastEditTime: 2020-12-15 16:25:10
  * @Description: 平台初始化的逻辑
  * @FilePath: \teacher-development\src\util\init.js
  */
@@ -187,7 +187,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "noPower";
     }
     // Role.version = version;
-    Role = {...Role,version,selectLevel,collegeID,schoolID}
+    Role = {...Role,version,selectLevel,collegeID,schoolID,level:!version.includes('-')?1:0}
     // if ( ProductUseRange === 1||) {
     // }
   } catch (e) {

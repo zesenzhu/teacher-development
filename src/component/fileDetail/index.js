@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-14 21:22:53
+ * @LastEditTime: 2020-12-15 09:28:43
  * @Description:
  * @FilePath: \teacher-development\src\component\fileDetail\index.js
  */
@@ -62,6 +62,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 import $ from "jquery";
 import useDetailRequest from "../../hooks/useDetailRequest";
 import { getRecruitDetail } from "../../api/recruit";
+import { getTrainDetail } from "../../api/train";
 import { Loading, Empty } from "../common";
 import { constructFileType, getDataStorage } from "../../util/public";
 function FileDetail(props, ref) {
@@ -83,7 +84,7 @@ function FileDetail(props, ref) {
   // 预览不用获取数据，数据由上面传下来
   const [detailData, handleChange, loading] = useDetailRequest(
     {},
-    type === "train" ? "" : getRecruitDetail
+    type === "train" ? getTrainDetail : getRecruitDetail
   );
   // 主文
   const preRef = useRef(null);

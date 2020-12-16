@@ -12,9 +12,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-04 14:08:10
- * @LastEditTime: 2020-12-04 15:41:08
+ * @LastEditTime: 2020-12-16 11:49:11
  * @Description:
- * @FilePath: \teacher-development\src\component\Bar\index.js
+ * @FilePath: \teacher-development\src\component\bar\index.js
  */
 
 import React, {
@@ -109,7 +109,7 @@ function $Bar(props, ref) {
           opacity={false}
           tip={"加载中..."}
         >
-          {isEmpty ? (
+          {isEmpty === undefined||!isEmpty ? (
             <div className="fbc-contain-box">{children}</div>
           ) : (
             <Empty

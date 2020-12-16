@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 19:36:59
- * @LastEditTime: 2020-12-14 11:28:49
+ * @LastEditTime: 2020-12-15 16:07:30
  * @Description: 平台框架
  * @FilePath: \teacher-development\src\component\frame\index.js
  */
@@ -265,7 +265,7 @@ function Frame(props, ref) {
 
   return (
     <frameContext.Provider value={{ state, dispatch }}>
-      <Loading spinning={FrameLoading} opacity={false} tip={"加载中..."}>
+      <Loading spinning={FrameLoading||MenuList.length===0} opacity={false} tip={"加载中..."}>
         <div id="Frame" className={`Frame ${className ? className : ""}`}>
           {checkType("default") ? (
             <TopBar

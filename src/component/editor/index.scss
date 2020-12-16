@@ -50,7 +50,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:07
- * @LastEditTime: 2020-12-14 17:05:59
+ * @LastEditTime: 2020-12-15 10:55:12
  * @Description: 
  * @FilePath: \teacher-development\src\component\editor\index.scss
  */
@@ -85,9 +85,17 @@
                 .source-input {
                     width: 360px;
                 }
+                .limit-input {
+                    width: 120px;
+                }
                 .handle-upload {
                     display: inline-block;
                     margin: 8px 0;
+                }
+                .ant-radio-checked {
+                    &+span {
+                        color: #0099ff;
+                    }
                 }
                 .file-content {
                     position: relative;

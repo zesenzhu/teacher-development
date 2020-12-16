@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /*
  *           佛曰:
  *                   写字楼里写字间，写字间里程序员；
@@ -12,12 +13,12 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-12-14 21:35:27
+ * @LastEditTime: 2020-12-16 09:17:17
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
 
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import ReactDOM from "react-dom";
 import "es6-shim";
@@ -37,8 +38,9 @@ import {
   Pagination as AntPagination,
   Button as AntdButton,
   Tooltip,
+  Select,
 } from "antd";
-
+let { Option } = Select;
 moment.locale("zh-cn");
 
 /*
@@ -1499,11 +1501,11 @@ class Empty extends React.Component {
     };
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-   componentDidMount(nextProps) {
-    const { style,title } = this.props;
+  componentDidMount(nextProps) {
+    const { style, title } = this.props;
 
     this.setState({
-      title:  title,
+      title: title,
       style: style,
     });
     this.selectType(this.state.type);
@@ -1722,17 +1724,17 @@ export class ErrorAlert extends React.Component {
     super(props);
     this.state = {
       show: props.show,
-      autoHide:props.autoHide?props.autoHide:false,
-      type:props.autoHide?'warn':props.type?props.type:'btn-error',
+      autoHide: props.autoHide ? props.autoHide : false,
+      type: props.autoHide ? "warn" : props.type ? props.type : "btn-error",
     };
   }
-// componentWillReceiveProps(nextProps){
-//   this.setState({
-//     // show: nextProps.show,
-//     autoHide:nextProps.autoHide?nextProps.autoHide:false,
-//     type:nextProps.autoHide?'warn':nextProps.type?nextProps.type:'btn-error',
-//   })  
-// }
+  // componentWillReceiveProps(nextProps){
+  //   this.setState({
+  //     // show: nextProps.show,
+  //     autoHide:nextProps.autoHide?nextProps.autoHide:false,
+  //     type:nextProps.autoHide?'warn':nextProps.type?nextProps.type:'btn-error',
+  //   })
+  // }
   onOk = () => {
     let { onOk } = this.props;
     typeof onOk === "function" && onOk();
@@ -1766,7 +1768,7 @@ export class ErrorAlert extends React.Component {
         onOk={this.onOk}
         onCancel={this.onCancel}
         onClose={this.onClose}
-        cancelShow={this.props.cancelShow?'y':"n"}
+        cancelShow={this.props.cancelShow ? "y" : "n"}
         // onHide={()=>{
         //   console.log(this.state.autoHide)
         //   this.state.autoHide&&this.onClose()
@@ -1807,14 +1809,58 @@ export const withAlert = (Component) => {
 function Tip(props) {
   let { className, children, ...reset } = props;
   return (
-    <Tooltip getPopupContainer={(e)=>e.parentNode} placement={'right'} overlayClassName={`lg-tip ${className ? className : ""}`} {...reset}>
+    <Tooltip
+      getPopupContainer={(e) => e.parentNode}
+      placement={"right"}
+      overlayClassName={`lg-tip ${className ? className : ""}`}
+      {...reset}
+    >
       {children}
     </Tooltip>
+  );
+}
+/**
+ * @description: 下拉选择器
+ * @param {*}
+ * @return {*}
+ */
+function DropDownComponent(props) {
+  const {
+    // value,
+    dropList,
+    width,
+    className,
+    dropdownClassName,
+    style,
+    title,
+    ...reset
+  } = props;
+  // console.log(props);
+  return (
+    <div className={`lg-dropdown ${className ? className : ""}`}>
+      <span className="dropdown-title">{title}:</span>
+      <Select
+        className={`dropdown-box ${dropdownClassName ? dropdownClassName : ""}`}
+        width={width}
+        style={{ width: (width ? width : 200) + "px", ...style }}
+        {...reset}
+      >
+        {dropList instanceof Array &&
+          dropList.map((child, index) => {
+            return (
+              <Option value={child.value} key={index}>
+                {child.title}
+              </Option>
+            );
+          })}
+      </Select>
+    </div>
   );
 }
 const PagiNation = memo(PageComponent);
 const Alert = memo(AppAlert);
 const DropDown = memo(DropComponent);
+const Dropdown = memo(DropDownComponent);
 export {
   Alert,
   Loading,
@@ -1826,5 +1872,7 @@ export {
   CheckBoxGroup,
   CheckBox,
   RadioGroup,
-  Radio,Tip
+  Radio,
+  Tip,
+  Dropdown,
 };

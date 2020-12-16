@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-16 11:49:38
+ * @LastEditTime: 2020-12-16 10:57:14
  * @Description:
- * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\index.js
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\analysisTop.js
  */
 import {
   connect,
@@ -49,67 +49,90 @@ import React, {
   // useCallback,
   memo,
   useEffect,
+  useMemo,
   useState,
-  // useImperativeHandle,
-  useRef,
+  useImperativeHandle,
+  // useRef,
   forwardRef,
 } from "react";
-import {
-  withRouter,
-  // , Route, Switch, NavLink
-} from "react-router-dom";
-import "./index.scss";
-import BaseMsg from "./baseMsg";
-import AnalysisTop from "./analysisTop";
-import { handleRoute } from "../../util/public";
+// import { Select } from "antd";
+import { Dropdown } from "../../component/common";
+function AnalysisTop(props, ref) {
+  let { type, termselect, termlist, onTermChange } = props;
 
-function Analysis(props, ref) {
-  console.log(props);
-  let { tabid, tabname, children, param, location,basePlatFormMsg:{ProVersion} } = props;
-  // 设置头部的类型
-  const [topType, setTopType] = useState("default");
-  // 设置路由路径，初始就设置
-  const [Path, setPath] = useState([]);
-  // 学期选择
-  const [TermSelect, setTermSelect] = useState('');
-
-  // 头部ref
-  const topRef = useRef({});
+  // 下拉菜单
+  const [TermList, setTermList] = useState([
+    { value: "00", title: "2019~2020学年第1学期" },
+    { value: "0", title: "2019~2020学年第2学期" },
+    { value: "1", title: "2020~2021学年第1学期" },
+    { value: "2", title: "2020~2021学年第2学期" },
+    { value: "3", title: "2020~2021学年第2学期" },
+    { value: "4", title: "2020~2021学年第2学期" },
+    { value: "5", title: "2020~2021学年第2学期" },
+    { value: "6", title: "2020~2021学年第2学期" },
+    { value: "7", title: "2020~2021学年第2学期" },
+  ]);
+  // 选择下拉
+  const [TermSelect, setTermSelect] = useState(TermList[0] && TermList[0].value);
+  // 下拉初始化
   useEffect(() => {
-    // 挂载的时候观察路由
-    let Path = handleRoute(location.pathname);
-    setPath(Path);
-    if (Path[0] === "schoolResource" && Path[1]) {
-      //学校详情
-      // 需要获取学校详情请求
-      setTopType("school");
-    }
+    // termselect存在，表明选择有使用者决定
+    termselect !== undefined && setTermSelect(termselect);
+  }, [termselect]);
+  // 下拉列表再次修改
+  useEffect(() => {
+    if (termlist === undefined) return;
+    setTermList(termlist);
+    termselect === undefined &&
+      TermSelect === undefined &&
+      setTermSelect(termlist[0] && termlist[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [termlist]);
+  const topType = useMemo(() => {
+    // 头部类型：*default:默认，*school:带有学校信息
+    return type ? type : "default";
+  }, [type]);
+  // 监听变化，修改回调
+  useEffect(() => {
+    typeof onTermChange === "function" && onTermChange(TermSelect);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [TermSelect]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      TermSelect,
+    }),
+    [TermSelect]
+  );
   return (
-    <div className="Analysis">
-      {Path[0] !== "schoolResource" || Path[1] ? (
-        <AnalysisTop
-          onTermChange={(e) => {
-            setTermSelect(e)
-          }}
-          ref={topRef}
-          type={topType}
-        ></AnalysisTop>
+    <div className="Analysis-Top">
+      {topType === "school" ? (
+        <div></div>
       ) : (
-        ""
+        <div className="top-default">
+          <Dropdown
+            width={200}
+            height={240}
+            dropList={TermList}
+            title={"所统计学期"}
+            value={TermSelect}
+            className="term-dropdown"
+            onChange={(e) => {}}
+            onSelect={(e) => {
+              setTermSelect(e);
+            }}
+          ></Dropdown>
+        </div>
       )}
-      
-      {tabid === "teacherBaseMsg" ? <BaseMsg term={topRef.current.TermSelect}></BaseMsg> : ""}
-      <p className='ProVersion'>{ProVersion}</p>
     </div>
   );
 }
 
-const mapStateToProps = (state) => {
-  let {
-    commonData: { roleMsg ,basePlatFormMsg},
-  } = state;
-  return { roleMsg,basePlatFormMsg };
-};
-export default connect(mapStateToProps)(withRouter(memo(forwardRef(Analysis))));
+// const mapStateToProps = (state) => {
+//   let {
+//     commonData: { roleMsg },
+//   } = state;
+//   return { roleMsg };
+// };
+// connect(mapStateToProps)
+export default memo(forwardRef(AnalysisTop));

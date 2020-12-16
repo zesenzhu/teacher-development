@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-14 19:58:11
+ * @LastEditTime: 2020-12-15 09:07:36
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -138,9 +138,10 @@ function $Table(props, ref) {
               hideOnSinglePage={Total === 0 ? true : false}
               total={Total}
               onChange={(pageIndex, pageSize) => {
+                console.log(pageSize,PageSize)
                 handerChange({
                   pageIndex,
-                  pageSize: PageProps.showSizeChanger ? pageSize : PageSize,
+                  pageSize: PageProps.showSizeChanger===undefined||PageProps.showSizeChanger ? pageSize : PageSize,
                 });
               }}
               {...PageProps}

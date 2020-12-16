@@ -23,9 +23,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 15:17:40
- * @LastEditTime: 2020-12-15 17:09:57
- * @Description: 招聘计划管理,可复用，所以尽量不要用reduce全局状态处理
- * @FilePath: \teacher-development\src\pages\recruit\index.js
+ * @LastEditTime: 2020-12-15 09:16:53
+ * @Description: 培训计划管理,可复用，所以尽量不要用reduce全局状态处理
+ * @FilePath: \teacher-development\src\pages\train\index.js
  */
 
 import {
@@ -51,9 +51,9 @@ import "./index.scss";
 import { withRouter } from "react-router-dom";
 import { Reducer, Context, initState } from "./reducer";
 import Edit from "./edit";
-function Recruit(props, ref) {
+function Train(props, ref) {
   let {
-    // teacherRecruitMsg,
+    teacherRecruitMsg,
     location,
     activeTab,
     removeTab,
@@ -73,7 +73,7 @@ function Recruit(props, ref) {
   //   // console.log(location)
   //    //   if (location.pathname) {
   //   //     let Path = handleRoute(location.pathname);
-  //   //     Path[0] === "recruitDetail" &&
+  //   //     Path[0] === "trainDetail" &&
   //   //       Path[1] &&
   //   //       Path[1] !== ID &&
   //   //       setID(Path[1]);
@@ -81,7 +81,7 @@ function Recruit(props, ref) {
   // }, [])
   return (
     <Context.Provider value={{ state, setDispatch }}>
-      <div className="Recruit">
+      <div className="Train">
         {Component === "home" ? (
           // component === "publish" ? (
           //   <Publish></Publish>
@@ -97,7 +97,7 @@ function Recruit(props, ref) {
           ""
         )}
         {Component === "edit" ? <Edit removeTab={removeTab}></Edit> : ""}
-        {tabid === "recruitDetail" ? <Detail></Detail> : ""}
+        {tabid === "trainDetail" ? <Detail></Detail> : ""}
         {/* {Component === "edit" ? <Home></Home> : ""} */}
         {Component === "details" ? <Home></Home> : ""}
       </div>
@@ -107,9 +107,9 @@ function Recruit(props, ref) {
 
 const mapStateToProps = (state) => {
   let {
-    // handleData: { teacherRecruitMsg },
+    handleData: { teacherRecruitMsg },
     commonData: { roleMsg },
   } = state;
-  return {  roleMsg };
+  return { teacherRecruitMsg, roleMsg };
 };
-export default connect(mapStateToProps)(withRouter(memo(forwardRef(Recruit))));
+export default connect(mapStateToProps)(withRouter(memo(forwardRef(Train))));

@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-15 15:52:17
+ * @LastEditTime: 2020-12-15 15:44:32
  * @Description:
- * @FilePath: \teacher-development\src\pages\recruit\home.js
+ * @FilePath: \teacher-development\src\pages\train\home.js
  */
 
 import { connect } from "react-redux";
@@ -60,12 +60,12 @@ import { withRouter, useHistory, useLocation } from "react-router-dom";
 import HomeTop from "../../component/homeTop";
 import Table from "../../component/table";
 import { Context } from "./reducer";
-import { getCruitList, deleteRecruit } from "../../api/recruit";
+import { getCruitList, deleteTrain } from "../../api/train";
 import { autoAlert } from "../../util/public";
 //   import { NavLink } from "react-router-dom";
 function Home(props, ref) {
   let {
-    teacherRecruitMsg: { tabId },
+    // teacherTrainMsg: { tabId },
     roleMsg: { schoolID, collegeID, selectLevel },
     // history,
     activeTab,
@@ -108,14 +108,14 @@ function Home(props, ref) {
     },
     {
       title: "标题",
-      width: 494 * widthRate,
+      width: 404 * widthRate,
       // dataIndex: "title",
       render: (data) => {
-        let { title, RID } = data;
+        let { title, TID } = data;
         return (
           <span
             onClick={() => {
-              history.push("/recruitDetail/" + RID);
+              history.push("/trainDetail/" + TID);
             }}
             className="table-title"
             title={title}
@@ -133,33 +133,54 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-source" title={data}>
-            {data?data:'--'}
+            {data}
           </span>
         );
       },
     },
+
     {
-      title: "发布人",
-      align: "center",
-      width: 90 * widthRate,
-      dataIndex: "publisher",
-      render: (data) => {
-        return (
-          <span className="table-publisher" title={data}>
-            {data?data:'--'}
-          </span>
-        );
-      },
-    },
-    {
-      title: "时间",
+      title: "报名截止时间",
       align: "center",
       width: 172 * widthRate,
-      dataIndex: "time",
+      dataIndex: "ApplyEndTime",
       render: (data) => {
         return (
           <span className="table-time" title={data}>
             {data?data:'--'}
+          </span>
+        );
+      },
+    },
+    {
+      title: "报名人数/限额",
+      align: "center",
+      width: 90 * widthRate,
+      // dataIndex: "publisher",
+      render: (data) => {
+        let { Limit,ApplyCount } = data;
+        let title = (ApplyCount?ApplyCount:0)+'/'+(Limit?Limit:'--')
+        return (
+          <span className="table-limit" title={title}>
+            {title}
+          </span>
+        );
+      },
+    },
+    {
+      title: "培训方式",
+      align: "center",
+      width: 90 * widthRate,
+      dataIndex: "ActivityFlag",
+      render: (data) => {
+        let ActivityList = [
+          { value: 1, title: "线上" },
+          { value: 0, title: "线下" },
+        ];
+        let title = ActivityList[parseInt(data)]?ActivityList[parseInt(data)].title:'--';
+        return (
+          <span className={`table-activity table-activity-${data}`} title={title}>
+            {title}
           </span>
         );
       },
@@ -176,7 +197,7 @@ function Home(props, ref) {
             <span
               className="table-btn btn-edit"
               onClick={() => {
-                history.push("/editRecruit/" + data.RID);
+                history.push("/editTrain/" + data.TID);
               }}
             >
               编辑
@@ -185,12 +206,12 @@ function Home(props, ref) {
               className="table-btn btn-delete"
               onClick={() => {
                 autoAlert({
-                  title: "确定删除该招聘计划?",
+                  title: "确定删除该培训计划?",
                   type: "btn-warn",
                   cancelShow: true,
                   onOk: () => {
-                    DeleteRecruit(
-                      { RIDs: data.RID },
+                    DeleteTrain(
+                      { TIDs: data.TID },
                       tableRef.current.reloadList
                     );
                   },
@@ -224,11 +245,11 @@ function Home(props, ref) {
       width: 300 * widthRate,
       // dataIndex: "title",
       render: (data) => {
-        let { title, RID } = data;
+        let { title, TID } = data;
         return (
           <span
             onClick={() => {
-              // history.push("/recruitDetail/" + RID);
+              // history.push("/trainDetail/" + TID);
             }}
             className="table-title"
             title={title}
@@ -264,7 +285,7 @@ function Home(props, ref) {
             <span
               className="table-btn btn-edit"
               onClick={() => {
-                history.push("/editRecruit/" + data.RID);
+                history.push("/editTrain/" + data.TID);
               }}
             >
               编辑
@@ -277,14 +298,14 @@ function Home(props, ref) {
                 //   type: "btn-warn",
                 //   cancelShow: true,
                 //   onOk: () => {
-                //     DeleteRecruit({ RIDs: data.RID }, () => {
+                //     DeleteTrain({ TIDs: data.TID }, () => {
                 //       tableRef.current.reloadList();
 
                 //       homeTopRef.current.reloadDraft();
                 //     });
                 //   },
                 // });
-                DeleteRecruit({ RIDs: data.RID }, () => {
+                DeleteTrain({ TIDs: data.TID }, () => {
                   tableRef.current.reloadList();
 
                   homeTopRef.current.reloadDraft();
@@ -299,9 +320,9 @@ function Home(props, ref) {
     },
   ];
   // 删除
-  const DeleteRecruit = useCallback(
+  const DeleteTrain = useCallback(
     (param, success = () => {}, error = () => {}) => {
-      deleteRecruit(param).then((res) => {
+      deleteTrain(param).then((res) => {
         if (res.result) {
           success();
         } else {
@@ -335,7 +356,7 @@ function Home(props, ref) {
     if (!initGet.current) {
       initGet.current = true;
     } else {
-      if (pathname === "/teacherRecruit") {
+      if (pathname === "/teacherTrain") {
         tableRef.current.reloadList();
       }
     }
@@ -349,13 +370,13 @@ function Home(props, ref) {
   //
   const homeTopRef = useRef(null);
   return (
-    <div className="Reacruit-context Recruit-home">
+    <div className="Reacruit-context Train-home">
       <HomeTop
         ref={homeTopRef}
         publish={{
-          title: "发布招聘计划",
+          title: "发布培训计划",
           onClick: () => {
-            history.push("/publishRecruit");
+            history.push("/publishTrain");
           },
         }}
         draft={{
@@ -387,7 +408,7 @@ function Home(props, ref) {
       ></Table>
       {/* <div style={{height:'20px',width:'100px',background:'#a6a6a6'}} onClick={()=>{
       history.push(`/${tabId}/publish`  );
-      dispatch(handleActions.setTeacherRecruitMsg({tabName:'发布招聘计划'}))
+      dispatch(handleActions.setTeacherTrainMsg({tabName:'发布培训计划'}))
   }}></div> */}
     </div>
   );
@@ -395,10 +416,10 @@ function Home(props, ref) {
 
 const mapStateToProps = (state) => {
   let {
-    handleData: { teacherRecruitMsg, activeTab },
+    handleData: { teacherTrainMsg, activeTab },
     commonData: { roleMsg },
   } = state;
-  return { teacherRecruitMsg, roleMsg, activeTab };
+  return { teacherTrainMsg, roleMsg, activeTab };
 };
 export default connect(mapStateToProps, null, null, { forwardRef: true })(
   memo(forwardRef(Home))

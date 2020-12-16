@@ -1,0 +1,53 @@
+/*
+ *                   江城子 . 程序员之歌
+ * 
+ *               十年生死两茫茫，写程序，到天亮。
+ *                   千行代码，Bug何处藏。
+ *               纵使上线又怎样，朝令改，夕断肠。
+ * 
+ *               领导每天新想法，天天改，日日忙。
+ *                   相顾无言，惟有泪千行。
+ *               每晚灯火阑珊处，夜难寐，加班狂。
+ * 
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-15 17:10:37
+ * @LastEditTime: 2020-12-16 11:34:07
+ * @Description: 
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\index.scss
+ */
+
+//  头部
+@import "../../component/common/mixin.scss";
+.Analysis-Top {
+    position: relative;
+    .dropdown_title_span {
+        color: #999999;
+    }
+    .top-default {
+        height: 54px;
+        background-color: #ffffff;
+        // box-shadow: 0px 1px 0px 0px
+        // 	#e5e5e5;
+        .term-dropdown {
+            position: absolute;
+            left: 20px;
+            @include v-center;
+        }
+    }
+}
+
+.Analysis {
+    // position: relative;
+    padding-bottom: 66px;
+    .ProVersion {
+        position: absolute;
+        margin-bottom: 0;
+        text-align: center;
+        width: 100%;
+        line-height: 48px;
+        color: #b8b8b8;
+        bottom: 18px;
+    }
+}

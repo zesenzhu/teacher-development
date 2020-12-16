@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-14 20:12:52
+ * @LastEditTime: 2020-12-15 14:35:04
  * @Description:招聘和培训共用的编辑区域组件，发布编辑
  * @FilePath: \teacher-development\src\component\editor\index.js
  */
@@ -47,16 +47,18 @@ import React, {
   useEffect,
   useState,
   // useImperativeHandle,
-  // useMemo,
+  useMemo,
   // useReducer,
   // createContext,
   // useContext,
   //   useRef,
   forwardRef,
 } from "react";
+
 import "./index.scss";
-import { Input, Spin } from "antd";
-import { Tip } from "../common";
+import { Input, DatePicker } from "antd";
+import locale from "antd/es/date-picker/locale/zh_CN";
+import { Tip, Radio, RadioGroup } from "../common";
 import useDetailRequest from "../../hooks/useDetailRequest";
 import $ from "jquery";
 import {
@@ -68,9 +70,12 @@ import {
   getDataStorage,
 } from "../../util/public";
 import { getRecruitDetail } from "../../api/recruit";
+import { getTrainDetail } from "../../api/train";
 import moment from "moment";
 import SparkMD5 from "spark-md5";
 const { TextArea } = Input;
+const { RangePicker } = DatePicker;
+let format = "YYYY-MM-DD HH:mm";
 function Editor(props, ref) {
   // type:分招聘和培训，*recruit：招聘，*train:培训
   // schema:模式，分发布publish和编辑edit两种，默认发布，
@@ -89,6 +94,7 @@ function Editor(props, ref) {
     ...reset
   } = props;
   type = type || "recruitment";
+  let sourceName = type === "recruitment" ? "来源" : "发布单位";
   // 标题
   const [title, setTitle] = useState("");
   // 标题错误显示
@@ -99,7 +105,7 @@ function Editor(props, ref) {
   const [source, setSource] = useState("");
   // 来源错误显示
   const [sourceVisible, setSourceVisible] = useState(false);
-  const [sourceTip, setSourceTip] = useState("请输入来源");
+  const [sourceTip, setSourceTip] = useState("请输入" + sourceName);
 
   // 附件
   const [file, setFile] = useState([]);
@@ -112,15 +118,52 @@ function Editor(props, ref) {
   const [forbinClick, setForbinClick] = useState(false);
   // 正文
   const [main, setMain] = useState("");
-  // 来源错误显示
+  // 正文错误显示
   const [mainVisible, setMainVisible] = useState(false);
   const [mainTip, setMainTip] = useState("请输入正文");
+  // 报名需求
+  const [applyFlag, setApplyFlag] = useState(0);
+  // 报名需求错误显示
+  const [applyFlagVisible, setApplyFlagVisible] = useState(false);
+  const [applyFlagTip, setApplyFlagTip] = useState("请选择是否启用报名");
+  // 上传人数限制
+  const [limit, setLimit] = useState("");
+  // 上传人数限制错误显示
+  const [limitVisible, setLimitVisible] = useState(false);
+  const [limitTip, setLimitTip] = useState("请输入上传人数限制");
+  // 培训方式
+  const [activityFlag, setActivityFlag] = useState(0);
+  // 培训方式错误显示
+  const [activityFlagVisible, setActivityFlagVisible] = useState(false);
+  const [activityFlagTip, setActivityFlagTip] = useState("请选择培训方式");
+
+  // 报名起始时间
+  const [applyBeginTime, setApplyBeginTime] = useState("");
+  const [applyEndTime, setApplyEndTime] = useState("");
+  // 报名起始时间错误显示
+  const [applyTimeVisible, setApplyTimeVisible] = useState(false);
+  const [applyTimeTip, setApplyTimeTip] = useState("请输入选择报名起止时间");
 
   // 预览不用获取数据，数据由上面传下来
   const [detailData, handleChange, loading] = useDetailRequest(
     {},
-    type === "train" ? "" : getRecruitDetail
+    type === "train" ? getTrainDetail : getRecruitDetail
   );
+
+  // 启用报名选择
+  const applyFlagList = useMemo(() => {
+    return [
+      { value: 1, title: "是" },
+      { value: 0, title: "否" },
+    ];
+  }, []);
+  // 启用报名选择
+  const activityFlagList = useMemo(() => {
+    return [
+      { value: 1, title: "线上" },
+      { value: 0, title: "线下" },
+    ];
+  }, []);
   //  请求
   useEffect(() => {
     schema !== "preview" && fileid && handleChange(fileid);
@@ -129,17 +172,22 @@ function Editor(props, ref) {
   }, [fileid]);
   // 赋值
   useEffect(() => {
-    console.log(detailData);
     if (detailData.IsLoaded && detailData.IsExist) {
       //加载完毕
       setTitle(detailData.Title);
       setFile(detailData.FileList);
       setMain(detailData.Content);
+      setSource(detailData.Issue);
+
       if (type === "recruitment") {
         //招聘
-        setSource(detailData.Issue);
       }
       if (type === "train") {
+        setActivityFlag(detailData.ActivityFlag);
+        setApplyBeginTime(detailData.ApplyBeginTime);
+        setApplyEndTime(detailData.ApplyEndTime);
+        setApplyFlag(detailData.ApplyFlag);
+        setLimit(detailData.Limit);
       }
     } else if (!detailData.IsExist) {
       //不存在
@@ -193,13 +241,13 @@ function Editor(props, ref) {
         },
         (isNull) => {
           // 不是招聘的不能进来
-          if (type !== "recruitment") {
-            return;
-          }
+          // if (type !== "recruitment") {
+          //   return;
+          // }
           if (isNull) {
-            setSourceTip("请输入来源");
+            setSourceTip("请输入" + sourceName);
           } else {
-            setSourceTip("来源格式不正确");
+            setSourceTip(sourceName + "格式不正确");
           }
           setSourceVisible(true);
           result = false;
@@ -229,10 +277,108 @@ function Editor(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [main]
   );
-
+  // 检查是否启用报名,返回结果是否对错
+  const checkApplyFlag = useCallback(
+    (value) => {
+      let result = true;
+      if (type !== "train") {//不是培训的，检查都成功
+        return true;
+      }
+      value = value || applyFlag;
+      if (value === "") {
+        // setLimitTip("请输入上传人数限制");
+        setApplyFlagVisible(true);
+        result = false;
+      } else {
+        setApplyFlagVisible(false);
+        result = true;
+      }
+      return result;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [applyFlag]
+  );
+  // 检查培训方式,返回结果是否对错
+  const checkActivityFlag = useCallback(
+    (value) => {
+      let result = true;
+      if (type !== "train") {//不是培训的，检查都成功
+        return true;
+      }
+      value = value || activityFlag;
+      if (value === "") {
+        // setLimitTip("请输入上传人数限制");
+        setActivityFlagVisible(true);
+        result = false;
+      } else {
+        setActivityFlagVisible(false);
+        result = true;
+      }
+      return result;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [activityFlag]
+  );
+  // 检查培训方式,返回结果是否对错
+  const checkApplyTime = useCallback(
+    (value) => {
+      //value传moment
+      let result = true;
+      if (type !== "train") {//不是培训的，检查都成功
+        return true;
+      }
+      let [begin, end] = value || [applyBeginTime, applyEndTime];
+      begin = moment(begin);
+      end = moment(end);
+      if (!begin.isValid() && !end.isValid()) {
+        setApplyTimeTip("请选择报名起止时间");
+        setApplyTimeVisible(true);
+        result = false;
+      } else if (!begin.isValid()) {
+        setApplyTimeTip("请选择报名起始时间");
+        setApplyTimeVisible(true);
+        result = false;
+      } else if (!end.isValid()) {
+        setApplyTimeTip("请选择报名终止时间");
+        setApplyTimeVisible(true);
+        result = false;
+      } else if (end.diff(begin, "m") < 60) {
+        setApplyTimeTip("起始时间与终止时间不能相差小于1小时");
+        setApplyTimeVisible(true);
+        result = false;
+      } else {
+        setApplyTimeVisible(false);
+        result = true;
+      }
+      return result;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [applyBeginTime, applyEndTime]
+  );
+  // 检查上传人数限制,返回结果是否对错
+  const checkLimit = useCallback(
+    (value) => {
+      let result = true;
+      if (type !== "train") {//不是培训的，检查都成功
+        return true;
+      }
+      value = value || limit;
+      // if (value) {
+      //   setLimitTip("请输入上传人数限制");
+      //   setLimitVisible(true);
+      //   result = false;
+      // } else {
+      //   setLimitVisible(false);
+      //   result = true;
+      // }
+      return result;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [limit]
+  );
   // 检查所有
   const checkAll = (fn) => {
-    let result = [checkContent(), checkSource(), checkTitle()];
+    let result = [checkContent(), checkSource(), checkTitle(),checkActivityFlag(),checkApplyFlag(),checkApplyTime(),checkLimit()];
 
     if (result.every((child) => child)) {
       typeof fn === "function" && fn();
@@ -301,7 +447,7 @@ function Editor(props, ref) {
       formData.append("FileName", file.name); //文件名称
       formData.append("File", fileData);
       formData.append("PlanType", type); //培训、招聘计划ID
-      formData.append("PlanID", "265A7E70-D7C2-4B49-AF8B-065AC475BA05"); //培训、招聘计划ID
+      // formData.append("PlanID", "265A7E70-D7C2-4B49-AF8B-065AC475BA05"); //培训、招聘计划ID
       formData.append("Token", token);
       formData.append("SchoolID", schoolID);
       formData.append("FileSavePath", fileSavePath);
@@ -362,6 +508,7 @@ function Editor(props, ref) {
     },
     [upload, file]
   );
+  console.log(moment("").isValid());
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
       <table className="editor-table">
@@ -385,23 +532,161 @@ function Editor(props, ref) {
               </Tip>
             </td>
           </tr>
-          {type === "recruitment" ? (
+          <tr>
+            <td className="must">{sourceName}:</td>
+            <td>
+              <Tip visible={sourceVisible} title={sourceTip}>
+                <Input
+                  value={source}
+                  className="editor-input source-input"
+                  maxLength={30}
+                  placeholder={`请输入${sourceName}...`}
+                  onChange={(e) => {
+                    setSource(e.target.value);
+                  }}
+                  onBlur={(e) => {
+                    checkSource(e.target.value);
+                  }}
+                ></Input>
+              </Tip>
+            </td>
+          </tr>
+          {type === "train" ? (
             <tr>
-              <td className="must">来源:</td>
+              <td>是否启用报名:</td>
               <td>
-                <Tip visible={sourceVisible} title={sourceTip}>
-                  <Input
-                    value={source}
-                    className="editor-input source-input"
-                    maxLength={30}
-                    placeholder={"请输入来源..."}
+                <Tip visible={applyFlagVisible} title={applyFlagTip}>
+                  <RadioGroup
+                    value={applyFlag}
                     onChange={(e) => {
-                      setSource(e.target.value);
+                      setApplyFlag(e.target.value);
+                      setApplyFlagVisible(false);
+                    }}
+                  >
+                    {applyFlagList.map((child, index) => {
+                      return (
+                        <Radio key={index} value={child.value}>
+                          {child.title}
+                        </Radio>
+                      );
+                    })}
+                  </RadioGroup>
+                </Tip>
+              </td>
+            </tr>
+          ) : (
+            <></>
+          )}
+          {type === "train" ? (
+            <tr>
+              <td>报名人数限制:</td>
+              <td>
+                <Tip visible={limitVisible} title={limitTip}>
+                  <Input
+                    value={limit}
+                    // max={}
+                    type={"number"}
+                    className="editor-input limit-input"
+                    maxLength={8}
+                    // placeholder={"请输入报名人数限制..."}
+                    onChange={(e) => {
+                      setLimit(e.target.value);
                     }}
                     onBlur={(e) => {
-                      checkSource(e.target.value);
+                      checkLimit(e.target.value);
                     }}
                   ></Input>
+                </Tip>
+              </td>
+            </tr>
+          ) : (
+            <></>
+          )}
+          {type === "train" ? (
+            <tr>
+              <td className="must">报名起止时间:</td>
+              <td>
+                <Tip visible={applyTimeVisible} title={applyTimeTip}>
+                  <RangePicker
+                    onChange={(dates, dateString) => {
+                      // console.log(dates, dateString);
+                      setApplyBeginTime(dateString[0]);
+                      setApplyEndTime(dateString[1]);
+                      // checkApplyTime(dateString)
+                      if (dateString[0] && dateString[1]) {
+                        // 两个时间都选择了才进行检查
+                        checkApplyTime(dates);
+
+                        // setApplyTimeVisible(false);
+                        // if(dates[0].diff(dates[1],'m')<60){
+                        //   checkApplyTime(dates)
+                        // }
+                      }
+                    }}
+                    // 禁用，没选开始，不能选择结束
+                    disabled={[false, !applyBeginTime]}
+                    allowEmpty={[false, !applyBeginTime]}
+                    value={[
+                      applyBeginTime ? moment(applyBeginTime) : "",
+                      applyEndTime ? moment(applyEndTime) : "",
+                    ]}
+                    disabledDate={(date) => {
+                      let time = moment();
+                      // console.log(date);
+                      return time > date;
+                    }}
+                    // disabledTime={(date, partial) => {
+                    // let now = moment();
+                    // let begin = moment(applyBeginTime);
+                    // let end = moment(applyEndTime);
+                    // console.log(date, partial);
+                    // if (partial === "start") {
+                    //   // 开始时间必须小于结束一个小时，如果不小于，则修改结束时间
+                    //   if (
+                    //     end &&
+                    //     date < end &&
+                    //     date.diff(end, "minutes") < 60
+                    //   ) {
+                    //     setApplyEndTime(date.add(1, "h").format(format));
+                    //   }
+                    // }
+                    // if (partial === "end") {
+                    //   // 结束时间，如果开始时间选择了，结束时间不能小于开始时间+一个小时
+                    //   if (date > begin && date.diff(begin, "minutes") < 60) {
+                    //     setApplyEndTime(begin.add(1, "h").format(format));
+                    //   }
+                    // }
+                    // }}
+                    format={format}
+                    locale={locale}
+                    showTime
+                  ></RangePicker>
+                </Tip>
+              </td>
+            </tr>
+          ) : (
+            <></>
+          )}
+          {type === "train" ? (
+            <tr>
+              <td>培训方式:</td>
+              <td>
+                <Tip visible={activityFlagVisible} title={activityFlagTip}>
+                  <RadioGroup
+                    value={activityFlag}
+                    onChange={(e) => {
+                      setActivityFlag(e.target.value);
+                      setActivityFlagVisible(false);
+                    }}
+                  >
+                    {activityFlagList.map((child, index) => {
+                      return (
+                        <Radio key={index} value={child.value}>
+                          {child.title}
+                        </Radio>
+                      );
+                    })}
+                  </RadioGroup>
                 </Tip>
               </td>
             </tr>
@@ -549,6 +834,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
+                  Limit:limit,
+                  ApplyBeginTime:applyBeginTime,
+                  ApplyEndTime:applyEndTime,
+                  ActivityFlag:activityFlag,
+                  ApplyFlag:applyFlag,
                   ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })
@@ -569,6 +859,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
+                  Limit:limit,
+                  ApplyBeginTime:applyBeginTime,
+                  ApplyEndTime:applyEndTime,
+                  ActivityFlag:activityFlag,
+                  ApplyFlag:applyFlag,
                   // ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })
@@ -589,6 +884,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
+                  Limit:limit,
+                  ApplyBeginTime:applyBeginTime,
+                  ApplyEndTime:applyEndTime,
+                  ActivityFlag:activityFlag,
+                  ApplyFlag:applyFlag,
                   // ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })

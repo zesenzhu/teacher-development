@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-16 11:49:38
+ * @LastEditTime: 2020-12-16 10:59:59
  * @Description:
- * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\index.js
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg.js
  */
 import {
   connect,
@@ -49,67 +49,26 @@ import React, {
   // useCallback,
   memo,
   useEffect,
-  useState,
+  // useState,
   // useImperativeHandle,
-  useRef,
+  // useRef,
   forwardRef,
 } from "react";
-import {
-  withRouter,
-  // , Route, Switch, NavLink
-} from "react-router-dom";
-import "./index.scss";
-import BaseMsg from "./baseMsg";
-import AnalysisTop from "./analysisTop";
-import { handleRoute } from "../../util/public";
-
-function Analysis(props, ref) {
+function BaseMsg(props, ref) {
   console.log(props);
-  let { tabid, tabname, children, param, location,basePlatFormMsg:{ProVersion} } = props;
-  // 设置头部的类型
-  const [topType, setTopType] = useState("default");
-  // 设置路由路径，初始就设置
-  const [Path, setPath] = useState([]);
-  // 学期选择
-  const [TermSelect, setTermSelect] = useState('');
-
-  // 头部ref
-  const topRef = useRef({});
-  useEffect(() => {
-    // 挂载的时候观察路由
-    let Path = handleRoute(location.pathname);
-    setPath(Path);
-    if (Path[0] === "schoolResource" && Path[1]) {
-      //学校详情
-      // 需要获取学校详情请求
-      setTopType("school");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  let {term } = props;
+  console.log(term)
   return (
-    <div className="Analysis">
-      {Path[0] !== "schoolResource" || Path[1] ? (
-        <AnalysisTop
-          onTermChange={(e) => {
-            setTermSelect(e)
-          }}
-          ref={topRef}
-          type={topType}
-        ></AnalysisTop>
-      ) : (
-        ""
-      )}
-      
-      {tabid === "teacherBaseMsg" ? <BaseMsg term={topRef.current.TermSelect}></BaseMsg> : ""}
-      <p className='ProVersion'>{ProVersion}</p>
+    <div className="BaseMsg">
+      {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
+      教师基础信息
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  let {
-    commonData: { roleMsg ,basePlatFormMsg},
-  } = state;
-  return { roleMsg,basePlatFormMsg };
+  // let { UIState, DataState, PublicState } = state;
+  // console.log(state)
+  return state;
 };
-export default connect(mapStateToProps)(withRouter(memo(forwardRef(Analysis))));
+export default connect(mapStateToProps)(memo(forwardRef(BaseMsg)));

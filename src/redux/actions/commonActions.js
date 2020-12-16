@@ -43,18 +43,150 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:14:26
- * @LastEditTime: 2020-12-10 21:36:25
+ * @LastEditTime: 2020-12-15 16:22:02
  * @Description:
  * @FilePath: \teacher-development\src\redux\actions\commonActions.js
  */
-
+import Icon_1 from "./images/icon-select-1.png";
+import Icon_2 from "./images/icon-select-2.png";
+import Icon_3 from "./images/icon-select-3.png";
+import Icon_4 from "./images/icon-select-4.png";
+import Icon_5 from "./images/icon-select-5.png";
+const leftMenu_1 = [
+  {
+    key: "teacherBaseMsg",
+    name: "师资统计分析",
+    icon: Icon_1,
+    children: [
+      {
+        key: "teacherBaseMsg",
+        name: "教师基本信息",
+      },
+      {
+        key: "workMsg",
+        name: "教师工作量",
+      },
+      {
+        key: "teachingAbility",
+        name: "教师教学能力",
+      },
+      {
+        key: "informationizeAbility",
+        name: "教师信息化能力",
+      },
+      {
+        key: "schoolResource",
+        name: "各校师资",
+      },
+    ],
+  },
+  {
+    key: "teacherPersona",
+    name: "教师画像查询",
+    icon: Icon_2,
+    children: [],
+  },
+  {
+    key: "teacherRecruit",
+    name: "教师招聘计划管理",
+    icon: Icon_3,
+    children: [],
+    // 除了左侧菜单的其它合法一级路由,打开这个路由，左侧会对应打开所属的节点
+    params: [
+      { key: "publishRecruit", title: "发布招聘计划" },
+      { key: "editRecruit", title: "编辑招聘计划" },
+      { key: "recruitDetail", title: "招聘计划详情" },
+    ],
+  },
+  {
+    key: "teacherTrain",
+    name: "教师培训计划管理",
+    icon: Icon_4,
+    children: [],
+    params: [
+      { key: "publishTrain", title: "发布培训计划" },
+      { key: "editTrain", title: "编辑培训计划" },
+      { key: "trainDetail", title: "培训计划详情" },
+    ],
+  },
+  { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
+];
+const leftMenu_0 = [
+  {
+    key: "teacherBaseMsg",
+    name: "师资统计分析",
+    icon: Icon_1,
+    children: [
+      {
+        key: "teacherBaseMsg",
+        name: "教师基本信息",
+      },
+      {
+        key: "workMsg",
+        name: "教师工作量",
+      },
+      {
+        key: "teachingAbility",
+        name: "教师教学能力",
+      },
+      {
+        key: "informationizeAbility",
+        name: "教师信息化能力",
+      },
+      // {
+      //   key: "schoolResource",
+      //   name: "各校师资",
+      // },
+    ],
+  },
+  {
+    key: "teacherPersona",
+    name: "教师画像查询",
+    icon: Icon_2,
+    children: [],
+  },
+  {
+    key: "teacherRecruit",
+    name: "教师招聘计划管理",
+    icon: Icon_3,
+    children: [],
+    // 除了左侧菜单的其它合法一级路由,打开这个路由，左侧会对应打开所属的节点
+    params: [
+      { key: "publishRecruit", title: "发布招聘计划" },
+      { key: "editRecruit", title: "编辑招聘计划" },
+      { key: "recruitDetail", title: "招聘计划详情" },
+    ],
+  },
+  {
+    key: "teacherTrain",
+    name: "教师培训计划管理",
+    icon: Icon_4,
+    children: [],
+    params: [
+      { key: "publishTrain", title: "发布培训计划" },
+      { key: "editTrain", title: "编辑培训计划" },
+      { key: "trainDetail", title: "培训计划详情" },
+    ],
+  },
+  { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
+];
 const COMMON_SET_TEST = "COMMON_SET_TEST";
 const COMMON_SET_IDENTITY = "COMMON_SET_IDENTITY";
 const COMMON_SET_USER_INFO = "COMMON_SET_USER_INFO";
 const COMMON_SET_BASE_PLAT_FORM_MSG = "COMMON_SET_BASE_PLAT_FORM_MSG";
 const COMMON_SET_ROLE_MSG = "COMMON_SET_ROLE_MSG";
 const COMMON_SET_CONTENT_HW = "COMMON_SET_CONTENT_HW";
-
+// 设置左侧菜单
+const COMMON_SET_LEFT_MENU = "COMMON_SET_LEFT_MENU";
+// *type:0教育局的学校，大学的学院，1教育局，大学的学校，默认0
+const SetLeftMenu = (type = 0) => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: COMMON_SET_LEFT_MENU,
+      data: type === 1 ? leftMenu_1 : leftMenu_0,
+    });
+  };
+};
 const actions = {
   COMMON_SET_TEST,
   COMMON_SET_USER_INFO,
@@ -62,5 +194,7 @@ const actions = {
   COMMON_SET_IDENTITY,
   COMMON_SET_ROLE_MSG,
   COMMON_SET_CONTENT_HW,
+  COMMON_SET_LEFT_MENU,
+  SetLeftMenu,
 };
 export default actions;

@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-07 16:08:21
- * @LastEditTime: 2020-12-15 14:44:08
+ * @LastEditTime: 2020-12-15 14:42:59
  * @Description:
- * @FilePath: \teacher-development\src\pages\recruit\publish.js
+ * @FilePath: \teacher-development\src\pages\train\publish.js
  */
 
 import { connect } from "react-redux";
@@ -60,13 +60,12 @@ import Editor from "../../component/editor";
 import { Context } from "./reducer";
 import { Loading } from "../../component/common";
 import FileDetail from "../../component/fileDetail";
-import { publishRecruit } from "../../api/recruit";
+import { publishTrain } from "../../api/train";
 let { TabPane } = Tabs;
-// import { getCruitList } from "../../api/recruit";
+// import { getCruitList } from "../../api/train";
 //   import { NavLink } from "react-router-dom";
 function Publish(props, ref) {
   let {
-    teacherRecruitMsg: { tabId },
     removeTab,
     activeTab,
     contentHW,
@@ -95,22 +94,23 @@ function Publish(props, ref) {
   // 发布
   const publish = useCallback(
     (data) => {
-      // *RStatus:状态：0草稿；1正式发布
+      // *TStatus:状态：0草稿；1正式发布
       setLoading(true);
-      let {FileList,...other} = data
+      let { FileList, ...other } = data;
       // FileName:FileList[0].FileName,
       // FileUrl:FileList[0].FileUrl,
       // FileSize:FileList[0].FileSize,
       // setTimeout(() => {
-      publishRecruit({
+      publishTrain({
         SchoolID: schoolID,
         CollegeID: collegeID,
         SelectLevel: selectLevel,
-        RStatus: 1,FileList,
+        TStatus: 1,
+        FileList,
         // ...previewData,
         ...other,
       }).then(({ result }) => {
-        if (result) removeTab("", "", "teacherRecruit",'',()=>{});
+        if (result) removeTab("", "", "teacherTrain", "",()=>{});
         else {
           setLoading(false);
         }
@@ -132,13 +132,14 @@ function Publish(props, ref) {
         <TabPane tab="publish" key="publish">
           <div
             // style={{ display: `${preview ? "none" : "block"}` }}
-            className=" Reacruit-context Publish-context Recruit-publish"
+            className=" Reacruit-context Publish-context Train-publish"
           >
             <div className="context-top  ">
-              <span className=" title-1">发布招聘计划</span>
-              <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
+              <span className=" title-1">发布培训计划</span>
+              {/* <span className=" title-2">(提示: 发布后将在各校官网显示)</span> */}
             </div>
             <Editor
+              type={"train"}
               preview={{
                 onClick: (data) => {
                   // data:{title, source, main}
@@ -155,23 +156,23 @@ function Publish(props, ref) {
                   // setLoading(true);
 
                   // setTimeout(() => {
-                  //   removeTab("", "", "teacherRecruit");
+                  //   removeTab("", "", "teacherTrain");
                   // }, 3000);
                   // setPreviewData(data);
 
-                  publish({...data,RStatus:0});
+                  publish({ ...data, TStatus: 0 });
                 },
               }}
               publish={{
                 onClick: (data) => {
-                  publish({...data,RStatus:1});
+                  publish({ ...data, TStatus: 1 });
                 },
               }}
               cancel={{
                 onClick: () => {
-                  removeTab("", "", "teacherRecruit", "", (active, param) => {
+                  removeTab("", "", "teacherTrain", "", (active, param) => {
                     console.log(active, param);
-                    // history.push('/teacherRecruit')
+                    // history.push('/teacherTrain')
                   });
                 },
               }}
@@ -180,7 +181,7 @@ function Publish(props, ref) {
         </TabPane>
         <TabPane tab="preview" key="preview">
           {preview ? (
-            <div className="Recruit-preview-box">
+            <div className="Train-preview-box">
               <div
                 style={{ height: contentHW.height + "px" }}
                 // onClick={() => {
@@ -192,14 +193,14 @@ function Publish(props, ref) {
               >
                 <FileDetail
                   schema={"preview"}
-                  type={"recruit"}
+                  type={"train"}
                   previewData={previewData}
                   onReturn={() => {
                     setPreview(false);
                     setActiveTab("publish");
                   }}
                   onComfirm={() => {
-                    publish({...previewData,RStatus:1});
+                    publish({ ...previewData, TStatus: 1 });
                   }}
                 ></FileDetail>
               </div>
@@ -215,9 +216,9 @@ function Publish(props, ref) {
 
 const mapStateToProps = (state) => {
   let {
-    handleData: { teacherRecruitMsg },
+    handleData: { teacherTrainMsg },
     commonData: { roleMsg, contentHW },
   } = state;
-  return { teacherRecruitMsg, roleMsg, contentHW };
+  return { teacherTrainMsg, roleMsg, contentHW };
 };
 export default connect(mapStateToProps)(withRouter(memo(forwardRef(Publish))));
