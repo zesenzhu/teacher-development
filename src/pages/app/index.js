@@ -159,7 +159,11 @@ function App(props, ref) {
       type: commonActions.COMMON_SET_ROLE_MSG,
       data: data.role,
     });
-// 根据版本级别，显示不同的左侧
+    dispatch({
+      type: commonActions.COMMON_SET_TERM_INFO,
+      data: data.termInfo,
+    });
+    // 根据版本级别，显示不同的左侧
     dispatch(commonActions.SetLeftMenu(data.role.level));
 
     // }
@@ -194,7 +198,6 @@ function App(props, ref) {
       getActiveTab={getActiveTab}
       onContentresize={(height, width) => {
         // 获取主区域的宽高
-        console.log(height, width);
         dispatch({
           type: commonActions.COMMON_SET_CONTENT_HW,
           data: { height, width },
@@ -209,7 +212,11 @@ function App(props, ref) {
         },
       }}
     >
-      <Analysis tabid={"schoolResource"} tabname={SchoolName} param={"SchoolID"}>
+      <Analysis
+        tabid={"schoolResource"}
+        tabname={SchoolName}
+        param={"SchoolID"}
+      >
         {SchoolName}
       </Analysis>
       <div tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
@@ -235,7 +242,11 @@ function App(props, ref) {
       <Analysis tabid={"teacherBaseMsg"} tabname={"教师基本信息"}>
         教师基本信息
       </Analysis>
-      <Analysis tabid={"teacherPersona"} tabname={TeacherName} param={"TeacherID"}>
+      <Analysis
+        tabid={"teacherPersona"}
+        tabname={TeacherName}
+        param={"TeacherID"}
+      >
         {TeacherName}
       </Analysis>
       <Recruit

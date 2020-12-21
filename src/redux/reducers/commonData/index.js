@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-15 16:15:27
+ * @LastEditTime: 2020-12-21 10:30:59
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -31,11 +31,25 @@ const commonData = (
     identity: {},
     basePlatFormMsg: {},
     roleMsg: {},
+    termInfo: {
+      HasHistory:false,
+      TermInfo:[]
+    },
+    levelHash: {
+      1: { productLevel: 1, selectLevel: 1, title: "区域", sub: "学段" },
+      2: { productLevel: 2, selectLevel: 2, title: "学校", sub: "学院" },
+      3: { productLevel: 3, selectLevel: 2, title: "学校", sub: "学科" },
+      4: { productLevel: 4, selectLevel: 3, title: "学院", sub: "教研室" },
+    },
     contentHW: { height: 0, width: 0 },
   },
   actions
 ) => {
   switch (actions.type) {
+    case commonActions.COMMON_SET_TERM_INFO:
+      return Object.assign({}, state, {
+        termInfo: actions.data,
+      });
     case commonActions.COMMON_SET_LEFT_MENU:
       return Object.assign({}, state, {
         leftMenu: actions.data,

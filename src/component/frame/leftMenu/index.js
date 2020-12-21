@@ -21,7 +21,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 15:10:38
- * @LastEditTime: 2020-12-08 19:13:48
+ * @LastEditTime: 2020-12-19 10:38:29
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\leftMenu\index.js
  */
@@ -167,6 +167,15 @@ function MenuLink(props, ref) {
                   (params instanceof Array &&
                     params.some((param) => {
                       return param.key === Path[0];
+                    })) ||
+                  (children instanceof Array &&
+                    children.some((child) => {
+                      return (
+                        child.params instanceof Array &&
+                        child.params.some((param) => {
+                          return param.key === Path[0];
+                        })
+                      );
                     }))
                 ) {
                   // 一级级选中后影响一级选中
@@ -221,14 +230,20 @@ function MenuLink(props, ref) {
               style={{ height: openChild ? `${children.length * 44}px` : 0 }}
             >
               {children.map((second, secondIndex) => {
-                let { key, name, icon } = second;
+                let { key, name, icon, params } = second;
                 return (
                   <NavLink
                     isActive={(match, location) => {
                       //  选中操作，可影响上级，只做选中操作
 
                       // 选择下级的话就必定上级选中
-                      if (match) {
+                      if (
+                        match ||
+                        (params instanceof Array &&
+                          params.some((param) => {
+                            return param.key === Path[0];
+                          }))
+                      ) {
                         // 二级选中后影响一级选中
                         // setSelectMenu(child.key);
                         return true;

@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-19 15:15:20
- * @LastEditTime: 2020-12-15 16:25:10
+ * @LastEditTime: 2020-12-21 11:08:16
  * @Description: 平台初始化的逻辑
  * @FilePath: \teacher-development\src\util\init.js
  */
@@ -66,15 +66,31 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
       TokenCheck({
         //里面进行token验证，用户信息获取，回调返回true才能正常，不然页面初始化失败
         firstLoad: true,
-        callback: async (userInfo) => {
+        callback: (userInfo) => {
           //有用户信息才能继续下面的工作
           if (userInfo) {
-            let identityDetail = await getIdentityDetail(moduleID);
-            success({
-              identityDetail,
-              basePlatformMsg: data,
-              userInfo,
-              role: setUnifyRole(userInfo, identityDetail, data),
+            let identityDetail = getIdentityDetail(moduleID);
+            let termInfo = getTermInfo(
+              userInfo.SchoolID ? userInfo.SchoolID : ""
+            );
+            // 多个接口，不能用await阻塞，要用Promise
+            // let identityDetail = getPromise(
+            //   getIdentityDetail.bind(this, moduleID)
+            // );
+            // let termInfo = getPromise(
+            //   getTermInfo.bind(this, userInfo.SchoolID ? userInfo.SchoolID : "")
+            // );
+
+            Promise.all([identityDetail, termInfo]).then((res) => {
+              let [identityDetail, termInfo] = res;
+              // console.log(identityDetail, termInfo);
+              success({
+                identityDetail,
+                basePlatformMsg: data,
+                userInfo,
+                termInfo,
+                role: setUnifyRole(userInfo, identityDetail, data),
+              });
             });
           } else {
             error();
@@ -92,6 +108,14 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
   });
 };
 
+// 传个promise进去，返回promise
+const getPromise = (promise) => {
+  return new Promise((resolve, reject) => {
+    promise().then((res) => {
+      resolve(res);
+    });
+  });
+};
 /**
  * @description: 处理用户信息，统一角色身份，返回统一后的教育局端、高校端的各种身份
  * @param {*userInfo:后台返回的用户个人信息，*identity：后台返回的身份信息,*baseMsg:平台基础信息}
@@ -133,6 +157,8 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     let collegeID = userInfo.CollegeID ? userInfo.CollegeID : "";
     // 控制级别：1教育局，2学校，3学院
     let selectLevel = 2;
+    // 数字记录组织类型：*1：教育局，*2：大学学校，*3：教育局学校*4大学学院
+    let productLevel = 3; //默认为3
     // 根据身份和产品类型判断显示的版本
     switch (ProductUseRange) {
       // 1，2，6：单个大学，为高校版本学校端
@@ -143,10 +169,13 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         if (IdentityCode !== "IC0008") {
           //学校
           version = "university";
+          productLevel = 2;
           selectLevel = 2;
         } else if (IdentityCode === "IC0008") {
           //学院
           version = "university-academy";
+          productLevel = 4;
+
           selectLevel = 3;
         }
         break;
@@ -157,6 +186,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         //学校
         version = "education-school";
         selectLevel = 2;
+        productLevel = 3;
 
         // } else {
         //   version = 'noPower'; //无权限进入
@@ -167,6 +197,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       case 8:
         version = "education-school";
         selectLevel = 2;
+        productLevel = 3;
 
         //非g管理员
         if (IdentityCode.includes("IC000")) {
@@ -174,6 +205,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
           //教育局
           version = "education";
           selectLevel = 1;
+          productLevel = 1;
         }
         // else if (IdentityCode === "IC0008") {
         //   //教育局
@@ -187,7 +219,15 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "noPower";
     }
     // Role.version = version;
-    Role = {...Role,version,selectLevel,collegeID,schoolID,level:!version.includes('-')?1:0}
+    Role = {
+      ...Role,
+      version,
+      selectLevel,
+      collegeID,
+      schoolID,
+      productLevel,
+      level: !version.includes("-") ? 1 : 0,
+    };
     // if ( ProductUseRange === 1||) {
     // }
   } catch (e) {
@@ -286,8 +326,8 @@ const IdentityRecognition = (
   }
   let IdentityMsg = {};
   if (ModuleID) {
-    const promiseList = IdentityList.map(async (i) => {
-      const res = await ValidateIdentity(i.IdentityCode, ModuleID);
+    const promiseList = IdentityList.map((i) => {
+      const res = ValidateIdentity(i.IdentityCode, ModuleID);
 
       return res;
     });
@@ -425,4 +465,40 @@ export const getBasePlatformMsg = async (keys = []) => {
   setDataStorage("BasePlatformMsg", json.Data);
 
   return BasePlatformMsg;
+};
+/**
+ * @description: 异步，获取学年学期,http://192.168.129.1:8033/showdoc/web/#/21?page_id=2085
+ * @param {*SchoolID:}
+ * @return {*promise}
+ */
+export const getTermInfo = async (SchoolID) => {
+  let url = BasicProxy + "/Global/GetTermInfo";
+  let TermInfo = getDataStorage("TermInfo"); //具体有什么字段这里不做判断，外部判断
+  let json = "";
+  //  界面第一次加载获取后保存，基本不会出错
+
+  if (TermInfo&&TermInfo.TermInfo instanceof Array&&TermInfo.length>0) {
+    json = await new Promise((resolve, reject) => {
+      resolve({
+        StatusCode: 200,
+        Data: TermInfo,
+      });
+    });
+  } else {
+    let res = await get({ url });
+    json = await res.json();
+  }
+
+  // let json = await pro();
+  // let res = await getData(url, 2, "cors", false, false);
+  // let json = await res.json();
+  if (json.StatusCode === 200) {
+    TermInfo = json.Data;
+  } else {
+    TermInfo = false; //有错误
+  }
+  // if(!(json.Data instanceof Array)&&)
+  setDataStorage("TermInfo", json.Data);
+
+  return TermInfo;
 };

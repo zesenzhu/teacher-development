@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-18 09:01:40
- * @LastEditTime: 2020-12-14 21:29:16
+ * @LastEditTime: 2020-12-19 16:19:10
  * @Description:
  * @FilePath: \teacher-development\src\util\public.js
  */
@@ -79,6 +79,7 @@
 // import config from "./config";
 import React from "react";
 import ReactDOM from "react-dom";
+import $ from "jquery";
 import { ErrorAlert } from "../component/common";
 //对象深度对比
 export const deepCompare = (x, y) => {
@@ -819,7 +820,7 @@ export function getAlertDom() {
  * @param {*}
  * @return {*}
  */
-export const autoAlert = ({ title, type, autoHide ,...other}) => {
+export const autoAlert = ({ title, type, autoHide, ...other }) => {
   title = title || "服务器出现未知异常，请重试或联系管理员";
 
   let AlertDom = getAlertDom();
@@ -946,16 +947,16 @@ export const constructFileType = (fileName) => {
           type = "video";
           isDecide = true;
         }
-        return child === FileType
+        return child === FileType;
       });
       AudioType.some((child) => {
         //音频
         if (child === FileType) {
           type = "audio";
           isDecide = true;
-        return child === FileType
+          return child === FileType;
         }
-        return child === FileType
+        return child === FileType;
       });
       PicType.some((child) => {
         //图片
@@ -963,7 +964,7 @@ export const constructFileType = (fileName) => {
           type = "pic";
           isDecide = true;
         }
-        return child === FileType
+        return child === FileType;
       });
       CompressType.some((child) => {
         //压缩
@@ -971,7 +972,7 @@ export const constructFileType = (fileName) => {
           type = "zip";
           isDecide = true;
         }
-        return child === FileType
+        return child === FileType;
       });
       if (!isDecide) {
         //前面不匹配
@@ -980,7 +981,7 @@ export const constructFileType = (fileName) => {
           type = "doc";
         } else if (FileType === "xls" || FileType === "xlsx") {
           type = "excel";
-        } else if (FileType === "ppt"  ) {
+        } else if (FileType === "ppt") {
           type = "ppt";
         } else if (FileType === "pdf") {
           type = "pdf";
@@ -997,35 +998,87 @@ export const constructFileType = (fileName) => {
   return type;
 };
 
-
 /**
  * @description: 文件大小
  * @param {*}
  * @return {*}
  */
 export const calculateFileSize = (fileSize) => {
-  let unit = ['B','KB','M','G','T'];
-  let i = unit.length-1;
-  let myUnit = 'B'
-  for(i;i>=0;i--){
-      if(fileSize/Math.pow(1024,i)>=1){
-          myUnit = unit[i];
-          break;
-      }
+  let unit = ["B", "KB", "M", "G", "T"];
+  let i = unit.length - 1;
+  let myUnit = "B";
+  for (i; i >= 0; i--) {
+    if (fileSize / Math.pow(1024, i) >= 1) {
+      myUnit = unit[i];
+      break;
+    }
   }
-  let str = Math.round(fileSize/Math.pow(1024,i)*100)/100;
-  let Size = str.toString()+myUnit;
+  let str = Math.round((fileSize / Math.pow(1024, i)) * 100) / 100;
+  let Size = str.toString() + myUnit;
   // // console.log(i,myUnit,Size)
   return Size;
-  
-}
+};
 
 /**
  * @description: 获取平台的token，先url，后session，最后local，如果都没有，直接掉线
  * @param {*}
  * @return {*}
  */
-export const getToken = ()=>{
-  let token = getQueryVariable('lg_tk')||getDataStorage('token')||getDataStorage('token',true);
-  return token
-} 
+export const getToken = () => {
+  let token =
+    getQueryVariable("lg_tk") ||
+    getDataStorage("token") ||
+    getDataStorage("token", true);
+  return token;
+};
+
+/**
+ * @description: 使用echarts后，界面resize，对echarts实例要进行重绘
+ * @param {*echartsInstance:echarts实例，必选，*params:function,返回{width,height},可缺省}
+ * @return {*}
+ */
+export const resizeForEcharts = (echartsInstance, fn) => {
+  if (!echartsInstance) {
+    return;
+  }
+  $(window).resize(() => {
+    let height = null;
+    let width = null;
+    if (typeof fn === "function") {
+      let back = fn();
+      if (back instanceof Object) {
+        height = back.height || null;
+        width = back.width || null;
+      }
+    }
+
+    echartsInstance.resize(width, height);
+  });
+};
+
+
+function getClass(o) { //判断数据类型
+  return Object.prototype.toString.call(o).slice(8, -1);
+}
+/**
+ * @description: 深拷贝
+ * @param {*}
+ * @return {*}
+ */
+export function deepCopy(obj) {
+  var result, oClass = getClass(obj);
+
+  if (oClass === "Object") result = {}; //判断传入的如果是对象，继续遍历
+  else if (oClass === "Array") result = []; //判断传入的如果是数组，继续遍历
+  else return obj; //如果是基本数据类型就直接返回
+
+  for (var i in obj) {
+      var copy = obj[i];
+
+      if (getClass(copy) === "Object") result[i] = deepCopy(copy); //递归方法 ，如果对象继续变量obj[i],下一级还是对象，就obj[i][i]
+      else if (getClass(copy) === "Array") result[i] = deepCopy(copy); //递归方法 ，如果对象继续数组obj[i],下一级还是数组，就obj[i][i]
+      else result[i] = copy; //基本数据类型则赋值给属性
+  }
+
+  return result;
+}

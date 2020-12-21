@@ -1,0 +1,417 @@
+/*
+ *                                                     __----~~~~~~~~~~~------___
+ *                                    .  .   ~~//====......          __--~ ~~
+ *                    -.            \_|//     |||\\  ~~~~~~::::... /~
+ *                 ___-==_       _-~o~  \/    |||  \\            _/~~-
+ *         __---~~~.==~||\=_    -_--~/_-~|-   |\\   \\        _/~
+ *     _-~~     .=~    |  \\-_    '-~7  /-   /  ||    \      /
+ *   .~       .~       |   \\ -_    /  /-   /   ||      \   /
+ *  /  ____  /         |     \\ ~-_/  /|- _/   .||       \ /
+ *  |~~    ~~|--~~~~--_ \     ~==-/   | \~--===~~        .\
+ *           '         ~-|      /|    |-~\~~       __--~~
+ *                       |-~~-_/ |    |   ~\_   _-~            /\
+ *                            /  \     \__   \/~                \__
+ *                        _--~ _/ | .-~~____--~-/                  ~~==.
+ *                       ((->/~   '.|||' -_|    ~~-/ ,              . _||
+ *                                  -_     ~\      ~~---l__i__i__i--~~_/
+ *                                  _-~-__   ~)  \--______________--~~
+ *                                //.-~~~-~_--~- |-------~~~~~~~~
+ *                                       //.-~~~--\
+ *                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ *                               神兽保佑            永无BUG
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-16 13:58:16
+ * @LastEditTime: 2020-12-21 16:58:32
+ * @Description: 
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\index.scss
+ */
+
+// 教师人数
+@import "../../../component/common/mixin.scss";
+.TeacherCount {
+    position: relative;
+    padding: 20px 0;
+    .tc-tip {
+        line-height: 22px;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 0;
+        color: #999999;
+        .tc-tip-1 {
+            font-weight: bold;
+            color: #333333;
+        }
+        .tc-tip-2 {
+            font-weight: bold;
+            color: #009900;
+        }
+    }
+    .tc-echarts {
+        width: 100%;
+        height: 220px;
+    }
+    .tc-tooltip {
+        position: relative;
+        .nodename {
+            font-size: 12px;
+            line-height: 20px;
+            color: #fffd64;
+            font-weight: bold;
+        }
+        p {
+            margin-bottom: 0;
+            position: relative;
+            color: #cccccc;
+            span {
+                color: #fff;
+            }
+        }
+        .msg {
+            padding-left: 12px;
+            &::before {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                left: 0;
+                border-radius: 50%;
+                background-color: #ffffff;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+                @include v-center;
+            }
+        }
+    }
+}
+
+.TeacherFamous {
+    padding: 20px 37px;
+    min-height: 100px;
+    .tf-node {
+        text-align: center;
+        padding-top: 16px;
+        display: inline-block;
+        vertical-align: top;
+        // width: 14.2%;//方案一，每行7个
+        width: 162px; //固定宽
+        &:nth-of-type(7n + 1) {
+            span {
+                background-color: #8099ff;
+                box-shadow: 0px 4px 10px 0px rgba(151, 170, 249, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 2) {
+            span {
+                background-color: #ff73b2;
+                box-shadow: 0px 4px 10px 0px rgba(255, 115, 178, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 3) {
+            span {
+                background-color: #3caeff;
+                box-shadow: 0px 4px 10px 0px rgba(60, 174, 255, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 4) {
+            span {
+                background-color: #ffaf54;
+                box-shadow: 0px 4px 10px 0px rgba(255, 183, 101, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 5) {
+            span {
+                background-color: #2edba6;
+                box-shadow: 0px 4px 10px 0px rgba(46, 219, 166, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 6) {
+            span {
+                background-color: #fd8276;
+                box-shadow: 0px 4px 10px 0px rgba(253, 130, 118, 0.45);
+            }
+        }
+        &:nth-of-type(7n + 7) {
+            span {
+                background-color: #80c624;
+                box-shadow: 0px 4px 10px 0px rgba(128, 198, 36, 0.45);
+            }
+        }
+        span {
+            width: 72px;
+            height: 72px;
+            line-height: 72px;
+            vertical-align: top;
+            display: inline-block;
+            background-color: #3caeff;
+            box-shadow: 0px 4px 10px 0px rgba(60, 174, 255, 0.45);
+            font-size: 20px;
+            border-radius: 50%;
+            color: #ffffff;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            -ms-border-radius: 50%;
+            -o-border-radius: 50%;
+        }
+        p {
+            margin-bottom: 0;
+            margin-top: 8px;
+            line-height: 36px;
+            color: #656565;
+            @include textOverFlow;
+        }
+    }
+}
+
+.TeacherAge_1 {
+    position: relative;
+    padding: 20px;
+    height: 316px;
+    .ta-left,
+    .ta-right {
+        padding-top: 20px;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        text-align: center;
+        height: 100%;
+        padding-right: 7px;
+        width: 50%;
+    }
+    .ta-right {
+        padding: 0;
+        padding-left: 7px;
+    }
+    .ta-tip {
+        line-height: 16px;
+        font-size: 14px;
+        text-align: left;
+        padding-left: 5px;
+        margin-bottom: 0;
+        color: #999999;
+        .ta-tip-1 {
+            font-weight: bold;
+            color: #333333;
+        }
+        .ta-tip-2 {
+            font-weight: bold;
+            color: #009900;
+        }
+    }
+    .ta-echarts {
+        width: calc(50% - 40px);
+        height: 100%;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .ta-tooltip {
+        position: relative;
+        .nodename {
+            font-size: 12px;
+            line-height: 20px;
+            color: #fffd64;
+            font-weight: bold;
+        }
+        p {
+            margin-bottom: 0;
+            position: relative;
+            color: #cccccc;
+            span {
+                color: #fff;
+            }
+        }
+        .msg {
+            padding-left: 12px;
+            &::before {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                left: 0;
+                border-radius: 50%;
+                background-color: #ffffff;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+                @include v-center;
+            }
+        }
+    }
+}
+
+.TeacherTitle,
+.TeacherAge {
+    position: relative;
+    padding: 20px;
+    // height: 316px;
+    .tt-top,
+    .tt-bottom {
+        position: relative;
+        text-align: center;
+        // width: 100%;
+    }
+    .tt-bottom {
+        height: 325px;
+    }
+    .tt-tip {
+        line-height: 36px;
+        font-size: 14px;
+        text-align: center;
+        padding-left: 5px;
+        margin-bottom: 20px;
+        color: #999999;
+        .tt-tip-1 {
+            color: #333333;
+            font-weight: bold;
+        }
+        .tt-tip-2 {
+            font-weight: bold;
+            color: #009900;
+        }
+    }
+    .tt-echarts {
+        width: calc(50% - 40px);
+        height: 290px;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .tt-tooltip {
+        position: relative;
+        .nodename {
+            font-size: 14px;
+            line-height: 20px;
+            color: #fffd64;
+            // font-weight: bold;
+        }
+        p {
+            margin-bottom: 0;
+            position: relative;
+            color: #cccccc;
+            span {
+                color: #fff;
+            }
+        }
+        .msg {
+            padding-left: 12px;
+            &::before {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                left: 0;
+                border-radius: 50%;
+                background-color: #ffffff;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+                @include v-center;
+            }
+        }
+    }
+}
+
+.TeacherTitle {
+    .tt-echarts-1 {
+        &:after {
+            content: "";
+            position: absolute;
+            right: -0.5px;
+            top: 0;
+            // @include v-center;
+            width: 1px;
+            height: 80%;
+            background: #b8b8b8;
+        }
+    }
+    .tt-bottom-box {
+        position: relative;
+        .tt-bottom-legend {
+            position: absolute;
+            z-index: 2;
+            right: 56px;
+            top: 50px;
+            .tt-bottom-legend-edu {
+                line-height: 20px;
+                margin-bottom: 0;
+            }
+            .tt-legend {
+                float: right;
+                font-size: 12px;
+                color: #999999;
+                margin-left: 15px;
+                .legend-icon {
+                    display: inline-block;
+                    height: 11px;
+                    width: 11px;
+                    border-radius: 2px;
+                    -webkit-border-radius: 2px;
+                    -moz-border-radius: 2px;
+                    -ms-border-radius: 2px;
+                    -o-border-radius: 2px;
+                    overflow: hidden;
+                    vertical-align: middle;
+                    margin-right: 3px;
+                }
+            }
+        }
+    }
+}
+
+.BaseMsg {
+    .t-tooltip {
+        position: relative;
+        .nodename {
+            font-size: 14px;
+            line-height: 20px;
+            color: #fffd64;
+            // font-weight: bold;
+        }
+        p {
+            margin-bottom: 0;
+            position: relative;
+            color: #cccccc;
+            text-align: left;
+            span {
+                color: #fff;
+            }
+        }
+        .msg {
+            .ball {
+                width: 10px;
+                height: 10px;
+                display: inline-block;
+                margin-left: 4px;
+                margin-right: 4px;
+                vertical-align: middle;
+                border-radius: 50%;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+            }
+        }
+        .msg-2 {
+            padding-left: 12px;
+            &::before {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                left: 0;
+                border-radius: 50%;
+                background-color: #ffffff;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+                @include v-center;
+            }
+        }
+    }
+}

@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-16 11:49:38
+ * @LastEditTime: 2020-12-21 10:08:16
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\index.js
  */
@@ -62,19 +62,39 @@ import "./index.scss";
 import BaseMsg from "./baseMsg";
 import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
-
+import { Scrollbars } from "react-custom-scrollbars";
+import Anchor from "../../component/anchor";
+import $ from "jquery";
 function Analysis(props, ref) {
-  console.log(props);
-  let { tabid, tabname, children, param, location,basePlatFormMsg:{ProVersion} } = props;
+  let {
+    tabid,
+    tabname,
+    children,
+    param,
+    termInfo: {  TermInfo, HasHistory },
+    roleMsg: { schoolID, collegeID, selectLevel, productLevel },
+    location,
+    levelHash,
+    basePlatFormMsg: { ProVersion },
+    contentHW: { height },
+  } = props;
   // 设置头部的类型
   const [topType, setTopType] = useState("default");
   // 设置路由路径，初始就设置
   const [Path, setPath] = useState([]);
+  // 底部version高度
+  const [bottomHeight, setBottomHeight] = useState(66);
   // 学期选择
-  const [TermSelect, setTermSelect] = useState('');
-
+  const [TermSelect, setTermSelect] = useState("");
+  // 获取头部高度,默认54
+  const [topHeight, setTopHeight] = useState(54);
+  // 获取锚点结构
+  const [anchorList, setAnchorList] = useState([]);
   // 头部ref
   const topRef = useRef({});
+  // contentref
+  const anchorRef = useRef(null);
+  const scrollRef = useRef(null);
   useEffect(() => {
     // 挂载的时候观察路由
     let Path = handleRoute(location.pathname);
@@ -90,26 +110,74 @@ function Analysis(props, ref) {
     <div className="Analysis">
       {Path[0] !== "schoolResource" || Path[1] ? (
         <AnalysisTop
-          onTermChange={(e) => {
-            setTermSelect(e)
+          getHeight={(height) => {
+            console.log(height);
+            setTopHeight(height);
           }}
+          className={"AnalysisTop"}
+          onTermChange={(e) => {
+            setTermSelect(e);
+          }}
+          termlist={TermInfo.map((child) => ({
+            value: child.Term,
+            title: child.TermName,
+          }))}
           ref={topRef}
           type={topType}
         ></AnalysisTop>
       ) : (
         ""
       )}
-      
-      {tabid === "teacherBaseMsg" ? <BaseMsg term={topRef.current.TermSelect}></BaseMsg> : ""}
-      <p className='ProVersion'>{ProVersion}</p>
+
+      <div
+        className="analysis-content"
+        style={{ height: height - topHeight + "px" }}
+      >
+        <Scrollbars
+          className="analysis-scroll"
+          ref={scrollRef}
+          onUpdate={(value) => {
+            anchorRef.current && anchorRef.current.onScroll();
+          }}
+        >
+          <div
+            className="content-box"
+            style={{ minHeight: height - topHeight - bottomHeight + "px" }}
+          >
+            {tabid === "teacherBaseMsg" ? (
+              <BaseMsg
+                onAnchorComplete={(anchor) => {
+                  // console.log(anchor);
+                  setAnchorList(anchor);
+                }}
+                schoolID={schoolID}
+                collegeID={collegeID}
+                productLevel={productLevel}
+                selectLevel={selectLevel}
+                productMsg={levelHash[productLevel]}
+                term={topRef.current.TermSelect}
+              ></BaseMsg>
+            ) : (
+              ""
+            )}
+          </div>
+          <p className="ProVersion">{ProVersion}</p>
+        </Scrollbars>
+      </div>
+      <Anchor
+        ref={anchorRef}
+        bottomheight={bottomHeight}
+        list={anchorList}
+        scrollref={scrollRef}
+      ></Anchor>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
   let {
-    commonData: { roleMsg ,basePlatFormMsg},
+    commonData: { roleMsg, basePlatFormMsg, contentHW, termInfo, levelHash },
   } = state;
-  return { roleMsg,basePlatFormMsg };
+  return { roleMsg, basePlatFormMsg, contentHW, termInfo, levelHash };
 };
 export default connect(mapStateToProps)(withRouter(memo(forwardRef(Analysis))));

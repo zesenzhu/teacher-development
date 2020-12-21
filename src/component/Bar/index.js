@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-04 14:08:10
- * @LastEditTime: 2020-12-16 11:49:11
+ * @LastEditTime: 2020-12-16 19:08:56
  * @Description:
  * @FilePath: \teacher-development\src\component\bar\index.js
  */
@@ -21,28 +21,19 @@ import React, {
   //   useCallback,
   memo,
   // useEffect,
-  // useState,
-  // useImperativeHandle,
+  useState,
+  useImperativeHandle,
   // useMemo,
   // useReducer,
   // createContext,
   // useContext,
-  //   useRef,
+  useLayoutEffect,
+  useRef,
   forwardRef,
 } from "react";
+import $ from "jquery";
 import "./index.scss";
 import { Loading, Empty } from "../common";
-
-/**
- * @description: Frame里使用，可渲染成约定的样式,内容区框架
- * @param {*}
- * @return {*}
- */
-function $Context(props, ref) {
-  // console.log(this)
-  // this.Bar = Bar
-  return <div className="frame-context"></div>;
-}
 
 /**
  * @description: 在frame中使用的bar
@@ -64,13 +55,27 @@ function $Bar(props, ref) {
     emptyTitle,
     ...reset
   } = props;
+  // bar的高度
+  // const [barHeight, setBarHeight] = useState(0);
+  // 获取bar ref
+  const barRef = useRef(null);
+  // 挂载后
+  // useLayoutEffect(() => {
+  //   let bar = $(barRef.current);
+  //   // setBarHeight(bar.height());
+  //   console.log(barRef.current.height, bar.outerHeight(true));
+  // }, []);
+  useImperativeHandle(ref, () => {
+    return barRef.current;
+  });
   return (
     <div
+      ref={barRef}
       style={Object.assign(
         {},
         {
           width: `calc(${width ? width : "100%"} - ${
-            typeof marginLR === "number" ? marginLR : 32
+            typeof marginLR === "number" ? marginLR * 2 : 32
           }px)`,
           marginLeft: typeof marginLR === "number" ? marginLR + "px" : "16px",
           marginRight: typeof marginLR === "number" ? marginLR + "px" : "16px",
@@ -97,7 +102,37 @@ function $Bar(props, ref) {
             ) : (
               ""
             )}
-            {topContext}
+            {/* 判断是否是reactDom，是渲染，否用组件的 */}
+            {/* *topContext:{
+            title:按钮名称,存在才渲染
+            icon:有就用这个，没有就有默认的
+            className:类
+            onClick:点击
+          } */}
+            {topContext.$$typeof ? (
+              topContext
+            ) : topContext.title ? (
+              <span
+                className={`ftc-default-btn ${
+                  topContext.className ? topContext.className : ""
+                }`}
+                onClick={() => {
+                  typeof topContext.onClick === "function" &&
+                    topContext.onClick();
+                }}
+                style={
+                  topContext.icon
+                    ? {
+                        background: `url(${topContext.icon}) no-repeat left center/15px 15px`,
+                      }
+                    : {}
+                }
+              >
+                {topContext.title}
+              </span>
+            ) : (
+              ""
+            )}
           </span>
         ) : (
           ""
@@ -109,7 +144,7 @@ function $Bar(props, ref) {
           opacity={false}
           tip={"加载中..."}
         >
-          {isEmpty === undefined||!isEmpty ? (
+          {isEmpty === undefined || !isEmpty ? (
             <div className="fbc-contain-box">{children}</div>
           ) : (
             <Empty
@@ -125,4 +160,3 @@ function $Bar(props, ref) {
 }
 // $Context.Bar = $Bar
 export default memo(forwardRef($Bar));
-

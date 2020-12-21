@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-16 10:57:14
+ * @LastEditTime: 2020-12-17 15:00:46
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\analysisTop.js
  */
@@ -52,28 +52,42 @@ import React, {
   useMemo,
   useState,
   useImperativeHandle,
-  // useRef,
+  useLayoutEffect,
+  useRef,
   forwardRef,
 } from "react";
+import $ from "jquery";
 // import { Select } from "antd";
 import { Dropdown } from "../../component/common";
 function AnalysisTop(props, ref) {
-  let { type, termselect, termlist, onTermChange } = props;
+  let {
+    type,
+    termselect,
+    termlist,
+    onTermChange,
+    className,
+    getHeight,
+  } = props;
 
   // 下拉菜单
-  const [TermList, setTermList] = useState([
-    { value: "00", title: "2019~2020学年第1学期" },
-    { value: "0", title: "2019~2020学年第2学期" },
-    { value: "1", title: "2020~2021学年第1学期" },
-    { value: "2", title: "2020~2021学年第2学期" },
-    { value: "3", title: "2020~2021学年第2学期" },
-    { value: "4", title: "2020~2021学年第2学期" },
-    { value: "5", title: "2020~2021学年第2学期" },
-    { value: "6", title: "2020~2021学年第2学期" },
-    { value: "7", title: "2020~2021学年第2学期" },
-  ]);
+  const [TermList, setTermList] = useState(
+    termlist
+    // [
+    // { value: "00", title: "2019~2020学年第1学期" },
+    // { value: "0", title: "2019~2020学年第2学期" },
+    // { value: "1", title: "2020~2021学年第1学期" },
+    // { value: "2", title: "2020~2021学年第2学期" },
+    // { value: "3", title: "2020~2021学年第2学期" },
+    // { value: "4", title: "2020~2021学年第2学期2021学年第2学期" },
+    // { value: "5", title: "2020~2021学年第2021学年第2学期2学期" },
+    // { value: "6", title: "2020~2021学2021学年第2学期年第2学期" },
+    // { value: "7", title: "2020~2021学年第2学期2021学年第2学期" },
+  // ]
+  );
   // 选择下拉
-  const [TermSelect, setTermSelect] = useState(TermList[0] && TermList[0].value);
+  const [TermSelect, setTermSelect] = useState(TermList[0] ? TermList[0] : {});
+  // 获取整个结构的都没节点
+  const boxRef = useRef({});
   // 下拉初始化
   useEffect(() => {
     // termselect存在，表明选择有使用者决定
@@ -85,7 +99,7 @@ function AnalysisTop(props, ref) {
     setTermList(termlist);
     termselect === undefined &&
       TermSelect === undefined &&
-      setTermSelect(termlist[0] && termlist[0].value);
+      setTermSelect(termlist[0]? termlist[0]:{});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [termlist]);
   const topType = useMemo(() => {
@@ -101,11 +115,17 @@ function AnalysisTop(props, ref) {
     ref,
     () => ({
       TermSelect,
+      boxRef,
     }),
     [TermSelect]
   );
+  // console.log($(boxRef.current).height())
+  useLayoutEffect(() => {
+    typeof getHeight === "function" && getHeight($(boxRef.current).height());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
-    <div className="Analysis-Top">
+    <div ref={boxRef} className={`Analysis-Top ${className ? className : ""}`}>
       {topType === "school" ? (
         <div></div>
       ) : (
@@ -115,11 +135,12 @@ function AnalysisTop(props, ref) {
             height={240}
             dropList={TermList}
             title={"所统计学期"}
-            value={TermSelect}
+            value={TermSelect.value}
             className="term-dropdown"
             onChange={(e) => {}}
-            onSelect={(e) => {
-              setTermSelect(e);
+            onSelect={(e, option) => {
+              // console.log(option);
+              setTermSelect(option);
             }}
           ></Dropdown>
         </div>

@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-16 10:59:59
+ * @LastEditTime: 2020-12-18 19:59:56
  * @Description:
- * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg.js
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\teacherCount.js
  */
 import {
   connect,
@@ -49,26 +49,35 @@ import React, {
   // useCallback,
   memo,
   useEffect,
-  // useState,
-  // useImperativeHandle,
-  // useRef,
+  useState,
+  useImperativeHandle,
+  useRef,
+  useLayoutEffect,
   forwardRef,
 } from "react";
-function BaseMsg(props, ref) {
-  console.log(props);
-  let {term } = props;
-  console.log(term)
+ 
+function TeacherFamous(props, ref) {
+  let {
+    className,
+    levelHash,
+    productMsg,
+    // data: { Total, TeaSthRatio, MaleCount, FemaleCount, SubSet },
+  } = props;
+  productMsg = productMsg ? productMsg : {};
+ 
+   
+
   return (
-    <div className="BaseMsg">
-      {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
-      教师基础信息
+    <div className={`TeacherFamous ${className ? className : ""} `}>
+      
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  // let { UIState, DataState, PublicState } = state;
-  // console.log(state)
-  return state;
+  let {
+    commonData: { levelHash },
+  } = state;
+  return { levelHash };
 };
-export default connect(mapStateToProps)(memo(forwardRef(BaseMsg)));
+export default connect(mapStateToProps)(memo(forwardRef(TeacherFamous)));
