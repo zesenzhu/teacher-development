@@ -280,4 +280,7 @@
     //     border: solid 1px #dedede;
     // }
     .content {}
+    &.second-level-dropdown {
+        padding-left: 10px;
+    }
 }

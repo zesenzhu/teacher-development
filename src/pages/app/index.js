@@ -27,6 +27,7 @@ import {
 import Analysis from "../teachersStatisticAnalysis";
 import Recruit from "../recruit";
 import Train from "../train";
+import TeacherPersonal from "../teacherPersonal";
 import { handleRoute, deepMap } from "../../util/public";
 // let { get } = fetch;
 function App(props, ref) {
@@ -212,6 +213,7 @@ function App(props, ref) {
         },
       }}
     >
+       
       <Analysis
         tabid={"schoolResource"}
         tabname={SchoolName}
@@ -316,6 +318,26 @@ function App(props, ref) {
       >
         编辑培训计划
       </Train>
+      <TeacherPersonal
+        tabid={"teacherPersonal"}
+        tabname={"教师画像查询"}
+        param={"list"}
+        // mustparam={"true"}
+        // redirect={"teacherTrain"}
+        removeTab={RemoveTab}
+      >
+        教师画像查询
+      </TeacherPersonal>
+      <TeacherPersonal
+        tabid={"personalDetail"}
+        tabname={"教师画像详情"}
+        param={"detail"}
+        // mustparam={"true"}
+        // redirect={"teacherTrain"}
+        removeTab={RemoveTab}
+      >
+        教师画像详情
+      </TeacherPersonal>
     </Frame>
   );
 }

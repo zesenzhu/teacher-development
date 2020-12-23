@@ -43,7 +43,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:14:26
- * @LastEditTime: 2020-12-17 14:49:15
+ * @LastEditTime: 2020-12-22 16:33:43
  * @Description:
  * @FilePath: \teacher-development\src\redux\actions\commonActions.js
  */
@@ -81,10 +81,12 @@ const leftMenu_1 = [
     ],
   },
   {
-    key: "teacherPersona",
+    key: "teacherPersonal",
     name: "教师画像查询",
     icon: Icon_2,
-    children: [],
+    children: [],params:[
+      { key: "personalDetail", title: "教师画像详情" },
+    ]
   },
   {
     key: "teacherRecruit",
@@ -140,10 +142,12 @@ const leftMenu_0 = [
     ],
   },
   {
-    key: "teacherPersona",
+    key: "teacherPersonal",
     name: "教师画像查询",
     icon: Icon_2,
-    children: [],
+    children: [],params:[
+      { key: "personalDetail", title: "教师画像详情" },
+    ]
   },
   {
     key: "teacherRecruit",

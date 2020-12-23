@@ -36,7 +36,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-08 13:54:00
- * @LastEditTime: 2020-12-15 09:07:36
+ * @LastEditTime: 2020-12-22 15:15:56
  * @Description: 封装下table
  * @FilePath: \teacher-development\src\component\table\index.js
  */
@@ -123,6 +123,19 @@ function $Table(props, ref) {
             <Table
               dataSource={List}
               pagination={false}
+              showSorterTooltip={false}
+              onChange={(pagination, filters, sorter, extra) => {
+                if(extra.action==='sort')
+                handerChange({
+                  sortFiled: sorter.columnKey,
+                  sortType:
+                    sorter.order === "ascend"
+                      ? "ASC"
+                      : sorter.order === "descend"
+                      ? "DESC"
+                      : "",
+                });
+              }}
               className={`lg-table`}
               {...reset}
             ></Table>
@@ -133,15 +146,18 @@ function $Table(props, ref) {
               //   console.log(PageSize);
               //   handerChange({ PageSize });
               // }}
-              PageSize={PageSize}
+              pageSize={PageSize}
               current={PageIndex}
               hideOnSinglePage={Total === 0 ? true : false}
               total={Total}
               onChange={(pageIndex, pageSize) => {
-                console.log(pageSize,PageSize)
                 handerChange({
                   pageIndex,
-                  pageSize: PageProps.showSizeChanger===undefined||PageProps.showSizeChanger ? pageSize : PageSize,
+                  pageSize:
+                    PageProps.showSizeChanger === undefined ||
+                    PageProps.showSizeChanger
+                      ? pageSize
+                      : PageSize,
                 });
               }}
               {...PageProps}

@@ -64,6 +64,13 @@
             table {
                 table-layout: fixed !important;
             }
+            .ant-table-column-sorter {
+                margin-left: 4px;
+            }
+            .ant-table-column-sorters {
+                // margin-left: 20px;
+                padding: 0;
+            }
             .ant-table-thead {
                 tr th {
                     height: 40px;

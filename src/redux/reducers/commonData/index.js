@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-21 10:30:59
+ * @LastEditTime: 2020-12-23 10:25:41
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -32,14 +32,42 @@ const commonData = (
     basePlatFormMsg: {},
     roleMsg: {},
     termInfo: {
-      HasHistory:false,
-      TermInfo:[]
+      HasHistory: false,
+      TermInfo: [],
     },
     levelHash: {
-      1: { productLevel: 1, selectLevel: 1, title: "区域", sub: "学段" },
-      2: { productLevel: 2, selectLevel: 2, title: "学校", sub: "学院" },
-      3: { productLevel: 3, selectLevel: 2, title: "学校", sub: "学科" },
-      4: { productLevel: 4, selectLevel: 3, title: "学院", sub: "教研室" },
+      1: {
+        productLevel: 1,
+        selectLevel: 1,
+        title: "区域",
+        sub: "学段", //教师基础信息文字显示
+        belong: "学校", //选择教师下级
+        belondName: "SchoolName",//教师画像获取接口所属的属性
+      },
+      2: {
+        productLevel: 2,
+        selectLevel: 2,
+        title: "学校",
+        sub: "学院",
+        belong: "学院",
+        belondName: "CollegeName",
+      },
+      3: {
+        productLevel: 3,
+        selectLevel: 2,
+        title: "学校",
+        sub: "学科",
+        belong: "学科",
+        belondName: "SubjectNames",
+      },
+      4: {
+        productLevel: 4,
+        selectLevel: 3,
+        title: "学院",
+        sub: "教研室",
+        belong: "教研室",
+        belondName: "CroupName",
+      },
     },
     contentHW: { height: 0, width: 0 },
   },

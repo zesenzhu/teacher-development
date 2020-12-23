@@ -13,7 +13,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 18:50:57
- * @LastEditTime: 2020-12-16 09:17:17
+ * @LastEditTime: 2020-12-22 20:38:30
  * @Description: 公共组件
  * @FilePath: \teacher-development\src\component\common\index.js
  */
@@ -1832,17 +1832,20 @@ function DropDownComponent(props) {
     className,
     dropdownClassName,
     style,
-    title,
+    title,onSelect,
     ...reset
   } = props;
   // console.log(props);
   return (
-    <div className={`lg-dropdown ${className ? className : ""}`}>
-      <span className="dropdown-title">{title}:</span>
+    <div className={`lg-dropdown ${!title?'second-level-dropdown':''} ${className ? className : ""}`}>
+      {title?<span className="dropdown-title">{title}:</span>:''}
       <Select
         className={`dropdown-box ${dropdownClassName ? dropdownClassName : ""}`}
         width={width}
         style={{ width: (width ? width : 200) + "px", ...style }}
+        onSelect={(e,option)=>{
+         typeof onSelect === 'function'&&onSelect(e,{...option,...dropList.find((child)=>child.value===e)})
+        }}
         {...reset}
       >
         {dropList instanceof Array &&

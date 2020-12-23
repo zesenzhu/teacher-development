@@ -16,7 +16,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-03 08:39:59
- * @LastEditTime: 2020-12-14 18:44:46
+ * @LastEditTime: 2020-12-22 16:49:12
  * @Description:
  * @FilePath: \teacher-development\src\component\frame\Tab\index.js
  */
@@ -97,7 +97,7 @@ function Tab(props, ref) {
         // 是否重定向，当节点设置了mustParam的时候，path没有param则会重定向到指定的redirct路径，没设置redirct则重定向到该节点key
         resetRoute = props.tabid === Path[0] && props.mustparam && !Path[1];
         if (
-          Path[0].includes(props.tabid) &&
+          Path[0] === props.tabid &&
           !TabList.some((tab) => {
             // id一样，如果没有param就返回true，如果有param就看param是否一样，一样就true
             // 返回true说明tab是已经存在了这个tab，不会加，只会跳到对应的tab页
@@ -187,10 +187,10 @@ function Tab(props, ref) {
           setTabList(List);
 
           // 通过路由修改
-          routeTo(nextTabid || active, nextTabid?nextParam:param);
+          routeTo(nextTabid || active, nextTabid ? nextParam : param);
           onlyOne(active, param);
         } else {
-          routeTo(nextTabid || active, nextTabid?nextParam:param);
+          routeTo(nextTabid || active, nextTabid ? nextParam : param);
           // rmTabid&&removeTab(rmTabid,reParam)
         }
 
@@ -234,7 +234,7 @@ function Tab(props, ref) {
       setTabList(List);
 
       // 通过路由修改
-      routeTo(nextTabid || active, nextTabid?nextParam:param);
+      routeTo(nextTabid || active, nextTabid ? nextParam : param);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [TabList, TabActive]
