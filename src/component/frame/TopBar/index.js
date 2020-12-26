@@ -77,7 +77,7 @@ function TopBar(props, ref) {
     <div className="Frame-topBar-1">
       <i
         className="Frame-logo"
-        style={{ background: `url(${PlatMsg.logo})` }}
+        style={{ background: `url(${PlatMsg.logo}) no-repeat` }}
       ></i>
       {UserInfo ? (
         <div className={"Frame-userMsg"}>

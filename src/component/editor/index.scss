@@ -204,6 +204,11 @@
                             background: url(./images/txt.png) no-repeat center center / contain;
                         }
                     }
+                    &.file-type-pic {
+                        &::before {
+                            background: url(./images/png.png) no-repeat center center / contain;
+                        }
+                    }
                 }
                 .file-upload {
                     position: relative;
@@ -236,7 +241,7 @@
                         cursor: pointer;
                         background: transparent;
                         // margin-left: -200px;
-                        left: -200px;
+                        left: -180px;
                         top: 0;
                         color: transparent;
                         &:focus {

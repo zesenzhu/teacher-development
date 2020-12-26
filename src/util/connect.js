@@ -304,7 +304,12 @@ export const getUserInfo = async (
             let time = date.getTime();
             value = value + "?T=" + time;
           }
-
+          // 锁控处理
+          if (key === "LockerState" && parseInt(value) !== 1) {
+            window.location.href =
+              baseIP + "/LockerMgr/ErrorTips.aspx?ErrorCode=" + value;
+            return;
+          }
           UserInfo[key] = decodeURIComponent(value);
         }
 
@@ -386,8 +391,8 @@ const checkToken = (
  * @return {*}
  */
 const tokenSuccess = (token) => {
-  setDataStorage("token", token);//存在session
-  setDataStorage("token", token, true);//local
+  setDataStorage("token", token); //存在session
+  setDataStorage("token", token, true); //local
   // 替换链接token
   window.history.pushState(
     null,

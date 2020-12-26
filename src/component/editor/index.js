@@ -466,7 +466,6 @@ function Editor(props, ref) {
             return;
           }
           fileSavePath = data.Data.FileUrl;
-          console.log(skip, totalCount);
           if (skip + 1 === totalCount) {
             //此文件所有切块均已上传完毕
             success(data.Data);
@@ -496,7 +495,6 @@ function Editor(props, ref) {
         0,
         "",
         (data) => {
-          console.log(data);
           setFile([...file, data]);
           setForbinClick(false);
         },

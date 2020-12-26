@@ -37,7 +37,7 @@
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
  * @LastEditTime: 2020-12-21 17:12:15
- * @Description:
+ * @Description:工作量统计，教育局才有师生比统计，其它的没有
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\index.js
  */
 import {
@@ -57,41 +57,41 @@ import React, {
 } from "react";
 import "./index.scss";
 import Bar from "../../../component/bar";
+import TeacherPeriod from './teacherPeriod';
+import TeacherGanger from './teacherGanger';
 import {
-  getTeacherCount,
-  getHonorTeacher,
+  getClassHour,
+  getTeacherGanger,
   getTeacherAge,getTeacherEduAndTitle
-} from "../../../api/baseMsg";
-import TeacherCount from "./teacherCount";
-import TeacherFamous from "./teacherFamous";
-import TeacherAge from "./teacherAge";
-import TeacherTitle from "./teacherTitle";
-function BaseMsg(props, ref) {
+} from "../../../api/workMsg";
+// import TeacherCount from "./teacherCount";
+// import TeacherPeriod from "./teacherPeriod";
+// import TeacherAge from "./teacherAge";
+// import TeacherTitle from "./teacherTitle";
+function WorkLoad(props, ref) {
   // *selectLevel:这里的selectLevel与用户的没关系，与看的级别有关，例如教育局的看学校的，selectLevel===2
   // *productLevel:产品类型，给用户看的界面类型，用来控制界面的一些属性：1教育局，2大学学校，3教育局学校，4大学学院，
   // *product:包含该productLevel的所有信息,有使用组件者使用productLevel和commonData的levelHash匹配使用，必须传，不传将出问题
   let { term,HasHistory, onAnchorComplete, schoolID, collegeID, productMsg } = props;
-  const { selectLevel } = productMsg;
+  const { selectLevel,productLevel } = productMsg;
   // 教师人数
   const [teacherCount, setTeacherCount] = useState(false);
-  const [teacherFamous, setTeacherFamous] = useState(false);
-  const [teacherAge, setTeacherAge] = useState(false);
+  const [teacherPeriod, setTeacherPeriod] = useState(false);
+  const [teacherGanger, setTeacherGanger] = useState(false);
   const [teacherEduAndTitle, setTeacherEduAndTitle] = useState(false);
   //向上传bar的信息
   // const [anchorList, setAnchorList] = useState([]);
   // 获取每一块的ref，实现锚点功能
-  const countRef = useRef(null);
-  const famousRef = useRef(null);
-  const ageRef = useRef(null);
-  const educationRef = useRef(null);
+  const ratioRef = useRef(null);
+  const periodRef = useRef(null);
+  const gangerRef = useRef(null);
   useLayoutEffect(() => {
     // setAnchorList();
     typeof onAnchorComplete === "function" &&
       onAnchorComplete([
-        { ref: countRef.current, name: "人数概况" },
-        { ref: famousRef.current, name: "名师统计" },
-        { ref: ageRef.current, name: "年龄教龄" },
-        { ref: educationRef.current, name: "学历职称" },
+        { ref: ratioRef.current, name: "师生比例" },
+        { ref: periodRef.current, name: "课时统计" },
+        { ref: gangerRef.current, name: "班级管理" },
       ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -99,84 +99,61 @@ function BaseMsg(props, ref) {
   useEffect(() => {
     // 第一次进来的时候可能为undefined
     if (term instanceof Object) {
-      // 教师数量
-      getTeacherCount({
+      // 课时统计
+      getClassHour({
         term: term.value,
         schoolID,
         collegeID,
         selectLevel,
       }).then((data) => {
         if (data) {
-          setTeacherCount(data);
+          setTeacherPeriod(data);
         }
       });
-      // 著名教师
-      getHonorTeacher({
+       // 班主任管理班级统计
+       getTeacherGanger({
         term: term.value,
         schoolID,
         collegeID,
         selectLevel,
       }).then((data) => {
         if (data) {
-          setTeacherFamous(data);
-        }
-      });
-      // 年龄及教龄统计
-      getTeacherAge({
-        term: term.value,
-        schoolID,
-        collegeID,
-        selectLevel,
-      }).then((data) => {
-        if (data) {
-          setTeacherAge(data);
-        }
-      });
-      // 年龄及教龄统计
-      getTeacherEduAndTitle({
-        term: term.value,
-        schoolID,
-        collegeID,
-        selectLevel,
-      }).then((data) => {
-        if (data) {
-          setTeacherEduAndTitle(data);
+          setTeacherGanger(data);
         }
       });
     }
   }, [term, schoolID, collegeID, selectLevel]);
 
   return (
-    <div className="BaseMsg">
+    <div className="WorkLoad">
       {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
-      <Bar
-        barName={"教师人数概况统计"}
-        ref={countRef}
-        topContext={HasHistory?{ title: "查看历年人数变化" }:false}
+      {productLevel===1?<Bar
+        barName={"师生比统计"}
+        ref={ratioRef}
+        topContext={HasHistory?{ title: "查看历年师生比变化" }:false}
         loading={!teacherCount}
       >
-        <TeacherCount
+        {/* <TeacherCount
           data={teacherCount}
           productMsg={productMsg}
-        ></TeacherCount>
-      </Bar>
-      <Bar loading={!teacherFamous} barName={"名师统计 "} ref={famousRef}>
-        <TeacherFamous
-          data={teacherFamous}
+        ></TeacherCount> */}
+      </Bar>:''}
+      <Bar loading={!teacherPeriod} barName={"课时数统计 "} ref={periodRef}>
+        <TeacherPeriod
+          data={teacherPeriod}
           productMsg={productMsg}
-        ></TeacherFamous>
+        ></TeacherPeriod>
       </Bar>
-      <Bar loading={!teacherAge} barName={"年龄及教龄统计"} ref={ageRef}>
-        <TeacherAge data={teacherAge} productMsg={productMsg}></TeacherAge>
+      <Bar loading={!teacherGanger} barName={"班主任班级管理统计"} ref={gangerRef}>
+        <TeacherGanger data={teacherGanger} productMsg={productMsg}></TeacherGanger>
       </Bar>
-      <Bar
-      loading={!teacherEduAndTitle}
+     {/*  <Bar
         barName={"学历职称统计 "}
         ref={educationRef}
         topContext={HasHistory?{ title: "查看历年学历职称统计 " }:false}
       >
         <TeacherTitle data={teacherEduAndTitle} productMsg={productMsg}></TeacherTitle>
-      </Bar>
+      </Bar> */}
     </div>
   );
 }
@@ -186,4 +163,4 @@ const mapStateToProps = (state) => {
   // console.log(state)
   return {HasHistory};
 };
-export default connect(mapStateToProps)(memo(forwardRef(BaseMsg)));
+export default connect(mapStateToProps)(memo(forwardRef(WorkLoad)));

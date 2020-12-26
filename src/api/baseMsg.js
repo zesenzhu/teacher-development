@@ -69,9 +69,7 @@ export function getTeacherCount(payload = {}) {
         //     "MalePercent":"50%",
         //     "FemalePercent":"50%",
         // }]
-        return {
-          ...json.Data,
-        };
+        return json.Data?json.Data:{};
       } else {
         return false;
       }
@@ -115,7 +113,7 @@ export function getHonorTeacher(payload = {}) {
         //     "MalePercent":"50%",
         //     "FemalePercent":"50%",
         // }]
-        return json.Data;
+        return json.Data?json.Data:{};
       } else {
         return false;
       }
@@ -154,9 +152,7 @@ export function getTeacherAge(payload = {}) {
         //     "NodeName":"20-30岁",
         //     "Total":50,
         // }]
-        return {
-          ...json.Data,
-        };
+        return json.Data?json.Data:{};
       } else {
         return false;
       }
@@ -195,9 +191,7 @@ export function getTeacherEduAndTitle(payload = {}) {
         //     "NodeName":"20-30岁",
         //     "Total":50,
         // }]
-        return {
-          ...json.Data,
-        };
+        return json.Data?json.Data:{};
       } else {
         return false;
       }

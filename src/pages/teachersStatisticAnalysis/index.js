@@ -60,11 +60,12 @@ import {
 } from "react-router-dom";
 import "./index.scss";
 import BaseMsg from "./baseMsg";
+import WorkLoad from "./workLoad";
+import TeachingAbility from "./teachingAbility";
 import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
 import { Scrollbars } from "react-custom-scrollbars";
 import Anchor from "../../component/anchor";
-import $ from "jquery";
 function Analysis(props, ref) {
   let {
     tabid,
@@ -157,6 +158,38 @@ function Analysis(props, ref) {
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
               ></BaseMsg>
+            ) : (
+              ""
+            )}
+            {tabid === "workMsg" ? (
+              <WorkLoad
+                onAnchorComplete={(anchor) => {
+                  // console.log(anchor);
+                  setAnchorList(anchor);
+                }}
+                schoolID={schoolID}
+                collegeID={collegeID}
+                productLevel={productLevel}
+                selectLevel={selectLevel}
+                productMsg={levelHash[productLevel]}
+                term={topRef.current.TermSelect}
+              ></WorkLoad>
+            ) : (
+              ""
+            )}
+            {tabid === "teachingAbility" ? (
+              <TeachingAbility
+                onAnchorComplete={(anchor) => {
+                  // console.log(anchor);
+                  setAnchorList(anchor);
+                }}
+                schoolID={schoolID}
+                collegeID={collegeID}
+                productLevel={productLevel}
+                selectLevel={selectLevel}
+                productMsg={levelHash[productLevel]}
+                term={topRef.current.TermSelect}
+              ></TeachingAbility>
             ) : (
               ""
             )}

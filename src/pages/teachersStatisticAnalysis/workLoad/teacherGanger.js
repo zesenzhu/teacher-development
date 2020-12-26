@@ -36,9 +36,9 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-27 09:20:46
- * @LastEditTime: 2020-12-21 17:05:36
- * @Description:
- * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\teacherCount.js
+ * @LastEditTime: 2020-12-21 17:06:25
+ * @Description:班主任管理班级统计
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\teacherAge.js
  */
 import {
   connect,
@@ -57,128 +57,131 @@ import React, {
 } from "react";
 import echarts from "echarts/lib/echarts";
 import "echarts/lib/chart/bar";
+// import "echarts/lib/chart/pie";
 import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts } from "../../../util/public";
-function TeacherCount(props, ref) {
+import { Scrollbars } from "react-custom-scrollbars";
+import { resizeForEcharts, deepCopy, deepMap } from "../../../util/public";
+function TeacherGanger(props, ref) {
   let {
     className,
     levelHash,
     productMsg,
-    data: { Total, TeaSthRatio, MaleCount, FemaleCount, SubSet },
+    data: { ClassCount, GangerCount, MaxClass, AvgClass, SubSet },
   } = props;
   productMsg = productMsg ? productMsg : {};
   // echart实例
-  const [tcEchart, setTcEchart] = useState(null);
+  // 柱状
+  const [subEchart, setSubEchart] = useState(null);
+  // 类型列表
+  const [dataList, setDataList] = useState([]);
+  // 选择类型
+  const [typeSelect, setTypeSelect] = useState("");
+  // 选中的柱状数据
+  const [dataInType, setDataInType] = useState({});
   // dom ref
-  const tcRef = useRef(null);
+  const subRef = useRef(null);
+  // 处理数据
+  useEffect(() => {
+    let dataList = [["nodeName", "count"]];
+    deepMap(
+      SubSet,
+      ({ child, level, parent }) => {
+        let { NodeName, Total, NodeID } = child;
+        dataList.push([NodeName, Total, NodeID]);
+      },
+      "SubSet"
+    );
+
+    setDataList(dataList);
+  }, [SubSet]);
   useLayoutEffect(() => {
-    if (!SubSet) {
-      // 没有数据禁止进入
-      return;
-    }
-    let myEchart = tcEchart;
-    let sexData = {
-      MaleCount: {
-        title: "男性教师",
-        value: MaleCount,
-      },
-      FemaleCount: {
-        title: "女性教师",
-        value: FemaleCount,
-      },
-    };
-    let dataset = [["nodeName", "MaleCount", "FemaleCount"]];
-    // SubSet = SubSet.concat(SubSet)
-    // console.log(SubSet)
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let { NodeName, MaleCount, FemaleCount } = child;
-        dataset.push([NodeName, MaleCount, FemaleCount, child]);
-      });
-    if (!tcEchart) {
-      // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
-      myEchart = echarts.init(tcRef.current);
-      // 保存echart实例
-      setTcEchart(myEchart);
-      // 对界面resize进行监听重绘echart
-      resizeForEcharts(myEchart);
-    }
-    // 属性配置
-    myEchart.setOption({
+ 
+    let myEchart_sub = subEchart;
+
+    let subOption = {
+      // title: {
+      //   text: "各年龄教师年龄/教龄分布情况",
+      //   // bottom: "4%",
+      //   left: "center",
+      //   top: 20,
+      //   textStyle: {
+      //     color: "#333333",
+      //     fontSize: 14,
+      //   },
+      // },
+      // backgroundColor: "#f5f5f5",
       tooltip: {
         trigger: "axis",
+        // appendToBody:true,
+
         axisPointer: {
           // 坐标轴指示器，坐标轴触发有效
           type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
         },
         backgroundColor: "rgba(0,0,0,0.7)",
         borderColor: "transparent",
-        // appendToBody:true,
         borderWidth: 0,
-        formatter: (value) => {
-          let [data_1] = value;
-          let {
-            NodeID,
-            NodeName,
-            Total,
-            MaleCount,
-            FemaleCount,
-            MalePercent,
-            FemalePercent,
-          } = data_1.data[3];
-          return `<div  class="tc-tooltip">
-              <p class="nodename">${NodeName}</p>
-                <p class='msg'>总人数<span>${Total}人</span></p>
-                <p class='msg'>男性<span>${MaleCount}人</span>，占比<span>${MalePercent}</span></p>
-                <p class='msg'>女性<span>${FemaleCount}人</span>，占比<span>${FemalePercent}</span></p>
-            </div>
+        formatter: (params) => {
+          let row = params[0];
+          let { name } = row;
+          // let [data_1] = value;
+          let dom = "";
+          params.forEach((child, index) => {
+            let { seriesName, data } = child;
+            dom += `<p class='msg '>班级数量:<span>${
+              data[index + 1]
+            }个</span></p>`;
+          });
+          return `<div  class="t-tooltip">
+              <p class="nodename">${name}</p>${dom}</div>
           `;
         },
-        textStyle: {
-          rich: {
-            NodeName: {},
-          },
-        },
+        // textStyle: {
+        //   color: "#fff",
+        // },
       },
-      legend: {
-        // data: ["男性教师", "女性教师"],
-        right: 20,
-        itemWidth: 11,
-        itemHeight: 11,
-        itemGap: 30,
-        formatter: (id) => {
-          return `{name|${sexData[id].title}:}{count|${sexData[id].value}}{name|人}`;
-        },
-        textStyle: {
-          rich: {
-            name: {
-              fontSize: 12,
-              color: "#999999",
-            },
-            count: {
-              fontSize: 14,
-              fontWeight: "bold",
-              color: "#333",
-            },
-          },
-        },
-      },
+      // legend: {
+      //   // data: ["男性教师", "女性教师"],
+      //   right: 50,
+      //   top: 40,
+      //   itemWidth: 11,
+      //   itemHeight: 11,
+      //   itemGap: 30,
+      //   // formatter: (id) => {
+      //   //   return `{name|${sexData[id].title}:}{count|${sexData[id].value}}{name|人}`;
+      //   // },
+      //   textStyle: {
+      //     rich: {
+      //       name: {
+      //         fontSize: 12,
+      //         color: "#999999",
+      //       },
+      //       count: {
+      //         fontSize: 14,
+      //         fontWeight: "bold",
+      //         color: "#333",
+      //       },
+      //     },
+      //   },
+      // },
       grid: {
-        left: 20,
-        right: 80,
-        bottom: 0,
+        left: 28,
+        top: 40,
+        height: 190,
+        right: 58,
+        // bottom: 20,
         containLabel: true,
       },
       dataset: {
-        source: dataset,
+        source: [],
       },
       xAxis: [
         {
           type: "category",
-          name: productMsg.sub,
+          name: productMsg.ganger,
           nameGap: 12,
           // data: [
           //   "幼儿园教师",
@@ -214,21 +217,20 @@ function TeacherCount(props, ref) {
       yAxis: [
         {
           type: "value",
-          name: "人数",
+          name: "平均管理班级数量",
           // max: function (value) {
-          //   if(value.max/4)
           //   return value.max + 1;
           // },
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
-            margin: 30,
+            margin: 20,
           },
-           
           nameTextStyle: {
             color: "#7c7c7c",
             fontSize: 12,
-            // padding:[0, 0 ,0 ,0 ]
+
+            padding: [0, 0, 0, 70],
           },
           nameGap: 20,
         },
@@ -238,7 +240,7 @@ function TeacherCount(props, ref) {
           // name: "男性教师",
           type: "bar",
           // barWidth: 5,
-          barMaxWidth: 20,
+          barMaxWidth: 36,
           itemStyle: {
             color: {
               type: "linear",
@@ -249,11 +251,15 @@ function TeacherCount(props, ref) {
               colorStops: [
                 {
                   offset: 0,
-                  color: "#7ecbff", // 0% 处的颜色
+                  color: "#ffb782", // 0% 处的颜色
+                },
+                {
+                  offset: 0.5,
+                  color: "#fba768", // 0% 处的颜色
                 },
                 {
                   offset: 1,
-                  color: "#1da4fe", // 100% 处的颜色
+                  color: "#f7964e", // 100% 处的颜色
                 },
               ],
             },
@@ -261,75 +267,45 @@ function TeacherCount(props, ref) {
           },
           // data: [320, 332, 301, 334, 390, 330, 320],
         },
-        {
-          // name: "女性教师",
-          type: "bar",
-          barGap: "1%",
-          // barWidth: 5,
-          barMaxWidth: 20,
-          itemStyle: {
-            color: {
-              type: "linear",
-              x: 1,
-              y: 1,
-              x2: 0,
-              y2: 0,
-              colorStops: [
-                {
-                  offset: 0,
-                  color: "#ffcbb9", // 0% 处的颜色
-                },
-                {
-                  offset: 1,
-                  color: "#fd6e75", // 100% 处的颜色
-                },
-              ],
-            },
-            borderRadius: [3, 3, 0, 0],
-          },
-          // data: [120, 132, 101, 134, 90, 230, 210],
-        },
       ],
-    });
+    };
+
+    if (!myEchart_sub) {
+      // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
+      myEchart_sub = echarts.init(subRef.current);
+      // 保存echart实例
+      setSubEchart(myEchart_sub);
+      // 对界面resize进行监听重绘echart
+      resizeForEcharts(myEchart_sub);
+    }
+    subOption.dataset.source = dataList;
+
+    // 设置option
+
+    myEchart_sub.setOption(subOption);
     return () => {
       // 卸载echarts实例的事件
-      myEchart.off();
+
+      myEchart_sub.off();
     };
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SubSet, productMsg]);
+  }, [dataList, productMsg]);
 
   return (
-    <div className={`TeacherCount ${className ? className : ""} `}>
-      {/* <Loading spinning={!tcEchart} tip={"加载中..."} opacity={false}> */}
-      <p className="tc-tip">
-        {productMsg && productMsg.title ? productMsg.title : ""}
-        教师总人数<span className="tc-tip-1">{Total}</span>人，其中
-        {productMsg && productMsg.productLevel === 1 ? (
-          <>
-            {SubSet instanceof Array
-              ? SubSet.map((child, index) => {
-                  return (
-                    <React.Fragment key={index}>
-                      {child.NodeName}
-                      <span className="tc-tip-2">{child.Total}</span>人
-                      {index === SubSet.length - 1 && index !== 0 ? "，" : ""}
-                    </React.Fragment>
-                  );
-                })
-              : ""}
-          </>
-        ) : (
-          <>
-            男性教师<span className="tc-tip-2">{MaleCount}</span>人，女性教师
-            <span className="tc-tip-2">{FemaleCount}</span>人，师生比例
-            <span className="tc-tip-2">{TeaSthRatio}</span>
-          </>
-        )}
-      </p>
-
-      <div ref={tcRef} className="tc-echarts"></div>
-      {/* </Loading> */}
+    <div className={`teacher-bar TeacherGanger ${className ? className : ""} `}>
+      <div className="tb-top">
+        <p className="tb-tip">
+          {productMsg && productMsg.title ? productMsg.title : ""}
+          行政班共有<span className="tb-tip-1">{ClassCount}</span>
+          个，班主任共有
+          <span className="tb-tip-2">{GangerCount}</span>名，每名班主任平均管理
+          <span className="tb-tip-2">{MaxClass}</span>个行政班，
+          最大管理班级数量者共负责
+          <span className="tb-tip-2">{AvgClass}</span>个行政班
+        </p>
+      </div>
+      <div ref={subRef} className="tp-echarts"></div>
     </div>
   );
 }
@@ -340,4 +316,4 @@ const mapStateToProps = (state) => {
   } = state;
   return { levelHash };
 };
-export default connect(mapStateToProps)(memo(forwardRef(TeacherCount)));
+export default connect(mapStateToProps)(memo(forwardRef(TeacherGanger)));

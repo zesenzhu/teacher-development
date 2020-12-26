@@ -1,0 +1,140 @@
+/*
+ *                                                     __----~~~~~~~~~~~------___
+ *                                    .  .   ~~//====......          __--~ ~~
+ *                    -.            \_|//     |||\\  ~~~~~~::::... /~
+ *                 ___-==_       _-~o~  \/    |||  \\            _/~~-
+ *         __---~~~.==~||\=_    -_--~/_-~|-   |\\   \\        _/~
+ *     _-~~     .=~    |  \\-_    '-~7  /-   /  ||    \      /
+ *   .~       .~       |   \\ -_    /  /-   /   ||      \   /
+ *  /  ____  /         |     \\ ~-_/  /|- _/   .||       \ /
+ *  |~~    ~~|--~~~~--_ \     ~==-/   | \~--===~~        .\
+ *           '         ~-|      /|    |-~\~~       __--~~
+ *                       |-~~-_/ |    |   ~\_   _-~            /\
+ *                            /  \     \__   \/~                \__
+ *                        _--~ _/ | .-~~____--~-/                  ~~==.
+ *                       ((->/~   '.|||' -_|    ~~-/ ,              . _||
+ *                                  -_     ~\      ~~---l__i__i__i--~~_/
+ *                                  _-~-__   ~)  \--______________--~~
+ *                                //.-~~~-~_--~- |-------~~~~~~~~
+ *                                       //.-~~~--\
+ *                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ *                               神兽保佑            永无BUG
+ * 
+ * @Author: zhuzesen
+ * @LastEditors: zhuzesen
+ * @Date: 2020-12-16 13:58:16
+ * @LastEditTime: 2020-12-21 16:58:32
+ * @Description: 
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\baseMsg\index.scss
+ */
+
+// 教师人数
+@import "../../../component/common/mixin.scss";
+.TeacherPeriod,
+.TeacherGanger {
+    .tp-tilte {
+        margin-top: 16px;
+        line-height: 20px;
+        font-size: 14px;
+        text-align: center;
+        color: #333333;
+        &::before {
+            content: "";
+            width: 334px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 10px;
+            background: url(./images/image-devide.png) no-repeat center center / 100% 1px;
+        }
+        &::after {
+            content: "";
+            width: 334px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 10px;
+            transform: rotate(180deg);
+            background: url(./images/image-devide.png) no-repeat center center / 100% 1px;
+            -webkit-transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+        }
+    }
+    .tp-handle {
+        margin-top: 12px;
+        line-height: 20px;
+        text-align: center;
+        .tph-Scrollbars {
+            display: inline-block;
+            max-width: 800px;
+            height: 40px;
+            vertical-align: top;
+        }
+        .tph-p {
+            line-height: 20px;
+            white-space: nowrap;
+        }
+        .tph-title {
+            font-size: 12px;
+            color: #333333;
+            margin-right: 5px;
+        }
+        .tph-type {
+            position: relative;
+            height: 20px;
+            background-color: #d5e8f8;
+            border-radius: 3px;
+            padding: 0 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #034069;
+            margin: 0 6px 0 5px;
+            &:first-of-type {
+                margin-left: 0;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                right: -6px;
+                width: 1px;
+                height: 20px;
+                background: url(./images/icon-devide-line.png) no-repeat center center/contain;
+            }
+            &:last-of-type {
+                &::after {
+                    display: none;
+                }
+            }
+            &.tph-type-select {
+                background-color: #0099ff;
+                color: #fff;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    bottom: -4px;
+                    left: 50%;
+                    height: 0;
+                    width: 0;
+                    border-top: 4px solid #0099ff;
+                    border-bottom: none;
+                    border-left: 4px solid transparent;
+                    border-right: 4px solid transparent;
+                    transform: translateX(-50%);
+                    -webkit-transform: translateX(-50%);
+                    -moz-transform: translateX(-50%);
+                    -ms-transform: translateX(-50%);
+                    -o-transform: translateX(-50%);
+                }
+            }
+        }
+    }
+    .tp-echarts {
+        width: 100%;
+        height: 230px;
+        display: inline-block;
+        vertical-align: top;
+    }
+}

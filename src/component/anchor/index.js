@@ -125,28 +125,33 @@ function Anchor(props, ref) {
       getScrollHeight,
     } = scrollref.current;
 
-    let ScrollTop = getScrollTop();
-    let ClientHeight = getClientHeight();
+    let ScrollTop = getScrollTop();//内容框滚动距离
+    let ClientHeight = getClientHeight();//内容框可视高度
     let ScrollHeight = getScrollHeight();
 
     let activeBar = { isInit: true }; //记录
     anchorList.forEach((child, index) => {
       let { offsetTop, height } = child;
-      let offsetForBottom = offsetTop + height;
-      let fullBar = false;
-      let visualHeight = 0;
-      let offsetVisualBottom = ClientHeight + ScrollTop;
+      let offsetForBottom = offsetTop + height;//bar头部加高度为bar的底部到内容框顶部的距离
+      let fullBar = false;//是否是完整的bar
+      let visualHeight = 0;//bard的可视高度
+      let offsetVisualBottom = ClientHeight + ScrollTop;//内容框的高度加上滚动的头部距离为内容框底部距离内容框顶部距离
 
       if (ScrollTop >= offsetForBottom || offsetVisualBottom < offsetTop) {
         //这块直接不显示在可是区域
         return;
       }
       // 后面的是有内有显示在可是区域
-      if (ScrollTop > offsetTop || offsetForBottom > offsetVisualBottom) {
+      // 头部不完整
+      if (ScrollTop > offsetTop && offsetForBottom <= offsetVisualBottom) {
         //不完整
         visualHeight = offsetForBottom - ScrollTop;
+      }else if(ScrollTop <= offsetTop && offsetForBottom > offsetVisualBottom){
+        // 底部不完整
+        visualHeight = offsetVisualBottom - offsetTop;
+
       } else {
-        //完整
+        //完整或者整个可视区域都是他
         fullBar = true;
         visualHeight = height;
       }

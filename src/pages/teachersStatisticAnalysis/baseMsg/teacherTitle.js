@@ -168,7 +168,7 @@ function TeacherTitle(props, ref) {
         },
       },
       tooltip: {
-        appendToBody: true,
+        // appendToBody: true,
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
