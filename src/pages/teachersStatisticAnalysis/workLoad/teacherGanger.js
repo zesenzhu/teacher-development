@@ -230,7 +230,7 @@ function TeacherGanger(props, ref) {
             color: "#7c7c7c",
             fontSize: 12,
 
-            padding: [0, 0, 0, 70],
+            padding: [0, 0, 0, 90],
           },
           nameGap: 20,
         },

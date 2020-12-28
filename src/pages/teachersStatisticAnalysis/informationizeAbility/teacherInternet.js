@@ -22,8 +22,8 @@
  * @LastEditors: zhuzesen
  * @Date: 2020-12-25 10:29:46
  * @LastEditTime: 2020-12-25 10:29:46
- * @Description: 教研课题
- * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\teachingAbility\teacherRP.js
+ * @Description: 电子资源
+ * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\teachingAbility\teacherER.js
  */
 
 import {
@@ -50,20 +50,19 @@ import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
 import { resizeForEcharts, deepCopy } from "../../../util/public";
-function TeacherRP(props, ref) {
+function TeacherInternet(props, ref) {
   let {
     className,
     levelHash,
     productMsg,
     data: {
-      ProjectCount,
-      AvgJoinCount,
-       CompletedCount,
-       AvgResultCount,
+      ResourceCount,
+      AvgUploadResourceCount,
+      AvgUploadUserCount,
       TotalTeacher,
-      HasJoinTeaCount,
-      NoJoinTeaCount,
-      HasJoinPercent,
+      HasUploadedCount,
+      NoUploadedCount,
+      UploadedPercent,
       SubSet,
  
     },
@@ -79,16 +78,16 @@ function TeacherRP(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoJoinTeaCount===undefined||HasJoinTeaCount===undefined){
-      return;
+    if(NoUploadedCount===undefined||HasUploadedCount===undefined){
+      return
     }
     let myEchart_ta = taEchart;
     let myEchart_sub = subEchart;
     let color = [
       "#0a407d",
-      "#8fdb66",
+      "#5ed9d8",
       // "#2edba3",
-      // "#fbb458",
+      "#fbb458",
       "#fd8273",
       "#3fb43f",
       "#e84855",
@@ -99,8 +98,8 @@ function TeacherRP(props, ref) {
 
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["未参加人数", NoJoinTeaCount],
-      ["已参加人数", HasJoinTeaCount],
+      ["平均每日不上机人数", NoUploadedCount],
+      ["平均每日上机人数", HasUploadedCount],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -122,23 +121,19 @@ function TeacherRP(props, ref) {
       //   },
       // },
       tooltip: {
-        appendToBody: true,
+        // appendToBody: true,
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `教研课题参与率${parseInt(HasJoinPercent) * 100}%`;
+          return `平均每日上机人数占比${parseInt(UploadedPercent) * 100}%`;
         },
         textStyle: {
           color: "#fffd64",
         },
       },
-      grid: {
-        height: 220,
-        
-        containLabel: true,
-      },
+
       legend: {
         show: false,
         // orient: "vertical",
@@ -153,11 +148,12 @@ function TeacherRP(props, ref) {
       color: color,
       series: [
         {
-          name: "电子教案制作参与率",
+          name: "上机信息统计",
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
 
+          // center: ["50% ", "50%"],
           height: "90%",
           itemStyle: {
             borderColor: "#fff",
@@ -191,7 +187,7 @@ function TeacherRP(props, ref) {
     };
     let subOption = {
       title: {
-        text: "各" + productMsg.sub + "统计信息",
+        text: "各" + productMsg.sub + "教师平均每日上机时长统计信息",
         // bottom: "4%",
         left: "center",
         top: 20,
@@ -213,20 +209,20 @@ function TeacherRP(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-        
+          
           let row = params[0];
           let { data } = row;
 
           return `<div  class="t-tooltip">
-                <p class="nodename">教研课题参与率${
-                  parseInt(data[1] * 100)
-                }%</p><p class='msg msg-2'>教师总人数<span>${
+                <p class="nodename">每人每日平均上机时长${
+                   data[1]  
+                }小时</p><p class='msg msg-2'>每人每日平均上机<span>${
             data[2]
-          }人</span></p><p class='msg msg-2'>已参加人数<span>${
+          }次</span></p><p class='msg msg-2'>每人每次平均上机时长<span>${
             data[3]
-          }人</span></p><p class='msg msg-2'>未参加人数<span>${
-            data[4]  
-          }人</span></p></div>
+          }小时</span></p><p class='msg msg-2'>平均每日上机人数占比<span>${
+            data[2] - data[3]
+          }%</span></p></div>
             `;
         },
         // textStyle: {
@@ -307,22 +303,22 @@ function TeacherRP(props, ref) {
       yAxis: [
         {
           type: "value",
-          name: "参与率",
-          max: 1,
+          name: "平均每日上机时长(单位:小时)",
+          // max: 1,
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
             margin: 20,
-            formatter: (value) => {
-              return `${value * 100}%`;
-            },
+            // formatter: (value) => {
+            //   return `${value * 100}%`;
+            // },
           },
 
           nameTextStyle: {
             color: "#7c7c7c",
             fontSize: 12,
 
-            padding: [0, 0, 0, 20],
+            padding: [0, 0, 0, 150],
           },
           nameGap: 20,
         },
@@ -344,12 +340,11 @@ function TeacherRP(props, ref) {
               colorStops: [
                 {
                   offset: 0,
-                  color: "#80c35c", // 0% 处的颜色
+                  color: "#9fedec", // 0% 处的颜色
                 },
-                 
                 {
                   offset: 1,
-                  color: "#b3f093", // 100% 处的颜色
+                  color: "#28c6c5", // 100% 处的颜色
                 },
               ],
             },
@@ -370,14 +365,14 @@ function TeacherRP(props, ref) {
         let {
           NodeName,
           TotalTeacher,
-          HasJoinTeaCount,
-          HasJoinPercent,NoJoinTeaCount
+          HasUploadedCount,
+          UploadedPercent,
         } = child;
         dataset_sub.push([
           NodeName,
-          HasJoinPercent,
+          UploadedPercent,
           TotalTeacher,
-          HasJoinTeaCount,NoJoinTeaCount
+          HasUploadedCount,
         ]);
       });
     // if (!myEchart_avg) {
@@ -426,17 +421,15 @@ function TeacherRP(props, ref) {
   }, [SubSet, productMsg]);
 
   return (
-    <div className={`teacher-bar TeacherRP ${className ? className : ""} `}>
+    <div className={`teacher-bar TeacherInternet ${className ? className : ""} `}>
       <div className="ter-left">
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          总体进行中的教研课题<span className="tb-tip-2">{ProjectCount}</span>
-          个，教师人均参与
-          <span className="tb-tip-2">{AvgJoinCount}</span>
-          份，教师人均课题成果
-          <span className="tb-tip-2">{AvgResultCount}</span>个；<br />
-          其中已结题课题<span className="tb-tip-2">{CompletedCount}</span>
-          个，已评定成果<span className="tb-tip-2">{ CompletedCount}</span>个
+          每人每日平均上机时长<span className="tb-tip-2">{ResourceCount}</span>
+          小时，每人每日平均上机
+          <span className="tb-tip-2">{AvgUploadResourceCount}</span>
+          次，每次
+          <span className="tb-tip-2">{AvgUploadUserCount}</span>小时
         </p>
         <div ref={taRef} className="ter-echarts"></div>
         <p className="ter-all">
@@ -445,7 +438,7 @@ function TeacherRP(props, ref) {
           <span>{TotalTeacher}</span>人
         </p>
         <p className="ter-title">
-        教研课题参与率
+        平均每日上机人数占比
           <Tooltip
             title="疑问"
             color={"#0249a5"}
@@ -469,4 +462,4 @@ const mapStateToProps = (state) => {
   } = state;
   return { levelHash };
 };
-export default connect(mapStateToProps)(memo(forwardRef(TeacherRP)));
+export default connect(mapStateToProps)(memo(forwardRef(TeacherInternet)));

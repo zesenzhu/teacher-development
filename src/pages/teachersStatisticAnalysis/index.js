@@ -62,6 +62,7 @@ import "./index.scss";
 import BaseMsg from "./baseMsg";
 import WorkLoad from "./workLoad";
 import TeachingAbility from "./teachingAbility";
+import InformationizeAbility from './informationizeAbility';
 import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
 import { Scrollbars } from "react-custom-scrollbars";
@@ -190,6 +191,22 @@ function Analysis(props, ref) {
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
               ></TeachingAbility>
+            ) : (
+              ""
+            )}
+            {tabid === "informationizeAbility" ? (
+              <InformationizeAbility
+                onAnchorComplete={(anchor) => {
+                  // console.log(anchor);
+                  setAnchorList(anchor);
+                }}
+                schoolID={schoolID}
+                collegeID={collegeID}
+                productLevel={productLevel}
+                selectLevel={selectLevel}
+                productMsg={levelHash[productLevel]}
+                term={topRef.current.TermSelect}
+              ></InformationizeAbility>
             ) : (
               ""
             )}

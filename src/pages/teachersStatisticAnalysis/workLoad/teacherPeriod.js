@@ -251,7 +251,7 @@ function TeacherPeriod(props, ref) {
             color: "#7c7c7c",
             fontSize: 12,
 
-            padding: [0, 0, 0, 20],
+            padding: [0, 0, 0, 50],
           },
           nameGap: 20,
         },

@@ -221,20 +221,10 @@ function App(props, ref) {
       >
         {SchoolName}
       </Analysis>
-      <div tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
-        <Bar
-          barName={"教师信息化能力"}
-          topContext={
-            <div
-              onClick={() => {
-                console.log("sdas");
-              }}
-            >
-              123
-            </div>
-          }
-        ></Bar>
-      </div>
+       
+      <Analysis tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
+        教师教学能力
+      </Analysis>
       <Analysis tabid={"teachingAbility"} tabname={"教师教学能力"}>
         教师教学能力
       </Analysis>
