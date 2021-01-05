@@ -27,6 +27,7 @@ import {
 import Analysis from "../teachersStatisticAnalysis";
 import Recruit from "../recruit";
 import Train from "../train";
+import Notice from '../notice';
 import TeacherPersonal from "../teacherPersonal";
 import { handleRoute, deepMap } from "../../util/public";
 // let { get } = fetch;
@@ -164,8 +165,13 @@ function App(props, ref) {
       type: commonActions.COMMON_SET_TERM_INFO,
       data: data.termInfo,
     });
-    // 根据版本级别，显示不同的左侧
-    dispatch(commonActions.SetLeftMenu(data.role.level));
+    dispatch({
+      type: commonActions.COMMON_SET_SYSTEM_SERVER,
+      data: data.systemServer,
+    });
+    // systemServer
+    // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
+    dispatch(commonActions.SetLeftMenu(data.role.level,!!data.systemServer[400]));
 
     // }
   };
@@ -250,9 +256,7 @@ function App(props, ref) {
         教师招聘计划管理
       </Recruit>
 
-      <div tabid={"notice"} tabname={"通知公告"}>
-        通知公告
-      </div>
+     
       <Recruit
         tabid={"publishRecruit"}
         tabname={"发布招聘计划"}
@@ -328,6 +332,8 @@ function App(props, ref) {
       >
         教师画像详情
       </TeacherPersonal>
+      <Notice tabid={"notice"}
+        tabname={"通知公告"}></Notice>
     </Frame>
   );
 }

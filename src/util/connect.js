@@ -52,7 +52,7 @@ import {
  * @return {*}
  */
 export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
-  sysID = sysID ? sysID : "000"; //默认基础平台000；
+  sysID = sysID ? sysID : "L10"; //默认基础平台000；
   callback = callback ? callback : (tokenValid) => {}; //回调函数；params:*tokenvalid:token是否有效
   firstLoad = firstLoad ? firstLoad : false; //是否第一次进来判断，默认false
   // token的比重是URL_TOKEN>SESSION_TOKEN>LOCAL_TOKEN
@@ -150,7 +150,7 @@ export function LogOut({ baseIP, sysID }) {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
 
   if (sysID) {
-    sysID = "000";
+    sysID = "L10";
   }
   baseIP = baseIP
     ? baseIP
@@ -268,7 +268,7 @@ const CirculTokenCheck = () => {
 export const getUserInfo = async (
   baseIP,
   token,
-  sysID = "000",
+  sysID = "L10",
   fun = () => {}
 ) => {
   token = token ? token : getDataStorage("token");

@@ -60,23 +60,34 @@ import Bar from "../../../component/bar";
 import {
   getTeacherCount,
   getHonorTeacher,
-  getTeacherAge,getTeacherEduAndTitle
+  getTeacherAge,
+  getTeacherEduAndTitle,
 } from "../../../api/baseMsg";
 import TeacherCount from "./teacherCount";
 import TeacherFamous from "./teacherFamous";
 import TeacherAge from "./teacherAge";
 import TeacherTitle from "./teacherTitle";
+import HistoryModal from "../historyModal";
 function BaseMsg(props, ref) {
   // *selectLevel:这里的selectLevel与用户的没关系，与看的级别有关，例如教育局的看学校的，selectLevel===2
   // *productLevel:产品类型，给用户看的界面类型，用来控制界面的一些属性：1教育局，2大学学校，3教育局学校，4大学学院，
   // *product:包含该productLevel的所有信息,有使用组件者使用productLevel和commonData的levelHash匹配使用，必须传，不传将出问题
-  let { term,HasHistory, onAnchorComplete, schoolID, collegeID, productMsg } = props;
+  let {
+    term,
+    HasHistory,
+    onAnchorComplete,
+    schoolID,
+    collegeID,
+    productMsg,
+  } = props;
   const { selectLevel } = productMsg;
   // 教师人数
   const [teacherCount, setTeacherCount] = useState(false);
   const [teacherFamous, setTeacherFamous] = useState(false);
   const [teacherAge, setTeacherAge] = useState(false);
   const [teacherEduAndTitle, setTeacherEduAndTitle] = useState(false);
+  // 历年弹框
+  const [visible, setVisible] = useState(false);
   //向上传bar的信息
   // const [anchorList, setAnchorList] = useState([]);
   // 获取每一块的ref，实现锚点功能
@@ -84,6 +95,8 @@ function BaseMsg(props, ref) {
   const famousRef = useRef(null);
   const ageRef = useRef(null);
   const educationRef = useRef(null);
+
+  const hisRef = useRef(null);
   useLayoutEffect(() => {
     // setAnchorList();
     typeof onAnchorComplete === "function" &&
@@ -145,14 +158,22 @@ function BaseMsg(props, ref) {
       });
     }
   }, [term, schoolID, collegeID, selectLevel]);
-
   return (
     <div className="BaseMsg">
       {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
       <Bar
         barName={"教师人数概况统计"}
         ref={countRef}
-        topContext={HasHistory?{ title: "查看历年人数变化" }:false}
+        topContext={
+          HasHistory
+            ? {
+                title: "查看历年人数变化",
+                onClick: () => {
+                  setVisible(true);
+                },
+              }
+            : false
+        }
         loading={!teacherCount}
       >
         <TeacherCount
@@ -170,20 +191,79 @@ function BaseMsg(props, ref) {
         <TeacherAge data={teacherAge} productMsg={productMsg}></TeacherAge>
       </Bar>
       <Bar
-      loading={!teacherEduAndTitle}
+        loading={!teacherEduAndTitle}
         barName={"学历职称统计 "}
         ref={educationRef}
-        topContext={HasHistory?{ title: "查看历年学历职称统计 " }:false}
+        topContext={
+          HasHistory
+            ? {
+                title: "查看历年学历职称统计 ",
+                onClick: () => {
+                  setVisible(true);
+                },
+              }
+            : false
+        }
       >
-        <TeacherTitle data={teacherEduAndTitle} productMsg={productMsg}></TeacherTitle>
+        <TeacherTitle
+          data={teacherEduAndTitle}
+          productMsg={productMsg}
+        ></TeacherTitle>
       </Bar>
+      <HistoryModal
+        onClose={() => {
+          setVisible(false);
+        }}
+        visible={visible}
+        title={'历史人数变化'}
+        data={[
+          {
+            nodeName: "全部",
+            nodeID: "all",
+            titleList: [
+              ["", "年", "教师人均周课时", "节次"],
+              ["人均总课时", "节"],
+              ["人均任教班级", "个"],
+              ["人均任教学生", "人"],
+            ],
+            xName: "周课时数",
+            yName: "年份",
+            source: [], //数据源
+            type: ["测试1", "测试2"], //多个数据时候的名称lengen
+            children: [
+              {
+                nodeName: "2018",
+                nodeID: 2018,
+                dataList: [["2018", "初中学段", "21"], ["150"], ["2"], ["60"]],
+                source: [70, 65],
+              },
+              {
+                nodeName: "2019",
+                nodeID: 2019,
+                dataList: [["2019", "初中学段", "21"], ["150"], ["2"], ["60"]],
+                source: [60, 30],
+              },
+              {
+                nodeName: "2020",
+                nodeID: 2020,
+                dataList: [["2020", "初中学段", "21"], ["150"], ["2"], ["60"]],
+                source: [85, 40],
+              },
+            ],
+          },
+        ]}
+      ></HistoryModal>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  let { commonData:{termInfo:{HasHistory}} } = state;
+  let {
+    commonData: {
+      termInfo: { HasHistory },
+    },
+  } = state;
   // console.log(state)
-  return {HasHistory};
+  return { HasHistory };
 };
 export default connect(mapStateToProps)(memo(forwardRef(BaseMsg)));

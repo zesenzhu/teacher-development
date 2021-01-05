@@ -444,22 +444,32 @@ export const deepMap = (
   array,
   callback = () => {},
   childrenKey = "children",
+  levelback = false, //深遍历到第几层，缺省默认遍历全部，定义为number遍历到该层，从1开始，包括number层
+  // 后面的为自己回调用
   level = 1,
-  parent = []
+  parent = [],
+  indexArray = []
 ) => {
   if (!(array instanceof Array)) {
     return false;
   }
 
   array.forEach((child, index) => {
-    callback({ child, index, level, parent });
-    if (child[childrenKey] instanceof Array) {
+    let IndexArray = indexArray.map((child) => child);
+    IndexArray.push(index);
+    callback({ child, index, indexArray: IndexArray, level, parent });
+    if (
+      (!levelback || isNaN(levelback) || level < levelback) &&
+      child[childrenKey] instanceof Array
+    ) {
       deepMap(
         child[childrenKey],
         callback,
         childrenKey,
+        levelback,
         level + 1,
-        [child].concat(parent)
+        [child].concat(parent),
+        IndexArray
       );
     }
   });
@@ -1056,8 +1066,8 @@ export const resizeForEcharts = (echartsInstance, fn) => {
   });
 };
 
-
-function getClass(o) { //判断数据类型
+function getClass(o) {
+  //判断数据类型
   return Object.prototype.toString.call(o).slice(8, -1);
 }
 /**
@@ -1066,19 +1076,45 @@ function getClass(o) { //判断数据类型
  * @return {*}
  */
 export function deepCopy(obj) {
-  var result, oClass = getClass(obj);
+  var result,
+    oClass = getClass(obj);
 
-  if (oClass === "Object") result = {}; //判断传入的如果是对象，继续遍历
-  else if (oClass === "Array") result = []; //判断传入的如果是数组，继续遍历
+  if (oClass === "Object") result = {};
+  //判断传入的如果是对象，继续遍历
+  else if (oClass === "Array") result = [];
+  //判断传入的如果是数组，继续遍历
   else return obj; //如果是基本数据类型就直接返回
 
   for (var i in obj) {
-      var copy = obj[i];
+    var copy = obj[i];
 
-      if (getClass(copy) === "Object") result[i] = deepCopy(copy); //递归方法 ，如果对象继续变量obj[i],下一级还是对象，就obj[i][i]
-      else if (getClass(copy) === "Array") result[i] = deepCopy(copy); //递归方法 ，如果对象继续数组obj[i],下一级还是数组，就obj[i][i]
-      else result[i] = copy; //基本数据类型则赋值给属性
+    if (getClass(copy) === "Object") result[i] = deepCopy(copy);
+    //递归方法 ，如果对象继续变量obj[i],下一级还是对象，就obj[i][i]
+    else if (getClass(copy) === "Array") result[i] = deepCopy(copy);
+    //递归方法 ，如果对象继续数组obj[i],下一级还是数组，就obj[i][i]
+    else result[i] = copy; //基本数据类型则赋值给属性
   }
 
   return result;
 }
+// 处理为数组，
+export const changeToArray = (param) => {
+  let end = [];
+  if (!(param instanceof Array)) {
+    // if (!param) {
+    //   end = [];
+    // }
+    if (typeof param === "object") {
+      for (let i in param) {
+        end.push(param[i]);
+      }
+    } else if (typeof param === "string") {
+      end = [param];
+    } else {
+      end = [];
+    }
+  } else {
+    end = param;
+  }
+  return end;
+};

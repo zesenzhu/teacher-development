@@ -18,7 +18,7 @@
  * @FilePath: \teacher-development\src\component\common\index.js
  */
 
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo,createRef } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import ReactDOM from "react-dom";
 import "es6-shim";
@@ -1929,22 +1929,29 @@ class Modal extends React.Component {
       width: this.props.width ? this.props.width : width,
       ModalStyle: ModalStyle,
     });
+    const Ref =createRef()
   }
 
   componentWillMount() {
     this.selectType(this.props.type);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const { title, bodyStyle, className, footer, mask } = nextProps;
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   const { title, bodyStyle, className, footer, mask } = nextProps;
 
-    this.selectType(this.props.type);
+  //   this.selectType(this.props.type);
 
-    this.setState({ title: title, bodyStyle, className, footer, mask });
-  }
+  //   this.setState({ title: title, bodyStyle, className, footer, mask });
+  // }
   // 拖拽modal
 
   componentDidMount() {
+
+    const { title, bodyStyle, className, footer, mask } = this.props;
+
+    // this.selectType(this.props.type);
+
+    // this.setState({ title: title, bodyStyle, className, footer, mask });
     //         let modalHeader = $('.ant-modal-header');
     //         let modal = $(this.refs.Modal);
     //         console.log(modalHeader,modal)
@@ -2068,7 +2075,7 @@ class Modal extends React.Component {
     return (
       <AntdModal
         // ref={ref=>this.Modal=ref}
-        ref="Modal"
+        ref={this.Ref}
         onOk={this.state.onOk}
         onCancel={this.state.onCancel}
         title={this.state.title}

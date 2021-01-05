@@ -84,9 +84,8 @@ const leftMenu_1 = [
     key: "teacherPersonal",
     name: "教师画像查询",
     icon: Icon_2,
-    children: [],params:[
-      { key: "personalDetail", title: "教师画像详情" },
-    ]
+    children: [],
+    params: [{ key: "personalDetail", title: "教师画像详情" }],
   },
   {
     key: "teacherRecruit",
@@ -145,9 +144,8 @@ const leftMenu_0 = [
     key: "teacherPersonal",
     name: "教师画像查询",
     icon: Icon_2,
-    children: [],params:[
-      { key: "personalDetail", title: "教师画像详情" },
-    ]
+    children: [],
+    params: [{ key: "personalDetail", title: "教师画像详情" }],
   },
   {
     key: "teacherRecruit",
@@ -181,14 +179,19 @@ const COMMON_SET_BASE_PLAT_FORM_MSG = "COMMON_SET_BASE_PLAT_FORM_MSG";
 const COMMON_SET_ROLE_MSG = "COMMON_SET_ROLE_MSG";
 const COMMON_SET_TERM_INFO = "COMMON_SET_TERM_INFO";
 const COMMON_SET_CONTENT_HW = "COMMON_SET_CONTENT_HW";
+const COMMON_SET_SYSTEM_SERVER = "COMMON_SET_SYSTEM_SERVER";
 // 设置左侧菜单
 const COMMON_SET_LEFT_MENU = "COMMON_SET_LEFT_MENU";
 // *type:0教育局的学校，大学的学院，1教育局，大学的学校，默认0
-const SetLeftMenu = (type = 0) => {
+const SetLeftMenu = (type = 0, haveNotice =true) => {
   return (dispatch, getState) => {
+    let leftMenu = type === 1 ? leftMenu_1 : leftMenu_0;
+    if (!haveNotice) {
+      leftMenu.pop()  
+    }
     dispatch({
       type: COMMON_SET_LEFT_MENU,
-      data: type === 1 ? leftMenu_1 : leftMenu_0,
+      data: leftMenu,
     });
   };
 };
@@ -200,6 +203,7 @@ const actions = {
   COMMON_SET_IDENTITY,
   COMMON_SET_ROLE_MSG,
   COMMON_SET_CONTENT_HW,
+  COMMON_SET_SYSTEM_SERVER,
   COMMON_SET_LEFT_MENU,
   SetLeftMenu,
 };

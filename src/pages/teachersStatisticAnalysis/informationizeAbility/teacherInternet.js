@@ -56,15 +56,14 @@ function TeacherInternet(props, ref) {
     levelHash,
     productMsg,
     data: {
-      ResourceCount,
-      AvgUploadResourceCount,
-      AvgUploadUserCount,
+      DayAvgTimeSpan,
+      DayAvgLoginCount,
+      AvgLoginTimeSpan,
       TotalTeacher,
-      HasUploadedCount,
-      NoUploadedCount,
-      UploadedPercent,
+      DayAvgOnlineUser,
+      DayAvgOfflineUser,
+      DayAvgOnlinePercent,
       SubSet,
- 
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -78,8 +77,8 @@ function TeacherInternet(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoUploadedCount===undefined||HasUploadedCount===undefined){
-      return
+    if (DayAvgOfflineUser === undefined || DayAvgOnlineUser === undefined) {
+      return;
     }
     let myEchart_ta = taEchart;
     let myEchart_sub = subEchart;
@@ -98,8 +97,8 @@ function TeacherInternet(props, ref) {
 
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["平均每日不上机人数", NoUploadedCount],
-      ["平均每日上机人数", HasUploadedCount],
+      ["平均每日不上机人数", DayAvgOfflineUser],
+      ["平均每日上机人数", DayAvgOnlineUser],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -127,7 +126,7 @@ function TeacherInternet(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `平均每日上机人数占比${parseInt(UploadedPercent) * 100}%`;
+          return `平均每日上机人数占比${parseInt(DayAvgOnlinePercent) * 100}%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -209,19 +208,18 @@ function TeacherInternet(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-          
           let row = params[0];
           let { data } = row;
 
           return `<div  class="t-tooltip">
                 <p class="nodename">每人每日平均上机时长${
-                   data[1]  
+                  data[1]
                 }小时</p><p class='msg msg-2'>每人每日平均上机<span>${
             data[2]
           }次</span></p><p class='msg msg-2'>每人每次平均上机时长<span>${
             data[3]
           }小时</span></p><p class='msg msg-2'>平均每日上机人数占比<span>${
-            data[2] - data[3]
+            data[4] 
           }%</span></p></div>
             `;
         },
@@ -329,7 +327,7 @@ function TeacherInternet(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:24,
+          barMaxWidth: 24,
           itemStyle: {
             color: {
               type: "linear",
@@ -364,15 +362,17 @@ function TeacherInternet(props, ref) {
       SubSet.forEach((child, index) => {
         let {
           NodeName,
-          TotalTeacher,
-          HasUploadedCount,
-          UploadedPercent,
+          AvgLoginTimeSpan,
+          DayAvgTimeSpan,
+          DayAvgOnlinePercent,
+          DayAvgLoginCount,
         } = child;
         dataset_sub.push([
           NodeName,
-          UploadedPercent,
-          TotalTeacher,
-          HasUploadedCount,
+          DayAvgTimeSpan,//每人每日平均上机时长
+          DayAvgLoginCount,//每人每日平均上机次数
+          AvgLoginTimeSpan,//平均每次时间
+          DayAvgOnlinePercent,//平均每日上机百分比
         ]);
       });
     // if (!myEchart_avg) {
@@ -421,15 +421,17 @@ function TeacherInternet(props, ref) {
   }, [SubSet, productMsg]);
 
   return (
-    <div className={`teacher-bar TeacherInternet ${className ? className : ""} `}>
+    <div
+      className={`teacher-bar TeacherInternet ${className ? className : ""} `}
+    >
       <div className="ter-left">
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          每人每日平均上机时长<span className="tb-tip-2">{ResourceCount}</span>
+          每人每日平均上机时长<span className="tb-tip-2">{DayAvgTimeSpan}</span>
           小时，每人每日平均上机
-          <span className="tb-tip-2">{AvgUploadResourceCount}</span>
+          <span className="tb-tip-2">{DayAvgLoginCount}</span>
           次，每次
-          <span className="tb-tip-2">{AvgUploadUserCount}</span>小时
+          <span className="tb-tip-2">{AvgLoginTimeSpan}</span>小时
         </p>
         <div ref={taRef} className="ter-echarts"></div>
         <p className="ter-all">
@@ -438,7 +440,7 @@ function TeacherInternet(props, ref) {
           <span>{TotalTeacher}</span>人
         </p>
         <p className="ter-title">
-        平均每日上机人数占比
+          平均每日上机人数占比
           <Tooltip
             title="疑问"
             color={"#0249a5"}

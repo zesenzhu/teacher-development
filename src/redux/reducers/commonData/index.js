@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-24 17:03:21
+ * @LastEditTime: 2021-01-05 10:24:56
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -74,6 +74,7 @@ const commonData = (
       },
     },
     contentHW: { height: 0, width: 0 },
+    systemServer:{}
   },
   actions
 ) => {
@@ -110,7 +111,10 @@ const commonData = (
       return Object.assign({}, state, {
         roleMsg: actions.data,
       });
-
+      case commonActions.COMMON_SET_SYSTEM_SERVER:
+        return Object.assign({}, state, {
+          systemServer: actions.data,
+        });
     default:
       return state;
   }

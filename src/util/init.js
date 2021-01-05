@@ -52,6 +52,7 @@ import {
   getDataStorage,
   getQueryVariable,
   addOrgToUrl,
+  changeToArray,
 } from "./public";
 import fetch from "./fetch";
 let { BasicProxy } = config;
@@ -73,6 +74,8 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
             let termInfo = getTermInfo(
               userInfo.SchoolID ? userInfo.SchoolID : ""
             );
+            let systemServer = getSystemServer([]);
+
             // 多个接口，不能用await阻塞，要用Promise
             // let identityDetail = getPromise(
             //   getIdentityDetail.bind(this, moduleID)
@@ -81,17 +84,20 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
             //   getTermInfo.bind(this, userInfo.SchoolID ? userInfo.SchoolID : "")
             // );
 
-            Promise.all([identityDetail, termInfo]).then((res) => {
-              let [identityDetail, termInfo] = res;
-              // console.log(identityDetail, termInfo);
-              success({
-                identityDetail,
-                basePlatformMsg: data,
-                userInfo,
-                termInfo,
-                role: setUnifyRole(userInfo, identityDetail, data),
-              });
-            });
+            Promise.all([identityDetail, termInfo, systemServer]).then(
+              (res) => {
+                let [identityDetail, termInfo, systemServer] = res;
+                // console.log(identityDetail, termInfo);
+                success({
+                  identityDetail,
+                  basePlatformMsg: data,
+                  userInfo,
+                  termInfo,
+                  systemServer,
+                  role: setUnifyRole(userInfo, identityDetail, data),
+                });
+              }
+            );
           } else {
             error();
           }
@@ -115,6 +121,37 @@ const getPromise = (promise) => {
       resolve(res);
     });
   });
+};
+// 获取子系统的服务器地址信息
+/**
+ * @description: 获取子系统的服务器地址信息
+ * @param {*sysID：额外要求请求的sysid,可为数组或字符串}
+ * @return {*}
+ */
+const getSystemServer = async (sysID) => {
+  let { BasicWebRootUrl: baseIP } =
+    getDataStorage("BasePlatformMsg") instanceof Object
+      ? getDataStorage("BasePlatformMsg")
+      : {};
+  sysID = [400].concat(changeToArray(sysID)).join(","); //处理为数组
+  const result = await get({
+    url: `${baseIP}/BaseApi/Global/GetSubSystemsMainServerBySubjectID?appid=L10&access_token=7f0fc0ce1335b77b0f3f944003713e09&subjectID=&sysIDs=${sysID}`,
+    securityLevel: 2,
+  });
+
+  const res = await result.json();
+  if (res.StatusCode === 200) {
+    let data = {};
+    if (res.Data instanceof Array) {
+      res.Data.forEach((child) => {
+        data[child.SysID] = child;
+      });
+    }
+    setDataStorage("SubSystemsMainServer", data);
+    return data;
+  } else {
+    return {};
+  }
 };
 /**
  * @description: 处理用户信息，统一角色身份，返回统一后的教育局端、高校端的各种身份
@@ -477,7 +514,7 @@ export const getTermInfo = async (SchoolID) => {
   let json = "";
   //  界面第一次加载获取后保存，基本不会出错
 
-  if (TermInfo&&TermInfo.TermInfo instanceof Array&&TermInfo.length>0) {
+  if (TermInfo && TermInfo.TermInfo instanceof Array && TermInfo.length > 0) {
     json = await new Promise((resolve, reject) => {
       resolve({
         StatusCode: 200,

@@ -41,7 +41,7 @@ export function getTeachER(payload = {}) {
   let { schoolID, collegeID, selectLevel, term } = payload;
   let url =
     BasicProxy +
-    `/Statistics/TeachingAbility/ER?SchoolID=${
+    `/Statistics/NetInfo/RP?SchoolID=${
       schoolID ? schoolID : ""
     }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
       selectLevel ? selectLevel : ""
@@ -55,19 +55,22 @@ export function getTeachER(payload = {}) {
     .then((res) => res.json())
     .then((json) => {
       if (json.StatusCode === 200) {
-        // "ResourceCount":150,            //电子资源上传数量
-        // "AvgUploadResourceCount":14,    //人均上传数量
-        // "AvgUploadUserCount":2,            //平均每日上传人数
-        // "TotalTeacher":60,                //教师总数量
-        // "HasUploadedCount":60,            //参与上传人数
-        // "NoUploadedCount":60,
-        // "UploadedPercent":0.963,            //参与率
+        // "DayAvgTimeSpan":"3小时",            //每人每日平均上机时长
+        // "DayAvgLoginCount":2,                //每人每日平均上机次数
+        // "AvgLoginTimeSpan":"1.5小时",                //平均每次时间
+        // "TotalTeacher":1920,                //教师总数量
+        // "DayAvgOnlineUser":60,                //平均每日上机人数
+        // "DayAvgOfflineUser":60,                //平均每日未上线人数
+        // ""DayAvgOnlinePercent":"0.96",        //平均每日上机百分比
         // "SubSet":[{
         //     "NodeID":"XXXXXXXXXXX",            
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
-        //     "HasUploadedCount":11,            //该节点参与上传人数
-        //     "UploadedPercent":0.963,         //参与率
+        //     "DayAvgTimeSpan":"3",            //每人每日平均上机时长
+        //     "DayAvgLoginCount":2,                //每人每日平均上机次数
+        //     "AvgLoginTimeSpan":"1.5",                //平均每次时间
+        //     "DayAvgOnlinePercent":0.96,        //平均每日上机百分比
+        // }]
         // }]
         return json.Data ? json.Data : {};
       } else {
@@ -85,7 +88,7 @@ export function getTeachTP(payload = {}) {
   let { schoolID, collegeID, selectLevel, term } = payload;
   let url =
     BasicProxy +
-    `/Statistics/TeachingAbility/TP?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
+    `/Statistics/NetInfo/TP?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
       collegeID ? collegeID : ""
     }&SelectLevel=${selectLevel ? selectLevel : ""}&Term=${term ? term : ""}`;
   // "?" +
