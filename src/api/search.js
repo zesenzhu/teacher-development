@@ -35,7 +35,7 @@ import fetch from "../util/fetch";
 import ipConfig from "../util/ipConfig";
 let { BasicProxy } = ipConfig;
 /**
- * @description: http://192.168.129.1:8033/showdoc/web/#/21?page_id=2076 管理员
+ * @description: http://192.168.129.1:8033/showdoc/web/#/21?page_id=2170 搜索
  * @param {*}
  * @return {*}
  */

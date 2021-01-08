@@ -66,16 +66,16 @@ function LGSearch(props, ref) {
 
   const [result, loading] = useSearchRequest(api, query);
   const [SearchValue, setSearchValue] = useState("");
-  const [myResult,setMyResult ] = useState(null);
+  const [myResult, setMyResult] = useState(null);
   const searchRef = useRef(null);
   // 设置显示的boolean
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    setMyResult(result)
+    setMyResult(result);
   }, [result]);
   useLayoutEffect(() => {
     let dom = searchRef.current;
-    console.log(dom.contains, document.getElementById("test"));
+    // 对点击不同节点来控制显示隐藏
     document.addEventListener("click", (node) => {
       let isOut = false;
       if (!dom.contains(node.target)) {
@@ -108,7 +108,7 @@ function LGSearch(props, ref) {
       visible={visible}
       title={
         // <div style={{ minHeight: "300px", width: "402px" }}></div>
-        <Loading spinning={loading} tip={"请稍候..."}>
+        <Loading opacity={false} spinning={loading} tip={"请稍候..."}>
           {typeof searchResult === "function"
             ? searchResult(myResult, query.keyword)
             : searchResult}
@@ -134,7 +134,7 @@ function LGSearch(props, ref) {
           }}
           onCancelSearch={(e) => {
             setSearchValue("");
-            setMyResult({})
+            setMyResult({});
           }}
         ></Search>
       </div>

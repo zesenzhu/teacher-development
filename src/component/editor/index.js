@@ -143,8 +143,9 @@ function Editor(props, ref) {
   const [applyEndTime, setApplyEndTime] = useState("");
   // 报名起始时间错误显示
   const [applyTimeVisible, setApplyTimeVisible] = useState(false);
-  const [applyTimeTip, setApplyTimeTip] = useState("请输入选择报名起止时间");
-
+  const [applyTimeTip, setApplyTimeTip] = useState("请选择报名起止时间");
+  // 是否允许报名,控制报名人数限制和报名起止
+  const [allowApply, setAllowApply] = useState(false);
   // 预览不用获取数据，数据由上面传下来
   const [detailData, handleChange, loading] = useDetailRequest(
     {},
@@ -392,8 +393,8 @@ function Editor(props, ref) {
       checkTitle(),
       checkActivityFlag(),
       checkApplyFlag(),
-      checkApplyTime(),
-      checkLimit(),
+      allowApply && checkApplyTime(),
+      allowApply && checkLimit(),
     ];
 
     if (result.every((child) => child)) {
@@ -522,7 +523,19 @@ function Editor(props, ref) {
     },
     [upload, file]
   );
-
+  // 监听是否启动报名
+  useEffect(() => {
+    if (applyFlag === 0) {
+      setAllowApply(false);
+      setLimit("");
+      setApplyBeginTime("");
+      setApplyEndTime("");
+      setApplyTimeVisible(false);
+      //  checkLimit()
+    } else {
+      setAllowApply(true);
+    }
+  }, [applyFlag]);
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
       <table className="editor-table">
@@ -575,6 +588,7 @@ function Editor(props, ref) {
                     onChange={(e) => {
                       setApplyFlag(e.target.value);
                       setApplyFlagVisible(false);
+                      // setAllowApply(e.target.value === 0);
                     }}
                   >
                     {applyFlagList.map((child, index) => {
@@ -599,6 +613,7 @@ function Editor(props, ref) {
                   <Input
                     value={limit}
                     // max={}
+                    disabled={!allowApply}
                     type={"number"}
                     className="editor-input limit-input"
                     maxLength={8}
@@ -620,7 +635,10 @@ function Editor(props, ref) {
             <tr>
               <td className="must">报名起止时间:</td>
               <td>
-                <Tip visible={applyTimeVisible} title={applyTimeTip}>
+                <Tip
+                  visible={allowApply && applyTimeVisible}
+                  title={applyTimeTip}
+                >
                   <RangePicker
                     onChange={(dates, dateString) => {
                       // console.log(dates, dateString);
@@ -638,8 +656,14 @@ function Editor(props, ref) {
                       }
                     }}
                     // 禁用，没选开始，不能选择结束
-                    disabled={[false, !applyBeginTime]}
-                    allowEmpty={[false, !applyBeginTime]}
+                    disabled={[
+                      !allowApply || false,
+                      !allowApply || !applyBeginTime,
+                    ]}
+                    allowEmpty={[
+                      !allowApply || false,
+                      !allowApply || !applyBeginTime,
+                    ]}
                     value={[
                       applyBeginTime ? moment(applyBeginTime) : "",
                       applyEndTime ? moment(applyEndTime) : "",
