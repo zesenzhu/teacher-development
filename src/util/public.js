@@ -81,6 +81,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import $ from "jquery";
 import { ErrorAlert } from "../component/common";
+import resolve from "resolve";
 //对象深度对比
 export const deepCompare = (x, y) => {
   var i, l, leftChain, rightChain;
@@ -1117,4 +1118,74 @@ export const changeToArray = (param) => {
     end = param;
   }
   return end;
+};
+
+/**
+ * @description: 动态添加标签到dom
+ * @param {*params:节点的属性，*element：所要添加的标签名，*parent:所添加的标签放到的位置}
+ * @return {*}
+ */
+export const addElement = (
+  params = {},
+  element = "script",
+  parent = "body",
+  callback=()=>{}
+) => {
+  try {
+    let Element = document.createElement(element);
+    // Element = { ...Element, ...params };
+    for (let i in params) {
+      Element[i] = params[i];
+    }
+    // 如果params带有id属性，判断dom是否有该节点了
+    if (
+      params.id &&
+      // params.src &&
+      document.getElementById(params.id)
+      // &&
+      // params.src === document.getElementById(params.id).src
+    ) {
+      callback(false)
+      return;
+    }
+    document[parent].appendChild(Element);
+    callback(true)
+  } catch (e) {
+    console.error(e);
+  }
+};
+/**
+ * @description: 添加script,params传onLoad表示使用同步
+ * @param {*}
+ * @return {*}
+ */
+export const addScript = async (
+  params = {},
+  element = "script",
+  parent = "body"
+) => {
+  // if (params.onLoad) {
+    return new Promise((resolve, reject) => {
+
+      addElement(
+        {
+          type: "text/javascript",
+          charset:'utf-8',
+          ...params,
+          onload: () => {
+            resolve(true);
+            typeof params.onLoad === "function" && params.onLoad();
+          },
+        },
+        element,
+        parent,
+        (data)=>{
+          if(!data)
+          resolve(true);
+        }
+      );
+    });
+  // } else {
+  //   addElement({ type: "text/javascript", ...params }, element, parent);
+  // }
 };

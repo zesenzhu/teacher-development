@@ -99,9 +99,15 @@ function HomeTop(props, ref) {
       )}
       {draft ? (
         <Tooltip
-          getPopupContainer={(e) => e.parentNode}
+          // getPopupContainer={(e) => e.parentNode}
           placement={"bottomRight"}
           // visible={tableProps?}
+          // align={{
+          //   points: ["tr", "br"], // align top left point of sourceNode with top right point of targetNode
+          //   // offset: [10, 20], // the offset sourceNode by 10px in x and 20px in y,
+          //   // targetOffset: ["30%", "40%"], // the offset targetNode by 30% of targetNode width in x and 40% of targetNode height in y,
+          //   overflow: { adjustX: true, adjustY: true }, // auto adjust position when sourceNode is overflowed
+          // }}
           color={"#fff"}
           overlayClassName={`draft-box`}
           trigger={"click"}
@@ -110,19 +116,22 @@ function HomeTop(props, ref) {
             setVisible(visible);
           }}
           title={
-            <Scrollbars autoHeight autoHeightMax={590} autoHide>
-              <Table
-                className="Reacruit-table"
-                columns={draft.columns}
-                // dataSource={data}
-                prepare={!!draft.query.selectLevel}
-                query={draft.query}
-                onDataChange={(data) => {}}
-                ref={tableRef}
-                api={draft.api}
-                pageProps={{ showSizeChanger: false }}
-              ></Table>
-            </Scrollbars>
+            <div style={{width:'984px',minHeight:'400px'}}>
+              {/* <Scrollbars autoHeight autoHeightMax={590} autoHide> */}
+                <Table
+                style={{minWidth:'884px'}}
+                  className="Reacruit-table"
+                  columns={draft.columns}
+                  // dataSource={data}
+                  prepare={!!draft.query.selectLevel}
+                  query={draft.query}
+                  onDataChange={(data) => {}}
+                  ref={tableRef}
+                  api={draft.api}
+                  pageProps={{ showSizeChanger: false }}
+                ></Table>
+              {/* </Scrollbars> */}
+            </div>
           }
         >
           <span
@@ -144,6 +153,7 @@ function HomeTop(props, ref) {
       )}
       {search ? (
         <Search
+          placeHolder={"输入关键词搜索..."}
           className="home-search"
           Value={SearchValue}
           onChange={(e) => {

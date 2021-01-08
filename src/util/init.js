@@ -263,6 +263,8 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       collegeID,
       schoolID,
       productLevel,
+      frameType:Role.userType===1?'teacher':'default',//教师是没有左侧的，其它的都一样
+      //教师 UserType=1
       level: !version.includes("-") ? 1 : 0,
     };
     // if ( ProductUseRange === 1||) {

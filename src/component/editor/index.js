@@ -51,7 +51,7 @@ import React, {
   // useReducer,
   // createContext,
   // useContext,
-  //   useRef,
+  useRef,
   forwardRef,
 } from "react";
 
@@ -73,6 +73,7 @@ import { getRecruitDetail } from "../../api/recruit";
 import { getTrainDetail } from "../../api/train";
 import moment from "moment";
 import SparkMD5 from "spark-md5";
+import UEditor from "../UEditor";
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 let format = "YYYY-MM-DD HH:mm";
@@ -164,12 +165,15 @@ function Editor(props, ref) {
       { value: 0, title: "线下" },
     ];
   }, []);
+  // 编辑器实例
+  const UEditorRef = useRef(null);
   //  请求
   useEffect(() => {
     schema !== "preview" && fileid && handleChange(fileid);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileid]);
+
   // 赋值
   useEffect(() => {
     if (detailData.IsLoaded && detailData.IsExist) {
@@ -281,7 +285,8 @@ function Editor(props, ref) {
   const checkApplyFlag = useCallback(
     (value) => {
       let result = true;
-      if (type !== "train") {//不是培训的，检查都成功
+      if (type !== "train") {
+        //不是培训的，检查都成功
         return true;
       }
       value = value || applyFlag;
@@ -302,7 +307,8 @@ function Editor(props, ref) {
   const checkActivityFlag = useCallback(
     (value) => {
       let result = true;
-      if (type !== "train") {//不是培训的，检查都成功
+      if (type !== "train") {
+        //不是培训的，检查都成功
         return true;
       }
       value = value || activityFlag;
@@ -324,7 +330,8 @@ function Editor(props, ref) {
     (value) => {
       //value传moment
       let result = true;
-      if (type !== "train") {//不是培训的，检查都成功
+      if (type !== "train") {
+        //不是培训的，检查都成功
         return true;
       }
       let [begin, end] = value || [applyBeginTime, applyEndTime];
@@ -359,7 +366,8 @@ function Editor(props, ref) {
   const checkLimit = useCallback(
     (value) => {
       let result = true;
-      if (type !== "train") {//不是培训的，检查都成功
+      if (type !== "train") {
+        //不是培训的，检查都成功
         return true;
       }
       value = value || limit;
@@ -378,7 +386,15 @@ function Editor(props, ref) {
   );
   // 检查所有
   const checkAll = (fn) => {
-    let result = [checkContent(), checkSource(), checkTitle(),checkActivityFlag(),checkApplyFlag(),checkApplyTime(),checkLimit()];
+    let result = [
+      checkContent(),
+      checkSource(),
+      checkTitle(),
+      checkActivityFlag(),
+      checkApplyFlag(),
+      checkApplyTime(),
+      checkLimit(),
+    ];
 
     if (result.every((child) => child)) {
       typeof fn === "function" && fn();
@@ -506,7 +522,7 @@ function Editor(props, ref) {
     },
     [upload, file]
   );
-  console.log(moment("").isValid());
+
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
       <table className="editor-table">
@@ -804,7 +820,7 @@ function Editor(props, ref) {
             <td className="must  ">正文:</td>
             <td>
               <Tip visible={mainVisible} title={mainTip}>
-                <TextArea
+                {/* <TextArea
                   value={main}
                   className="editor-input main-input"
                   // maxLength={100}
@@ -816,7 +832,18 @@ function Editor(props, ref) {
                   onBlur={(e) => {
                     checkContent(e.target.value);
                   }}
-                ></TextArea>
+                ></TextArea> */}
+                <div className={"editor-input main-input"}>
+                  {" "}
+                  <UEditor
+                    onBlur={(e) => {
+                      checkContent(e);
+                      setMain(e);
+                    }}
+                    defaultValue={main}
+                    ref={UEditorRef}
+                  ></UEditor>
+                </div>
               </Tip>
             </td>
           </tr>
@@ -832,11 +859,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
-                  Limit:limit,
-                  ApplyBeginTime:applyBeginTime,
-                  ApplyEndTime:applyEndTime,
-                  ActivityFlag:activityFlag,
-                  ApplyFlag:applyFlag,
+                  Limit: limit,
+                  ApplyBeginTime: applyBeginTime,
+                  ApplyEndTime: applyEndTime,
+                  ActivityFlag: activityFlag,
+                  ApplyFlag: applyFlag,
                   ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })
@@ -857,11 +884,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
-                  Limit:limit,
-                  ApplyBeginTime:applyBeginTime,
-                  ApplyEndTime:applyEndTime,
-                  ActivityFlag:activityFlag,
-                  ApplyFlag:applyFlag,
+                  Limit: limit,
+                  ApplyBeginTime: applyBeginTime,
+                  ApplyEndTime: applyEndTime,
+                  ActivityFlag: activityFlag,
+                  ApplyFlag: applyFlag,
                   // ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })
@@ -882,11 +909,11 @@ function Editor(props, ref) {
                   Title: title,
                   Issue: source,
                   Content: main,
-                  Limit:limit,
-                  ApplyBeginTime:applyBeginTime,
-                  ApplyEndTime:applyEndTime,
-                  ActivityFlag:activityFlag,
-                  ApplyFlag:applyFlag,
+                  Limit: limit,
+                  ApplyBeginTime: applyBeginTime,
+                  ApplyEndTime: applyEndTime,
+                  ActivityFlag: activityFlag,
+                  ApplyFlag: applyFlag,
                   // ReleaseTime: moment().format("YYYY-MM-DD HH:mm"),
                   FileList: file,
                 })

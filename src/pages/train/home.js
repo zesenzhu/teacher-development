@@ -145,9 +145,10 @@ function Home(props, ref) {
       width: 172 * widthRate,
       dataIndex: "ApplyEndTime",
       render: (data) => {
+        let {ApplyFlag,ApplyEndTime} =data
         return (
-          <span className="table-time" title={data}>
-            {data?data:'--'}
+          <span className="table-time" title={ApplyEndTime}>
+            {ApplyFlag&&ApplyEndTime?ApplyEndTime:'--'}
           </span>
         );
       },
@@ -158,11 +159,11 @@ function Home(props, ref) {
       width: 90 * widthRate,
       // dataIndex: "publisher",
       render: (data) => {
-        let { Limit,ApplyCount } = data;
+        let { Limit,ApplyCount,ApplyFlag } = data;
         let title = (ApplyCount?ApplyCount:0)+'/'+(Limit?Limit:'--')
         return (
           <span className="table-limit" title={title}>
-            {title}
+            {ApplyFlag?title:'--'}
           </span>
         );
       },

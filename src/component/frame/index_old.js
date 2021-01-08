@@ -92,7 +92,7 @@ import React, {
   function Frame(props, ref) {
     // type控制显示骨架类型，不存在或false则界面loading
     // type:*default:默认模式，存在左侧菜单和默认头部，children为中部内容区
-    // *default-no-left:没有左侧区域，只有中间区域
+    // *default-teacher:没有左侧区域，只有中间区域
     const {
       type,
       pageInit,
@@ -374,7 +374,7 @@ import React, {
           )}
           <div
             className={`Frame-contain  ${
-              checkType("no-left") ? "Frame-contain-2" : ""
+              checkType("teacher") ? "Frame-contain-2" : ""
             }`}
           >
             {type === "default" ? (
@@ -386,7 +386,7 @@ import React, {
             )}
             <div
               className={`Frame-contain-right ${
-                checkType("no-left") ? "only-center" : ""
+                checkType("teacher") ? "only-center" : ""
               }`}
             >
               {Init ? (

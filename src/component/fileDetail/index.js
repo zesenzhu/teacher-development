@@ -63,7 +63,7 @@ import $ from "jquery";
 import useDetailRequest from "../../hooks/useDetailRequest";
 import { getRecruitDetail } from "../../api/recruit";
 import { getTrainDetail } from "../../api/train";
-import { Loading, Empty } from "../common";
+import { Loading, Empty,EmptyReact } from "../common";
 import { constructFileType, getDataStorage } from "../../util/public";
 function FileDetail(props, ref) {
   // *type:分为recruit招聘、train培训,默认招聘
@@ -78,6 +78,7 @@ function FileDetail(props, ref) {
     onReturn,
     onComfirm,
     previewData,
+    useScrollbars,
     ...reset
   } = props;
   // 获取数据
@@ -86,6 +87,10 @@ function FileDetail(props, ref) {
     {},
     type === "train" ? getTrainDetail : getRecruitDetail
   );
+  // 是否使用滚动条
+  const UseScrollbars= useMemo(() => {
+    return useScrollbars===undefined||useScrollbars?true:false
+  }, [useScrollbars])
   // 主文
   const preRef = useRef(null);
   useEffect(() => {
@@ -119,7 +124,7 @@ function FileDetail(props, ref) {
     return BasePlatformMsg instanceof Object && BasePlatformMsg.ResHttpRootUrl;
   }, []);
   return (
-    <Scrollbars>
+    <EmptyReact component={UseScrollbars?Scrollbars:false}>
       <Loading
         opacity={false}
         spinning={schema !== "preview" && loading}
@@ -247,7 +252,7 @@ function FileDetail(props, ref) {
           )}
         </div>
       </Loading>
-    </Scrollbars>
+    </EmptyReact>
   );
 }
 export default memo(forwardRef(FileDetail));

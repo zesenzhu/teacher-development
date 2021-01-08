@@ -32,29 +32,15 @@
  */
 
 @import "../../common/mixin.scss";
-.Frame-topBar-1 {
+.Frame-topBar-default {
     position: relative;
     width: 100%;
     height: 64px;
     background: url(./images/image-top-bg.png) no-repeat right center / 100% 64px;
-    // background-image: linear-gradient(90deg, #0084ff 0%, #0d49f2 100%), linear-gradient(#0045ac, #0045ac);
-    // &::before {
-    //     position: absolute;
-    //     content: '';
-    //     width: 100%;
-    //     height: 64px;
-    //     right: 0;
-    //     top: 0;
-    //     background: url(./images/image-top-bg.png) no-repeat right center / contain;
-    // }
-    .Frame-logo {
-        position: absolute;
-        width: 239px;
-        height: 51px;
-        bottom: 0;
-        left: 19px;
-    }
-    &>div {
+}
+
+.Frame-topBar {
+    .Frame-devide {
         position: relative;
         float: right;
         height: 100%;
@@ -81,10 +67,18 @@
             }
         }
     }
+    .Frame-logo {
+        position: absolute;
+        width: 239px;
+        height: 51px;
+        bottom: 0;
+        left: 19px;
+    }
     .Frame-userMsg {
         float: right;
         height: 100%;
         line-height: 64px;
+        position: relative;
         // &::after {
         //     display: none;
         // }
@@ -168,6 +162,61 @@
             display: inline-block;
             width: 6px;
             vertical-align: top;
+        }
+    }
+}
+
+.Frame-topBar-teacher {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background: url(./images/image-top-bg-2.png) no-repeat center center / 100% 150px;
+    .tb-bar {
+        height: 40px;
+        line-height: 40px;
+        padding: 0 calc(50% - 600px);
+        background-color: rgba(#000000, 0.1);
+        .tb-logo {
+            float: left;
+            width: 30px;
+            // display: inline-block;
+            height: 40px;
+            background: url(./images/image-platform-logo.png) no-repeat center center / contain;
+        }
+        .tb-title {
+            float: left;
+            line-height: 40px;
+            font-size: 16px;
+            color: #fefefe;
+            margin-left: 8px;
+        }
+        .Frame-devide {
+            height: 40px;
+            line-height: 40px;
+            padding: 0;
+        }
+    }
+    .tb-name {
+        position: relative;
+        margin: 0 calc(50% - 600px);
+        // bottom: 0;
+        margin-top: 21px;
+        left: 30px;
+        min-width: 500px;
+        height: 89px;
+        background: url(./images/image-top-name-teacher.png) no-repeat left center / contain;
+        .tb-module-name {
+            margin-left: 240px;
+            margin-top: 18px;
+            display: inline-block;
+            text-align: center;
+            // width: 102px;
+            padding: 0 10px;
+            height: 20px;
+            background-color: rgba(#000000, 0.24);
+            border-radius: 10px;
+            font-size: 14px;
+            color: rgba(#ffffff, 0.72);
         }
     }
 }

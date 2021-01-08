@@ -18,7 +18,7 @@
  * @FilePath: \teacher-development\src\component\common\index.js
  */
 
-import React, { memo, useMemo,createRef } from "react";
+import React, { memo, useMemo, createRef } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import ReactDOM from "react-dom";
 import "es6-shim";
@@ -65,6 +65,7 @@ class AppAlert extends React.Component {
 
       readyShow: false,
     };
+    let setTime = "";
   }
 
   //关闭按钮
@@ -91,7 +92,6 @@ class AppAlert extends React.Component {
 
   componentDidUpdate() {
     const { show, type, onHide } = this.props;
-
     if (show) {
       if (
         type === "success" ||
@@ -100,7 +100,7 @@ class AppAlert extends React.Component {
         type === "warn"
       ) {
         if (onHide) {
-          setTimeout(onHide, 1000);
+          this.setTime = setTimeout(onHide, 1000);
         }
       }
     }
@@ -135,9 +135,23 @@ class AppAlert extends React.Component {
       this.setState({ readyShow: false });
     }
   }
-
+  componentWillUnmount() {
+    clearTimeout(this.setTime);
+  }
   componentDidMount() {
-    const { show } = this.props;
+    const { show, type, onHide } = this.props;
+    if (show) {
+      if (
+        type === "success" ||
+        type === "error" ||
+        type === "tips" ||
+        type === "warn"
+      ) {
+        if (onHide) {
+          this.setTime = setTimeout(onHide, 1000);
+        }
+      }
+    }
 
     /* if(this.AlertBody&&show&&!this.state.readyShow){
   
@@ -1758,7 +1772,10 @@ export class ErrorAlert extends React.Component {
       show: false,
     });
   };
-
+  onHide = () => {
+    typeof this.state.autoHide === "function" && this.state.autoHide();
+    this.state.autoHide && this.onClose();
+  };
   render() {
     // console.log(this.state.show)
     return (
@@ -1770,10 +1787,7 @@ export class ErrorAlert extends React.Component {
         onCancel={this.onCancel}
         onClose={this.onClose}
         cancelShow={this.props.cancelShow ? "y" : "n"}
-        // onHide={()=>{
-        //   console.log(this.state.autoHide)
-        //   this.state.autoHide&&this.onClose()
-        // }}
+        onHide={this.onHide}
       ></Alert>
     );
   }
@@ -1929,7 +1943,7 @@ class Modal extends React.Component {
       width: this.props.width ? this.props.width : width,
       ModalStyle: ModalStyle,
     });
-    const Ref =createRef()
+    const Ref = createRef();
   }
 
   componentWillMount() {
@@ -1946,7 +1960,6 @@ class Modal extends React.Component {
   // 拖拽modal
 
   componentDidMount() {
-
     const { title, bodyStyle, className, footer, mask } = this.props;
 
     // this.selectType(this.props.type);
@@ -2290,6 +2303,17 @@ class Button extends React.Component {
     );
   }
 }
+
+/**
+ * @description: 空标签，通过传入组件来控制是否渲染组件，方便做是否使用操作
+ * @param {*}
+ * @return {*}
+ */
+function EmptyReact(props) {
+  let { component: Component, children } = props;
+
+  return <>{Component ? <Component>{children}</Component> : <>{children}</>}</>;
+}
 const PagiNation = memo(PageComponent);
 const Alert = memo(AppAlert);
 const DropDown = memo(DropComponent);
@@ -2310,4 +2334,5 @@ export {
   Modal,
   Button,
   Dropdown,
+  EmptyReact,
 };

@@ -28,7 +28,7 @@
  * @FilePath: \teacher-development\src\component\frame\TopBar\index.js
  */
 import React, {
-  //   useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
@@ -50,6 +50,8 @@ function TopBar(props, ref) {
     basePlatFormMsg: BasePlatFormMsg,
     platMsg: PlatMsg,
     identity: Identity,
+    type,
+    moduleName,
   } = props;
   const [Time, setTime] = useState("");
   useEffect(() => {
@@ -73,72 +75,140 @@ function TopBar(props, ref) {
       clearInterval(Interval);
     };
   }, []);
+  const onMsgClick = useCallback(() => {}, []);
   return (
-    <div className="Frame-topBar-1">
-      <i
-        className="Frame-logo"
-        style={{ background: `url(${PlatMsg.logo}) no-repeat` }}
-      ></i>
-      {UserInfo ? (
-        <div className={"Frame-userMsg"}>
+    <div
+      className={` Frame-topBar ${
+        type === "teacher" ? "Frame-topBar-teacher" : "Frame-topBar-default"
+      }`}
+    >
+      {type === "default" && (
+        <>
+          {" "}
           <i
-            className="user-pic"
-            style={{
-              background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
-              cursor: BasePlatFormMsg ? "pointer" : "auto",
-            }}
-            onClick={() => {
-              BasePlatFormMsg &&
-                window.open(
-                  BasePlatFormMsg.BasicWebRootUrl +
-                    "/html/personalMgr/?lg_tk" +
-                    getDataStorage("token") +
-                    "#/"
-                );
-            }}
-          >
-            {" "}
-          </i>
-          <span title={UserInfo.UserName} className={"user-name"}>
-            {UserInfo.UserName}
-          </span>
-          <span
-            className="user-iden"
-            style={{
-              background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
-            }}
-          >
-            {Identity.IdentityCode.includes("IC1") ? Identity.IdentityName : ""}
-          </span>
-          <span
-            className="logout"
-            onClick={() => {
-              LogOut({});
-            }}
-          ></span>
-        </div>
-      ) : (
-        ""
+            className="Frame-logo"
+            style={{ background: `url(${PlatMsg.logo}) no-repeat` }}
+          ></i>
+          {UserInfo ? (
+            <div className={"Frame-userMsg  Frame-devide"}>
+              <i
+                className="user-pic"
+                style={{
+                  background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
+                  cursor: BasePlatFormMsg ? "pointer" : "auto",
+                }}
+                onClick={() => {
+                  BasePlatFormMsg &&
+                    window.open(
+                      BasePlatFormMsg.BasicWebRootUrl +
+                        "/html/personalMgr/?lg_tk" +
+                        getDataStorage("token") +
+                        "#/"
+                    );
+                }}
+              >
+                {" "}
+              </i>
+              <span title={UserInfo.UserName} className={"user-name"}>
+                {UserInfo.UserName}
+              </span>
+              <span
+                className="user-iden"
+                style={{
+                  background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
+                }}
+              >
+                {Identity.IdentityCode.includes("IC1")
+                  ? Identity.IdentityName
+                  : ""}
+              </span>
+              <span
+                className="logout"
+                onClick={() => {
+                  LogOut({});
+                }}
+              ></span>
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="Frame-open Frame-devide">
+            <span className="open-msg" onClick={onMsgClick}>
+              消息
+            </span>
+            <span
+              className="open-help"
+              onClick={() => {
+                console.log("帮助");
+              }}
+            >
+              帮助
+            </span>
+          </div>
+          {Time ? <div className="Frame-time  Frame-devide">{Time}</div> : ""}
+        </>
       )}
-      <div className="Frame-open">
-        <span
-          className="open-msg"
-          onClick={() => {
-            console.log("消息");
-          }}
-        >
-          消息
-        </span>
-        <span
-          className="open-help"
-          onClick={() => {
-            console.log("帮助");
-          }}
-        >
-          帮助
-        </span>
-      </div>
-      {Time ? <div className="Frame-time">{Time}</div> : ""}
+      {type === "teacher" && (
+        <>
+          <div className="tb-bar">
+            <i className="tb-logo"></i>
+            <span className="tb-title">一体化智慧校园</span>
+            {UserInfo ? (
+              <div className={"Frame-userMsg  Frame-devide"}>
+                <i
+                  className="user-pic"
+                  style={{
+                    background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
+                    cursor: BasePlatFormMsg ? "pointer" : "auto",
+                  }}
+                  onClick={() => {
+                    BasePlatFormMsg &&
+                      window.open(
+                        BasePlatFormMsg.BasicWebRootUrl +
+                          "/html/personalMgr/?lg_tk" +
+                          getDataStorage("token") +
+                          "#/"
+                      );
+                  }}
+                >
+                  {" "}
+                </i>
+                <span title={UserInfo.UserName} className={"user-name"}>
+                  {UserInfo.UserName}
+                </span>
+                <span
+                  className="user-iden"
+                  style={{
+                    background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
+                  }}
+                >
+                  {Identity.IdentityCode.includes("IC1")
+                    ? Identity.IdentityName
+                    : ""}
+                </span>
+                <span
+                  className="logout"
+                  onClick={() => {
+                    LogOut({});
+                  }}
+                ></span>
+              </div>
+            ) : (
+              ""
+            )}
+            <div className="Frame-open Frame-devide">
+              <span className="open-msg" onClick={onMsgClick}></span>
+            </div>
+          </div>
+          <div className="tb-name">
+            {moduleName ? (
+              <span className="tb-module-name">{moduleName}</span>
+            ) : (
+              ""
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

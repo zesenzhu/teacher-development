@@ -70,10 +70,10 @@ function Datail(props, ref) {
     activeTab,
     contentHW,
     location,id,
-    history,
-    dispatch,
+    history,controlSize,
+    dispatch,useScrollbars
   } = props;
-  let { state, setDispatch } = useContext(Context);
+  // let { state, setDispatch } = useContext(Context);
   // 转到预览
   const [loading, setLoading] = useState(false);
   // 培训id
@@ -94,9 +94,9 @@ function Datail(props, ref) {
     <Loading opacity={0.5} spinning={loading}>
       <div
         className=" Reacruit-context   Train-Datail"
-        style={{ height: contentHW.height + "px" }}
+        style={controlSize===undefined||controlSize?{ height: contentHW.height + "px" }:{}}
       >
-        <FileDetail fileid={ID} type={'train'}></FileDetail>
+        <FileDetail useScrollbars={useScrollbars} fileid={ID} type={'train'}></FileDetail>
       </div>
     </Loading>
   );

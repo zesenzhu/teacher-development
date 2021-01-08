@@ -54,9 +54,10 @@ import React, {
   forwardRef,
   useLayoutEffect,
   ForwardedRef,
+  useCallback,
 } from "react";
 import "./index.scss";
-import { withRouter } from "react-router-dom";
+import { withRouter, useLocation } from "react-router-dom";
 import $ from "jquery";
 
 import logo from "./images/image-top-name.png";
@@ -67,6 +68,8 @@ import LeftMenu from "./leftMenu";
 
 import Tab from "./Tab";
 import TopBar from "./TopBar";
+import RouteTab from "./routeTab";
+import { handleRoute } from "@/util/public";
 // 创建frame的context
 export const frameContext = createContext();
 const initState = {
@@ -91,7 +94,7 @@ const frameReducer = (state, actions) => {
 function Frame(props, ref) {
   // type控制显示骨架类型，不存在或false则界面loading
   // type:*default:默认模式，存在左侧菜单和默认头部，children为中部内容区
-  // *default-no-left:没有左侧区域，只有中间区域
+  // *default-teacher:没有左侧区域，只有中间区域
   // search为tab的搜索区域，undefined则不会出现
   const {
     type,
@@ -110,6 +113,7 @@ function Frame(props, ref) {
     tabPorps,
     // 回调函数，获取标签页主要区域的宽高
     onContentresize,
+
     search,
   } = props;
   // 是否初始化
@@ -135,6 +139,20 @@ function Frame(props, ref) {
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
 
+  // 单页面的
+  //   存得到路由标签
+  const [routeList, setRouteList] = useState([]);
+  //   存普通的节点
+  const [domList, setDomList] = useState([]);
+  //   存底部版本
+  const [proversion, setProVersion] = useState("");
+
+  // 路由
+  const location = useLocation();
+
+  // 设置modulename
+  const [moduleName, setModuleName] = useState(undefined);
+  // end 单页面
   // let { ComponentList, TabList } = state;
   // 页面初始化副作用，依赖moduleID，pageInit,type
   useEffect(() => {
@@ -154,7 +172,6 @@ function Frame(props, ref) {
           typeof pageInit === "function" && pageInit(data);
           type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
           setInit(true);
-
         } else {
           //身份无效
           // console.log('无效')
@@ -188,13 +205,18 @@ function Frame(props, ref) {
       });
     leftMenu instanceof Array && setMenuList(leftMenu);
   }, [platMsg, leftMenu]);
-  // 测试输出副作用
+  // 路由变化,控制头部modulename
   useEffect(() => {
-    // props.children.map((child, index) => {
-    //   console.log(child.type);
-    // });
+    let Path = handleRoute(location.pathname);
+    routeList.forEach((child, index) => {
+      if (child.props.routeid === Path[0]) {
+        setModuleName(child.props.routename);
+      }
+    });
+    
     return () => {};
-  }, []);
+  }, [location, routeList]);
+  // 当type不一样的时候，处理界面显示不同的模式，返回不同的节点列表
   useEffect(() => {
     // 默认的才有tab
     if (checkType("default")) {
@@ -230,90 +252,129 @@ function Frame(props, ref) {
       // 存compoent
       setComponentList(List);
     }
+    if (checkType("teacher")) {
+      let routeList = [];
+      let domList = [];
+      let proversion = [];
 
+      children instanceof Array &&
+        children.forEach((child) => {
+          // frametype为teacher的都是要的
+          if (child.props.frametype === "teacher") {
+            if (child.props.routeid) {
+              routeList.push(child);
+            } else if (child.props.proversion) {
+              proversion.push(child);
+            } else {
+              domList.push(child);
+            }
+          }
+        });
+      setRouteList(routeList);
+      setProVersion(proversion);
+      setDomList(domList);
+    }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, type, leftMenu]);
 
   // 对type字段解析，查看是否包含
-  const checkType = (key = null) => {
-    return typeof type === "string" && type.includes(key);
-  };
+  const checkType = useCallback(
+    (key = null) => {
+      return typeof type === "string" && type.includes(key);
+    },
+    [type]
+  );
   let { activeTab, tabList, removeTab } = tabRef.current;
   // 返回方法，外部使用
   useImperativeHandle(
     ref,
     () => {
- 
-
       return {
         // pageInit,
         activeTab,
         tabList,
         removeTab,
-        contentHeight:state.contentHeight
+        contentHeight: state.contentHeight,
       };
     },
-    [activeTab, tabList, removeTab,state.contentHeight]
+    [activeTab, tabList, removeTab, state.contentHeight]
   );
   // 保存活动的tab
   useEffect(() => {
-   typeof getActiveTab === 'function'&&getActiveTab(activeTab);
+    typeof getActiveTab === "function" && getActiveTab(activeTab);
     // dispatch(handleActions.setActiveTab(activeTab));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   return (
     <frameContext.Provider value={{ state, dispatch }}>
-      <Loading spinning={FrameLoading||MenuList.length===0} opacity={false} tip={"加载中..."}>
+      <Loading
+        spinning={FrameLoading || MenuList.length === 0}
+        opacity={false}
+        tip={"加载中..."}
+      >
         <div id="Frame" className={`Frame ${className ? className : ""}`}>
-          {checkType("default") ? (
-            <TopBar
-              userInfo={UserInfo}
-              basePlatFormMsg={BasePlatFormMsg}
-              platMsg={PlatMsg}
-              identity={Identity}
-            ></TopBar>
-          ) : (
-            ""
-          )}
-          <div
-            className={`Frame-contain  ${
-              checkType("no-left") ? "Frame-contain-2" : ""
-            }`}
-          >
-            {type === "default" ? (
-              <div className="Frame-contain-left">
-                <LeftMenu list={MenuList}></LeftMenu>
-              </div>
-            ) : (
-              ""
-            )}
+          <TopBar
+            userInfo={UserInfo}
+            basePlatFormMsg={BasePlatFormMsg}
+            platMsg={PlatMsg}
+            identity={Identity}
+            type={type}
+            moduleName={moduleName}
+          ></TopBar>
+
+          {type ? (
             <div
-              className={`Frame-contain-right ${
-                checkType("no-left") ? "only-center" : ""
+              className={`Frame-contain  ${
+                checkType("teacher") ? "Frame-contain-2" : ""
               }`}
             >
-              {Init ? (
-                ComponentList instanceof Array && ComponentList.length > 0 ? (
-                  <Tab
-                    tabPorps={tabPorps}
-                    ref={tabRef}
-                    componentList={ComponentList}
-                    search={search}
-                    type={type}
-                    onContentresize={onContentresize}
-                  >
-                    {children}
-                  </Tab>
-                ) : (
-                  children
-                )
+              {checkType("default") ? (
+                <div className="Frame-contain-left">
+                  <LeftMenu list={MenuList}></LeftMenu>
+                </div>
               ) : (
                 ""
               )}
+
+              <div
+                className={`Frame-contain-right ${
+                  checkType("teacher") ? "only-center" : ""
+                }`}
+              >
+                {Init ? (
+                  checkType("teacher") ? (
+                    <RouteTab
+                      routeList={routeList}
+                      domList={domList}
+                      proversion={proversion}
+                    >
+                      {children}
+                    </RouteTab>
+                  ) : ComponentList instanceof Array &&
+                    ComponentList.length > 0 ? (
+                    <Tab
+                      tabPorps={tabPorps}
+                      ref={tabRef}
+                      componentList={ComponentList}
+                      search={search}
+                      type={type}
+                      onContentresize={onContentresize}
+                    >
+                      {children}
+                    </Tab>
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
         </div>
       </Loading>
     </frameContext.Provider>

@@ -19,7 +19,7 @@ import { commonActions, handleActions } from "../../redux/actions";
 // import fetch from "../../util/fetch";
 // import config from "../../util/ipConfig";
 import Frame from "../../component/frame";
-import Bar from "../../component/bar";
+import Bar from "@/component/bar";
 import {
   withRouter,
   // , Route, Switch, NavLink
@@ -27,16 +27,27 @@ import {
 import Analysis from "../teachersStatisticAnalysis";
 import Recruit from "../recruit";
 import Train from "../train";
-import Notice from '../notice';
+import Notice from "../notice";
+import TeacherTrain from "@/pages/teacher/train";
+import Details from "@/pages/train/detail";
 import TeacherPersonal from "../teacherPersonal";
 import { handleRoute, deepMap } from "../../util/public";
+import Search from "@/component/search";
+import { getSearch } from "@/api/search";
+import { Empty } from "@/component/common";
+import SearchchAll from "../searchAll";
 // let { get } = fetch;
 function App(props, ref) {
   // let commonData = useSelector((state) => state.commonData);
   const {
     history,
     location,
-    commonData: { leftMenu, params },
+    commonData: {
+      leftMenu,
+      params,
+      basePlatFormMsg: { ProVersion },
+      roleMsg: { schoolID, collegeID, selectLevel },
+    },
     handleData: {
       teacherRecruitMsg: {
         tabName: recruitName,
@@ -49,6 +60,8 @@ function App(props, ref) {
   const [SchoolName, setSchoolName] = useState("各校师资");
   const [TeacherName, setTeacherName] = useState("教师画像查询");
   const [RecruitDetail, setRecruitDetail] = useState("detailID");
+  // 设置frame Type
+  const [frameType, setFrameType] = useState(undefined);
   // const [RecruitName, setRecruitName] = useState(recruitName);
   const [Path, setPath] = useState([]);
   // 存frame返回的数据
@@ -58,81 +71,78 @@ function App(props, ref) {
   // 在这做路由做配置，监听路由变化不合法的时候给它做合法方案
 
   useLayoutEffect(() => {
+    // 平台模式类型不确定，不允许进来
+    if (!frameType) {
+      return;
+    }
     let Path = handleRoute(location.pathname);
     setPath(Path);
-    // 没有就默认给个
-    if (!Path[0] && leftMenu instanceof Array && leftMenu.length > 0) {
-      // history.push("/" + leftMenu[0].key);
-      controlRoute(leftMenu[0].key);
-      return;
-    } else if (Path[0] === "recruitDetail") {
-      //教师招聘计划管理,默认
-      if (Path[1]) {
-        // setRecruitDetail(Path[1]);
-      } else {
-        controlRoute(recruitId);
+    // 管理员的
+    if (frameType === "default") {
+      // 没有就默认给个
+      if (!Path[0] && leftMenu instanceof Array && leftMenu.length > 0) {
+        // history.push("/" + leftMenu[0].key);
+        controlRoute(leftMenu[0].key);
+        return;
+      } else if (Path[0] === "recruitDetail") {
+        //教师招聘计划管理,默认
+        if (Path[1]) {
+          // setRecruitDetail(Path[1]);
+        } else {
+          controlRoute(recruitId);
+        }
+        // setRecruitName()
+        return;
       }
-      // setRecruitName()
-      return;
-    }
-    // else if (
-    //   Path[0] === recruitId &&
-    //   Path[1] &&
-    //   !recruitParams.find((child) => {
-    //     return child.key === Path[1];
-    //   })
-    // ) {
-    //   //教师招聘计划管理,默认
-    //   // console.log(Path)
-    //   controlRoute(Path[0]);
-    //   // setRecruitName()
-    //   return;
-    // }
+      // else if (
+      //   Path[0] === recruitId &&
+      //   Path[1] &&
+      //   !recruitParams.find((child) => {
+      //     return child.key === Path[1];
+      //   })
+      // ) {
+      //   //教师招聘计划管理,默认
+      //   // console.log(Path)
+      //   controlRoute(Path[0]);
+      //   // setRecruitName()
+      //   return;
+      // }
 
-    //遍历下path[0]是否存在leftmenushang
-    // 这个是为了控制不在左侧上出现的id，但要挂载某个菜单上的操作
+      //遍历下path[0]是否存在leftmenushang
+      // 这个是为了控制不在左侧上出现的id，但要挂载某个菜单上的操作
 
-    let isExist = false;
-    deepMap(leftMenu, (child) => {
-      if (
-        child.child.key === Path[0] ||
-        (child.child.params instanceof Array &&
-          child.child.params.some((param) => Path[0] === param.key))
-      ) {
-        isExist = true;
+      let isExist = false;
+      deepMap(leftMenu, (child) => {
+        if (
+          child.child.key === Path[0] ||
+          (child.child.params instanceof Array &&
+            child.child.params.some((param) => Path[0] === param.key))
+        ) {
+          isExist = true;
+        }
+      });
+      // isExist = !isExist
+      //   ? params.some((child) => {
+      //       return child.key === Path[0];
+      //     })
+      //   : isExist;
+      // 不存在
+
+      if (!isExist && leftMenu.length > 0) {
+        // 第一次进来的时候frame还没挂载，所以为undefined，需要自己控制，后面不是undefined了可以使用frame返回的方法
+        frameRef.current.removeTab
+          ? RemoveTab("", "")
+          : controlRoute(leftMenu[0].key);
       }
-    });
-    // isExist = !isExist
-    //   ? params.some((child) => {
-    //       return child.key === Path[0];
-    //     })
-    //   : isExist;
-    // 不存在
-
-    if (!isExist && leftMenu.length > 0) {
-      // 第一次进来的时候frame还没挂载，所以为undefined，需要自己控制，后面不是undefined了可以使用frame返回的方法
-      frameRef.current.removeTab
-        ? RemoveTab("", "")
-        : controlRoute(leftMenu[0].key);
     }
+
+    if (frameType === "teacher") {
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location, leftMenu]);
+  }, [location, leftMenu, frameType]);
   // 测试tab功能，可以删掉
-  useEffect(() => {
-    // let a = 0;
-    // let time = setInterval(() => {
-    //   history.push("/schoolResource/" + Math.round(Math.random() * 1000));
-    //   setSchoolName("蓝鸽学校-" + Math.round(Math.random() * 1000));
-    //   a++;
-    //   if (a > 10) {
-    //     clearInterval(time);
-    //   }
-    // }, 3000);
-    // return () => {
-    //   clearInterval(time);
-    // };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {}, []);
 
   // 手动路由控制
   function controlRoute() {
@@ -171,8 +181,10 @@ function App(props, ref) {
     });
     // systemServer
     // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
-    dispatch(commonActions.SetLeftMenu(data.role.level,!!data.systemServer[400]));
-
+    dispatch(
+      commonActions.SetLeftMenu(data.role.level, !!data.systemServer[400])
+    );
+    setFrameType(data.role.frameType);
     // }
   };
   // // 移除tab
@@ -198,9 +210,27 @@ function App(props, ref) {
   return (
     <Frame
       pageInit={pageInit}
-      type={"default"}
+      type={frameType}
       leftMenu={leftMenu}
-      search={<div>搜索</div>}
+      search={
+        <Search
+          api={[
+            (payload) => {
+              return getSearch.call(this, {
+                schoolID,
+                collegeID,
+                selectLevel,
+                ...payload,
+              });
+            },
+          ]}
+          // overlayStyle={{width:'402px'}}
+          searchResult={(res,keyword) => {
+            return <SearchchAll keyword={keyword} data={res}></SearchchAll>;
+          }}
+          className="frame-search-all"
+        ></Search>
+      }
       ref={frameRef}
       getActiveTab={getActiveTab}
       onContentresize={(height, width) => {
@@ -219,7 +249,6 @@ function App(props, ref) {
         },
       }}
     >
-       
       <Analysis
         tabid={"schoolResource"}
         tabname={SchoolName}
@@ -227,7 +256,7 @@ function App(props, ref) {
       >
         {SchoolName}
       </Analysis>
-       
+
       <Analysis tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
         教师教学能力
       </Analysis>
@@ -256,7 +285,6 @@ function App(props, ref) {
         教师招聘计划管理
       </Recruit>
 
-     
       <Recruit
         tabid={"publishRecruit"}
         tabname={"发布招聘计划"}
@@ -332,8 +360,29 @@ function App(props, ref) {
       >
         教师画像详情
       </TeacherPersonal>
-      <Notice tabid={"notice"}
-        tabname={"通知公告"}></Notice>
+      <Notice tabid={"notice"} tabname={"通知公告"}></Notice>
+      {/* 有frame类型的属性，*teacher：为教师类型，缺省则为default类型 */}
+      <TeacherTrain
+        frametype={"teacher"}
+        routeid={"teacherTrain"}
+      ></TeacherTrain>
+      <Details
+        frametype={"teacher"}
+        routeid={"trainDetail"}
+        routename={"培训计划详情"}
+        param={"id"}
+        controlSize={""}
+        useScrollbars={false}
+      >
+        培训计划详情
+      </Details>
+      <p
+        proversion={ProVersion}
+        className="teacher-ProVersion"
+        frametype={"teacher"}
+      >
+        {ProVersion}
+      </p>
     </Frame>
   );
 }
