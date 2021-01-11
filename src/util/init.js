@@ -70,6 +70,15 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
         callback: (userInfo) => {
           //有用户信息才能继续下面的工作
           if (userInfo) {
+            // 检查锁控,不等于1的时候跳
+            // http://192.168.129.1/baseshare/Temp/V23%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/%E5%8A%A0%E5%AF%86%E9%94%81%E6%8E%A7%E5%88%B6%E9%9B%86%E6%88%90%E7%9B%B8%E5%85%B3%E6%96%87%E6%A1%A3/%E3%80%90-2%E3%80%91%E4%BA%91%E5%B9%B3%E5%8F%B0%E5%8A%A0%E5%AF%86%E9%94%81%E6%8E%A7%E5%88%B6%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E.pdf
+            if (userInfo.LockerState !== "1") {
+              window.location.href =
+                data.LockerServerRootUrl +
+                "/LockerMgr/ErrorTips.aspx?ErrorCode=" +
+                userInfo.LockerState;
+              return;
+            }
             let identityDetail = getIdentityDetail(moduleID);
             let termInfo = getTermInfo(
               userInfo.SchoolID ? userInfo.SchoolID : ""
@@ -263,7 +272,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       collegeID,
       schoolID,
       productLevel,
-      frameType:Role.userType===1?'teacher':'default',//教师是没有左侧的，其它的都一样
+      frameType: Role.userType === 1 ? "teacher" : "default", //教师是没有左侧的，其它的都一样
       //教师 UserType=1
       level: !version.includes("-") ? 1 : 0,
     };
@@ -290,7 +299,16 @@ const getIdentityDetail = async (moduleID = "") => {
   let identityList = [];
   if (lg_ic) {
     //存在，进行身份信息获取
-    identityList = await GetIdentityTypeByCode(lg_ic);
+    // lg_ic可能有误，要进行用户所拥有的的身份列表验证
+    identityList = await getIdentityList();
+    identityList.forEach((child) => {});
+    if (
+      identityList.some((child) => {
+        return child.IdentityCode === lg_ic;
+      })
+    ) {
+      identityList = await GetIdentityTypeByCode(lg_ic);
+    }
     // identityDetail = data[0];
   } else if (identityDetail && identityDetail.IdentityCode) {
     //不存在，获取session上存的身份信息,存在本次用这个

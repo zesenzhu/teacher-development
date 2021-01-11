@@ -151,8 +151,13 @@ function TopBar(props, ref) {
       {type === "teacher" && (
         <>
           <div className="tb-bar">
-            <i className="tb-logo"></i>
-            <span className="tb-title">一体化智慧校园</span>
+            <i
+              className="tb-logo"
+              style={{
+                background: `url(${BasePlatFormMsg.ProductLogoUrl}) no-repeat center center/contain`,
+              }}
+            ></i>
+            <span className="tb-title">{BasePlatFormMsg.ProductName?BasePlatFormMsg.ProductName:'一体化智慧校园'}</span>
             {UserInfo ? (
               <div className={"Frame-userMsg  Frame-devide"}>
                 <i

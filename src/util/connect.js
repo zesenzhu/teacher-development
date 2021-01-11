@@ -40,7 +40,7 @@ import {
   setDataStorage,
   SimpleArrayNoRepeat,
   urlRemLg_tk,
-  addOrgToUrl,
+  addOrgToUrl,removeParam
 } from "./public";
 // import { useHistory, useLocation } from "react-router-dom";
 // import { createHashHistory } from "history";
@@ -173,7 +173,7 @@ export function LogOut({ baseIP, sysID }) {
         //result为true
 
         sessionStorage.setItem("LogOuting", false);
-        tokenError(baseIP);
+        tokenError(baseIP,false);
       }
     },
     error: (err) => {
@@ -330,14 +330,15 @@ export const getUserInfo = async (
 
 /**
  * @description: 掉线页
- * @param {*}
+ * @param {*initType:是否带lg_preurl}
  * @return {*}
  */
-const routeToDisconnect = (baseIP) => {
+const routeToDisconnect = (baseIP, initType = true) => {
   window.location.href =
     baseIP +
-    "/?lg_preurl=" +
-    encodeURIComponent(urlRemLg_tk(window.location.href));
+    (initType
+      ? "/?lg_preurl=" + encodeURIComponent(urlRemLg_tk(window.location.href))
+      : "");
 };
 
 /**
@@ -402,14 +403,14 @@ const tokenSuccess = (token) => {
 };
 /**
  * @description: 验证token失败后跳转至登陆页，需要所有token都验证完
- * @param {*}
+ * @param {*initType:是否带上lg_preurl}
  * @return {*}
  */
-const tokenError = (baseIP) => {
+const tokenError = (baseIP,initType=true) => {
   // 清掉storage
   sessionStorage.clear();
   localStorage.removeItem("token");
-  routeToDisconnect(baseIP); //掉线后重新定向到登陆页
+  routeToDisconnect(baseIP,initType); //掉线后重新定向到登陆页
 };
 /**
  * @description: 更新url上的token，有就替换，没有就加上

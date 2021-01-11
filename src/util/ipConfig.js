@@ -76,12 +76,12 @@ if (process.env.NODE_ENV === "production") {
     // LoginProxy: "",
 
     // ErrorProxy: "",
-    TokenProxy: "http://192.168.129.1:30103",
+    TokenProxy: "",
     // TokenProxy:'http://47.115.20.102:10102',
     proxy:
       "http://192.168.2.202:7300/mock/5d7726e0ed0ccd1564c8df05/webCloudDev",
-    BasicProxy: "http://192.168.129.1:8023",
-    LoginProxy: "http://192.168.129.1:8023",
+    BasicProxy: "",
+    LoginProxy: "",
 
     ErrorProxy: "http://192.168.129.1:30103",
     HashPrevProxy: RootUrl,

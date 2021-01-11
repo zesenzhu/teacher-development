@@ -75,8 +75,9 @@ function LGSearch(props, ref) {
   }, [result]);
   useLayoutEffect(() => {
     let dom = searchRef.current;
+    // 点击iframe
     // 对点击不同节点来控制显示隐藏
-    document.addEventListener("click", (node) => {
+    const fn = (node) => {
       let isOut = false;
       if (!dom.contains(node.target)) {
         //判断是否包含点击的节点
@@ -87,7 +88,11 @@ function LGSearch(props, ref) {
 
       //点击的位置不在搜索框和搜索内容显示区
       setVisible(!isOut);
-    });
+    }
+    document.addEventListener("click", fn);
+    return ()=>{
+document.removeEventListener('click',fn)
+    }
   }, []);
   return (
     <Tooltip
