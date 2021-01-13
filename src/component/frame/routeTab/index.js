@@ -50,7 +50,15 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { handleRoute } from "@/util/public";
 
 function RouteTab(props, ref) {
-  let { children, routeList, domList, ProVersion, location, history } = props;
+  let {
+    children,
+    routeList,
+    basePlatFormMsg,
+    domList,
+    ProVersion,
+    location,
+    history,
+  } = props;
   // 路由变化,控制头部modulename
   useEffect(() => {
     let Path = handleRoute(location.pathname);
@@ -59,19 +67,26 @@ function RouteTab(props, ref) {
       if (child.props.routeid === Path[0]) {
         isExist = true;
         // 路由上有parma，但组件没有，改变路由
-        if(Path[1]&&!child.props.param){
-            history.push('/'+child.props.routeid);
-        }else if(!Path[1]&&child.props.param){//有设置param但路由没有
-            history.push('/'+routeList[0].props.routeid);
+        if (Path[1] && !child.props.param) {
+          history.push("/" + child.props.routeid);
+        } else if (!Path[1] && child.props.param) {
+          //有设置param但路由没有
+          if (!routeList[0].props.param)
+            history.push("/" + routeList[0].props.routeid);
+          else {
+            window.location.href =
+              basePlatFormMsg.BasicWebRootUrl + "/Error.aspx?errcode=E012";
 
+            //http://192.168.2.207:10108/Error.aspx?errcode=E012
+          }
         }
       }
     });
     if (!isExist && routeList.length > 0) {
-      history.push('/'+routeList[0].props.routeid);
+      history.push("/" + routeList[0].props.routeid);
     }
     return () => {};
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, routeList]);
   return (
     <Scrollbars>

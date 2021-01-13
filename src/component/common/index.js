@@ -2310,9 +2310,9 @@ class Button extends React.Component {
  * @return {*}
  */
 function EmptyReact(props) {
-  let { component: Component, children } = props;
+  let { component: Component, children,props:Props } = props;
 
-  return <>{Component ? <Component>{children}</Component> : <>{children}</>}</>;
+  return <>{Component ? <Component {...Props}>{children}</Component> : <>{children}</>}</>;
 }
 const PagiNation = memo(PageComponent);
 const Alert = memo(AppAlert);

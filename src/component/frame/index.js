@@ -69,6 +69,7 @@ import LeftMenu from "./leftMenu";
 import Tab from "./Tab";
 import TopBar from "./TopBar";
 import RouteTab from "./routeTab";
+import Page from "./page";
 import { handleRoute } from "@/util/public";
 // 创建frame的context
 export const frameContext = createContext();
@@ -139,7 +140,7 @@ function Frame(props, ref) {
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
 
-  // 单页面的
+  // 单页面的,还保留头部的
   //   存得到路由标签
   const [routeList, setRouteList] = useState([]);
   //   存普通的节点
@@ -153,10 +154,16 @@ function Frame(props, ref) {
   // 设置modulename
   const [moduleName, setModuleName] = useState(undefined);
   // end 单页面
+
+  // 单页面2
+  //   存得到路由标签
+  const [pageList, setPageList] = useState([]);
   // let { ComponentList, TabList } = state;
+  // init成功
+  const [initData, setInitData] = useState(false);
   // 页面初始化副作用，依赖moduleID，pageInit,type
   useEffect(() => {
-    //初始化，didmount
+    //初始化，didmount，只依赖moduleid，依赖type会请求多次
     init(
       moduleID,
       (data) => {
@@ -169,8 +176,9 @@ function Frame(props, ref) {
           data.userInfo && setUserInfo(data.userInfo);
           data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
 
-          typeof pageInit === "function" && pageInit(data);
-          type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
+          // typeof pageInit === "function" && pageInit(data);
+          setInitData(data);
+          // type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
           setInit(true);
         } else {
           //身份无效
@@ -185,7 +193,21 @@ function Frame(props, ref) {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moduleID, type]);
+  }, [moduleID]);
+
+  // 监听type变化，修改loading,解决接口因为type变化请求多次问题请求多次
+  // 初始化成功后的逻辑与初始化分开比较好
+  useEffect(() => {
+    // 初始化成功和loading还在才运行
+    if (Init && FrameLoading) {
+        typeof pageInit === "function" && pageInit(initData).then(isInit=>{
+        if (isInit) {
+          type && setFrameLoading(false);
+        }
+      })
+     
+    }
+  }, [type, initData, Init, pageInit, FrameLoading]);
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -213,12 +235,13 @@ function Frame(props, ref) {
         setModuleName(child.props.routename);
       }
     });
-    
+
     return () => {};
   }, [location, routeList]);
   // 当type不一样的时候，处理界面显示不同的模式，返回不同的节点列表
   useEffect(() => {
     // 默认的才有tab
+
     if (checkType("default")) {
       let List = [];
       children.forEach((child) => {
@@ -252,6 +275,7 @@ function Frame(props, ref) {
       // 存compoent
       setComponentList(List);
     }
+    // 教师端，也就是有路由的
     if (checkType("teacher")) {
       let routeList = [];
       let domList = [];
@@ -274,6 +298,30 @@ function Frame(props, ref) {
       setProVersion(proversion);
       setDomList(domList);
     }
+
+    // 单页面,新开界面
+    if (checkType("page")) {
+      let pageList = [];
+      let domList = [];
+      let proversion = [];
+      children instanceof Array &&
+        children.forEach((child) => {
+          // frametype为page的都是要的
+          if (child.props.frametype === "page") {
+            if (child.props.pageid) {
+              pageList.push(child);
+            } else if (child.props.proversion) {
+              proversion.push(child);
+            } else {
+              domList.push(child);
+            }
+          }
+        });
+
+      setPageList(pageList);
+      setProVersion(proversion);
+      setDomList(domList);
+    }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, type, leftMenu]);
@@ -285,7 +333,7 @@ function Frame(props, ref) {
     },
     [type]
   );
-  let { activeTab, tabList, removeTab } = tabRef.current;
+  let { activeTab, tabList, removeTab } = tabRef.current ? tabRef.current : {};
   // 返回方法，外部使用
   useImperativeHandle(
     ref,
@@ -314,66 +362,85 @@ function Frame(props, ref) {
         opacity={false}
         tip={"加载中..."}
       >
-        <div id="Frame" className={`Frame ${className ? className : ""}`}>
-          <TopBar
-            userInfo={UserInfo}
-            basePlatFormMsg={BasePlatFormMsg}
-            platMsg={PlatMsg}
-            identity={Identity}
-            type={type}
-            moduleName={moduleName}
-          ></TopBar>
+        <div
+          id="Frame"
+          style={checkType("page") ? { minWidth: "auto" } : {}}
+          className={`Frame ${className ? className : ""}`}
+        >
+          {checkType("page") ? (
+            BasePlatFormMsg && (
+              <Page
+                pageList={pageList}
+                useScrollbars={false}
+                basePlatFormMsg={BasePlatFormMsg}
+                domList={domList}
+                proversion={proversion}
+              ></Page>
+            )
+          ) : (
+            <>
+              <TopBar
+                userInfo={UserInfo}
+                basePlatFormMsg={BasePlatFormMsg}
+                platMsg={PlatMsg}
+                identity={Identity}
+                type={type}
+                moduleName={moduleName}
+              ></TopBar>
 
-          {type ? (
-            <div
-              className={`Frame-contain  ${
-                checkType("teacher") ? "Frame-contain-2" : ""
-              }`}
-            >
-              {checkType("default") ? (
-                <div className="Frame-contain-left">
-                  <LeftMenu list={MenuList}></LeftMenu>
+              {type ? (
+                <div
+                  className={`Frame-contain  ${
+                    checkType("teacher") ? "Frame-contain-2" : ""
+                  }`}
+                >
+                  {checkType("default") ? (
+                    <div className="Frame-contain-left">
+                      <LeftMenu list={MenuList}></LeftMenu>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  <div
+                    className={`Frame-contain-right ${
+                      checkType("teacher") ? "only-center" : ""
+                    }`}
+                  >
+                    {Init ? (
+                      checkType("teacher") ? (
+                        <RouteTab
+                          routeList={routeList}
+                          domList={domList}
+                          basePlatFormMsg={BasePlatFormMsg}
+                          proversion={proversion}
+                        >
+                          {children}
+                        </RouteTab>
+                      ) : ComponentList instanceof Array &&
+                        ComponentList.length > 0 ? (
+                        <Tab
+                          tabPorps={tabPorps}
+                          ref={tabRef}
+                          componentList={ComponentList}
+                          search={search}
+                          type={type}
+                          onContentresize={onContentresize}
+                        >
+                          {children}
+                        </Tab>
+                      ) : (
+                        ""
+                      )
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
               ) : (
                 ""
               )}
-
-              <div
-                className={`Frame-contain-right ${
-                  checkType("teacher") ? "only-center" : ""
-                }`}
-              >
-                {Init ? (
-                  checkType("teacher") ? (
-                    <RouteTab
-                      routeList={routeList}
-                      domList={domList}
-                      proversion={proversion}
-                    >
-                      {children}
-                    </RouteTab>
-                  ) : ComponentList instanceof Array &&
-                    ComponentList.length > 0 ? (
-                    <Tab
-                      tabPorps={tabPorps}
-                      ref={tabRef}
-                      componentList={ComponentList}
-                      search={search}
-                      type={type}
-                      onContentresize={onContentresize}
-                    >
-                      {children}
-                    </Tab>
-                  ) : (
-                    ""
-                  )
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-          ) : (
-            ""
+            </>
           )}
         </div>
       </Loading>

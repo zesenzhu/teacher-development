@@ -46,7 +46,9 @@ export function getTeacherList(payload = {}) {
     schoolID,
     collegeID,
     nodeType,
-    nodeID,sortFiled,sortType
+    nodeID,
+    sortFiled,
+    sortType,
   } = payload;
   let url =
     BasicProxy +
@@ -57,8 +59,8 @@ export function getTeacherList(payload = {}) {
     }&Keyword=${keyword ? keyword : ""}&CollegeID=${
       collegeID ? collegeID : ""
     }&NodeType=${nodeType ? nodeType : ""}${
-      sortFiled ? '&SortFiled='+sortFiled : ""
-    }${sortType ? '&SortType='+sortType : ""}`;
+      sortFiled ? "&SortFiled=" + sortFiled : ""
+    }${sortType ? "&SortType=" + sortType : ""}`;
 
   return fetch
     .get({ url, securityLevel: 2 })
@@ -155,6 +157,177 @@ export function getNode(payload = {}) {
       } else {
         return {
           StatusCode: json.StatusCode,
+        };
+      }
+    });
+}
+/**
+ * @description:  获取各个系统url
+ * @param {*sysIDs}
+ * @return {*}
+ */
+export function GetSubSystemsMainServerBySubjectID(payload = {}) {
+  let { sysIDs, baseIP } = payload;
+  sysIDs = sysIDs instanceof Array ? sysIDs : [];
+  let url =
+    baseIP +
+    `/BaseApi/Global/GetSubSystemsMainServerBySubjectID?appid=000&access_token=4d39af1bff534514e24948568b750f6c&subjectID=&sysIDs=${sysIDs.join(
+      ","
+    )}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        let data = {};
+        if (json.Data instanceof Array) {
+          json.Data.forEach((child) => {
+            data[child.SysID] = child;
+          });
+        }
+        return {
+          StatusCode: json.StatusCode,
+          data: data,
+        };
+      } else {
+        return {
+          StatusCode: json.StatusCode,
+        };
+      }
+    });
+}
+
+export function GetUserDetailForHX(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url =
+    baseIP +
+    `/UserMgr/UserInfoMgr/GetUserDetailForHX?UserID=${userID}&UserType=1`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        let data = json.Data ? json.Data : {};
+
+        return {
+          StatusCode: json.StatusCode,
+          Data: { ...data, UserID: userID },
+        };
+      } else {
+        return {
+          StatusCode: json.StatusCode,
+        };
+      }
+    });
+}
+
+export function getTeacherDetailIntroduction(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url = baseIP + `admin/getTeacherDetailIntroduction?teacherId=${userID}`;
+  return fetch
+    .get({ url, securityLevel: 2, advance: false })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.code === 0) {
+        let data = {};
+        if (json.data) {
+          json.data.educationBackgroundDetailData = [
+            {
+              id: 7,
+              teacherIntroductionId: 3,
+              eduStage: 2,
+              currentSchool: "南昌大学",
+              extend1: null,
+              extend2: null,
+              startTime: "1990-01-02 00:00:00",
+              endTime: "1992-02-20 00:00:00",
+            },
+            {
+              id: 7,
+              teacherIntroductionId: 3,
+              eduStage: 2,
+              currentSchool: "南昌大学",
+              extend1: null,
+              extend2: null,
+              startTime: "1990-01-02 00:00:00",
+              endTime: "1992-02-20 00:00:00",
+            },
+            {
+              id: 7,
+              teacherIntroductionId: 3,
+              eduStage: 2,
+              currentSchool: "南昌大学",
+              extend1: null,
+              extend2: null,
+              startTime: "1990-01-02 00:00:00",
+              endTime: "1992-02-20 00:00:00",
+            },
+            {
+              id: 7,
+              teacherIntroductionId: 3,
+              eduStage: 2,
+              currentSchool: "南昌大学",
+              extend1: null,
+              extend2: null,
+              startTime: "1990-01-02 00:00:00",
+              endTime: "1992-02-20 00:00:00",
+            },
+            {
+              id: 7,
+              teacherIntroductionId: 3,
+              eduStage: 2,
+              currentSchool: "南昌大学",
+              extend1: null,
+              extend2: null,
+              startTime: "1990-01-02 00:00:00",
+              endTime: "1992-02-20 00:00:00",
+            },
+          ]
+          let EducationBackgroundDetailData = [];
+          if (json.data.educationBackgroundDetailData instanceof Array) {
+            let eduCard = []; //两个一个轮播
+            json.data.educationBackgroundDetailData.forEach((child,index) => {
+              if (eduCard.length === 2||index===json.data.educationBackgroundDetailData.length-1) {
+                EducationBackgroundDetailData.push(eduCard);
+                eduCard = [];
+              } else  {
+                eduCard.push(child);
+              }
+            });
+          }
+          console.log(EducationBackgroundDetailData)
+          data = {
+            ...json.data,
+            EducationBackgroundDetailData,
+          };
+        }
+        // accessToken: null
+        // appId: null
+        // birthday: null
+        // degree: null
+        // educationBackground: null
+        // educationBackgroundDetail: null
+        // email: null
+        // id: null
+        // nation: null
+        // nativeSpace: null
+        // photoPath: "http://192.168.129.64:20103/http_basic/UserInfo/Photo/Default/Nopic.jpg"
+        // politicStatus: null
+        // professionalTitle: "一级教师"
+        // qq: ""
+        // telePhone: ""
+        // userId: "gy2"
+        // userName: "甘月"
+        // weibo: ""
+        // weixin: ""
+        // workExperience: null
+        return {
+          StatusCode: 200,
+          Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
         };
       }
     });

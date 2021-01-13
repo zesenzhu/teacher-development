@@ -96,7 +96,6 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
             Promise.all([identityDetail, termInfo, systemServer]).then(
               (res) => {
                 let [identityDetail, termInfo, systemServer] = res;
-                // console.log(identityDetail, termInfo);
                 success({
                   identityDetail,
                   basePlatformMsg: data,
@@ -265,6 +264,11 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "noPower";
     }
     // Role.version = version;
+    //2,3为学生家长，没有权限进来
+    if(Role.userType === 2 || Role.userType === 3){
+      goErrorPage("E011");
+      return ;
+    }
     Role = {
       ...Role,
       version,
@@ -272,7 +276,12 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       collegeID,
       schoolID,
       productLevel,
-      frameType: Role.userType === 1 ? "teacher" : "default", //教师是没有左侧的，其它的都一样
+      frameType:
+        Role.userType === 1
+          ? "teacher"
+          : Role.userType === 2 || Role.userType === 3
+          ? ""
+          : "default", //教师是没有左侧的，其它的都一样,2,3为学生家长，没有权限进来
       //教师 UserType=1
       level: !version.includes("-") ? 1 : 0,
     };
@@ -552,10 +561,11 @@ export const getTermInfo = async (SchoolID) => {
   if (json.StatusCode === 200) {
     TermInfo = json.Data;
   } else {
-    TermInfo = false; //有错误
+    TermInfo = {TermInfo:[], HasHistory:false}; //有错误
   }
+  // console.log(TermInfo)
   // if(!(json.Data instanceof Array)&&)
-  setDataStorage("TermInfo", json.Data);
+  setDataStorage("TermInfo", TermInfo);
 
   return TermInfo;
 };

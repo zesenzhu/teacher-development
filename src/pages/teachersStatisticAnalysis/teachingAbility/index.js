@@ -191,13 +191,14 @@ function TeachingAbility(props, ref) {
        <Bar
           barName={"学历职称统计 "}
           ref={raRef}
+          loading={!teacherEvaluateCourse}
           topContext={HasHistory?{ title: "查看历年评估值变化 " }:false}
         >
           <TeacherECourse data={teacherEvaluateCourse} productMsg={productMsg}></TeacherECourse>
         </Bar>
         <Bar
           barName={"教研课题统计 "}
-          ref={rpRef}
+          ref={rpRef}loading={!teacherRP}
           topContext={HasHistory?{ title: "查看历年参与率变化 " }:false}
         >
           <TeacherRP data={teacherRP} productMsg={productMsg}></TeacherRP>
@@ -205,7 +206,7 @@ function TeachingAbility(props, ref) {
 
         <Bar
           barName={"教研活动统计 "}
-          ref={courseRef}
+          ref={courseRef}loading={!teacherRA}
           topContext={HasHistory?{ title: "查看历年参与率变化 " }:false}
         >
           <TeacherRA data={teacherRA} productMsg={productMsg}></TeacherRA>

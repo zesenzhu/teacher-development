@@ -36,6 +36,8 @@ import Search from "@/component/search";
 import { getSearch } from "@/api/search";
 import { Empty } from "@/component/common";
 import SearchchAll from "../searchAll";
+import PersonalDetail from "../personalDetail";
+import { GetUserDetailForHX } from "@/api/personal";
 // let { get } = fetch;
 function App(props, ref) {
   // let commonData = useSelector((state) => state.commonData);
@@ -64,6 +66,10 @@ function App(props, ref) {
   const [frameType, setFrameType] = useState(undefined);
   // const [RecruitName, setRecruitName] = useState(recruitName);
   const [Path, setPath] = useState([]);
+  // 存page的个人画像的教师信息
+  const [TeacherMsg, setTeacherMsg] = useState(null);
+  // 教师id
+  const [TeacherID,setTeacherID] = useState(null)
   // 存frame返回的数据
   // const [tabRef,setTabRef]
   // frame的ref
@@ -141,8 +147,14 @@ function App(props, ref) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, leftMenu, frameType]);
-  // 测试tab功能，可以删掉
-  useEffect(() => {}, []);
+  //  提前检查路由
+  useEffect(() => {
+    let Path = handleRoute(location.pathname);
+    // 单页面
+    if (Path[0] === "page" && Path[1]) {
+      setFrameType("page");
+    }
+  }, [location]);
 
   // 手动路由控制
   function controlRoute() {
@@ -153,40 +165,84 @@ function App(props, ref) {
     history.push(path);
   }
   // 初始化方法
-  const pageInit = (data) => {
-    // 保证返回的data包含identityDetail，userInfo，basePlatformMsg，role
-    dispatch({
-      type: commonActions.COMMON_SET_IDENTITY,
-      data: data.identityDetail,
-    });
-    dispatch({
-      type: commonActions.COMMON_SET_USER_INFO,
-      data: data.userInfo,
-    });
-    dispatch({
-      type: commonActions.COMMON_SET_BASE_PLAT_FORM_MSG,
-      data: data.basePlatformMsg,
-    });
-    dispatch({
-      type: commonActions.COMMON_SET_ROLE_MSG,
-      data: data.role,
-    });
-    dispatch({
-      type: commonActions.COMMON_SET_TERM_INFO,
-      data: data.termInfo,
-    });
-    dispatch({
-      type: commonActions.COMMON_SET_SYSTEM_SERVER,
-      data: data.systemServer,
-    });
-    // systemServer
-    // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
-    dispatch(
-      commonActions.SetLeftMenu(data.role.level, !!data.systemServer[400])
-    );
-    setFrameType(data.role.frameType);
-    // }
-  };
+  const pageInit = useCallback(
+    async (data) => {
+      let isInit = true;
+      let Path = handleRoute(location.pathname);
+      // 保证返回的data包含identityDetail，userInfo，basePlatformMsg，role
+      dispatch({
+        type: commonActions.COMMON_SET_IDENTITY,
+        data: data.identityDetail,
+      });
+      dispatch({
+        type: commonActions.COMMON_SET_USER_INFO,
+        data: data.userInfo,
+      });
+      dispatch({
+        type: commonActions.COMMON_SET_BASE_PLAT_FORM_MSG,
+        data: data.basePlatformMsg,
+      });
+      dispatch({
+        type: commonActions.COMMON_SET_ROLE_MSG,
+        data: data.role,
+      });
+      dispatch({
+        type: commonActions.COMMON_SET_TERM_INFO,
+        data: data.termInfo,
+      });
+      dispatch({
+        type: commonActions.COMMON_SET_SYSTEM_SERVER,
+        data: data.systemServer,
+      });
+      // systemServer
+      // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
+      dispatch(
+        commonActions.SetLeftMenu(data.role.level, !!data.systemServer[400])
+      );
+      // // 为空表示是学生，家长，不允许进来
+      // if(!data.role.frameType){
+
+      // }
+      // 如果还没定义可以再定义框架类型，因为上面的是先检查是否是page了
+      if (!frameType) {
+        // 根据用户角色显示不同的界面
+
+        setFrameType(data.role.frameType);
+      } else {
+        //在单页面page的时候做用户信息处理，看是否合法，不合法跳转，只做page的检测，再具体的就由内部做
+        // 刚开始的page只有新版教师个人画像，所以会有多种角色查看该界面，暂不做当前登陆用户角色
+        if (Path[0] === "page" && Path[1] === "personalDetail") {
+          //先获取所看的用户id，检查是否有效
+          if (Path[2]) {
+            let res = await GetUserDetailForHX({
+              baseIP: data.basePlatformMsg.BasicWebRootUrl,
+              userID: Path[2],
+            });
+            if (res.StatusCode === 200) {
+              setTeacherMsg(res.Data);
+              setTeacherID(Path[2])//这个要在最后改变，因为他控制个人画像里面的副作用的运行
+            } else {
+              // if (res.ErrCode === -2) {//id有误
+              window.location.href =
+                data.basePlatformMsg.BasicWebRootUrl +
+                "/Error.aspx?errcode=E001";
+              isInit = false;
+              // }
+            }
+          } else {
+            isInit = false;
+            window.location.href =
+              data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E012"; //缺参数
+          }
+        }
+      }
+      // }
+      return isInit;
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [frameType]
+  );
   // // 移除tab
   const RemoveTab =
     // useCallback(
@@ -225,7 +281,7 @@ function App(props, ref) {
             },
           ]}
           // overlayStyle={{width:'402px'}}
-          searchResult={(res,keyword) => {
+          searchResult={(res, keyword) => {
             return <SearchchAll keyword={keyword} data={res}></SearchchAll>;
           }}
           className="frame-search-all"
@@ -362,6 +418,7 @@ function App(props, ref) {
       </TeacherPersonal>
       <Notice tabid={"notice"} tabname={"通知公告"}></Notice>
       {/* 有frame类型的属性，*teacher：为教师类型，缺省则为default类型 */}
+      {/* 教师端 */}
       <TeacherTrain
         frametype={"teacher"}
         routeid={"teacherTrain"}
@@ -381,6 +438,20 @@ function App(props, ref) {
         className="teacher-ProVersion"
         frametype={"teacher"}
       >
+        {ProVersion}
+      </p>
+      {/* 教师端end */}
+      {/* 个人画像 */}
+      <PersonalDetail
+        frametype={"page"}
+        pageid={"personalDetail"}
+        param={"id"}
+        teachermsg={TeacherMsg}
+        teacherid ={TeacherID}
+      ></PersonalDetail>
+      {/* 个人画像end */}
+
+      <p proversion={ProVersion} className="page-ProVersion" frametype={"page"}>
         {ProVersion}
       </p>
     </Frame>
