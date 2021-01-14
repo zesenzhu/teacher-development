@@ -193,7 +193,7 @@ function Data(props, ref) {
       subjectList["同学科"] = ["同学科", null, AllScale, AllCount, UseCount];
       firstSub = "同学科";
     }
-    setPercentageData({
+    setTeachPlanData({
       source,
       subjectList,
     });
@@ -212,9 +212,10 @@ function Data(props, ref) {
     //   ]);
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Percentage, SubjectList]);
+  }, [TeachPlan, SubjectList]);
   // 精品课程
   useLayoutEffect(() => {
+    console.log(Percentage)
     if (!Percentage) {
       return;
     }
@@ -255,7 +256,7 @@ function Data(props, ref) {
       subjectList["同学科"] = ["同学科", null, AllScale, AllCount, UseCount];
       firstSub = "同学科";
     }
-    setTeachPlanData({
+     setPercentageData({
       source,
       subjectList,
     });
@@ -268,7 +269,7 @@ function Data(props, ref) {
     }
    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [TeachPlan, SubjectList]);
+  }, [Percentage, SubjectList]);
   // 轮播循环
   useLayoutEffect(() => {
     if (!(SubjectList instanceof Array && SubjectList.length > 1)) {
@@ -312,7 +313,7 @@ function Data(props, ref) {
         PercentageData.source,
         PercentageData.subjectList[SubjectName],
       ];
-      SetEchart(SecondEchart, SecondRef, setSecondEchart, data);
+      SetEchart(ThirdEchart, ThirdRef, setThirdEchart, data);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -325,7 +326,8 @@ function Data(props, ref) {
     ) {
       //数据上有学科才更新
       let data = [TeachPlanData.source, TeachPlanData.subjectList[SubjectName]];
-      SetEchart(ThirdEchart, ThirdRef, setThirdEchart, data);
+      SetEchart(SecondEchart, SecondRef, setSecondEchart, data);
+      
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
