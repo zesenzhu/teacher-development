@@ -183,11 +183,11 @@ const COMMON_SET_SYSTEM_SERVER = "COMMON_SET_SYSTEM_SERVER";
 // 设置左侧菜单
 const COMMON_SET_LEFT_MENU = "COMMON_SET_LEFT_MENU";
 // *type:0教育局的学校，大学的学院，1教育局，大学的学校，默认0
-const SetLeftMenu = (type = 0, haveNotice =true) => {
+const SetLeftMenu = (type = 0, haveNotice = true) => {
   return (dispatch, getState) => {
     let leftMenu = type === 1 ? leftMenu_1 : leftMenu_0;
     if (!haveNotice) {
-      leftMenu.pop()  
+      leftMenu.pop();
     }
     dispatch({
       type: COMMON_SET_LEFT_MENU,
@@ -195,7 +195,20 @@ const SetLeftMenu = (type = 0, haveNotice =true) => {
     });
   };
 };
+// 统一修改common,有风险，快捷
+const COMMON_SET_COMMON_DATA = "COMMON_SET_COMMON_DATA";
+const SetCommonData = (data) => {
+  return (dispatch, getState) => {
+    let { commonData } = getState();
+    dispatch({
+      type: COMMON_SET_COMMON_DATA,
+      data: { ...commonData, ...data },
+    });
+  };
+};
 const actions = {
+  COMMON_SET_COMMON_DATA,
+  SetCommonData,
   COMMON_SET_TERM_INFO,
   COMMON_SET_TEST,
   COMMON_SET_USER_INFO,

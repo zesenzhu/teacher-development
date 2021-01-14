@@ -69,7 +69,7 @@ function Work(props, ref) {
       color: "#3caeff",
     },
     { title: "教学班数", color: "#8099ff", l_title: "任课教师" },
-    { title: "任课教师", color: "#fd8276" },
+    { title: "监考数量", color: "#fd8276" },
   ];
   return (
     <div className={`card-content card-work ${className ? className : ""}`}>

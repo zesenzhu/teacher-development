@@ -166,7 +166,35 @@ let fetchService = {
 
     return result;
   },
+  tranfer: async ({ reqUrl, url, basicProxy = "", token }) => {
+    let data = null;
+    token =
+      token || sessionStorage.getItem("token") || getQueryVariable("lg_tk");
+    url =
+      url ||
+      basicProxy +
+        "/Global/GetHttpRequestTransfer?appid=000&token=" +
+        token +
+        "&reqUrl=" +
+        encodeURIComponent(reqUrl);
+    try {
+      let res = await fetchService.get({ url, securityLevel: 2, advance:false});
+      let json = await res.json();
+      data = JSON.parse(json);
+      // console.log(json)
+
+      // if (json.error === 0) {
+      //   data = json;
+      // } else {
+      //   data = false; //有错误
+      // }
+    } catch {
+      data = false; //有错误
+    }
+    return data;
+  },
 };
+
 // fecth Advance 提前处理函数
 /**
  * @description: post get 统一提前处理返回的数据

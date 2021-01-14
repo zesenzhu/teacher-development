@@ -54,6 +54,8 @@ if (pathName.includes("/html/")) {
 
 const RootUrl = protocol + "//" + host + pathFolder;
 if (process.env.NODE_ENV === "development") {
+  // 129.64:20103/Web_TeacherGrow/
+  //  129.1:8023
   config = {
     TokenProxy: "http://192.168.129.64:20103/Web_TeacherGrow/",
     // TokenProxy:'http://47.115.20.102:10102',

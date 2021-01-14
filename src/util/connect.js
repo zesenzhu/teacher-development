@@ -42,6 +42,7 @@ import {
   urlRemLg_tk,
   addOrgToUrl,removeParam
 } from "./public";
+import {getBasePlatformMsg} from './init';
 // import { useHistory, useLocation } from "react-router-dom";
 // import { createHashHistory } from "history";
 // let history = createHashHistory();
@@ -60,9 +61,8 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
   // session暂无基础平台链接，先写死；
   let { BasicWebRootUrl: baseIP } =
-    getDataStorage("BasePlatformMsg") instanceof Object
-      ? getDataStorage("BasePlatformMsg")
-      : {};
+ await getBasePlatformMsg(['BasicWebRootUrl'])
+      // console.log(getDataStorage("BasePlatformMsg").BasicWebRootUrl,baseIP)
   // // 柯里化
   const myTokenError = () => {
     tokenError(baseIP);
@@ -125,7 +125,7 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
       }
 
       // 最后，执行回调
-      callback(UserInfo);
+      callback(UserInfo,child);
       // 通过后需要轮询是否在线
       CirculTokenCheck();
       isComplete = true;
@@ -146,17 +146,21 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
  * @param {*}
  * @return {*}
  */
-export function LogOut({ baseIP, sysID }) {
+export async function  LogOut ({ baseIP, sysID }) {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
 
   if (sysID) {
     sysID = "L10";
   }
-  baseIP = baseIP
-    ? baseIP
-    : getDataStorage("BasePlatformMsg") instanceof Object
-    ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
-    : "";
+  // baseIP = baseIP
+  //   ? baseIP
+  //   : getDataStorage("BasePlatformMsg") instanceof Object
+  //   ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
+  //   : "";
+    if(!baseIP){
+     let {BasicWebRootUrl} = await getBasePlatformMsg(['BasicWebRootUrl'])
+     baseIP = BasicWebRootUrl
+    }
   let token = URL_TOKEN || SESSION_TOKEN || LOCAL_TOKEN;
 
   setDataStorage("LogOuting", true);
@@ -189,12 +193,9 @@ export function LogOut({ baseIP, sysID }) {
  * @return {*}
  */
 
-const loginApi = ({ baseIP, token, method, sysID, success, error }) => {
-  if (baseIP) {
-    const { BasicWebRootUrl } =
-      getDataStorage("BasePlatformMsg") instanceof Object
-        ? getDataStorage("BasePlatformMsg")
-        : {};
+ const loginApi =async ({ baseIP, token, method, sysID, success, error }) => {
+  if (!baseIP) {
+    const { BasicWebRootUrl } = await getBasePlatformMsg(['BasicWebRootUrl'])
     baseIP = BasicWebRootUrl;
   }
 
@@ -272,11 +273,15 @@ export const getUserInfo = async (
   fun = () => {}
 ) => {
   token = token ? token : getDataStorage("token");
-  baseIP = baseIP
-    ? baseIP
-    : getDataStorage("BasePlatformMsg") instanceof Object
-    ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
-    : "";
+  // baseIP = baseIP
+  //   ? baseIP
+  //   : getDataStorage("BasePlatformMsg") instanceof Object
+  //   ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
+  //   : "";
+  if (!baseIP) {
+    const { BasicWebRootUrl } = await getBasePlatformMsg(['BasicWebRootUrl'])
+    baseIP = BasicWebRootUrl;
+  }
   return new Promise((resolve) => {
     if (!token) {
       resolve(false);

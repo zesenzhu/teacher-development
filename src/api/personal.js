@@ -31,7 +31,8 @@
  */
 import fetch from "../util/fetch";
 import ipConfig from "../util/ipConfig";
-import { deepMap } from "../util/public";
+import moment from "moment";
+import { deepMap,SetNaNToNumber } from "../util/public";
 let { BasicProxy } = ipConfig;
 /**
  * @description:获取画像列表 http://192.168.129.1:8033/showdoc/web/#/21?page_id=2081
@@ -231,71 +232,74 @@ export function getTeacherDetailIntroduction(payload = {}) {
       if (json.code === 0) {
         let data = {};
         if (json.data) {
-          json.data.educationBackgroundDetailData = [
-            {
-              id: 7,
-              teacherIntroductionId: 3,
-              eduStage: 2,
-              currentSchool: "南昌大学",
-              extend1: null,
-              extend2: null,
-              startTime: "1990-01-02 00:00:00",
-              endTime: "1992-02-20 00:00:00",
-            },
-            {
-              id: 7,
-              teacherIntroductionId: 3,
-              eduStage: 2,
-              currentSchool: "南昌大学",
-              extend1: null,
-              extend2: null,
-              startTime: "1990-01-02 00:00:00",
-              endTime: "1992-02-20 00:00:00",
-            },
-            {
-              id: 7,
-              teacherIntroductionId: 3,
-              eduStage: 2,
-              currentSchool: "南昌大学",
-              extend1: null,
-              extend2: null,
-              startTime: "1990-01-02 00:00:00",
-              endTime: "1992-02-20 00:00:00",
-            },
-            {
-              id: 7,
-              teacherIntroductionId: 3,
-              eduStage: 2,
-              currentSchool: "南昌大学",
-              extend1: null,
-              extend2: null,
-              startTime: "1990-01-02 00:00:00",
-              endTime: "1992-02-20 00:00:00",
-            },
-            {
-              id: 7,
-              teacherIntroductionId: 3,
-              eduStage: 2,
-              currentSchool: "南昌大学",
-              extend1: null,
-              extend2: null,
-              startTime: "1990-01-02 00:00:00",
-              endTime: "1992-02-20 00:00:00",
-            },
-          ]
+          // json.data.educationBackgroundDetailData = [
+          //   {
+          //     id: 7,
+          //     teacherIntroductionId: 3,
+          //     eduStage: 2,
+          //     currentSchool: "南昌大学",
+          //     extend1: null,
+          //     extend2: null,
+          //     startTime: "1990-01-02 00:00:00",
+          //     endTime: "1992-02-20 00:00:00",
+          //   },
+          //   {
+          //     id: 7,
+          //     teacherIntroductionId: 3,
+          //     eduStage: 2,
+          //     currentSchool: "南昌大学",
+          //     extend1: null,
+          //     extend2: null,
+          //     startTime: "1990-01-02 00:00:00",
+          //     endTime: "1992-02-20 00:00:00",
+          //   },
+          //   {
+          //     id: 7,
+          //     teacherIntroductionId: 3,
+          //     eduStage: 2,
+          //     currentSchool: "南昌大学",
+          //     extend1: null,
+          //     extend2: null,
+          //     startTime: "1990-01-02 00:00:00",
+          //     endTime: "1992-02-20 00:00:00",
+          //   },
+          //   {
+          //     id: 7,
+          //     teacherIntroductionId: 3,
+          //     eduStage: 2,
+          //     currentSchool: "南昌大学",
+          //     extend1: null,
+          //     extend2: null,
+          //     startTime: "1990-01-02 00:00:00",
+          //     endTime: "1992-02-20 00:00:00",
+          //   },
+          //   {
+          //     id: 7,
+          //     teacherIntroductionId: 3,
+          //     eduStage: 2,
+          //     currentSchool: "南昌大学",
+          //     extend1: null,
+          //     extend2: null,
+          //     startTime: "1990-01-02 00:00:00",
+          //     endTime: "1992-02-20 00:00:00",
+          //   },
+          // ]
           let EducationBackgroundDetailData = [];
           if (json.data.educationBackgroundDetailData instanceof Array) {
             let eduCard = []; //两个一个轮播
-            json.data.educationBackgroundDetailData.forEach((child,index) => {
-              if (eduCard.length === 2||index===json.data.educationBackgroundDetailData.length-1) {
+            json.data.educationBackgroundDetailData.forEach((child, index) => {
+              if (
+                eduCard.length === 2 ||
+                index === json.data.educationBackgroundDetailData.length - 1
+              ) {
                 EducationBackgroundDetailData.push(eduCard);
                 eduCard = [];
-              } else  {
+              } else {
                 eduCard.push(child);
               }
             });
           }
-          console.log(EducationBackgroundDetailData)
+          console.log(EducationBackgroundDetailData);
           data = {
             ...json.data,
             EducationBackgroundDetailData,
@@ -331,4 +335,266 @@ export function getTeacherDetailIntroduction(payload = {}) {
         };
       }
     });
+}
+
+// 获取周次
+export function GetTermAndPeriodAndWeekNOInfo(payload = {}) {
+  let { userID, baseIP, schoolID } = payload;
+  let url =
+    baseIP +
+    `/Schedule/api//GetTermAndPeriodAndWeekNOInfo?UserID=${userID}&UserType=1&schoolId=${schoolID}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        let data = {};
+        let StatusCode = json.StatusCode;
+        if (json.Data && json.Data.ItemWeek instanceof Array) {
+          let WeekList = [];
+          let NowWeekSelect;
+          let NowWeek = json.Data.WeekNO;
+          if (NowWeek > json.Data.ItemWeek.length || NowWeek <= 0) {
+            NowWeek = 1;
+          }
+          json.Data.ItemWeek.forEach((child) => {
+            let data = {
+              startTime: moment(child.StartDate).format("YYYY-MM-DD HH:mm:ss"),
+              endTime: moment(child.EndDate).format("YYYY-MM-DD HH:mm:ss"),
+              value: child.WeekNO,
+              title: "第" + child.WeekNO + "周",
+            };
+            WeekList.push(data);
+            if (NowWeek === child.WeekNO) {
+              NowWeekSelect = data;
+            }
+          });
+          data = { ...json.Data };
+          data.WeekList = WeekList;
+          data.NowWeekSelect = NowWeekSelect;
+        } else {
+          StatusCode = 401;
+        }
+        return {
+          StatusCode: StatusCode,
+          Data: { ...data },
+        };
+      } else {
+        return {
+          StatusCode: json.StatusCode,
+        };
+      }
+    });
+}
+// 电子资源
+export function GetTeacherResView(payload = {}) {
+  let {
+    userID,
+    baseIP,
+    proxy,
+    schoolID,
+    token,
+    subjectNames,
+    startTime,
+    subjectIDs,
+    endTime,
+  } = payload;
+  let url =
+    proxy +
+    `/api/Public/GetTeacherResView?SchoolID=${schoolID}&TeacherID=${userID}&Token=${token}&SubjectIDs=${subjectIDs}&SubjectNames=${subjectNames}&startTime=${startTime}&endTime=${endTime}`;
+  return (
+    fetch
+      .tranfer({ reqUrl: url, basicProxy: baseIP, token })
+      // .then((res) => res.json())
+      .then((json) => {
+        if (json.error === 0 && json.data) {
+          let data = {};
+          let StatusCode = 200;
+          //         "TeacherID":"t0001",
+          // "Url":"/xxxxxxxxx",
+          // "UploadCount":"500",
+          // "BrowseCount":"1290",
+          // "UploadAllScale":"0.236",
+          // "UploadSubjectScale":[{
+          // 	"SubjectScale":"0.562",
+          // 	"SubjectID":"",
+          // 	"SubjectName":""
+          // }]
+
+          let {
+            UploadCount,
+            UploadAllScale,
+            BrowseCount,
+            Url,
+            UploadSubjectScale,
+          } = json.data;
+          data.AllCount = SetNaNToNumber(UploadCount);
+          data.AllScale = SetNaNToNumber(UploadAllScale)*100;
+          data.UseCount = SetNaNToNumber(BrowseCount);
+          data.Url = Url ? proxy + Url + "?lg_tk=" + token : "";
+          data.AllSubject = [];
+          UploadSubjectScale instanceof Array &&
+            UploadSubjectScale.forEach((child) => {
+              data.AllSubject.push({
+                SubjectName: child.SubjectName,
+                SUbjectID: child.SubjectID,
+                Scale: SetNaNToNumber(child.SubjectScale)*100,
+              });
+            });
+          return {
+            StatusCode: StatusCode,
+            Data: { ...data },
+          };
+        } else {
+          return {
+            StatusCode: 400,
+          };
+        }
+      })
+  );
+}
+
+// 教学方案
+export function GetTeachPlanStatistics(payload = {}) {
+  let {
+    userID,
+    baseIP,
+    proxy,
+    // schoolID,
+    token,
+    // subjectNames,
+    startTime,
+    // subjectIDs,
+    endTime,
+  } = payload;
+  let url =
+    proxy +
+    `TeachingPlan/ApiForOutside/GetTeachPlanStatistics?UserID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data) {
+        let data = {};
+        let StatusCode = 200;
+        //         "TeacherID":"t0001",
+        // "Url":"/xxxxxxxxx",
+        // "UploadCount":"500",
+        // "BrowseCount":"1290",
+        // "UploadAllScale":"0.236",
+        // "UploadSubjectScale":[{
+        // 	"SubjectScale":"0.562",
+        // 	"SubjectID":"",
+        // 	"SubjectName":""
+        // }]
+
+        let {
+          UploadCount,
+          UploadAllScale,
+          UseCount,
+          PCLink,
+          UploadSubjectScale,
+        } = json.Data;
+        data.AllCount = SetNaNToNumber(UploadCount);
+        data.AllScale = SetNaNToNumber(UploadAllScale)*100 ;
+        data.UseCount =SetNaNToNumber( UseCount);
+        data.Url = PCLink ? proxy + PCLink + "?lg_tk=" + token : "";
+        data.AllSubject = [];
+        UploadSubjectScale instanceof Array &&
+          UploadSubjectScale.forEach((child) => {
+            data.AllSubject.push({
+              SubjectName: child.SubjectName,
+              SUbjectID: child.SubjectID,
+              Scale: SetNaNToNumber(child.SubjectScale)*100,
+            });
+          });
+        // window.open(
+        //   Urls["300"].WebUrl +
+        //     "html/TeachingPlan/?subjectid=" +
+        //     SubjectID +
+        //     "&lg_tk=" +
+        //     token +
+        //     "&lg_ic=" +
+        //     IdentityCode
+        // );
+        return {
+          StatusCode: StatusCode,
+          Data: { ...data },
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+
+// 精品课程
+export function GetTeacherpercentage(payload = {}) {
+  let {
+    userID,
+    baseIP,
+    proxy,
+    schoolID,
+    token,
+    subjectNames,
+    startTime,
+    subjectIDs,
+    endTime,
+  } = payload;
+  let url =
+    proxy +
+    `api/common/teacherpercentage?schoolId=${schoolID}&TeacherID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
+  return (
+    fetch
+      .tranfer({ reqUrl: url, basicProxy: baseIP, token })
+      // .then((res) => res.json())
+      .then((json) => {
+        // console.log(json);
+        if (json.code === 0 && json.data) {
+          let data = {};
+          let StatusCode = 200;
+          //         "TeacherID":"t0001",
+          // "Url":"/xxxxxxxxx",
+          // "UploadCount":"500",
+          // "BrowseCount":"1290",
+          // "UploadAllScale":"0.236",
+          // "UploadSubjectScale":[{
+          // 	"SubjectScale":"0.562",
+          // 	"SubjectID":"",
+          // 	"SubjectName":""
+          // }]
+
+          let {
+            uploadCount,
+            uploadAllScale,
+            browseCount,
+            url,
+            uploadSubjectScale,
+          } = json.data;
+          data.AllCount = SetNaNToNumber(uploadCount);
+          data.AllScale = SetNaNToNumber(uploadAllScale)*100;
+          data.UseCount = SetNaNToNumber(browseCount);
+          data.Url = url ? decodeURIComponent(url) + "?lg_tk=" + token : ""; //教师才能看
+          data.AllSubject = [];
+          uploadSubjectScale instanceof Array &&
+            uploadSubjectScale.forEach((child) => {
+              data.AllSubject.push({
+                SubjectName: child.subjectName,
+                SUbjectID: child.subjectID,
+                Scale:SetNaNToNumber( child.subjectScale)*100,
+              });
+            });
+          console.log(data.Url);
+          return {
+            StatusCode: StatusCode,
+            Data: { ...data },
+          };
+        } else {
+          return {
+            StatusCode: 400,
+          };
+        }
+      })
+  );
 }

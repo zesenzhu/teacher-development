@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2021-01-05 10:24:56
+ * @LastEditTime: 2021-01-14 21:07:32
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -79,6 +79,8 @@ const commonData = (
   actions
 ) => {
   switch (actions.type) {
+    case commonActions.COMMON_SET_COMMON_DATA:
+      return Object.assign({}, state,  actions.data);
     case commonActions.COMMON_SET_TERM_INFO:
       return Object.assign({}, state, {
         termInfo: actions.data,

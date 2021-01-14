@@ -59,19 +59,25 @@ function History(props, ref) {
 
     data,
   } = props;
-
+  // 小于5个补
+  if (data.length < 5) {
+    let more = ["", "", "", "", ""];
+    data = data.concat(more.slice(0, 5 - data.length));
+    console.log(data);
+  }
   return (
     <div className={`card-content card-history ${className ? className : ""}`}>
       {
         <Scrollbars>
-          <p className="ch-dot-box">
+          <div className="ch-dot-box">
             {data.map((child, index) => {
               // 第一个前面要有一个球，最后加4个，旗最长7个球的长度
               let dom = [];
               if (index === 0) {
                 dom.push("dot");
               }
-              dom = dom.concat(["active", "dot", "dot", "dot"]);
+              // 看child有没有值
+              dom = dom.concat([child ? "active" : "dot", "dot", "dot", "dot"]);
               if (index === data.length - 1) {
                 dom = dom.concat(["dot", "dot", "dot", "dot"]);
               }
@@ -98,7 +104,7 @@ function History(props, ref) {
                 </React.Fragment>
               );
             })}
-          </p>
+          </div>
         </Scrollbars>
       }
     </div>

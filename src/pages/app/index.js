@@ -69,7 +69,7 @@ function App(props, ref) {
   // 存page的个人画像的教师信息
   const [TeacherMsg, setTeacherMsg] = useState(null);
   // 教师id
-  const [TeacherID,setTeacherID] = useState(null)
+  const [TeacherID, setTeacherID] = useState(null);
   // 存frame返回的数据
   // const [tabRef,setTabRef]
   // frame的ref
@@ -194,6 +194,9 @@ function App(props, ref) {
         type: commonActions.COMMON_SET_SYSTEM_SERVER,
         data: data.systemServer,
       });
+      data.token &&
+        dispatch(commonActions.SetCommonData({ token: data.token }));
+
       // systemServer
       // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
       dispatch(
@@ -220,7 +223,7 @@ function App(props, ref) {
             });
             if (res.StatusCode === 200) {
               setTeacherMsg(res.Data);
-              setTeacherID(Path[2])//这个要在最后改变，因为他控制个人画像里面的副作用的运行
+              setTeacherID(Path[2]); //这个要在最后改变，因为他控制个人画像里面的副作用的运行
             } else {
               // if (res.ErrCode === -2) {//id有误
               window.location.href =
@@ -447,7 +450,7 @@ function App(props, ref) {
         pageid={"personalDetail"}
         param={"id"}
         teachermsg={TeacherMsg}
-        teacherid ={TeacherID}
+        teacherid={TeacherID}
       ></PersonalDetail>
       {/* 个人画像end */}
 

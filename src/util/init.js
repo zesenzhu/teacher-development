@@ -63,11 +63,12 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
   initCount++;
   getBasePlatformMsg().then((data) => {
     //data：基础平台信息，object,{BasePlatformAddr}
+    // console.log(data)
     if (data) {
       TokenCheck({
         //里面进行token验证，用户信息获取，回调返回true才能正常，不然页面初始化失败
         firstLoad: true,
-        callback: (userInfo) => {
+        callback: (userInfo,token) => {
           //有用户信息才能继续下面的工作
           if (userInfo) {
             // 检查锁控,不等于1的时候跳
@@ -101,7 +102,7 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
                   basePlatformMsg: data,
                   userInfo,
                   termInfo,
-                  systemServer,
+                  systemServer,token,
                   role: setUnifyRole(userInfo, identityDetail, data),
                 });
               }
@@ -498,7 +499,8 @@ export const getBasePlatformMsg = async (keys = []) => {
   let json = "";
   let isExist = true;
   keys = keys instanceof Array ? keys : [];
-  if (BasePlatformMsg instanceof Object) {
+  // console.log(BasePlatformMsg)
+  if (BasePlatformMsg&&BasePlatformMsg instanceof Object) {
     for (let key in keys) {
       if (BasePlatformMsg[key] === undefined) {
         isExist = false;
@@ -526,7 +528,14 @@ export const getBasePlatformMsg = async (keys = []) => {
   if (json.StatusCode === 200) {
     BasePlatformMsg = json.Data;
   } else {
-    BasePlatformMsg = false; //有错误
+    if(keys.length>0){
+      BasePlatformMsg = {}; //想获取某个值的时候给空对象
+    }else{
+      BasePlatformMsg = false; //有错误
+    }
+    
+    
+    // return ;
   }
   setDataStorage("BasePlatformMsg", json.Data);
 

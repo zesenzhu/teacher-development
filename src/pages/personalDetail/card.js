@@ -64,7 +64,9 @@ function Card(props, ref) {
     lock, //控制锁显示
     data, //主要控制空数据显示问题
     component: Component,
+    componentProps, //组件的props
   } = props;
+  console.log(data)
   return (
     <div
       className={`personal-card ${className ? className : ""} ${
@@ -98,7 +100,7 @@ function Card(props, ref) {
                   type={"3"}
                 ></Empty>
               ) : Component ? (
-                <Component data={data}></Component>
+                <Component data={data} {...componentProps}></Component>
               ) : (
                 ""
               )

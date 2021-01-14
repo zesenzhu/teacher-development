@@ -1189,3 +1189,7 @@ export const addScript = async (
   //   addElement({ type: "text/javascript", ...params }, element, parent);
   // }
 };
+
+export const SetNaNToNumber = (data) => {
+  return isNaN(Number(data)) ? 0 : Number(data);
+};
