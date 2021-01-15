@@ -70,7 +70,10 @@ import {
   getTeacherDetailIntroduction,
   GetTermAndPeriodAndWeekNOInfo,
   GetTeacherResView,
-  GetTeachPlanStatistics,GetTeacherpercentage
+  GetTeachPlanStatistics,
+  GetTeacherpercentage,
+  GetAllTerm,
+  GetTeacherWork,
 } from "@/api/personal";
 import Card from "./card";
 import Archives from "./archives";
@@ -108,11 +111,11 @@ function PersonalDetail(props, ref) {
   const [SysUrl, setSysUrl] = useState(null);
   // 档案
   const [archives, setArchives] = useState(null);
-  // 档案
+  // 账号
   const [accout, setAccout] = useState(null);
-  // 档案
+  // 信息化
   const [information, setInformation] = useState(null);
-  // 档案
+  // 教研
   const [teach, setTeach] = useState(null);
   // 教学资料
   const [data, setData] = useState(null);
@@ -120,8 +123,10 @@ function PersonalDetail(props, ref) {
   const [Percentage, setPercentage] = useState(null); //精品课程
   const [ResView, setResView] = useState(null); //电子资源
   const [SubjectList, setSubjectList] = useState(null); //学科列表
-  // 档案
+  // 工作量
   const [work, setWork] = useState(null);
+  const [WorkTerm, setWorkTerm] = useState(null);
+  const [WorkTermList, setWorkTermList] = useState(null);
   // 档案
   const [History, setHistory] = useState(null);
 
@@ -141,6 +146,7 @@ function PersonalDetail(props, ref) {
     "archives",
     "history",
   ];
+ 
   // 获取各平台地址
   useEffect(() => {
     let sysIDs = [
@@ -165,21 +171,7 @@ function PersonalDetail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basePlatFormMsg]);
-  // 更新data
-  const changeData = useCallback(
-    (data) => {
-      let old = Data ? Data : {};
-      console.log(data, old);
-      setData({
-        ResView: old.ResView,
-        Percentage: old.Percentage,
-        SubjectList: old.ResView,
-        TeachPlan: old.TeachPlan,
-        ...data,
-      });
-    },
-    [Data]
-  );
+
   // 获取接口
   useEffect(() => {
     let baseIP = basePlatFormMsg.BasicWebRootUrl;
@@ -187,6 +179,7 @@ function PersonalDetail(props, ref) {
     if (SysUrl) {
       // 档案啊
       if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
+        // 获取档案-教务
         getTeacherDetailIntroduction({
           userID,
           baseIP: SysUrl["E34"].WebSvrAddr,
@@ -195,11 +188,21 @@ function PersonalDetail(props, ref) {
             setArchives({ ...archives, ...res.Data });
           }
         });
+        // 获取教师工作量学期
+        GetAllTerm({ proxy: SysUrl["E34"].WsSvrAddr }).then((res) => {
+          if (res.StatusCode === 200) {
+            // console.log(res.Data)
+            setWorkTermList(res.Data);
+            setWorkTerm(res.Data[0]);
+          } else {
+            setWorkTerm(false);
+          }
+        });
       }
       // 教研
       if (true) {
         setTeach([96, 18, 13]);
-        setWork([96, 2, 18, 13]);
+        // setWork([96, 2, 18, 13]);
         setHistory([
           { time: "2020-1", title: "荣获“三育人”先进个人称号" },
           { time: "2020-1", title: "荣获“三育人”先进个人称号" },
@@ -253,73 +256,7 @@ function PersonalDetail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SysUrl]);
-  // 教学资料需要依赖周次和sysURl
-  useEffect(() => {
-    let userID = teacherid;
-    if (!SysUrl) {
-      return;
-    }
-    // 电子资源
-    if (SysUrl["C10"] && SysUrl["C10"].WebSvrAddr && WeekData) {
-      GetTeacherResView({
-        userID,
-        baseIP: DataParams.baseIP,
-        proxy: SysUrl["C10"].WebSvrAddr,
-        token,
-        schoolID: DataParams.schoolID,
-        subjectIDs: DataParams.subjectIDs,
-        subjectNames: DataParams.subjectNames,
-        startTime: WeekData.startTime,
-        endTime: WeekData.endTime,
-      }).then((res) => {
-        if (res.StatusCode === 200) {
-          setResView(res.Data)
-          // changeData({ ResView: res.Data });
-        }
-      });
-    }
-    // 教学方案
-    if (SysUrl["310"] && SysUrl["310"].WebSvrAddr && WeekData) {
-      GetTeachPlanStatistics({
-        userID,
-        baseIP: DataParams.baseIP,
-        proxy: SysUrl["310"].WebSvrAddr,
-        token,
-        // schoolID: DataParams.schoolID,
-        // subjectIDs: DataParams.subjectIDs,
-        // subjectNames: DataParams.subjectNames,
-        startTime: WeekData.startTime,
-        endTime: WeekData.endTime,
-      }).then((res) => {
-        if (res.StatusCode === 200) {
-          // console.log(res.Data);
-          setTeachPlan(res.Data)
-          // changeData({ TeachPlan: res.Data });
-        }
-      });
-    }
-       // 精品课程
-       if (SysUrl["D21"] && SysUrl["D21"].WsSvrAddr && WeekData) {
-        GetTeacherpercentage({
-          userID,
-          baseIP: DataParams.baseIP,
-          proxy: SysUrl["D21"].WsSvrAddr,
-          token,
-          schoolID: DataParams.schoolID,
-          subjectIDs: DataParams.subjectIDs,
-          subjectNames: DataParams.subjectNames,
-          startTime: WeekData.startTime,
-          endTime: WeekData.endTime,
-        }).then((res) => {
-          if (res.StatusCode === 200) {
-            setPercentage(res.Data)
-            // changeData({ ResView: res.Data });
-          }
-        });
-      }
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SysUrl, WeekData]);
+
   // 不需要系统url的接口
   useEffect(() => {
     let userID = teacherid;
@@ -332,12 +269,27 @@ function PersonalDetail(props, ref) {
           subjectNames: teachermsg.SubjectNames,
           baseIP: basePlatFormMsg.BasicWebRootUrl,
         });
-        setSubjectList([
-          // { key: "same", value: "同学科" },
-          { key: "1", value: "英语" },
-          { key: "2", value: "语文" },
-          { key: "3", value: "数学" },
-        ]);
+        if (typeof teachermsg.SubjectNames === "string") {
+          let SubjectList = [];
+          let SubjectIDList =
+            typeof teachermsg.SubjectIDs === "string"
+              ? teachermsg.SubjectIDs.split(",")
+              : [];
+          teachermsg.SubjectNames.split(",").forEach((child, index) => {
+            SubjectList.push({
+              key: SubjectIDList[index] || index,
+              value: child,
+            });
+          });
+          setSubjectList(SubjectList);
+        }
+
+        // setSubjectList([
+        //   // { key: "same", value: "同学科" },
+        //   { key: "1", value: "英语" },
+        //   { key: "2", value: "语文" },
+        //   { key: "3", value: "数学" },
+        // ]);
         //获取学期周次
         GetTermAndPeriodAndWeekNOInfo({
           userID,
@@ -351,6 +303,7 @@ function PersonalDetail(props, ref) {
             setWeekData(false);
           }
         });
+
         setArchives(teachermsg);
         setAccout(teachermsg);
 
@@ -406,7 +359,102 @@ function PersonalDetail(props, ref) {
       //   }
       // });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teacherid]);
+  // 工作量，依赖学期和sysurl
+  useEffect(() => {
+    if (!SysUrl || !WorkTerm) {
+      return;
+    }
+    let userID = teacherid;
+    let userName = teachermsg.UserName;
+
+    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WeekData) {
+      GetTeacherWork({
+        userName:userID,
+        baseIP: DataParams.baseIP,
+        proxy: SysUrl["E34"].WebSvrAddr,
+        token,
+        semester: WorkTerm.value,
+      }).then((res) => {
+        if (res.StatusCode === 200) {
+          setWork(res.Data);
+          // changeData({ ResView: res.Data });
+        } else {
+          setWork(false);
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [SysUrl, WorkTerm]);
+  // 教学资料需要依赖周次和sysURl
+  useEffect(() => {
+    let userID = teacherid;
+    if (!SysUrl) {
+      return;
+    }
+    // 电子资源
+    if (SysUrl["C10"] && SysUrl["C10"].WebSvrAddr && WeekData) {
+      GetTeacherResView({
+        userID,
+        baseIP: DataParams.baseIP,
+        proxy: SysUrl["C10"].WebSvrAddr,
+        token,
+        schoolID: DataParams.schoolID,
+        subjectIDs: DataParams.subjectIDs,
+        subjectNames: DataParams.subjectNames,
+        startTime: WeekData.startTime,
+        endTime: WeekData.endTime,
+      }).then((res) => {
+        if (res.StatusCode === 200) {
+          setResView(res.Data);
+          // changeData({ ResView: res.Data });
+        }
+      });
+    }
+    // 教学方案
+    if (SysUrl["310"] && SysUrl["310"].WebSvrAddr && WeekData) {
+      GetTeachPlanStatistics({
+        userID,
+        baseIP: DataParams.baseIP,
+        proxy: SysUrl["310"].WebSvrAddr,
+        token,
+        // schoolID: DataParams.schoolID,
+        // subjectIDs: DataParams.subjectIDs,
+        // subjectNames: DataParams.subjectNames,
+        startTime: WeekData.startTime,
+        endTime: WeekData.endTime,
+      }).then((res) => {
+        if (res.StatusCode === 200) {
+          // console.log(res.Data);
+          setTeachPlan(res.Data);
+          // changeData({ TeachPlan: res.Data });
+        }
+      });
+    }
+    // 精品课程
+    if (SysUrl["D21"] && SysUrl["D21"].WsSvrAddr && WeekData) {
+      GetTeacherpercentage({
+        userID,
+        baseIP: DataParams.baseIP,
+        proxy: SysUrl["D21"].WsSvrAddr,
+        token,
+        schoolID: DataParams.schoolID,
+        subjectIDs: DataParams.subjectIDs,
+        subjectNames: DataParams.subjectNames,
+        startTime: WeekData.startTime,
+        endTime: WeekData.endTime,
+      }).then((res) => {
+        if (res.StatusCode === 200) {
+          console.log(res.Data)
+          setPercentage(res.Data);
+          // changeData({ ResView: res.Data });
+        }
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [SysUrl, WeekData]);
   // 控制初始进来的时候是什么模式
   useLayoutEffect(() => {
     let page = $(personalRef.current);
@@ -539,7 +587,27 @@ function PersonalDetail(props, ref) {
                   style={{
                     ...getPX(["", 94]),
                   }}
-                ></div>
+                >
+                  {teachermsg ? (
+                    <>
+                      <p
+                        className="pd-teacher-name"
+                        title={teachermsg.UserName}
+                      >
+                        {teachermsg.UserName ? teachermsg.UserName : "--"}
+                      </p>
+                      {teachermsg.Sign ? (
+                        <p className="pd-teacher-sign" title={teachermsg.Sign}>
+                          {teachermsg.Sign ? teachermsg.Sign : "--"}
+                        </p>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
                 <div
                   className="pd-drag-container"
                   style={{
@@ -655,8 +723,15 @@ function PersonalDetail(props, ref) {
                   cardid={"work"}
                   height={217}
                   component={Work}
-                  loading={work === null}
-                  data={work}
+                  loading={WorkTerm === null || work === null}
+                  data={WorkTerm && work}
+                  componentProps={{
+                    onTermSelect: (e) => {
+                      setWorkTerm(e);
+                    },
+                    termSelect: WorkTerm,
+                    termList: WorkTermList,
+                  }}
                 ></Card>
                 <Card
                   select={SelectCard}
@@ -684,13 +759,15 @@ function PersonalDetail(props, ref) {
                       TeachPlan === null &&
                       Percentage === null)
                   }
-                  lock={!SubjectList}
+                  // lock={
+                  //   !(SubjectList instanceof Array && SubjectList.length > 0)
+                  // }
                   data={
                     SysUrl &&
                     WeekData &&
-                    ((SysUrl["D21"] &&
-                      SysUrl["D21"].WsSvrAddr &&
-                      Percentage) ||
+                    SubjectList instanceof Array &&
+                    SubjectList.length > 0 &&
+                    ((SysUrl["D21"] && SysUrl["D21"].WsSvrAddr && Percentage) ||
                       (SysUrl["310"] &&
                         SysUrl["310"].WebSvrAddr &&
                         TeachPlan) ||

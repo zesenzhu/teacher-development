@@ -518,7 +518,7 @@ function Data(props, ref) {
         <span className="cd-legend-tea">全校教师</span>
         <span className="cd-legend-sub">{SubjectName}</span>
       </div>
-      <div className="cd-week-box">
+      <div className="ca-drop-box cd-week-box">
         {weekList instanceof Array && weekList.length > 0 ? (
           <Dropdown
             width={120}

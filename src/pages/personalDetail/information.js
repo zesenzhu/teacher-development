@@ -223,9 +223,9 @@ function Information(props, ref) {
       },
       title: {
         show: true,
-        text: "平均每日在线办公/\n教学时长占比",
-        bottom: 0,
-        left: "15%",
+        text: "平均每日在线时长占比",
+        bottom: 15,
+        left: "10%",
         textStyle: {
           fontSize: 14,
 

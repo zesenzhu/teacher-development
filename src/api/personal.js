@@ -32,7 +32,7 @@
 import fetch from "../util/fetch";
 import ipConfig from "../util/ipConfig";
 import moment from "moment";
-import { deepMap,SetNaNToNumber } from "../util/public";
+import { deepMap, SetNaNToNumber } from "../util/public";
 let { BasicProxy } = ipConfig;
 /**
  * @description:获取画像列表 http://192.168.129.1:8033/showdoc/web/#/21?page_id=2081
@@ -299,7 +299,6 @@ export function getTeacherDetailIntroduction(payload = {}) {
               }
             });
           }
-          console.log(EducationBackgroundDetailData);
           data = {
             ...json.data,
             EducationBackgroundDetailData,
@@ -429,7 +428,7 @@ export function GetTeacherResView(payload = {}) {
             UploadSubjectScale,
           } = json.data;
           data.AllCount = SetNaNToNumber(UploadCount);
-          data.AllScale = SetNaNToNumber(UploadAllScale)*100;
+          data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
           data.UseCount = SetNaNToNumber(BrowseCount);
           data.Url = Url ? proxy + Url + "?lg_tk=" + token : "";
           data.AllSubject = [];
@@ -438,7 +437,7 @@ export function GetTeacherResView(payload = {}) {
               data.AllSubject.push({
                 SubjectName: child.SubjectName,
                 SUbjectID: child.SubjectID,
-                Scale: SetNaNToNumber(child.SubjectScale)*100,
+                Scale: SetNaNToNumber(child.SubjectScale) * 100,
               });
             });
           return {
@@ -496,8 +495,8 @@ export function GetTeachPlanStatistics(payload = {}) {
           UploadSubjectScale,
         } = json.Data;
         data.AllCount = SetNaNToNumber(UploadCount);
-        data.AllScale = SetNaNToNumber(UploadAllScale)*100 ;
-        data.UseCount =SetNaNToNumber( UseCount);
+        data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
+        data.UseCount = SetNaNToNumber(UseCount);
         data.Url = PCLink ? proxy + PCLink + "?lg_tk=" + token : "";
         data.AllSubject = [];
         UploadSubjectScale instanceof Array &&
@@ -505,7 +504,7 @@ export function GetTeachPlanStatistics(payload = {}) {
             data.AllSubject.push({
               SubjectName: child.SubjectName,
               SUbjectID: child.SubjectID,
-              Scale: SetNaNToNumber(child.SubjectScale)*100,
+              Scale: SetNaNToNumber(child.SubjectScale) * 100,
             });
           });
         // window.open(
@@ -573,7 +572,7 @@ export function GetTeacherpercentage(payload = {}) {
             uploadSubjectScale,
           } = json.data;
           data.AllCount = SetNaNToNumber(uploadCount);
-          data.AllScale = SetNaNToNumber(uploadAllScale)*100;
+          data.AllScale = SetNaNToNumber(uploadAllScale) * 100;
           data.UseCount = SetNaNToNumber(browseCount);
           data.Url = url ? decodeURIComponent(url) + "?lg_tk=" + token : ""; //教师才能看
           data.AllSubject = [];
@@ -582,7 +581,7 @@ export function GetTeacherpercentage(payload = {}) {
               data.AllSubject.push({
                 SubjectName: child.subjectName,
                 SUbjectID: child.subjectID,
-                Scale:SetNaNToNumber( child.subjectScale)*100,
+                Scale: SetNaNToNumber(child.subjectScale) * 100,
               });
             });
           console.log(data.Url);
@@ -597,4 +596,103 @@ export function GetTeacherpercentage(payload = {}) {
         }
       })
   );
+}
+
+// 获取学期
+export function GetAllTerm(payload = {}) {
+  let { proxy } = payload;
+  let url = proxy + `/getAllTerm`;
+  return fetch
+    .get({ url, securityLevel: 2, advance: false })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.code === 0) {
+        let data = [];
+        let StatusCode = 200;
+        if (json.data instanceof Array && json.data.length > 0) {
+          json.data.forEach((child) => {
+            data.push({
+              value: child.term,
+              title: constructTerm(child.term),
+            });
+          });
+        } else {
+          StatusCode = 401;
+        }
+        return {
+          StatusCode: StatusCode,
+          Data: data,
+        };
+      } else {
+        return {
+          StatusCode: json.StatusCode,
+        };
+      }
+    });
+}
+
+let constructTerm = (Term) => {
+  if (Term.includes("-")) {
+    let Term1 = Term.slice(0, Term.length - 2);
+    let Term2 = Term.slice(Term.length - 2, Term.length);
+    let TermC = "";
+    if (Term2 === "01") {
+      TermC = "第一学期";
+    } else if (Term2 === "02") {
+      TermC = "第二学期";
+    }
+    return Term1 + "学年" + TermC;
+  }
+  return "";
+};
+
+export function GetTeacherWork(payload = {}) {
+  let { userName, proxy, semester, pageSize, pageNum, token } = payload;
+  let url =
+    proxy +
+    `/admin/getTeacherWork?userName=${userName}&pageNum=${1}&pageSize=${10000}&token=${token}&semester=${semester}`;
+  return fetch
+    .get({ url, securityLevel: 2, advance: false })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.code === 0) {
+        let data = {};
+        let StatusCode = 200;
+        if (
+          json.data &&
+          json.data.data instanceof Array &&
+          json.data.data.length > 0
+        ) {
+          //           pageCount: 1
+          // pageNum: 1
+          // pageSize: 10000
+          // totalCount: 1
+          //data:[{}]
+          // json.data.data为数组，拿第一个
+          let {
+            administrativeClassNum, //行政班数
+            classNum, //教学班数
+            invigilationNum, //监考数
+            scheduleCount, //课程
+          } = json.data.data[0];
+          data = [
+            SetNaNToNumber(scheduleCount),
+            SetNaNToNumber(administrativeClassNum),
+            SetNaNToNumber(classNum),
+            SetNaNToNumber(invigilationNum),
+          ];
+        } else {
+          StatusCode = 40001;
+        }
+
+        return {
+          StatusCode: StatusCode,
+          Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
 }

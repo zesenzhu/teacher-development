@@ -116,7 +116,35 @@
                     // background: rgba(blue, 0.1);
                 }
                 .pd-center-content-center-top {
-                    background: rgba(orange, 0.1);
+                    // background: rgba(orange, 0.1);
+                    height: 94px;
+                    padding-top: 35px;
+                    text-align: center;
+                    .pd-teacher-name {
+                        line-height: 34px;
+                        font-size: 24px;
+                        color: #e8e658;
+                        margin-bottom: 0;
+                    }
+                    .pd-teacher-sign {
+                        position: relative;
+                        display: inline-block;
+                        font-size: 14px;
+                        @include textOverFlow;
+                        padding-left: 20px;
+                        line-height: 24px;
+                        color: rgba($color: #0a406f, $alpha: 0.64);
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            @include v-center;
+                            left: 0;
+                            width: 17px;
+                            height: 16px;
+                            background: url(./images/icon-sign.png) no-repeat center center / 100% 100%;
+                            // opacity: 0.21;
+                        }
+                    }
                 }
                 .pd-drag-container {
                     position: relative;
@@ -431,6 +459,21 @@
     width: 100%;
     height: 100%;
     padding: 20px;
+    .ca-drop-box {
+        position: absolute;
+        z-index: 10;
+        top: 20px;
+        .ant-select-selector {
+            background-color: transparent !important;
+            border: none !important;
+            .ant-select-selection-item {
+                color: #fff;
+            }
+        }
+        .ant-select-arrow {
+            color: #fff;
+        }
+    }
     p {
         margin-bottom: 0;
     }
@@ -1109,14 +1152,14 @@
         z-index: 10;
         top: 20px;
         .ant-select-selector {
-            background-color: transparent!important;
-            border: none!important;
+            background-color: transparent !important;
+            border: none !important;
             .ant-select-selection-item {
-                color: #fff
+                color: #fff;
             }
         }
         .ant-select-arrow {
-            color: #fff
+            color: #fff;
         }
     }
     .week-dropdown {}

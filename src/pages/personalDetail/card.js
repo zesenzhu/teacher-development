@@ -66,7 +66,6 @@ function Card(props, ref) {
     component: Component,
     componentProps, //组件的props
   } = props;
-  console.log(data)
   return (
     <div
       className={`personal-card ${className ? className : ""} ${
@@ -96,7 +95,7 @@ function Card(props, ref) {
               lock ? (
                 <Empty
                   className="pc-lock"
-                  title={"暂无不开放该模块"}
+                  title={"暂不开放该模块"}
                   type={"3"}
                 ></Empty>
               ) : Component ? (

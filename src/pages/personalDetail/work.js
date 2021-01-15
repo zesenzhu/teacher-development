@@ -45,6 +45,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import "./index.scss";
+import { Dropdown } from "@/component/common";
 
 /**
  * @description: 暂无数据表明是没有这个系统id或返回错误，加锁是没有权限看,前者权重大于后者
@@ -55,7 +56,7 @@ import "./index.scss";
 function Work(props, ref) {
   let {
     className,
-
+    onTermSelect,termSelect,termList,
     data,
   } = props;
   const workList = [
@@ -73,6 +74,33 @@ function Work(props, ref) {
   ];
   return (
     <div className={`card-content card-work ${className ? className : ""}`}>
+      <div className="ca-drop-box cw-term-box">
+        {termList instanceof Array && termList.length > 0 ? (
+          <Dropdown
+            width={120}
+            height={120}
+            dropList={termList}
+            // title={""}
+            value={termSelect.value}
+            className="term-dropdown"
+            onChange={(e) => {}}
+            onSelect={(e, option) => {
+              onTermSelect(option);
+            }}
+
+            // width={120}
+            // height={120}
+            // style={{ zIndex: 10 }}
+            // onChange={(e) => {
+            //   onWeekSelect(e.value);
+            // }}
+            // dropList={weekList}
+            // dropSelectd={weekSelect}
+          ></Dropdown>
+        ) : (
+          ""
+        )}
+      </div>
       {data instanceof Array &&
         data.map((child, index) => {
           let work = workList[index];
