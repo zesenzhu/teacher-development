@@ -393,9 +393,10 @@ function Editor(props, ref) {
       checkTitle(),
       checkActivityFlag(),
       checkApplyFlag(),
-      allowApply && checkApplyTime(),
-      allowApply && checkLimit(),
+      !allowApply ||checkApplyTime(),
+      !allowApply || checkLimit(),
     ];
+    console.log(result)
 
     if (result.every((child) => child)) {
       typeof fn === "function" && fn();
@@ -903,6 +904,7 @@ function Editor(props, ref) {
           <li
             className="handle-btn handle-draft"
             onClick={() => {
+             
               checkAll(
                 draft.onClick.bind(this, {
                   Title: title,

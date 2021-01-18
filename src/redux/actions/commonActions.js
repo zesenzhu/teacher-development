@@ -77,6 +77,7 @@ const leftMenu_1 = [
       {
         key: "schoolResource",
         name: "各校师资",
+        params: [{ key: "schoolDetail", title: "学校详情" }],
       },
     ],
   },
@@ -186,6 +187,24 @@ const COMMON_SET_LEFT_MENU = "COMMON_SET_LEFT_MENU";
 const SetLeftMenu = (type = 0, haveNotice = true) => {
   return (dispatch, getState) => {
     let leftMenu = type === 1 ? leftMenu_1 : leftMenu_0;
+    switch (type) {
+      case 0:
+        leftMenu = leftMenu_0; //学院或中小学学校
+
+        break;
+      case 1:
+        leftMenu = leftMenu_1; //加各校师资，教育局
+
+        break;
+      case 2:
+        leftMenu_1[0].children[4].name = "各院师资";
+        leftMenu_1[0].children[4].params[0].title = "学院详情";
+        leftMenu = leftMenu_1; //各校师资改为各院，大学
+
+        break;
+      default:
+        leftMenu = leftMenu_0;
+    }
     if (!haveNotice) {
       leftMenu.pop();
     }

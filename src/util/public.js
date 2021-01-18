@@ -1193,3 +1193,10 @@ export const addScript = async (
 export const SetNaNToNumber = (data) => {
   return isNaN(Number(data)) ? 0 : Number(data);
 };
+
+// 数组排序
+/**
+ * @description: 对字符串，数字，排序，对象方法布尔值不比较
+ * @param {*}
+ * @return {*}
+ */

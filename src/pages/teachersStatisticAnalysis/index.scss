@@ -26,15 +26,62 @@
         color: #999999;
     }
     .top-default {
+        position: relative;
         height: 54px;
         background-color: #ffffff;
+        padding: 0 20px;
         // box-shadow: 0px 1px 0px 0px
         // 	#e5e5e5;
         box-shadow: 0px 1px 0px 0px #e5e5e5;
         .term-dropdown {
+            // position: absolute;
+            // left: 20px;
+            float: left;
+            margin-top: 11px;
+            // @include v-center;
+        }
+        .dropdown-school {
+            float: right;
+            margin-left: 20px;
+            // left: auto;
+            // right: 20px;
+        }
+    }
+    .top-msg {
+        // width: 1240px;
+        height: 90px;
+        z-index: 2;
+        overflow: visible;
+        position: relative;
+        background: url(./images/img-personal-header.png) no-repeat center top/100% 100%;
+        .s-msg {
             position: absolute;
-            left: 20px;
-            @include v-center;
+            bottom: 0;
+            left: 0;
+            line-height: 42px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0a406f;
+            margin-bottom: 0;
+            padding-left: 135px;
+            i {
+                position: absolute;
+                left: 28px;
+                @include v-center;
+                margin-right: 17px;
+                display: inline-block;
+                background-size: 100% 100%;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-image: url(./images/icon-show-detail.png);
+                height: 90px;
+                width: 90px;
+                border-radius: 50%;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+            }
         }
     }
 }
@@ -189,7 +236,7 @@
         vertical-align: top;
         cursor: pointer;
         opacity: 0.9;
-        background: url(./images/icon-show-detail.png) no-repeat center center /contain;
+        background: url(./images/icon-show-detail.png) no-repeat center center / contain;
         &:hover {
             opacity: 1;
         }
@@ -257,7 +304,7 @@
                 background-color: #0099ff;
                 color: #fff;
                 &::before {
-                    content: '';
+                    content: "";
                     position: absolute;
                     bottom: -4px;
                     left: 50%;
@@ -280,7 +327,7 @@
         height: 360px;
         padding: 0;
         .title-2 {
-            color: #fff
+            color: #fff;
         }
     }
 }

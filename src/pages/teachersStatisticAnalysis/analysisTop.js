@@ -66,7 +66,9 @@ function AnalysisTop(props, ref) {
     termlist,
     onTermChange,
     className,
+    schoolMsg,
     getHeight,
+    onTypeChange,
   } = props;
 
   // 下拉菜单
@@ -82,10 +84,19 @@ function AnalysisTop(props, ref) {
     // { value: "5", title: "2020~2021学年第2021学年第2学期2学期" },
     // { value: "6", title: "2020~2021学2021学年第2学期年第2学期" },
     // { value: "7", title: "2020~2021学年第2学期2021学年第2学期" },
-  // ]
+    // ]
   );
+  // 统计类型
+  const [TypeList, setTypeList] = useState([
+    { value: "teacherBaseMsg", title: "教师基本信息" },
+    { value: "workMsg", title: "教师工作量" },
+    { value: "teachingAbility", title: "教师教学能力" },
+    { value: "informationizeAbility", title: "教师信息化能力" },
+  ]);
   // 选择下拉
   const [TermSelect, setTermSelect] = useState(TermList[0] ? TermList[0] : {});
+  const [TypeSelect, setTypeSelect] = useState(TypeList[0] ? TypeList[0] : {});
+
   // 获取整个结构的都没节点
   const boxRef = useRef({});
   // 下拉初始化
@@ -99,25 +110,39 @@ function AnalysisTop(props, ref) {
     setTermList(termlist);
     termselect === undefined &&
       TermSelect === undefined &&
-      setTermSelect(termlist[0]? termlist[0]:{});
+      setTermSelect(termlist[0] ? termlist[0] : {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [termlist]);
   const topType = useMemo(() => {
     // 头部类型：*default:默认，*school:带有学校信息
     return type ? type : "default";
   }, [type]);
+  // 学校信息
+  const { isSchool, schoolName, schoolImg } = useMemo(() => {
+    let data = { isSchool: false };
+    if (!schoolMsg && topType === "school") {
+      data = { isSchool: true, ...schoolMsg };
+    }
+    return data;
+  }, [schoolMsg, topType]);
   // 监听变化，修改回调
   useEffect(() => {
     typeof onTermChange === "function" && onTermChange(TermSelect);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [TermSelect]);
+  // 监听变化，修改回调
+  useEffect(() => {
+    typeof onTypeChange === "function" && onTypeChange(TypeSelect);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [TypeSelect]);
   useImperativeHandle(
     ref,
     () => ({
       TermSelect,
       boxRef,
+      TypeSelect,
     }),
-    [TermSelect]
+    [TermSelect, TypeSelect]
   );
   // console.log($(boxRef.current).height())
   useLayoutEffect(() => {
@@ -126,25 +151,46 @@ function AnalysisTop(props, ref) {
   }, []);
   return (
     <div ref={boxRef} className={`Analysis-Top ${className ? className : ""}`}>
-      {topType === "school" ? (
-        <div></div>
+      {isSchool ? (
+        <div className="top-msg">
+          <p className="s-msg">
+            <i style={{ backgroundImage: schoolImg ?schoolImg: "#fff" }}></i>
+            {schoolName ? schoolName : "测试"}
+          </p>
+        </div>
       ) : (
-        <div className="top-default">
+        ""
+      )}
+      <div className="top-default">
+        <Dropdown
+          width={200}
+          height={240}
+          dropList={TermList}
+          title={"所统计学期"}
+          value={TermSelect.value}
+          className={`term-dropdown ${isSchool ? "dropdown-school" : ""}`}
+          onChange={(e) => {}}
+          onSelect={(e, option) => {
+            // console.log(option);
+            setTermSelect(option);
+          }}
+        ></Dropdown>
+        {isSchool && (
           <Dropdown
             width={200}
             height={240}
-            dropList={TermList}
-            title={"所统计学期"}
-            value={TermSelect.value}
-            className="term-dropdown"
+            dropList={TypeList}
+            title={"所统计类型"}
+            value={TypeSelect.value}
+            className={`term-dropdown dropdown-school`}
             onChange={(e) => {}}
             onSelect={(e, option) => {
               // console.log(option);
-              setTermSelect(option);
+              setTypeSelect(option);
             }}
           ></Dropdown>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

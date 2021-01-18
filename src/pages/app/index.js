@@ -9,7 +9,7 @@ import React, {
   memo,
   useEffect,
   useState,
-  // useMemo,
+  useMemo,
   // useImperativeHandle,
   useRef,
   forwardRef,
@@ -38,6 +38,7 @@ import { Empty } from "@/component/common";
 import SearchchAll from "../searchAll";
 import PersonalDetail from "../personalDetail";
 import { GetUserDetailForHX } from "@/api/personal";
+import School from "../school";
 // let { get } = fetch;
 function App(props, ref) {
   // let commonData = useSelector((state) => state.commonData);
@@ -48,7 +49,7 @@ function App(props, ref) {
       leftMenu,
       params,
       basePlatFormMsg: { ProVersion },
-      roleMsg: { schoolID, collegeID, selectLevel },
+      roleMsg: { schoolID, collegeID, selectLevel, productLevel },
     },
     handleData: {
       teacherRecruitMsg: {
@@ -75,7 +76,19 @@ function App(props, ref) {
   // frame的ref
   const frameRef = useRef({});
   // 在这做路由做配置，监听路由变化不合法的时候给它做合法方案
+  // 看是大学还是教育局，各校，各院，
+  const NameData = useMemo(() => {
+    console.log(productLevel)
+    let data = { schoolList: "各校师资", schoolDetail: "学校详情" };
+    switch (productLevel) {
+      case 2:
+        data = { schoolList: "各院师资", schoolDetail: "学院详情" };
 
+        break;
+      default:
+    }
+    return data;
+  }, [productLevel]);
   useLayoutEffect(() => {
     // 平台模式类型不确定，不允许进来
     if (!frameType) {
@@ -200,7 +213,10 @@ function App(props, ref) {
       // systemServer
       // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
       dispatch(
-        commonActions.SetLeftMenu(data.role.level, !!data.systemServer[400])
+        commonActions.SetLeftMenu(
+          1 || data.role.productLevel,
+          !!data.systemServer[400]
+        )
       );
       // // 为空表示是学生，家长，不允许进来
       // if(!data.role.frameType){
@@ -234,6 +250,7 @@ function App(props, ref) {
             }
           } else {
             isInit = false;
+            // return ;
             window.location.href =
               data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E012"; //缺参数
           }
@@ -308,13 +325,13 @@ function App(props, ref) {
         },
       }}
     >
-      <Analysis
+      {/* <Analysis
         tabid={"schoolResource"}
         tabname={SchoolName}
         param={"SchoolID"}
       >
         {SchoolName}
-      </Analysis>
+      </Analysis> */}
 
       <Analysis tabid={"informationizeAbility"} tabname={"教师信息化能力"}>
         教师教学能力
@@ -356,6 +373,8 @@ function App(props, ref) {
         tabid={"recruitDetail"}
         tabname={"招聘计划详情"}
         param={"detail"}
+        mustparam={"true"}
+        redirect={"teacherRecruit"}
         removeTab={RemoveTab}
       >
         招聘计划详情
@@ -384,6 +403,8 @@ function App(props, ref) {
       <Train
         tabid={"trainDetail"}
         tabname={"培训计划详情"}
+        mustparam={"true"}
+        redirect={"teacherTrain"}
         param={"detail"}
         removeTab={RemoveTab}
       >
@@ -454,6 +475,22 @@ function App(props, ref) {
       ></PersonalDetail>
       {/* 个人画像end */}
 
+      {/* 多学校 */}
+
+      <School
+        tabid={"schoolResource"}
+        tabname={NameData.schoolList}
+        param={"list"}
+        removeTab={RemoveTab}
+      ></School>
+      <School
+        tabname={NameData.schoolDetail}
+        tabid={"schoolDetail"}
+        param={"detail"}
+        mustparam={"true"}
+        redirect={"schoolResource"}
+        removeTab={RemoveTab}
+      ></School>
       <p proversion={ProVersion} className="page-ProVersion" frametype={"page"}>
         {ProVersion}
       </p>

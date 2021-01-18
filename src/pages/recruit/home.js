@@ -191,7 +191,7 @@ function Home(props, ref) {
                   onOk: () => {
                     DeleteRecruit(
                       { RIDs: data.RID },
-                      tableRef.current.reloadList
+                      tableRef.current.reloadList.bind(this,{},false)
                     );
                   },
                 });
@@ -285,7 +285,7 @@ function Home(props, ref) {
                 //   },
                 // });
                 DeleteRecruit({ RIDs: data.RID }, () => {
-                  tableRef.current.reloadList();
+                  tableRef.current.reloadList({},false);
 
                   homeTopRef.current.reloadDraft();
                 });

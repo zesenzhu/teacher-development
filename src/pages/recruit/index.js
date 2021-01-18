@@ -97,7 +97,7 @@ function Recruit(props, ref) {
           ""
         )}
         {Component === "edit" ? <Edit removeTab={removeTab}></Edit> : ""}
-        {tabid === "recruitDetail" ? <Detail></Detail> : ""}
+        {tabid === "recruitDetail" ? <Detail removeTab={removeTab}></Detail> : ""}
         {/* {Component === "edit" ? <Home></Home> : ""} */}
         {Component === "details" ? <Home></Home> : ""}
       </div>

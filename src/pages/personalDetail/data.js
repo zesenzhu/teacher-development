@@ -516,7 +516,7 @@ function Data(props, ref) {
       {/* <div className="ci-echarts-box"> */}
       <div className="cd-legend">
         <span className="cd-legend-tea">全校教师</span>
-        <span className="cd-legend-sub">{SubjectName}</span>
+        {<span className="cd-legend-sub">{SubjectName?SubjectName:'同学科'}</span>}
       </div>
       <div className="ca-drop-box cd-week-box">
         {weekList instanceof Array && weekList.length > 0 ? (

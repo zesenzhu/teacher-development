@@ -33,6 +33,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
+import config from "@/util/ipConfig";
 // import { addScript } from "@/util/public";
 // import name from '@/';
 /**
@@ -40,6 +41,7 @@ import React, {
  * @param {*} id:ueditor的id
  * @return {*}
  */
+const { EditorProxy } = config;
 export default function useUEditorLaod(id, config) {
   // 编辑器实例
   const [UE, setUE] = useState(null);
@@ -102,32 +104,27 @@ export default function useUEditorLaod(id, config) {
     async function loadScript() {
       //
       let jqLaod = await addScript({
-        src:
-          "http://192.168.129.1:10914/EduResearchSrc/UEditor/third-party/jquery-1.10.2.min.js",
+        src: EditorProxy + "/third-party/jquery-1.10.2.min.js",
         id: "ueditor_script_jq",
         onLoad: () => {},
       });
       let configLaod = await addScript({
-        src:
-          "http://192.168.129.1:10914/EduResearchSrc/UEditor/ueditor.config.js",
+        src: EditorProxy + "ueditor.config.js",
         id: "ueditor_script_config",
         onLoad: () => {},
       });
       let all_minLaod = await addScript({
-        src:
-          "http://192.168.129.1:10914/EduResearchSrc/UEditor/ueditor.all.min.js",
+        src: EditorProxy + "ueditor.all.min.js",
         id: "ueditor_script_all_min",
         onLoad: () => {},
       });
       let parseLaod = await addScript({
-        src:
-          "http://192.168.129.1:10914/EduResearchSrc/UEditor/ueditor.parse.min.js",
+        src: EditorProxy + "ueditor.parse.min.js",
         id: "ueditor_script_.parse",
         onLoad: () => {},
       });
       let langLaod = await addScript({
-        src:
-          "http://192.168.129.1:10914/EduResearchSrc/UEditor/lang/zh-cn/zh-cn.js",
+        src: EditorProxy + "lang/zh-cn/zh-cn.js",
         id: "ueditor_script_lang_zh-cn",
         onLoad: () => {},
       });
@@ -154,9 +151,9 @@ export default function useUEditorLaod(id, config) {
             "|",
             "emotion",
             "simpleupload",
-            "|",
-            "music",
-            "insertvideo",
+            // "|",
+            // "music",
+            // "insertvideo",
           ],
         ],
         // 字数统计

@@ -122,12 +122,12 @@ export  function useTableRequest(query = {}, api, prepare = true) {
   );
   // 刷新
   const reloadList = useMemo(
-    () => (options) => {
+    () => (options,initIndex=true) => {
       options = options || {};
       return getList({
         ...query,
         ...pageOptions,
-        pageIndex: 1,
+        pageIndex: initIndex?1:pageOptions.pageIndex,
         ...options,
       });
     },

@@ -723,8 +723,8 @@ function PersonalDetail(props, ref) {
                   cardid={"work"}
                   height={217}
                   component={Work}
-                  loading={WorkTerm === null || work === null}
-                  data={WorkTerm && work}
+                  loading={ !SysUrl || (SysUrl["E34"]&& (WorkTerm === null  || work === null))}
+                  data={SysUrl&& SysUrl["E34"]&&WorkTerm && work}
                   componentProps={{
                     onTermSelect: (e) => {
                       setWorkTerm(e);

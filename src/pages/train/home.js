@@ -213,7 +213,7 @@ function Home(props, ref) {
                   onOk: () => {
                     DeleteTrain(
                       { TIDs: data.TID },
-                      tableRef.current.reloadList
+                      tableRef.current.reloadList.bind(this,{},false)
                     );
                   },
                 });
@@ -307,7 +307,7 @@ function Home(props, ref) {
                 //   },
                 // });
                 DeleteTrain({ TIDs: data.TID }, () => {
-                  tableRef.current.reloadList();
+                  tableRef.current.reloadList({},false);
 
                   homeTopRef.current.reloadDraft();
                 });

@@ -285,7 +285,7 @@ function PersonalList(props, ref) {
                 className=" btn-check"
                 onClick={() => {
                   // history.push("/personalDetail/" + data.UserID);
-                  history.push("/page/personalDetail/" + data.UserID);
+                  window.open(window.location.search+"#/page/personalDetail/" + data.UserID);
                 }}
               ></span>
             </span>

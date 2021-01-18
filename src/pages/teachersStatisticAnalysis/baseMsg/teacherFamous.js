@@ -55,14 +55,14 @@ import React, {
   useLayoutEffect,
   forwardRef,
 } from "react";
-
+import {Empty} from '@/component/common';
 function TeacherFamous(props, ref) {
   let { className, levelHash, productMsg, data } = props;
   productMsg = productMsg ? productMsg : {};
 
   return (
     <div className={`TeacherFamous ${className ? className : ""} `}>
-      {data instanceof Array
+      {data instanceof Array&&data.length>0
         ? data.map((child, index) => {
             let { NodeName, Total } = child;
             return (
@@ -72,7 +72,7 @@ function TeacherFamous(props, ref) {
               </div>
             );
           })
-        : ""}
+        : <Empty type={'3'} title={'暂无数据'}></Empty>}
     </div>
   );
 }

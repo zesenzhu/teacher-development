@@ -51,6 +51,7 @@ import React, {
   useEffect,
   useState,
   // useImperativeHandle,
+  useMemo,
   useRef,
   forwardRef,
 } from "react";
@@ -62,7 +63,7 @@ import "./index.scss";
 import BaseMsg from "./baseMsg";
 import WorkLoad from "./workLoad";
 import TeachingAbility from "./teachingAbility";
-import InformationizeAbility from './informationizeAbility';
+import InformationizeAbility from "./informationizeAbility";
 import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
 import { Scrollbars } from "react-custom-scrollbars";
@@ -73,9 +74,12 @@ function Analysis(props, ref) {
     tabname,
     children,
     param,
-    termInfo: {  TermInfo, HasHistory },
-    roleMsg: { schoolID, collegeID, selectLevel, productLevel },
+    termInfo: { TermInfo, HasHistory },
+    roleMsg, //当前最高级用户信息，决定学校信息
     location,
+    type,
+    roleData, //多学校的用户信息，决定学校
+    schoolMsg, //多学校的学校信息，由外部传
     levelHash,
     basePlatFormMsg: { ProVersion },
     contentHW: { height },
@@ -88,15 +92,36 @@ function Analysis(props, ref) {
   const [bottomHeight, setBottomHeight] = useState(66);
   // 学期选择
   const [TermSelect, setTermSelect] = useState("");
+  // 统计类型
+  const [TypeSelect, setTypeSelect] = useState("");
+
   // 获取头部高度,默认54
   const [topHeight, setTopHeight] = useState(54);
   // 获取锚点结构
   const [anchorList, setAnchorList] = useState([]);
+  // 当是schoolDetail，设置当前的module
+  const [ModuleID, setModuleID] = useState();
+
+  const { schoolID, collegeID, selectLevel, productLevel } = useMemo(() => {
+    let role = roleMsg;
+    // module为使用roleData，不然就使用roleMsg
+    if (type === "school") {
+      // role = roleData;
+      setTopType("school");
+    }
+    return role;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
+  // console.log({ schoolID, collegeID, selectLevel, productLevel });
+
   // 头部ref
   const topRef = useRef({});
   // contentref
   const anchorRef = useRef(null);
   const scrollRef = useRef(null);
+  useEffect(() => {
+    tabid && setModuleID(tabid);
+  }, [tabid]);
   useEffect(() => {
     // 挂载的时候观察路由
     let Path = handleRoute(location.pathname);
@@ -110,26 +135,28 @@ function Analysis(props, ref) {
   }, []);
   return (
     <div className="Analysis">
-      {Path[0] !== "schoolResource" || Path[1] ? (
-        <AnalysisTop
-          getHeight={(height) => {
-            console.log(height);
-            setTopHeight(height);
-          }}
-          className={"AnalysisTop"}
-          onTermChange={(e) => {
-            setTermSelect(e);
-          }}
-          termlist={TermInfo.map((child) => ({
-            value: child.Term,
-            title: child.TermName,
-          }))}
-          ref={topRef}
-          type={topType}
-        ></AnalysisTop>
-      ) : (
-        ""
-      )}
+      <AnalysisTop
+        // type={Path[0] === "schoolDetail" ? "module" : "tab"}
+        getHeight={(height) => {
+          // console.log(height);
+          setTopHeight(height);
+        }}
+        className={"AnalysisTop"}
+        onTermChange={(e) => {
+          setTermSelect(e);
+        }}
+        onTypeChange={(e) => {
+          setTypeSelect(e);
+          setModuleID(e.value)
+        }}
+        termlist={TermInfo.map((child) => ({
+          value: child.Term,
+          title: child.TermName,
+        }))}
+        ref={topRef}
+        type={topType}
+        schoolMsg={schoolMsg}
+      ></AnalysisTop>
 
       <div
         className="analysis-content"
@@ -146,7 +173,7 @@ function Analysis(props, ref) {
             className="content-box"
             style={{ minHeight: height - topHeight - bottomHeight + "px" }}
           >
-            {tabid === "teacherBaseMsg" ? (
+            {ModuleID === "teacherBaseMsg" ? (
               <BaseMsg
                 onAnchorComplete={(anchor) => {
                   // console.log(anchor);
@@ -162,7 +189,7 @@ function Analysis(props, ref) {
             ) : (
               ""
             )}
-            {tabid === "workMsg" ? (
+            {ModuleID === "workMsg" ? (
               <WorkLoad
                 onAnchorComplete={(anchor) => {
                   // console.log(anchor);
@@ -178,7 +205,7 @@ function Analysis(props, ref) {
             ) : (
               ""
             )}
-            {tabid === "teachingAbility" ? (
+            {ModuleID === "teachingAbility" ? (
               <TeachingAbility
                 onAnchorComplete={(anchor) => {
                   // console.log(anchor);
@@ -194,7 +221,7 @@ function Analysis(props, ref) {
             ) : (
               ""
             )}
-            {tabid === "informationizeAbility" ? (
+            {ModuleID === "informationizeAbility" ? (
               <InformationizeAbility
                 onAnchorComplete={(anchor) => {
                   // console.log(anchor);

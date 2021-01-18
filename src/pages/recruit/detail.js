@@ -84,13 +84,20 @@ function Datail(props, ref) {
   useEffect(() => {
     if (location.pathname) {
       let Path = handleRoute(location.pathname);
+      // if(Path[0] === "recruitDetail" &&
+      // Path[1] ){
+      //   setID(Path[1])
+      // }else if(!Path[1]){
+      //   // console.log('teacherRecruit')
+      //   removeTab&&  removeTab("", "", "teacherRecruit", "")
+      // }
       Path[0] === "recruitDetail" &&
         Path[1] &&
         Path[1] !== ID &&
         setID(Path[1]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.pathname]);
   return (
     <Loading opacity={0.5} spinning={loading}>
       <div

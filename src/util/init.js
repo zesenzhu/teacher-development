@@ -68,7 +68,7 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
       TokenCheck({
         //里面进行token验证，用户信息获取，回调返回true才能正常，不然页面初始化失败
         firstLoad: true,
-        callback: (userInfo,token) => {
+        callback: (userInfo, token) => {
           //有用户信息才能继续下面的工作
           if (userInfo) {
             // 检查锁控,不等于1的时候跳
@@ -102,7 +102,8 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
                   basePlatformMsg: data,
                   userInfo,
                   termInfo,
-                  systemServer,token,
+                  systemServer,
+                  token,
                   role: setUnifyRole(userInfo, identityDetail, data),
                 });
               }
@@ -211,6 +212,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
       case 1:
       case 2:
       case 6:
+      case 9:
         //非学院管理员
         if (IdentityCode !== "IC0008") {
           //学校
@@ -266,9 +268,9 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     }
     // Role.version = version;
     //2,3为学生家长，没有权限进来
-    if(Role.userType === 2 || Role.userType === 3){
+    if (Role.userType === 2 || Role.userType === 3) {
       goErrorPage("E011");
-      return ;
+      return;
     }
     Role = {
       ...Role,
@@ -499,10 +501,11 @@ export const getBasePlatformMsg = async (keys = []) => {
   let json = "";
   let isExist = true;
   keys = keys instanceof Array ? keys : [];
-  // console.log(BasePlatformMsg)
-  if (BasePlatformMsg&&BasePlatformMsg instanceof Object) {
+  console.log(BasePlatformMsg)
+  if (BasePlatformMsg && BasePlatformMsg instanceof Object) {
     for (let key in keys) {
-      if (BasePlatformMsg[key] === undefined) {
+      console.log(BasePlatformMsg[keys[key]] )
+      if (BasePlatformMsg[keys[key]] === undefined) {
         isExist = false;
       }
     }
@@ -528,13 +531,12 @@ export const getBasePlatformMsg = async (keys = []) => {
   if (json.StatusCode === 200) {
     BasePlatformMsg = json.Data;
   } else {
-    if(keys.length>0){
+    if (keys.length > 0) {
       BasePlatformMsg = {}; //想获取某个值的时候给空对象
-    }else{
+    } else {
       BasePlatformMsg = false; //有错误
     }
-    
-    
+
     // return ;
   }
   setDataStorage("BasePlatformMsg", json.Data);
@@ -570,7 +572,7 @@ export const getTermInfo = async (SchoolID) => {
   if (json.StatusCode === 200) {
     TermInfo = json.Data;
   } else {
-    TermInfo = {TermInfo:[], HasHistory:false}; //有错误
+    TermInfo = { TermInfo: [], HasHistory: false }; //有错误
   }
   // console.log(TermInfo)
   // if(!(json.Data instanceof Array)&&)
