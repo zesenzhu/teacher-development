@@ -188,6 +188,10 @@
             color: #81370f;
             cursor: pointer;
         }
+        .table-count {
+            font-size: 14px;
+            color: #666666;
+        }
     }
 }
 
@@ -221,6 +225,7 @@
         .more-map {
             height: 276px;
             width: 200px;
+            padding-bottom: 10px;
             .c-select-bar {
                 line-height: 27px;
                 font-size: 14px;

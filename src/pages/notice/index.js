@@ -82,7 +82,7 @@ function Notice(props, ref) {
         // src={'http://192.168.129.64:20105/publicinfo//WebPage/html/notice/?lg_tk=4FF1FDEC-D573-4EAD-9DEB-78B278973073&lg_ic=IC0002&sysID=E34&iFrame=true#/'}
         src={
           systemServer[400].WebSvrAddr +
-          "/publicinfo//WebPage/html/notice/?lg_tk=" +
+          "/WebPage/html/notice/?lg_tk=" +
           token +
           "&lg_ic=" +
           identityCode +

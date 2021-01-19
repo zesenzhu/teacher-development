@@ -214,7 +214,7 @@ function App(props, ref) {
       // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
       dispatch(
         commonActions.SetLeftMenu(
-          1 || data.role.productLevel,
+           data.role.productLevel,
           !!data.systemServer[400]
         )
       );

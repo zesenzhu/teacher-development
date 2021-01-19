@@ -62,6 +62,7 @@ import {
 } from "react-redux";
 import React, {
   // useCallback,
+  useMemo,
   memo,
   useEffect,
   useState,
@@ -80,8 +81,8 @@ import {Loading} from '@/component/common'
 function School(props, ref) {
   let {
     location,
-    activeTab,
-    removeTab,
+    activeTab,levelHash,
+    removeTab, roleMsg: { productLevel, schoolID, collegeID },
     tabid,contentHW:{
       height
     },schoolMsg,
@@ -92,7 +93,19 @@ function School(props, ref) {
   const [loading,setLoading] = useState(true)
   // const [state, setDispatch] = useReducer(Reducer, initState);
   // let { component } = state;
-
+  // 获取当前级别的信息
+  const levelMsg = useMemo(() => {
+    return levelHash[productLevel]
+      ? levelHash[productLevel]
+      : {
+          productLevel: 1,
+          selectLevel: 1,
+          title: "",
+          sub: "",
+          belong: "",
+          belondName: "",
+        };
+  }, [levelHash, productLevel]);
   useEffect(() => {
     setComponent(param);
   }, [param]);
@@ -107,11 +120,12 @@ function School(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Loading spinning={Component === "detail"&&loading} tip={'加载中...'} opacity={false}>
     <div className="School" style={{ height: height }}>
-      {Component === "list" ? <SchoolList></SchoolList> : <></>}
-      {Component === "detail" ? <SchoolDetail schoolMsg={schoolMsg} id={ID}></SchoolDetail> : <></>}
+      {Component === "list" ? <SchoolList levelMsg={levelMsg}></SchoolList> : <></>}
+      {Component === "detail" ? <SchoolDetail levelMsg={levelMsg} schoolMsg={schoolMsg} id={ID}></SchoolDetail> : <></>}
     </div></Loading>
   );
 }
@@ -119,9 +133,9 @@ function School(props, ref) {
 const mapStateToProps = (state) => {
   let {
     handleData: { teacherRecruitMsg },
-    commonData: { roleMsg,contentHW },
+    commonData: { roleMsg,contentHW ,levelHash},
   } = state;
-  return { teacherRecruitMsg, roleMsg ,contentHW};
+  return { teacherRecruitMsg, roleMsg ,contentHW,levelHash};
 };
 export default connect(mapStateToProps)(
   withRouter(memo(forwardRef(School)))

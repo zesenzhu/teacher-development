@@ -129,11 +129,13 @@ function PersonalList(props, ref) {
     // 非教育局，使用node
     if (productLevel !== 1) {
       getNode({ collegeID, schoolID }).then((res) => {
-        setFirstNodeList([
-          { value: "", title: "全部" + levelMsg.sub },
-          ...res.data[0],
-        ]);
-        setSecondNodeObj(res.data[1]);
+        if (res.StatusCode === 200) {
+          setFirstNodeList([
+            { value: "", title: "全部" + levelMsg.sub },
+            ...res.data[0],
+          ]);
+          setSecondNodeObj(res.data[1]);
+        }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -229,6 +231,7 @@ function PersonalList(props, ref) {
           );
         },
       },
+
       {
         title: "政治面貌",
         sorter: true,
@@ -285,7 +288,11 @@ function PersonalList(props, ref) {
                 className=" btn-check"
                 onClick={() => {
                   // history.push("/personalDetail/" + data.UserID);
-                  window.open(window.location.search+"#/page/personalDetail/" + data.UserID);
+                  window.open(
+                    window.location.search +
+                      "#/page/personalDetail/" +
+                      data.UserID
+                  );
                 }}
               ></span>
             </span>

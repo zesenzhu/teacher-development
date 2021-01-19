@@ -302,8 +302,9 @@ export const getUserInfo = async (
         let UserInfo = {};
 
         UserInfo["TruethUserType"] = loginInfo["UserType"];
-
-        for (let [key, value] of Object.entries(loginInfo)) {
+        for(let key in loginInfo){
+          let value = loginInfo[key]
+          // console.log(key,value)
           if (key === "PhotoPath") {
             let date = new Date();
             let time = date.getTime();
@@ -317,6 +318,22 @@ export const getUserInfo = async (
           }
           UserInfo[key] = decodeURIComponent(value);
         }
+
+        // for (let [key, value] of Object.entries(loginInfo)) {
+        //   // console.log(key,value)
+        //   if (key === "PhotoPath") {
+        //     let date = new Date();
+        //     let time = date.getTime();
+        //     value = value + "?T=" + time;
+        //   }
+        //   // 锁控处理
+        //   if (key === "LockerState" && parseInt(value) !== 1) {
+        //     window.location.href =
+        //       baseIP + "/LockerMgr/ErrorTips.aspx?ErrorCode=" + value;
+        //     return;
+        //   }
+        //   UserInfo[key] = decodeURIComponent(value);
+        // }
 
         UserInfo.isLogin = true;
 

@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2021-01-14 21:07:32
+ * @LastEditTime: 2021-01-19 10:32:22
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -43,7 +43,10 @@ const commonData = (
         sub: "学段", //教师基础信息文字显示
         belong: "学校", //选择教师下级
         belondName: "SchoolName",//教师画像获取接口所属的属性
-        ganger:'学段',//班主任班级管理统计
+        ganger:'学段',//班主任班级管理统计,
+        nextProductLevel:3,//下级的产品级别
+        nextSelectLevel:3,//下级的选择级别
+        nextTitle:'学校',//下级名称
       },
       2: {
         productLevel: 2,
@@ -52,7 +55,10 @@ const commonData = (
         sub: "学院",
         belong: "学院",
         belondName: "CollegeName",
-        ganger:'学院'
+        ganger:'学院',
+        nextProductLevel:4,//下级的产品级别
+        nextSelectLevel:3,//下级的选择级别
+        nextTitle:'学院',//下级名称
       },
       3: {
         productLevel: 3,

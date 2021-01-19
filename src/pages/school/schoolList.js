@@ -78,11 +78,12 @@ import {
   CheckBoxGroup,
 } from "../../component/common";
 import Table from "../../component/table";
-import { getTeacherList, getNode } from "../../api/personal";
+import { getSchoolList } from "../../api/school";
 // import { handleRoute } from "../../util/public";
 import { withRouter } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Tooltip } from "antd";
+import { handleRoute } from "../../util/public";
 
 //   import { Reducer, Context, initState } from "./reducer";
 function SchoolList(props, ref) {
@@ -91,13 +92,27 @@ function SchoolList(props, ref) {
     history,
     roleMsg: { productLevel, schoolID, collegeID },
     levelHash,
+    levelMsg,
     termInfo: { TermInfo, HasHistory },
     contentHW: { height },
   } = props;
   const [SearchValue, setSearchValue] = useState("");
+  // 获取当前级别的信息
+  // const levelMsg = useMemo(() => {
+  //   return levelHash[productLevel]
+  //     ? levelHash[productLevel]
+  //     : {
+  //         productLevel: 1,
+  //         selectLevel: 1,
+  //         title: "",
+  //         sub: "",
+  //         belong: "",
+  //         belondName: "",
+  //       };
+  // }, [levelHash, productLevel]);
   // 列筛选裂变
   const [Culomns] = useState([
-    { value: 0, title: "学校基础信息", canControl: false },
+    { value: 0, title: levelMsg.belong + "基础信息", canControl: false },
     { value: 1, title: "教师人数/师生比", canControl: true },
     { value: 2, title: "年龄/教龄统计", canControl: true },
     { value: 3, title: "学历统计", canControl: true },
@@ -107,31 +122,24 @@ function SchoolList(props, ref) {
     { value: 7, title: "电子资源上传统计", canControl: true },
     { value: 8, title: "电子教案制作统计", canControl: true },
     { value: 9, title: "精品课程制作统计", canControl: true },
+    { value: 10, title: "电子督课平均估值分", canControl: true },
+    { value: 11, title: "教研课题统计", canControl: true },
+    { value: 12, title: "教研活动统计", canControl: true },
+    { value: 13, title: "上机信息统计", canControl: true },
   ]);
+  const [ListFirst, setListFirst] = useState(true);
+
   // 列选择
   const [CulomnsSelect, setCulomnsSelect] = useState([0, 1, 2, 3]);
-  // 获取当前级别的信息
-  const levelMsg = useMemo(() => {
-    return levelHash[productLevel]
-      ? levelHash[productLevel]
-      : {
-          productLevel: 1,
-          selectLevel: 1,
-          title: "",
-          sub: "",
-          belong: "",
-          belondName: "",
-        };
-  }, [levelHash, productLevel]);
 
   const [query, setQuery] = useState({
     // keyword: "",
-    // term: "",
+    term: "",
     // type: "",
     keyword: "",
     schoolID: productLevel === 1 ? "" : schoolID,
-    nodeID: "",
-    nodeType: "",
+    // nodeID: "",
+    // nodeType: "",
   });
   // 学期
   const TermList = useMemo(() => {
@@ -165,7 +173,8 @@ function SchoolList(props, ref) {
   const tableRef = useRef({});
 
   const columns = useMemo(() => {
-    let widthRate = 1;//1040 / 1200
+    let haveCollege = productLevel===2;//大学
+    let widthRate = 1; //1040 / 1200
     let EndCulomns = [];
     let culomnsData = [
       {
@@ -184,30 +193,35 @@ function SchoolList(props, ref) {
         },
       },
       {
-        title: "学校名称",
+        title: levelMsg.belong + "名称",
         width: 124 * widthRate,
         sorter: true,
         key: "SchoolName",
         align: "center",
         // dataIndex: "SchoolName",
         render: (data) => {
-          let {SchoolName,SchoolID} = data
+          let { NodeName, NodeID } = data;
           return (
-            <span onClick={()=>{
-              history.push("/schoolDetail/" + SchoolID);
-            }} className="table-SchoolName" title={SchoolName}>
-              {SchoolName ? SchoolName : "--"}
+            <span
+              onClick={() => {
+                history.push("/schoolDetail/" + NodeID);
+              }}
+              className="table-SchoolName"
+              title={NodeName}
+            >
+              {NodeName ? NodeName : "--"}
             </span>
           );
         },
       },
       {
-        title: "学校学段",
+        title: levelMsg.belong + "学段",
         width: 124 * widthRate,
         sorter: true,
-        key: "UserID",
+        // colSpan:productLevel===1?1:0,//为大学时不渲染
+        key: "Level",
         align: "center",
-        dataIndex: "UserID",
+        dataIndex: "Level",
         render: (data) => {
           return (
             <span className="table-limit" title={data}>
@@ -218,76 +232,73 @@ function SchoolList(props, ref) {
       },
       {
         title: "教师人数及师生比统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '教师人数',
+            title: "教师人数",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
+              let { TeacherCount } = data;
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={TeacherCount}>
+                  {TeacherCount ? TeacherCount + "人" : "--"}
                 </span>
               );
             },
           },
           {
-            title: "男性人数"  ,
+            title: "男性人数",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "MaleCount",
+            className: "two-col-bottom",
 
             width: 82 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "MaleCount",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data + "人" : "--"}
                 </span>
               );
             },
           },
           {
-            title: "女性人数" ,
+            title: "女性人数",
             sorter: true,
             align: "center",
-            key: 'MaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 82 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "FemaleCount",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data + "人" : "--"}
                 </span>
               );
             },
           },
           {
-            title: "师生比例"  ,
+            title: haveCollege?'':"师生比例",
             sorter: true,
             align: "center",
-            key: 'TSRate',
-            className:'two-col-bottom',
+            key: "TeaStuRatio",
+            className: "two-col-bottom",
 
-            width: 98 * widthRate,
-            // dataIndex: "source",
+            width: haveCollege?0:98 * widthRate,
+            dataIndex: "TeaStuRatio",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
@@ -296,347 +307,323 @@ function SchoolList(props, ref) {
       },
       {
         title: "年龄教龄统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '平均年龄',
+            title: "平均年龄",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "AgeAvg",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "AgeAvg",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data + "岁" : "--"}
                 </span>
               );
             },
           },
           {
-            title: "平均教龄"  ,
+            title: "平均教龄",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "TeachAgeAvg",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "TeachAgeAvg",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data + "年" : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
         title: "学历统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "BenkePercent",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
         title: "职称统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
         title: "平均周课时",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
-        title: "行政班\班主任数量",
-        className:'two-col',
+        title: "行政班班主任数量",
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
 
       {
         title: "电子资源上传统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
         title: "电子教案制作统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
         title: "精品课程制作统计",
-        className:'two-col',
+        className: "two-col",
         children: [
           {
-            title: '本科率',
+            title: "本科率",
             sorter: true,
             align: "center",
-            key: 'TeacherCount',
-            className:'two-col-bottom',
+            key: "TeacherCount",
+            className: "two-col-bottom",
 
             width: 98 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
           {
-            title: "博士研究生及以上"  ,
+            title: "博士研究生及以上",
             sorter: true,
             align: "center",
-            key: 'FemaleCount',
-            className:'two-col-bottom',
+            key: "FemaleCount",
+            className: "two-col-bottom",
 
             width: 146 * widthRate,
-            // dataIndex: "source",
+            dataIndex: "BenkePercent",
             render: (data) => {
-              let name = data[levelMsg.belondName];
               return (
-                <span className="table-belondName" title={name}>
-                  {name ? name : "--"}
+                <span className="table-count" title={data}>
+                  {data ? data : "--"}
                 </span>
               );
             },
           },
-          
         ],
       },
       {
@@ -661,7 +648,6 @@ function SchoolList(props, ref) {
                   <CheckBoxGroup
                     value={CulomnsSelect}
                     onChange={(e) => {
-                      console.log(e);
                       setCulomnsSelect(
                         e.sort((a, b) => {
                           return a > b;
@@ -705,7 +691,9 @@ function SchoolList(props, ref) {
         },
       },
     ];
-    EndCulomns = EndCulomns.concat(culomnsData.slice(0, 3));
+    EndCulomns = EndCulomns.concat(
+      culomnsData.slice(0, productLevel === 1 ? 3 : 2)
+    ); //大学不要学段
     CulomnsSelect.forEach((child, index) => {
       // 因为前面三个必选，同时不能用children，所以每个加2
       if (child !== 0 && culomnsData[child + 2]) {
@@ -716,6 +704,19 @@ function SchoolList(props, ref) {
     return EndCulomns;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelMsg, CulomnsSelect]);
+
+  // 监听列表，进来就更新，除了第一次
+  useEffect(() => {
+    if (!ListFirst) {
+      let Path = handleRoute(location.pathname);
+      if (Path[0] === "schoolResource") {
+        tableRef.current.reloadList();
+      }
+    }
+
+    ListFirst && setListFirst(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
   return (
     <div className="SchoolList" style={{ height: height }}>
       <div className="pl-top">
@@ -753,7 +754,7 @@ function SchoolList(props, ref) {
           <Search
             className="home-search"
             Value={SearchValue}
-            placeHolder={"输入学校名称搜索"}
+            placeHolder={"输入" + levelMsg.belong + "名称搜索"}
             onChange={(e) => {
               setSearchValue(e.target.value);
             }}
@@ -782,7 +783,7 @@ function SchoolList(props, ref) {
             query={query}
             onDataChange={(data) => {}}
             ref={tableRef}
-            api={getTeacherList}
+            api={getSchoolList}
           ></Table>
         </Scrollbars>
       </div>
