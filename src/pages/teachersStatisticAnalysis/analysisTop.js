@@ -118,9 +118,9 @@ function AnalysisTop(props, ref) {
     return type ? type : "default";
   }, [type]);
   // 学校信息
-  const { isSchool, schoolName, schoolImg } = useMemo(() => {
+  const { isSchool, NodeName, LogoUrl } = useMemo(() => {
     let data = { isSchool: false };
-    if (!schoolMsg && topType === "school") {
+    if (schoolMsg && topType === "school") {
       data = { isSchool: true, ...schoolMsg };
     }
     return data;
@@ -154,8 +154,8 @@ function AnalysisTop(props, ref) {
       {isSchool ? (
         <div className="top-msg">
           <p className="s-msg">
-            <i style={{ backgroundImage: schoolImg ?schoolImg: "#fff" }}></i>
-            {schoolName ? schoolName : "测试"}
+            <i style={{ backgroundImage: LogoUrl ?LogoUrl: "#fff" }}></i>
+            {NodeName ? NodeName : "测试"}
           </p>
         </div>
       ) : (

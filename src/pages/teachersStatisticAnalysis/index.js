@@ -106,7 +106,7 @@ function Analysis(props, ref) {
     let role = roleMsg;
     // module为使用roleData，不然就使用roleMsg
     if (type === "school") {
-      // role = roleData;
+      role = roleData;
       setTopType("school");
     }
     return role;

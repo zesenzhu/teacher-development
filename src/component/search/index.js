@@ -88,11 +88,11 @@ function LGSearch(props, ref) {
 
       //点击的位置不在搜索框和搜索内容显示区
       setVisible(!isOut);
-    }
+    };
     document.addEventListener("click", fn);
-    return ()=>{
-document.removeEventListener('click',fn)
-    }
+    return () => {
+      document.removeEventListener("click", fn);
+    };
   }, []);
   return (
     <Tooltip

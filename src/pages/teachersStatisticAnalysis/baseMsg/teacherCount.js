@@ -75,6 +75,8 @@ function TeacherCount(props, ref) {
   // dom ref
   const tcRef = useRef(null);
   useLayoutEffect(() => {
+    console.log(SubSet);
+    // if (SubSet instanceof Array||SubSet.length===0) {
     if (!SubSet) {
       // 没有数据禁止进入
       return;
@@ -167,9 +169,10 @@ function TeacherCount(props, ref) {
         },
       },
       grid: {
-        left: 20,
-        right: 80,
-        bottom: 0,
+        left: 70,
+        right: 100,
+        height: 140,
+        bottom: 20,
         containLabel: true,
       },
       dataset: {
@@ -224,7 +227,7 @@ function TeacherCount(props, ref) {
             fontSize: 12,
             margin: 30,
           },
-           
+
           nameTextStyle: {
             color: "#7c7c7c",
             fontSize: 12,
@@ -307,7 +310,7 @@ function TeacherCount(props, ref) {
         教师总人数<span className="tc-tip-1">{Total}</span>人，其中
         {productMsg && productMsg.productLevel === 1 ? (
           <>
-            {SubSet instanceof Array
+            {SubSet instanceof Array && SubSet.length > 0
               ? SubSet.map((child, index) => {
                   return (
                     <React.Fragment key={index}>

@@ -104,3 +104,38 @@ export function getSchoolList(payload = {}) {
       }
     });
 }
+
+/**
+ * @description: 
+ * @param {*}
+ * @return {*}
+ */
+export function getSchoolMsg(payload = {}) {
+  let {
+   
+    nodeID,
+ 
+  } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/Basic/GetSubsetDetail?nodeID=${
+      nodeID ? nodeID : ""
+    }`;
+
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200&&json.Data) {
+         
+        return {
+          StatusCode: json.StatusCode,
+          Data:  json.Data
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}

@@ -438,7 +438,6 @@ function TeacherAge(props, ref) {
     taOption.title.text = "教师教龄段人数分布";
 
     subOption.dataset.source = dataset_sub;
-    console.log(subOption);
     // 设置option
     myEchart_avg.setOption(avgOption);
     myEchart_ta.setOption(taOption);
