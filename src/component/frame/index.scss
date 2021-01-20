@@ -22,6 +22,7 @@
 #Frame {
     position: relative;
     width: 100vw;
+    overflow: hidden;
     min-width: 1280px;
     height: 100vh;
     // background-color: rgba($color: #ff6600, $alpha: 0.2);

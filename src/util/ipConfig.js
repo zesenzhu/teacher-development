@@ -65,7 +65,7 @@ if (process.env.NODE_ENV === "development") {
     proxy:
       "http://192.168.2.202:7300/mock/5d7726e0ed0ccd1564c8df05/webCloudDev",
     BasicProxy: baseIP+"",
-    EditorProxy: baseIP+"/ResHttp/UEditor/",
+    EditorProxy: "/UEditor/",
     LoginProxy: "http://192.168.129.1:30103",
 
     ErrorProxy: "http://192.168.129.1:30103",
@@ -86,9 +86,9 @@ if (process.env.NODE_ENV === "production") {
     // TokenProxy:'http://47.115.20.102:10102',
     proxy:
       "http://192.168.2.202:7300/mock/5d7726e0ed0ccd1564c8df05/webCloudDev",
-    BasicProxy: "",
-    LoginProxy: "",
-    EditorProxy: "/ResHttp/UEditor/",
+    BasicProxy: RootUrl,
+    LoginProxy: RootUrl,
+    EditorProxy: "/UEditor/",
 
     ErrorProxy: "http://192.168.129.1:30103",
     HashPrevProxy: RootUrl,

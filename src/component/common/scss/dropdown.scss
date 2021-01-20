@@ -270,15 +270,15 @@
         font-size: 14px;
         color: #999999;
         margin-right: 8px;
+        vertical-align: middle;
     }
     .ant-select:not(.ant-select-customize-input) .ant-select-selector {
         border-radius: 3px;
         border: solid 1px #dedede;
     }
-    // .dropdown-box {
-    //     border-radius: 3px;
-    //     border: solid 1px #dedede;
-    // }
+    .dropdown-box {
+        vertical-align: middle;
+    }
     .content {}
     &.second-level-dropdown {
         padding-left: 10px;

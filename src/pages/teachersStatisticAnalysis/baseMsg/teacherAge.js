@@ -222,7 +222,7 @@ function TeacherAge(props, ref) {
           // let [data_1] = value;
           let dom = "";
           params.forEach((child, index) => {
-            let {   seriesName, data } = child;
+            let { seriesName, data } = child;
             dom += `<p class='msg msg-2'>${seriesName}:<span>${
               data[index + 1]
             }人</span></p>`;
@@ -438,7 +438,7 @@ function TeacherAge(props, ref) {
     taOption.title.text = "教师教龄段人数分布";
 
     subOption.dataset.source = dataset_sub;
-
+    console.log(subOption);
     // 设置option
     myEchart_avg.setOption(avgOption);
     myEchart_ta.setOption(taOption);

@@ -34,6 +34,8 @@ import React, {
   useCallback,
 } from "react";
 import config from "@/util/ipConfig";
+import { getDataStorage } from "@/util/public";
+import { getBasePlatformMsg } from "@/util/init";
 // import { addScript } from "@/util/public";
 // import name from '@/';
 /**
@@ -42,6 +44,7 @@ import config from "@/util/ipConfig";
  * @return {*}
  */
 const { EditorProxy } = config;
+
 export default function useUEditorLaod(id, config) {
   // 编辑器实例
   const [UE, setUE] = useState(null);
@@ -103,28 +106,31 @@ export default function useUEditorLaod(id, config) {
   useEffect(() => {
     async function loadScript() {
       //
+      let { ResHttpRootUrl } = await getBasePlatformMsg([
+        "ResHttpRootUrl",
+      ]);
       let jqLaod = await addScript({
-        src: EditorProxy + "/third-party/jquery-1.10.2.min.js",
+        src: ResHttpRootUrl + "/UEditor/third-party/jquery-1.10.2.min.js",
         id: "ueditor_script_jq",
         onLoad: () => {},
       });
       let configLaod = await addScript({
-        src: EditorProxy + "ueditor.config.js",
+        src: ResHttpRootUrl + "/UEditor/ueditor.config.js",
         id: "ueditor_script_config",
         onLoad: () => {},
       });
       let all_minLaod = await addScript({
-        src: EditorProxy + "ueditor.all.min.js",
+        src: ResHttpRootUrl + "/UEditor/ueditor.all.min.js",
         id: "ueditor_script_all_min",
         onLoad: () => {},
       });
       let parseLaod = await addScript({
-        src: EditorProxy + "ueditor.parse.min.js",
+        src: ResHttpRootUrl + "/UEditor/ueditor.parse.min.js",
         id: "ueditor_script_.parse",
         onLoad: () => {},
       });
       let langLaod = await addScript({
-        src: EditorProxy + "lang/zh-cn/zh-cn.js",
+        src: ResHttpRootUrl + "/UEditor/lang/zh-cn/zh-cn.js",
         id: "ueditor_script_lang_zh-cn",
         onLoad: () => {},
       });

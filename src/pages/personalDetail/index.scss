@@ -170,17 +170,24 @@
                         height: 200px;
                         left: calc(50% - 84px);
                         top: calc(50% - 100px);
-                        animation: 60s linear 0s infinite normal none running circle;
-                        -webkit-animation: 60s linear 0s infinite normal none running circle;
+                        animation: circle 60s linear 0s infinite;
+                        -webkit-animation: circle 60s linear 0s infinite;
+                        -ms-animation: circle 60s linear 0s infinite;
+                        -o-animation: circle 60s linear 0s infinite;
+                        -moz-animation: circle 60s linear 0s infinite;
                         //&.drag-paused:;
                         //:;
-                        // // {
+                        ////:;
+                        // {
                         //                             animation-play-state: paused;
                         //                             -webkit-animation-play-state: paused
                         //                         }
                         &:hover {
                             animation-play-state: paused;
                             -webkit-animation-play-state: paused;
+                            -ms-animation-play-state: paused;
+                            -o-animation-play-state: paused;
+                            -moz-animation-play-state: paused;
                         }
                     }
                     i {
@@ -191,9 +198,15 @@
                         box-shadow: 0 0 8px #fff;
                         transition: transform 1s ease 0s;
                         -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+                        -ms-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+                        -o-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+                        -moz-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         &:hover {
                             box-shadow: 0 0 15px #fffd;
                             -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0007);
+                            -ms-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+                            -o-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+                            -moz-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         }
                     }
                     .img-accout {
@@ -241,7 +254,8 @@
     }
     .pc-content {
         position: relative;
-        overflow: auto;
+        // overflow: auto;
+        overflow: hidden;
         &::before {
             content: "";
             position: absolute;
@@ -421,6 +435,40 @@
 }
 
 @-moz-keyframes circle {
+    from {
+        transform: rotateY(0deg);
+        -webkit-transform: rotateY(0deg);
+        -moz-transform: rotateY(0deg);
+        -ms-transform: rotateY(0deg);
+        -o-transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+        -webkit-transform: rotateY(360deg);
+        -moz-transform: rotateY(360deg);
+        -ms-transform: rotateY(360deg);
+        -o-transform: rotateY(360deg);
+    }
+}
+
+@-o-keyframes circle {
+    from {
+        transform: rotateY(0deg);
+        -webkit-transform: rotateY(0deg);
+        -moz-transform: rotateY(0deg);
+        -ms-transform: rotateY(0deg);
+        -o-transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+        -webkit-transform: rotateY(360deg);
+        -moz-transform: rotateY(360deg);
+        -ms-transform: rotateY(360deg);
+        -o-transform: rotateY(360deg);
+    }
+}
+
+@-ms-keyframes circle {
     from {
         transform: rotateY(0deg);
         -webkit-transform: rotateY(0deg);
