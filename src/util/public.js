@@ -1112,7 +1112,7 @@ export const changeToArray = (param) => {
     } else if (typeof param === "string") {
       end = [param];
     } else {
-      end = [];
+      end = [param];
     }
   } else {
     end = param;
@@ -1129,7 +1129,7 @@ export const addElement = (
   params = {},
   element = "script",
   parent = "body",
-  callback=()=>{}
+  callback = () => {}
 ) => {
   try {
     let Element = document.createElement(element);
@@ -1145,12 +1145,14 @@ export const addElement = (
       // &&
       // params.src === document.getElementById(params.id).src
     ) {
-      callback(false)
+      callback(false);
       return;
     }
     document[parent].appendChild(Element);
-    callback(true)
+    callback(true);
   } catch (e) {
+    callback(false);
+
     console.error(e);
   }
 };
@@ -1165,26 +1167,25 @@ export const addScript = async (
   parent = "body"
 ) => {
   // if (params.onLoad) {
-    return new Promise((resolve, reject) => {
-
-      addElement(
-        {
-          type: "text/javascript",
-          charset:'utf-8',
-          ...params,
-          onload: () => {
-            resolve(true);
-            typeof params.onLoad === "function" && params.onLoad();
-          },
-        },
-        element,
-        parent,
-        (data)=>{
-          if(!data)
+  return new Promise((resolve, reject) => {
+    addElement(
+      {
+        type: "text/javascript",
+        charset: "utf-8",
+        ...params,
+        onload: () => {
           resolve(true);
-        }
-      );
-    });
+          typeof params.onLoad === "function" && params.onLoad();
+        },
+      },
+      element,
+      parent,
+      (data) => {
+        // if(!data)
+        resolve(data);
+      }
+    );
+  });
   // } else {
   //   addElement({ type: "text/javascript", ...params }, element, parent);
   // }
@@ -1194,9 +1195,32 @@ export const SetNaNToNumber = (data) => {
   return isNaN(Number(data)) ? 0 : Number(data);
 };
 
-// 数组排序
 /**
- * @description: 对字符串，数字，排序，对象方法布尔值不比较
- * @param {*}
+ * @description: 时间转换,单纯的秒分时装换
+ * @param {*time:要转换的时间，*front：转换前单位，*back：转换后单位}
+ * 先简单点,分=>时
  * @return {*}
  */
+export const transTime = (time, front, back) => {
+  time = isNaN(time)?0:Number(time)
+  let data = {
+    time: time,
+    unit_zh: "分",
+    unit_En_Up: "M",
+    // Time_zh: time + "分",
+  };
+  if (back==='h'||time >= 60) {
+    data.time = Number((time / 60).toFixed(2));
+    data.unit_zh = "小时";
+    data.unit_En_Up = "H";
+  }
+  data.Time_zh = data.time + data.unit_zh;
+  data.Time_En = data.time + data.unit_En_Up;
+  return data;
+};
+// 解决js数字失精问题
+// 0.7*100=7.0000000000001
+// 0.1+0.2=0.30000000000004
+export function correctNumber(number=0) {
+  return parseFloat(number.toPrecision(12));
+}

@@ -61,6 +61,8 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
+import "echarts/lib/component/dataZoom";
+
 import { resizeForEcharts } from "../../../util/public";
 function TeacherCount(props, ref) {
   let {
@@ -75,7 +77,6 @@ function TeacherCount(props, ref) {
   // dom ref
   const tcRef = useRef(null);
   useLayoutEffect(() => {
-    console.log(SubSet);
     // if (SubSet instanceof Array||SubSet.length===0) {
     if (!SubSet) {
       // 没有数据禁止进入
@@ -108,8 +109,23 @@ function TeacherCount(props, ref) {
       // 对界面resize进行监听重绘echart
       resizeForEcharts(myEchart);
     }
+    // dataset =  dataset.concat(dataset.slice(1))
     // 属性配置
     myEchart.setOption({
+      dataZoom: {
+        type: "slider",
+        show: dataset.length > 11,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (10 / (dataset.length - 1)) * 100,
+        maxSpan: (10 / (dataset.length - 1)) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       tooltip: {
         trigger: "axis",
         axisPointer: {
@@ -183,14 +199,6 @@ function TeacherCount(props, ref) {
           type: "category",
           name: productMsg.sub,
           nameGap: 12,
-          // data: [
-          //   "幼儿园教师",
-          //   "小学教师",
-          //   "初中教师",
-          //   "高中教师",
-          //   "中专教师 ",
-          //   "中职教师",
-          // ],
 
           nameTextStyle: {
             color: "#7c7c7c",
@@ -211,6 +219,13 @@ function TeacherCount(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],

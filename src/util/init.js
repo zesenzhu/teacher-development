@@ -58,7 +58,24 @@ import fetch from "./fetch";
 let { BasicProxy } = config;
 let { get, post } = fetch;
 let initCount = 0;
-export const init = (moduleID = "", success = () => {}, error = () => {}) => {
+export const init = (params, success = () => {}, error = () => {}) => {
+  //   L10001 师资发展管理       管理员、教师（学校领导）
+  // 默认权限身份IC0002、IC0010
+
+  // L10002   师资发展培训  教师
+  // 默认权限身份IC0011、IC0012、IC0013
+  let moduleID = "";
+  // 先对params进行判断，是对象还是字符串，字符串就是moduleID，对象就是有很多数据存在里面
+
+  if (!params) {
+    //没定义或为null，undefiened,'',false,表示所有人都能进来
+    moduleID = "";
+  } else if (typeof params === "string") {
+    moduleID = params;
+  } else if (typeof params === "object") {
+    moduleID = params.moduleID || "";
+  }
+  console.log(params);
   // tokencheck前需要进行基础信息的请求
   initCount++;
   getBasePlatformMsg().then((data) => {
@@ -84,7 +101,13 @@ export const init = (moduleID = "", success = () => {}, error = () => {}) => {
             let termInfo = getTermInfo(
               userInfo.SchoolID ? userInfo.SchoolID : ""
             );
-            let systemServer = getSystemServer([]);
+            let systemServer = getSystemServer([
+              310, //教学方案
+              // 300, //教学方案
+              "D21", //精品课程
+              "E34", //档案
+              "C10", //电子资源
+            ]);
 
             // 多个接口，不能用await阻塞，要用Promise
             // let identityDetail = getPromise(
@@ -143,7 +166,10 @@ const getSystemServer = async (sysID) => {
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
-  sysID = [400].concat(changeToArray(sysID)).join(","); //处理为数组
+  // 200:个人信息管理系统ID
+  sysID = [400, 200].concat(changeToArray(sysID)).join(","); //处理为数组
+  // 先处理，看storage里是否有全部的sysid,
+
   const result = await get({
     url: `${baseIP}/BaseApi/Global/GetSubSystemsMainServerBySubjectID?appid=L10&access_token=7f0fc0ce1335b77b0f3f944003713e09&subjectID=&sysIDs=${sysID}`,
     securityLevel: 2,
@@ -268,10 +294,10 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     }
     // Role.version = version;
     //2,3为学生家长，没有权限进来
-    if (Role.userType === 2 || Role.userType === 3) {
-      goErrorPage("E011");
-      return;
-    }
+    // if (Role.userType === 2 || Role.userType === 3) {
+    //   goErrorPage("E011");
+    //   return;
+    // }
     Role = {
       ...Role,
       version,
@@ -342,13 +368,14 @@ const getIdentityDetail = async (moduleID = "") => {
     //   // console.log(identityDetail);
     // }
   }
-  identityDetail = IdentityRecognition(identityList, moduleID);
+  identityDetail =await IdentityRecognition(identityList, moduleID);
   identityDetail &&
     window.history.pushState(
       null,
       null,
       replaceIcOfUrl(identityDetail.IdentityCode)
     );
+  // console.log(identityDetail);
   return identityDetail;
 };
 /**
@@ -384,7 +411,7 @@ const GetIdentityTypeByCode = async (IdentityCodes) => {
  * @param {*}
  * @return {*}
  */
-const IdentityRecognition = (
+const IdentityRecognition = async (
   IdentityList,
   ModuleID = "",
   callBack = () => {}
@@ -401,21 +428,20 @@ const IdentityRecognition = (
       return res;
     });
     // 需要等所有请求返回
-    Promise.all(promiseList).then((res) => {
-      const index = res.findIndex((i) => i === true);
+    let res = await Promise.all(promiseList);
 
-      if (index >= 0) {
-        const IdentityItem = IdentityList[index];
+    const index = res.findIndex((i) => i === true);
+    if (index >= 0) {
+      const IdentityItem = IdentityList[index];
 
-        setDataStorage("IdentityMsg", IdentityItem);
+      setDataStorage("IdentityMsg", IdentityItem);
 
-        typeof callBack === "function" && callBack(IdentityItem);
-        IdentityMsg = IdentityItem;
-      } else {
-        goErrorPage("E011");
-        IdentityMsg = false;
-      }
-    });
+      typeof callBack === "function" && callBack(IdentityItem);
+      IdentityMsg = IdentityItem;
+    } else {
+      goErrorPage("E011");
+      IdentityMsg = false;
+    }
   } else {
     setDataStorage("IdentityMsg", IdentityList[0]);
 
@@ -501,10 +527,8 @@ export const getBasePlatformMsg = async (keys = []) => {
   let json = "";
   let isExist = true;
   keys = keys instanceof Array ? keys : [];
-  console.log(BasePlatformMsg)
   if (BasePlatformMsg && BasePlatformMsg instanceof Object) {
     for (let key in keys) {
-      console.log(BasePlatformMsg[keys[key]] )
       if (BasePlatformMsg[keys[key]] === undefined) {
         isExist = false;
       }

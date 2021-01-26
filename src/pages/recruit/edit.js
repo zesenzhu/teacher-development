@@ -119,8 +119,9 @@ function Publish(props, ref) {
       }).then(({ result }) => {
         if (result) removeTab("", "", "teacherRecruit", "");
         else {
-          setLoading(false);
         }
+        setLoading(false);
+
       });
       // }, 3000);
     },

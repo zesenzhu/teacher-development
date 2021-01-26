@@ -155,6 +155,45 @@ function TeacherTitle(props, ref) {
       //   "正高级教师",
       // ],
     ];
+    let isPush = false;
+    SubSet instanceof Array &&
+      SubSet.forEach((child, Index) => {
+        let { NodeName, Total, EduList, TitleList } = child;
+        let nodeName = ["nodeName"];
+        let data = [NodeName];
+        EduList.forEach(({ Total: total, NodeName }, index) => {
+          data.push(total);
+          nodeName.push(NodeName);
+          // if(Index===0)
+          // barSeries.push({
+          //   ...barParam,
+          //   stack: "edu",
+          //   itemStyle: {
+          //     ...barParam.itemStyle,
+          //     color: color_bar_edu[index],
+          //   },
+          // });
+        });
+        TitleList.forEach(({ Total: total, NodeName }, index) => {
+          data.push(total);
+          nodeName.push(NodeName);
+
+          // if(Index===0)
+          // barSeries.push({
+          //   ...barParam,
+          //   stack: "title",
+          //   itemStyle: {
+          //     ...barParam.itemStyle,
+          //     color: color_bar_title[index],
+          //   },
+          // });
+        });
+        if (!isPush) {
+          dataset_sub.push(nodeName);
+          isPush = true;
+        }
+        dataset_sub.push(data);
+      });
     let pieOption = {
       dataset: { source: [] },
       title: {
@@ -228,6 +267,20 @@ function TeacherTitle(props, ref) {
       ],
     };
     let subOption = {
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length > 11,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (10 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (10 / (dataset_sub.length - 1)) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       title: {
         text: "各" + productMsg.sub + "教师学历职称统计",
         // bottom: "4%",
@@ -249,22 +302,24 @@ function TeacherTitle(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-          let row = params[0]
-          let {name,} =row
+          let row = params[0];
+          let { name } = row;
 
           // let [data_1] = value;
-          let dom = '';
-          params.forEach((child,index)=>{
+          let dom = "";
+          params.forEach((child, index) => {
             let { color, seriesName, data } = child;
-            dom += `<p class='msg'><i class='ball' style='background:${color}'></i>${seriesName}:<span>${data[index+1]}人</span></p>`
-          })
+            dom += `<p class='msg'><i class='ball' style='background:${color}'></i>${seriesName}:<span>${
+              data[index + 1]
+            }人</span></p>`;
+          });
           return `<div  class="t-tooltip">
               <p class="nodename">${name}</p>${dom}</div>
           `;
         },
         textStyle: {
           // color: "#fff",
-          textAlign:'left'
+          textAlign: "left",
         },
       },
       legend: {
@@ -338,6 +393,13 @@ function TeacherTitle(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -403,45 +465,7 @@ function TeacherTitle(props, ref) {
           },
         });
       });
-let isPush = false
-    SubSet instanceof Array &&
-      SubSet.forEach((child, Index) => {
-        let { NodeName, Total, EduList, TitleList } = child;
-        let nodeName = ['nodeName']
-        let data = [NodeName];
-        EduList.forEach(({ Total:total,NodeName }, index) => {
-          data.push(total);
-          nodeName.push(NodeName)
-          // if(Index===0)
-          // barSeries.push({
-          //   ...barParam,
-          //   stack: "edu",
-          //   itemStyle: {
-          //     ...barParam.itemStyle,
-          //     color: color_bar_edu[index],
-          //   },
-          // });
-        });
-        TitleList.forEach(({ Total:total ,NodeName}, index) => {
-          data.push(total);
-          nodeName.push(NodeName)
-
-          // if(Index===0)
-          // barSeries.push({
-          //   ...barParam,
-          //   stack: "title",
-          //   itemStyle: {
-          //     ...barParam.itemStyle,
-          //     color: color_bar_title[index],
-          //   },
-          // });
-        });
-        if(!isPush){
-          dataset_sub.push(nodeName);
-          isPush=true
-        }
-        dataset_sub.push(data);
-      });
+    
     if (!myEchart_avg) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_avg = echarts.init(avgRef.current);
@@ -496,9 +520,9 @@ let isPush = false
       <div className="tt-top">
         <p className="tt-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          教师学历本科率<span className="tt-tip-2">{BenkePercent}%</span>
+          教师学历本科率<span className="tt-tip-2">{BenkePercent}</span>
           ，一级教师及以上占比
-          <span className="tt-tip-2">{MiddleTitlePercent}%</span>
+          <span className="tt-tip-2">{MiddleTitlePercent}</span>
         </p>
 
         <div ref={avgRef} className="tt-echarts tt-echarts-1"></div>
@@ -510,7 +534,7 @@ let isPush = false
             {EduList instanceof Array
               ? EduList.map((child, index) => {
                   return (
-                    <span  key={index} className="tt-legend">
+                    <span key={index} className="tt-legend">
                       <i
                         className="legend-icon"
                         style={{

@@ -51,8 +51,9 @@ export function useSearchRequest(api, payload) {
     let proList = [];
     let Res = {};
     // 转换为数组
-    api = changeToArray(api);
-    proList = api.map(async (child) => {
+   let Api = changeToArray(api);
+
+    proList = Api.map(async (child) => {
         setLoading(true)
       if (typeof child === "function") {
         let res = await child(payload);

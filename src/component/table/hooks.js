@@ -90,7 +90,7 @@ export  function useTableRequest(query = {}, api, prepare = true) {
   }, []);
   /* 改变分页，重新请求数据 */
   useEffect(() => {
-    console.log(query)
+    // console.log(query)
     fisrtRequest.current &&
       getList({
         ...query,
@@ -101,7 +101,7 @@ export  function useTableRequest(query = {}, api, prepare = true) {
   }, [pageOptions]);
   /* 改变查询条件。重新请求数据 */
   useEffect(() => {
-    console.log(query)
+    // console.log(query)
 
     prepare &&
       getList({

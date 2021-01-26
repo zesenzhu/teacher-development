@@ -21,7 +21,8 @@
 import React, {
   //   useCallback,
   memo,
-  useEffect,useLayoutEffect,
+  useEffect,
+  useLayoutEffect,
   useState,
   // useImperativeHandle,
   // useMemo,
@@ -32,22 +33,25 @@ import React, {
   forwardRef,
 } from "react";
 import {
-   useHistory
-    // , Route, Switch, NavLink
-  } from "react-router-dom";
-import $ from 'jquery'
+  useHistory,
+  // , Route, Switch, NavLink
+} from "react-router-dom";
+import $ from "jquery";
 function Bar(props, ref) {
   const { data } = props;
   const [select, setSelect] = useState(true);
-  const [height,setHeight]= useState(0)
+  const [height, setHeight] = useState(0);
   const contentRef = useRef(null);
-  const history = useHistory()
+  const history = useHistory();
   useLayoutEffect(() => {
-      let content = $(contentRef.current)
-      setHeight(content.outerHeight())
+    let content = $(contentRef.current);
+    setHeight(content.outerHeight());
   }, [data]);
   return (
-    <div style={{height:select?height+28:28}} className={`search-bar ${select ? "search-bar-active" : ""}`}>
+    <div
+      style={{ height: select ? height + 28 : 28 }}
+      className={`search-bar ${select ? "search-bar-active" : ""}`}
+    >
       <p className="bar-main">
         <span title={data.title}>{data.title}</span>
         <i
@@ -57,30 +61,34 @@ function Bar(props, ref) {
           className={`bar-handle ${select ? "bar-handle-open" : ""}`}
         ></i>
       </p>
-      {/* {select ? ( */}
-        <div ref={contentRef}  className={`bar-content`}>
-          {data.List instanceof Array && data.List.length > 0
-            ? data.List.map((child, index) => {
-                return (
-                  <div
-                    className="bar-content-title"
-                    key={child.id}
-                    onClick={()=>{
-                        
-                        console.log(child,'/'+child.tabid+'/'+child.id)
-                        history.push('/'+child.tabid+'/'+child.id)
-                    }}
-                    title={child.defaultName}
-                  >
-                    {child.name}
-                  </div>
-                );
-              })
-            : ""}
-        </div>
-      {/* ) : (
-        ""
-      )} */}
+
+      <div ref={contentRef} className={`bar-content`}>
+        {data.List instanceof Array && data.List.length > 0
+          ? data.List.map((child, index) => {
+              return (
+                <div
+                  className="bar-content-title"
+                  key={index}
+                  onClick={() => {
+                    if (child.key === "TeacherList") {
+                      //教师的打开个人画像
+                      window.open(
+                        window.location.search +
+                          "#/page/personalDetail/" +
+                          child.id
+                      );
+                    } else {
+                      history.push("/" + child.tabid + "/" + child.id);
+                    }
+                  }}
+                  title={child.defaultName}
+                >
+                  {child.name}
+                </div>
+              );
+            })
+          : ""}
+      </div>
     </div>
   );
 }

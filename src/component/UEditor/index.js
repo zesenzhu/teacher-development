@@ -45,7 +45,9 @@ import React, {
   forwardRef,
 } from "react";
 import "./index.scss";
-import $ from "jquery";
+import { Input } from "antd";
+import { Loading } from "@/component/common";
+// import $ from "jquery";
 import useUEditorLaod from "./hooks/useUEditorLaod";
 /**
  * @description: 使用前需要配置部署在服务器上的js文件:config.js,具体配置自己看官网文档，
@@ -93,15 +95,31 @@ function UEditor(props, ref) {
     onBlur(UE.getContent());
   }, [UE, onBlur]);
   return (
-    <div
-      id={Id}
-      onBlur={() => {
-        console.log("dasdsa");
-      }}
-      className={`LG_UEditor ${className ? className : ""}`}
-      //   type="text/plain"
-      style={{ width: "931px", height: "370px", ...style }}
-    ></div>
+    <Loading spinning={Ready === null} opacity={false} tip={'加载中...'}>
+      {Ready !== false && (
+        <div
+          id={Id}
+          onBlur={() => {
+            console.log("dasdsa");
+          }}
+          className={`LG_UEditor ${className ? className : ""}`}
+          //   type="text/plain"
+          style={{ width: "931px", height: "370px", ...style }}
+        ></div>
+      )}
+      {/* 当加载失败后，使用默认input */}
+      {Ready === false && (
+        <Input.TextArea
+          defaultValue={defaultValue}
+          className="LG_Input_default"
+          onBlur={(e) => {
+            console.log(e)
+            onBlur(e.target.value);
+          }}
+          rows={10}
+        ></Input.TextArea>
+      )}
+    </Loading>
   );
 }
 

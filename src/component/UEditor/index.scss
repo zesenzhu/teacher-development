@@ -38,3 +38,13 @@
         width: 20px;
     }
 }
+
+.LG_Input_default {
+    &.ant-input {
+        line-height: 20px;
+        padding: 4px 12px 4px 8px;
+        width: 931px;
+        // padding: 0;
+        height: 370px;
+    }
+}

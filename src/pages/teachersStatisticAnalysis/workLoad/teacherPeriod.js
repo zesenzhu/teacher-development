@@ -121,7 +121,10 @@ function TeacherPeriod(props, ref) {
     let myEchart_sub = subEchart;
 
     let dataset_sub = [["nodeName", "count"]];
-
+    dataInType[typeSelect] instanceof Array &&
+    dataInType[typeSelect].forEach((child, index) => {
+        dataset_sub.push(child);
+      });
     let subOption = {
       // title: {
       //   text: "各年龄教师年龄/教龄分布情况",
@@ -134,6 +137,20 @@ function TeacherPeriod(props, ref) {
       //   },
       // },
       // backgroundColor: "#f5f5f5",
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>11,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (10 / (dataset_sub.length-1  )) * 100,
+        maxSpan: (10 / (dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       tooltip: {
         trigger: "axis",
         // appendToBody:true,
@@ -191,9 +208,10 @@ function TeacherPeriod(props, ref) {
       grid: {
         left: 28,
         top: 40,
-        height: 190,
+        height: 'auto',
+        // 190
         right: 58,
-        // bottom: 20,
+        bottom: 20,
         containLabel: true,
       },
       dataset: {
@@ -231,7 +249,13 @@ function TeacherPeriod(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,
+            fontSize: 12,formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -288,10 +312,7 @@ function TeacherPeriod(props, ref) {
       ],
     };
  
-    dataInType[typeSelect] instanceof Array &&
-    dataInType[typeSelect].forEach((child, index) => {
-        dataset_sub.push(child);
-      });
+   
     if (!myEchart_sub) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_sub = echarts.init(subRef.current);

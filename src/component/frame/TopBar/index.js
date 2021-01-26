@@ -37,13 +37,22 @@ import React, {
   //   useReducer,
   //   createContext,
   //   useContext,
-  //   useRef,
+  useRef,
   forwardRef,
 } from "react";
-import { getDataStorage } from "../../../util/public";
-import { LogOut } from "../../../util/connect";
+import {
+  getDataStorage,
+  addElement,
+  addScript,
+  autoAlert,
+} from "@/util/public";
+import { LogOut } from "@/util/connect";
+import fetch from "@/util/fetch";
 import "./index.scss";
 import moment from "moment";
+import $ from "jquery";
+let { get, post } = fetch;
+
 function TopBar(props, ref) {
   let {
     userInfo: UserInfo,
@@ -51,9 +60,94 @@ function TopBar(props, ref) {
     platMsg: PlatMsg,
     identity: Identity,
     type,
+    systemServer,
     moduleName,
+    initData,
   } = props;
   const [Time, setTime] = useState("");
+  // 消息中心加载完成
+  const [MsgInit, setMsgInit] = useState(false);
+  const msgRef = useRef(null);
+  // 获取消息中心
+  useEffect(() => {
+    // if (BasePlatFormMsg && BasePlatFormMsg.BasicWebRootUrl) {
+    //   let { BasicWebRootUrl: baseIP } = BasePlatFormMsg;
+    //   post({
+    //     url: `${baseIP}Base/WS/Service_Basic.asmx/WS_G_GetSubSystemServerInfo`,
+    //     body: {
+    //       subjectID: "",
+    //       sysID: 200,
+    //     },
+    //     // securityLevel: 2,
+    //   })
+    //     .then((result) => {
+    //       return result.json();
+    //     })
+    //     .then((res) => {
+    //       if (res.StatusCode === 200) {
+    //         let data = {};
+    //         console.log(res);
+    //         return data;
+    //       } else {
+    //         return {};
+    //       }
+    //     });
+    // }
+    if (initData && initData.systemServer && initData.systemServer[200]) {
+      let wsAddr = initData.systemServer[200].WebSvrAddr;
+      let {
+        token,
+        basePlatformMsg: { BasicWebRootUrl },
+      } = initData;
+      //1.动态引入css
+      addElement(
+        {
+          rel: "stylesheet",
+          type: "text/css",
+          id: "PsnMgr_link_assistantInfoCenter",
+
+          href:
+            wsAddr +
+            "/PsnMgr/LgAssistant/css/lancoo.cp.assistantInfoCenter.css",
+        },
+        "link",
+        "body"
+      );
+      // 2.将用户Token，基础平台地址MainServerAddr，
+      // 个人信息管理系统地址LgAssistantAddr，三个值保存到sessionStorage
+      sessionStorage.setItem("PsnMgrToken", token); //用户Token
+      sessionStorage.setItem("PsnMgrMainServerAddr", BasicWebRootUrl); //基础平台IP地址和端口号形如：http://192.168.129.1:30103/
+      sessionStorage.setItem("PsnMgrLgAssistantAddr", wsAddr); //个人信息管理系统Web站点IP地址和端口号形如：http://192.168.129.1:10103/
+      // 3.引入js
+      //
+      addScript({
+        src: wsAddr + "/PsnMgr/LgAssistant/js/jquery-1.7.2.min.js",
+        id: "PsnMgr_script_jq",
+      }).then((res) => {
+        if (res) {
+          addScript({
+            src: wsAddr + "/PsnMgr/LgAssistant/assets/jquery.pagination.js",
+            id: "PsnMgr_script_pagination",
+          }).then((res) => {
+            if (res) {
+              addScript({
+                src:
+                  wsAddr +
+                  "/PsnMgr/LgAssistant/js/lancoo.cp.assistantInfoCenter.js",
+                id: "PsnMgr_script_assistantInfoCenter",
+              }).then((res) => {
+                if (res) {
+                  setMsgInit(true);
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+    // console.log(systemServer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initData]);
   useEffect(() => {
     let Interval = setInterval(() => {
       let Moment = moment();
@@ -75,7 +169,11 @@ function TopBar(props, ref) {
       clearInterval(Interval);
     };
   }, []);
-  const onMsgClick = useCallback(() => {}, []);
+  // 点击消息字也可以打开消息中心
+  const onMsgClick = useCallback(() => {
+    $(msgRef.current).click();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [MsgInit]);
   return (
     <div
       className={` Frame-topBar ${
@@ -98,10 +196,11 @@ function TopBar(props, ref) {
                   cursor: BasePlatFormMsg ? "pointer" : "auto",
                 }}
                 onClick={() => {
+                
                   BasePlatFormMsg &&
                     window.open(
                       BasePlatFormMsg.BasicWebRootUrl +
-                        "/html/personalMgr/?lg_tk" +
+                        "/html/personalMgr/?lg_tk=" +
                         getDataStorage("token") +
                         "#/"
                     );
@@ -109,7 +208,20 @@ function TopBar(props, ref) {
               >
                 {" "}
               </i>
-              <span title={UserInfo.UserName} className={"user-name"}>
+              <span
+                onClick={() => {
+               
+                  BasePlatFormMsg &&
+                    window.open(
+                      BasePlatFormMsg.BasicWebRootUrl +
+                        "/html/personalMgr/?lg_tk=" +
+                        getDataStorage("token") +
+                        "#/"
+                    );
+                }}
+                title={UserInfo.UserName}
+                className={"user-name"}
+              >
                 {UserInfo.UserName}
               </span>
               <span
@@ -118,14 +230,21 @@ function TopBar(props, ref) {
                   background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
                 }}
               >
-                {Identity.IdentityCode.includes("IC1")
+                {Identity.IdentityCode && Identity.IdentityCode.includes("IC1")
                   ? Identity.IdentityName
                   : ""}
               </span>
               <span
                 className="logout"
                 onClick={() => {
-                  LogOut({});
+                  autoAlert({
+                    title: "确定要退出登录吗?",
+                    type: "btn-warn",
+                    cancelShow: true,
+                    onOk: () => {
+                      LogOut({});
+                    },
+                  });
                 }}
               ></span>
             </div>
@@ -133,9 +252,14 @@ function TopBar(props, ref) {
             ""
           )}
           <div className="Frame-open Frame-devide">
-            <span className="open-msg" onClick={onMsgClick}>
-              消息
-            </span>
+            {MsgInit ? (
+              <span className="open-msg" onClick={onMsgClick}>
+                <i ref={msgRef} className="msg" id={"Assistant_infoCenter"}></i>
+                消息
+              </span>
+            ) : (
+              ""
+            )}
             <span
               className="open-help"
               onClick={() => {
@@ -157,7 +281,11 @@ function TopBar(props, ref) {
                 background: `url(${BasePlatFormMsg.ProductLogoUrl}) no-repeat center center/contain`,
               }}
             ></i>
-            <span className="tb-title">{BasePlatFormMsg.ProductName?BasePlatFormMsg.ProductName:'一体化智慧校园'}</span>
+            <span className="tb-title">
+              {BasePlatFormMsg.ProductName
+                ? BasePlatFormMsg.ProductName
+                : "一体化智慧校园"}
+            </span>
             {UserInfo ? (
               <div className={"Frame-userMsg  Frame-devide"}>
                 <i
@@ -170,7 +298,7 @@ function TopBar(props, ref) {
                     BasePlatFormMsg &&
                       window.open(
                         BasePlatFormMsg.BasicWebRootUrl +
-                          "/html/personalMgr/?lg_tk" +
+                          "/html/personalMgr/?lg_tk=" +
                           getDataStorage("token") +
                           "#/"
                       );
@@ -178,7 +306,19 @@ function TopBar(props, ref) {
                 >
                   {" "}
                 </i>
-                <span title={UserInfo.UserName} className={"user-name"}>
+                <span
+                  onClick={() => {
+                    BasePlatFormMsg &&
+                      window.open(
+                        BasePlatFormMsg.BasicWebRootUrl +
+                          "/html/personalMgr/?lg_tk=" +
+                          getDataStorage("token") +
+                          "#/"
+                      );
+                  }}
+                  title={UserInfo.UserName}
+                  className={"user-name"}
+                >
                   {UserInfo.UserName}
                 </span>
                 <span
@@ -187,7 +327,8 @@ function TopBar(props, ref) {
                     background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
                   }}
                 >
-                  {Identity.IdentityCode.includes("IC1")
+                  {Identity.IdentityCode &&
+                  Identity.IdentityCode.includes("IC1")
                     ? Identity.IdentityName
                     : ""}
                 </span>
@@ -202,7 +343,18 @@ function TopBar(props, ref) {
               ""
             )}
             <div className="Frame-open Frame-devide">
-              <span className="open-msg" onClick={onMsgClick}></span>
+              {MsgInit ? (
+                <span className="open-msg" onClick={onMsgClick}>
+                  <i
+                    ref={msgRef}
+                    className="msg"
+                    id={"Assistant_infoCenter"}
+                  ></i>
+                  {/* 消息 */}
+                </span>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="tb-name">

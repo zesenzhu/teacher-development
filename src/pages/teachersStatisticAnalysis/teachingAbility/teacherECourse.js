@@ -71,7 +71,11 @@ function TeacherECourse(props, ref) {
     let myEchart_sub = subEchart;
 
     let dataset_sub = [["nodeName", "平均年龄", "平均教龄"]];
-
+    SubSet instanceof Array &&
+    SubSet.forEach((child, index) => {
+      let { NodeName, AvgScore } = child;
+      dataset_sub.push([NodeName, AvgScore]);
+    });
     let subOption = {
       title: {
         text: "各" + productMsg.sub + "统计信息",
@@ -142,6 +146,20 @@ function TeacherECourse(props, ref) {
       dataset: {
         source: [],
       },
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 /(dataset_sub.length-1  )) * 100,
+        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       xAxis: [
         {
           type: "category",
@@ -175,6 +193,13 @@ function TeacherECourse(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -239,11 +264,7 @@ function TeacherECourse(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_tpr.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let { NodeName, AvgScore } = child;
-        dataset_sub.push([NodeName, AvgScore]);
-      });
+   
 
     if (!myEchart_sub) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
@@ -283,7 +304,7 @@ function TeacherECourse(props, ref) {
               width = width * (AvgScore + 1 - child);
             }
             return (
-              <span className="pentacle">
+              <span className="pentacle" key={index}>
                 <span
                   className="pentacle-active"
                   style={{ width: width + "px" }}

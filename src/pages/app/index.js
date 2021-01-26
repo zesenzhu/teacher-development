@@ -31,7 +31,7 @@ import Notice from "../notice";
 import TeacherTrain from "@/pages/teacher/train";
 import Details from "@/pages/train/detail";
 import TeacherPersonal from "../teacherPersonal";
-import { handleRoute, deepMap } from "../../util/public";
+import { handleRoute, deepMap, getQueryVariable } from "../../util/public";
 import Search from "@/component/search";
 import { getSearch } from "@/api/search";
 import { Empty } from "@/component/common";
@@ -71,6 +71,10 @@ function App(props, ref) {
   const [TeacherMsg, setTeacherMsg] = useState(null);
   // 教师id
   const [TeacherID, setTeacherID] = useState(null);
+  // 存模块id
+  const [ModuleID, setModuleID] = useState("");
+  // 模块类型
+  const [ModuleType, setModuleType] = useState("");
   // 存frame返回的数据
   // const [tabRef,setTabRef]
   // frame的ref
@@ -78,7 +82,6 @@ function App(props, ref) {
   // 在这做路由做配置，监听路由变化不合法的时候给它做合法方案
   // 看是大学还是教育局，各校，各院，
   const NameData = useMemo(() => {
-    console.log(productLevel)
     let data = { schoolList: "各校师资", schoolDetail: "学校详情" };
     switch (productLevel) {
       case 2:
@@ -89,6 +92,35 @@ function App(props, ref) {
     }
     return data;
   }, [productLevel]);
+
+  //  提前检查路由
+  useEffect(() => {
+    let Path = handleRoute(location.pathname);
+    let moduleType = getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
+    // 单页面
+    if (Path[0] === "page" && Path[1]) {
+      setFrameType("page");
+      // 现在Path[1]只有教师个人画像，不需要身份验证，也没有模块id，后面加page看情况配置mioduleid
+      setModuleID("");
+    } else {
+      //       L10001 师资发展管理       管理员、教师（学校领导）
+      // 默认权限身份IC0002、IC0010
+
+      // L10002   师资发展培训  教师
+      // 默认权限身份IC0011、IC0012、IC0013
+      if (moduleType === "teacher") {
+        setModuleID("L10002");
+        // setModuleID("");
+        setFrameType("teacher");
+      } else {
+        //默认管理员模块
+        setModuleID("L10001");
+        setFrameType("default");
+        // setModuleID("");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useLayoutEffect(() => {
     // 平台模式类型不确定，不允许进来
     if (!frameType) {
@@ -160,14 +192,6 @@ function App(props, ref) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, leftMenu, frameType]);
-  //  提前检查路由
-  useEffect(() => {
-    let Path = handleRoute(location.pathname);
-    // 单页面
-    if (Path[0] === "page" && Path[1]) {
-      setFrameType("page");
-    }
-  }, [location]);
 
   // 手动路由控制
   function controlRoute() {
@@ -214,7 +238,7 @@ function App(props, ref) {
       // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
       dispatch(
         commonActions.SetLeftMenu(
-           data.role.productLevel,
+          data.role.productLevel,
           !!data.systemServer[400]
         )
       );
@@ -263,6 +287,19 @@ function App(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [frameType]
   );
+  // 搜索api
+  const searchApi = useCallback(
+    (payload) => {
+      // console.log(payload);
+      return getSearch.call(this, {
+        schoolID,
+        collegeID,
+        selectLevel,
+        ...payload,
+      });
+    },
+    [schoolID, collegeID, selectLevel]
+  );
   // // 移除tab
   const RemoveTab =
     // useCallback(
@@ -288,18 +325,10 @@ function App(props, ref) {
       pageInit={pageInit}
       type={frameType}
       leftMenu={leftMenu}
+      moduleID={ModuleID}
       search={
         <Search
-          api={[
-            (payload) => {
-              return getSearch.call(this, {
-                schoolID,
-                collegeID,
-                selectLevel,
-                ...payload,
-              });
-            },
-          ]}
+          api={searchApi}
           // overlayStyle={{width:'402px'}}
           searchResult={(res, keyword) => {
             return <SearchchAll keyword={keyword} data={res}></SearchchAll>;

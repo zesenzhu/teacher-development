@@ -49,7 +49,7 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy } from "../../../util/public";
+import { resizeForEcharts, deepCopy, transTime } from "../../../util/public";
 function TeacherInternet(props, ref) {
   let {
     className,
@@ -184,6 +184,23 @@ function TeacherInternet(props, ref) {
         },
       ],
     };
+    SubSet instanceof Array &&
+      SubSet.forEach((child, index) => {
+        let {
+          NodeName,
+          AvgLoginTimeSpan,
+          DayAvgTimeSpan,
+          DayAvgOnlinePercent,
+          DayAvgLoginCount,
+        } = child;
+        dataset_sub.push([
+          NodeName,
+          transTime(DayAvgTimeSpan,'m','h').time, //每人每日平均上机时长
+          DayAvgLoginCount, //每人每日平均上机次数
+          transTime(AvgLoginTimeSpan,'m','h').time, //平均每次时间
+          DayAvgOnlinePercent, //平均每日上机百分比
+        ]);
+      });
     let subOption = {
       title: {
         text: "各" + productMsg.sub + "教师平均每日上机时长统计信息",
@@ -212,15 +229,7 @@ function TeacherInternet(props, ref) {
           let { data } = row;
 
           return `<div  class="t-tooltip">
-                <p class="nodename">每人每日平均上机时长${
-                  data[1]
-                }小时</p><p class='msg msg-2'>每人每日平均上机<span>${
-            data[2]
-          }次</span></p><p class='msg msg-2'>每人每次平均上机时长<span>${
-            data[3]
-          }小时</span></p><p class='msg msg-2'>平均每日上机人数占比<span>${
-            data[4] 
-          }%</span></p></div>
+                <p class="nodename">每人每日平均上机时长${data[1]}小时</p><p class='msg msg-2'>每人每日平均上机<span>${data[2]}次</span></p><p class='msg msg-2'>每人每次平均上机时长<span>${data[3]}小时</span></p><p class='msg msg-2'>平均每日上机人数占比<span>${data[4]}%</span></p></div>
             `;
         },
         // textStyle: {
@@ -262,6 +271,20 @@ function TeacherInternet(props, ref) {
       dataset: {
         source: [],
       },
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length > 6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       xAxis: [
         {
           type: "category",
@@ -295,6 +318,13 @@ function TeacherInternet(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -358,23 +388,7 @@ function TeacherInternet(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let {
-          NodeName,
-          AvgLoginTimeSpan,
-          DayAvgTimeSpan,
-          DayAvgOnlinePercent,
-          DayAvgLoginCount,
-        } = child;
-        dataset_sub.push([
-          NodeName,
-          DayAvgTimeSpan,//每人每日平均上机时长
-          DayAvgLoginCount,//每人每日平均上机次数
-          AvgLoginTimeSpan,//平均每次时间
-          DayAvgOnlinePercent,//平均每日上机百分比
-        ]);
-      });
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);
@@ -427,11 +441,12 @@ function TeacherInternet(props, ref) {
       <div className="ter-left">
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          每人每日平均上机时长<span className="tb-tip-2">{DayAvgTimeSpan}</span>
-          小时，每人每日平均上机
+          每人每日平均上机时长
+          <span className="tb-tip-2">{transTime(DayAvgTimeSpan,'m').Time_zh}</span>
+          ，每人每日平均上机
           <span className="tb-tip-2">{DayAvgLoginCount}</span>
           次，每次
-          <span className="tb-tip-2">{AvgLoginTimeSpan}</span>小时
+          <span className="tb-tip-2">{transTime(AvgLoginTimeSpan,'m').Time_zh}</span>
         </p>
         <div ref={taRef} className="ter-echarts"></div>
         <p className="ter-all">

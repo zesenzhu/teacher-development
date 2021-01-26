@@ -99,7 +99,7 @@ function HomeTop(props, ref) {
       )}
       {draft ? (
         <Tooltip
-          // getPopupContainer={(e) => e.parentNode}
+          getPopupContainer={(e) => e.parentNode}
           placement={"bottomRight"}
           // visible={tableProps?}
           // align={{

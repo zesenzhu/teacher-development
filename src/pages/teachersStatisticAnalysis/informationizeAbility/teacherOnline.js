@@ -87,7 +87,22 @@ function TeacherOnline(props, ref) {
     let labelSize = {};
  
     let dataset_sub = [["nodeName", "平均在线办公时长", "平均在线教学时长"]];
- 
+    SubSet instanceof Array &&
+    SubSet.forEach((child, index) => {
+      let {
+        NodeName,
+        TotalTeacher,
+        HasUploadedCount,
+        UploadedPercent,
+      } = child;
+      dataset_sub.push([
+        NodeName,
+        TotalTeacher,
+        HasUploadedCount,
+        TotalTeacher,
+
+      ]);
+    });
     let subOption = {
       // title: {
       //   text: "各" + productMsg.sub + "统计信息",
@@ -100,6 +115,20 @@ function TeacherOnline(props, ref) {
       //   },
       // },
       // backgroundColor: "#f5f5f5",
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 /(dataset_sub.length-1  )) * 100,
+        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       tooltip: {
         trigger: "axis",
         // appendToBody:true,
@@ -199,6 +228,13 @@ function TeacherOnline(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -293,22 +329,7 @@ function TeacherOnline(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let {
-          NodeName,
-          TotalTeacher,
-          HasUploadedCount,
-          UploadedPercent,
-        } = child;
-        dataset_sub.push([
-          NodeName,
-          TotalTeacher,
-          HasUploadedCount,
-          TotalTeacher,
-
-        ]);
-      });
+   
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);

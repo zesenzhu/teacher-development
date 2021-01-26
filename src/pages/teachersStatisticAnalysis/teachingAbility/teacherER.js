@@ -49,7 +49,7 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy } from "../../../util/public";
+import { resizeForEcharts, deepCopy,correctNumber } from "../../../util/public";
 function TeacherER(props, ref) {
   let {
     className,
@@ -64,7 +64,6 @@ function TeacherER(props, ref) {
       NoUploadedCount,
       UploadedPercent,
       SubSet,
- 
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -78,8 +77,8 @@ function TeacherER(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoUploadedCount===undefined||HasUploadedCount===undefined){
-      return
+    if (NoUploadedCount === undefined || HasUploadedCount === undefined) {
+      return;
     }
     let myEchart_ta = taEchart;
     let myEchart_sub = subEchart;
@@ -127,7 +126,9 @@ function TeacherER(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `电子资源上传参与率${parseInt(UploadedPercent) * 100}%`;
+          return `电子资源上传参与率${
+            !isNaN(UploadedPercent) ?correctNumber( UploadedPercent * 100) : 0
+          }%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -185,7 +186,36 @@ function TeacherER(props, ref) {
         },
       ],
     };
+    SubSet instanceof Array &&
+      SubSet.forEach((child, index) => {
+        let {
+          NodeName,
+          TotalTeacher,
+          HasUploadedCount,
+          UploadedPercent,
+        } = child;
+        dataset_sub.push([
+          NodeName,
+          UploadedPercent,
+          TotalTeacher,
+          HasUploadedCount,
+        ]);
+      });
     let subOption = {
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length > 6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       title: {
         text: "各" + productMsg.sub + "统计信息",
         // bottom: "4%",
@@ -209,13 +239,11 @@ function TeacherER(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-          
           let row = params[0];
           let { data } = row;
-
           return `<div  class="t-tooltip">
                 <p class="nodename">电子资源上传参与率${
-                  parseInt(data[1] * 100)
+                  !isNaN(data[1]) ? data[1] * 100 : 0
                 }%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参与上传人数<span>${
@@ -297,6 +325,13 @@ function TeacherER(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -329,7 +364,7 @@ function TeacherER(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:24,
+          barMaxWidth: 24,
           itemStyle: {
             color: {
               type: "linear",
@@ -360,21 +395,7 @@ function TeacherER(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let {
-          NodeName,
-          TotalTeacher,
-          HasUploadedCount,
-          UploadedPercent,
-        } = child;
-        dataset_sub.push([
-          NodeName,
-          UploadedPercent,
-          TotalTeacher,
-          HasUploadedCount,
-        ]);
-      });
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);

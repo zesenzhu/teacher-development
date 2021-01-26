@@ -83,6 +83,13 @@ function SearchAll(props, ref) {
       idKey: "SchoolID",
       nameKey: "SchoolName",
     },
+    CollegeList: {
+      key: "CollegeList",
+      title: "学院",
+      tabid: "schoolDetail",
+      idKey: "CollegeID",
+      nameKey: "CollegeName",
+    },
     TeacherList: {
       key: "TeacherList",
       title: "教师",
@@ -113,19 +120,20 @@ function SearchAll(props, ref) {
                   ? child[keyMap[key].nameKey].split(keyword ? keyword : "")
                   : [];
               // 对name进行keyword处理
-              typeof child[keyMap[key].nameKey] === "string" &&
-                child[keyMap[key].nameKey]
-                  .split(keyword ? keyword : "")
-                  .forEach((c, index) => {
-                    name.push(c);
+              nameArray.forEach((c, index) => {
+                name.push(c);
                     if (
-                      nameArray.length - 1 === index &&
+                      nameArray.length - 1 !== index &&
                       nameArray.length - 1 !== 0
                     ) {
                       name.push(
-                        <span className="search-keyword">{keyword}</span>
+                        <>
+                          <span className="search-keyword">{keyword}</span>
+                          {/* {c} */}
+                        </>
                       );
                     }
+                   
                     // 教师的需要在后面家学校，教育局
                     // if (
                     //   nameArray.length - 1 === index &&
@@ -135,13 +143,14 @@ function SearchAll(props, ref) {
                   });
               dataList.push({
                 ...child,
+                key,
                 id: child[keyMap[key].idKey],
                 name: name,
-                tabid:keyMap[key].tabid,
+                tabid: keyMap[key].tabid,
                 defaultName: child[keyMap[key].nameKey],
               });
             });
-          List.push({ ...keyMap[key], List: dataList});
+          List.push({ ...keyMap[key], List: dataList });
         }
         if (
           !data[key] ||
@@ -171,6 +180,7 @@ function SearchAll(props, ref) {
           })
         ) : (
           <Empty
+            key={"index"}
             className={"frame-search-empty"}
             type={"4"}
             title={"暂无搜索数据"}

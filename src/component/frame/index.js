@@ -61,8 +61,8 @@ import { withRouter, useLocation } from "react-router-dom";
 import $ from "jquery";
 
 import logo from "./images/image-top-name.png";
-import { init } from "../../util/init";
-import { Loading } from "../../component/common";
+import { init } from "@/util/init";
+import { Loading } from "@/component/common";
 
 import LeftMenu from "./leftMenu";
 
@@ -131,6 +131,10 @@ function Frame(props, ref) {
   let [FrameLoading, setFrameLoading] = useState(true);
   // 平台信息
   let [PlatMsg, setPlatMsg] = useState({ logo });
+  // 各服务器url
+  let [SystemServer, setSystemServer] = useState(null);
+// // init 的所有数据
+// const [InitData,setInitData] =useState(null)
   // 左侧菜单
   let [MenuList, setMenuList] = useState([]);
   // tab的ref；
@@ -175,7 +179,7 @@ function Frame(props, ref) {
           setIdentity(data.identityDetail);
           data.userInfo && setUserInfo(data.userInfo);
           data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
-
+          setSystemServer(data.systemServer?data.systemServer:false)
           // typeof pageInit === "function" && pageInit(data);
           setInitData(data);
           // type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
@@ -374,7 +378,7 @@ function Frame(props, ref) {
                 useScrollbars={false}
                 basePlatFormMsg={BasePlatFormMsg}
                 domList={domList}
-                proversion={proversion}
+                ProVersion={proversion}
               ></Page>
             )
           ) : (
@@ -385,7 +389,9 @@ function Frame(props, ref) {
                 platMsg={PlatMsg}
                 identity={Identity}
                 type={type}
+                systemServer={SystemServer}
                 moduleName={moduleName}
+                initData={initData}
               ></TopBar>
 
               {type ? (
@@ -413,7 +419,7 @@ function Frame(props, ref) {
                           routeList={routeList}
                           domList={domList}
                           basePlatFormMsg={BasePlatFormMsg}
-                          proversion={proversion}
+                          ProVersion={proversion}
                         >
                           {children}
                         </RouteTab>

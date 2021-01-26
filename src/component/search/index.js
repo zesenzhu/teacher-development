@@ -70,6 +70,7 @@ function LGSearch(props, ref) {
   const searchRef = useRef(null);
   // 设置显示的boolean
   const [visible, setVisible] = useState(false);
+  // useEffect(()=>{console.log('关在',query,api)},[api])
   useEffect(() => {
     setMyResult(result);
   }, [result]);

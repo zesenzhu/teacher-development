@@ -193,7 +193,27 @@ function TeacherAge(props, ref) {
         },
       ],
     };
+    SubSetList instanceof Array &&
+    SubSetList.forEach((child, index) => {
+      let { NodeName, Total, AgeAvg, TeachAgeAvg } = child;
+      dataset_sub.push([NodeName, AgeAvg, TeachAgeAvg, Total]);
+    });
+    // console.log(dataset_sub)
     let subOption = {
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>11,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (10 / (dataset_sub.length-1  )) * 100,
+        maxSpan: (10 / (dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       title: {
         text: "各年龄教师年龄/教龄分布情况",
         // bottom: "4%",
@@ -302,6 +322,13 @@ function TeacherAge(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -386,24 +413,28 @@ function TeacherAge(props, ref) {
         },
       ],
     };
+    let AgeError = true
+    let TeachAgeError = true
     AgeList instanceof Array &&
       AgeList.forEach((child, index) => {
         let { NodeName, Total } = child;
         // if(index>5){
         //   return
         // }
+        if(Total){
+          AgeError =false
+        }
         dataset_avg.push([NodeName, Total]);
       });
     TeachAgeList instanceof Array &&
       TeachAgeList.forEach((child, index) => {
         let { NodeName, Total } = child;
+        if(Total){
+          TeachAgeError =false
+        }
         dataset_ta.push([NodeName, Total]);
       });
-    SubSetList instanceof Array &&
-      SubSetList.forEach((child, index) => {
-        let { NodeName, Total, AgeAvg, TeachAgeAvg } = child;
-        dataset_sub.push([NodeName, AgeAvg, TeachAgeAvg, Total]);
-      });
+ 
     if (!myEchart_avg) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_avg = echarts.init(avgRef.current);
@@ -439,7 +470,9 @@ function TeacherAge(props, ref) {
 
     subOption.dataset.source = dataset_sub;
     // 设置option
+    // !AgeError&& 
     myEchart_avg.setOption(avgOption);
+    // !TeachAgeError&&  
     myEchart_ta.setOption(taOption);
     myEchart_sub.setOption(subOption);
     return () => {
@@ -457,8 +490,8 @@ function TeacherAge(props, ref) {
       <div className="tt-top">
         <p className="tt-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          教师平均年龄<span className="ta-tip-1">{AgeAvg}</span>岁，平均教龄
-          <span className="ta-tip-2">{TeachAgeAvg}</span>年
+          教师平均年龄<span className="tt-tip-1">{AgeAvg}</span>岁，平均教龄
+          <span className="tt-tip-2">{TeachAgeAvg}</span>年
         </p>
 
         <div ref={avgRef} className="tt-echarts"></div>

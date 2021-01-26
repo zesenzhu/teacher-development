@@ -74,6 +74,9 @@ import {
   GetTeacherpercentage,
   GetAllTerm,
   GetTeacherWork,
+  GetResearchByUserID,
+  GetDevelopmentHistory,
+  GetLogInfoByUserID,
 } from "@/api/personal";
 import Card from "./card";
 import Archives from "./archives";
@@ -146,7 +149,7 @@ function PersonalDetail(props, ref) {
     "archives",
     "history",
   ];
- 
+
   // 获取各平台地址
   useEffect(() => {
     let sysIDs = [
@@ -201,18 +204,17 @@ function PersonalDetail(props, ref) {
       }
       // 教研
       if (true) {
-        setTeach([96, 18, 13]);
+        // setTeach([96, 18, 13]);
         // setWork([96, 2, 18, 13]);
-        setHistory([
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-          { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        ]);
-
+        // setHistory([
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+        // ]);
         // changeData({
         //   // ResView: {
         //   //   AllCount: 456,
@@ -306,51 +308,74 @@ function PersonalDetail(props, ref) {
 
         setArchives(teachermsg);
         setAccout(teachermsg);
-
-        setInformation({
-          TimeSpan: 48, //累计上机时长
-          DayAvgTimeSpan: 1.2, //累计上机时长
-          LoginCount: 485, //上机总次数
-          AvgLoginTimeSpan: 48, //平均每次上机时长
-          DayTimeList: [
-            {
-              Time: "06:00~09:00",
-              Count: 10,
-            },
-            {
-              Time: "09:00~12:00",
-              Count: 70,
-            },
-            {
-              Time: "12:00~15:00",
-              Count: 20,
-            },
-            {
-              Time: "15:00~18:00",
-              Count: 80,
-            },
-            {
-              Time: "18:00~21:00",
-              Count: 10,
-            },
-            {
-              Time: "21:00~23:59",
-              Count: 50,
-            },
-          ], //平均每日上机时间段分布
-          DayOnlineList: [
-            //平均每日在线办公/
-            //教学时长占比
-            {
-              NodeName: "在线办公",
-              Time: 20,
-            },
-            {
-              NodeName: "在线教学",
-              Time: 20,
-            },
-          ],
+        // 教研统计
+        GetResearchByUserID({ userID }).then((res) => {
+          if (res.StatusCode === 200) {
+            setTeach(res.Data);
+          } else {
+            setTeach(false);
+          }
         });
+        // 历史发展
+        GetDevelopmentHistory({ userID }).then((res) => {
+          if (res.StatusCode === 200) {
+            setHistory(res.Data);
+          } else {
+            setHistory(false);
+          }
+        });
+        // 上机信息
+        GetLogInfoByUserID({ userID }).then((res) => {
+          if (res.StatusCode === 200) {
+            setInformation(res.Data);
+          } else {
+            setInformation(false);
+          }
+        });
+        // setInformation({
+        //   TimeSpan: 48, //累计上机时长
+        //   DayAvgTimeSpan: 1.2, //累计上机时长
+        //   LoginCount: 485, //上机总次数
+        //   AvgLoginTimeSpan: 48, //平均每次上机时长
+        //   DayTimeList: [
+        //     {
+        //       Time: "06:00~09:00",
+        //       Count: 10,
+        //     },
+        //     {
+        //       Time: "09:00~12:00",
+        //       Count: 70,
+        //     },
+        //     {
+        //       Time: "12:00~15:00",
+        //       Count: 20,
+        //     },
+        //     {
+        //       Time: "15:00~18:00",
+        //       Count: 80,
+        //     },
+        //     {
+        //       Time: "18:00~21:00",
+        //       Count: 10,
+        //     },
+        //     {
+        //       Time: "21:00~23:59",
+        //       Count: 50,
+        //     },
+        //   ], //平均每日上机时间段分布
+        //   DayOnlineList: [
+        //     //平均每日在线办公/
+        //     //教学时长占比
+        //     {
+        //       NodeName: "在线办公",
+        //       Time: 20,
+        //     },
+        //     {
+        //       NodeName: "在线教学",
+        //       Time: 20,
+        //     },
+        //   ],
+        // });
       }
 
       // GetUserDetailForHX({userID:}).then((res) => {
@@ -371,7 +396,7 @@ function PersonalDetail(props, ref) {
 
     if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WeekData) {
       GetTeacherWork({
-        userName:userID,
+        userName: userID,
         baseIP: DataParams.baseIP,
         proxy: SysUrl["E34"].WebSvrAddr,
         token,
@@ -446,7 +471,7 @@ function PersonalDetail(props, ref) {
         endTime: WeekData.endTime,
       }).then((res) => {
         if (res.StatusCode === 200) {
-          console.log(res.Data)
+          console.log(res.Data);
           setPercentage(res.Data);
           // changeData({ ResView: res.Data });
         }
@@ -519,6 +544,22 @@ function PersonalDetail(props, ref) {
       ref={personalRef}
       className={`lg-PersonalDetail ${className ? className : ""}`}
     >
+      <div className={`control-rate control-rate-${zoomType}`}>
+        <i
+          className={`ct-box ct-full ${zoomType === "full" ? "ct-select" : ""}`}
+          onClick={() => {
+            setZoomType("full");
+          }}
+        ></i>
+        <i
+          className={`ct-box ct-ratio ${
+            zoomType === "ratio" ? "ct-select" : ""
+          }`}
+          onClick={() => {
+            setZoomType("ratio");
+          }}
+        ></i>
+      </div>
       {rate ? (
         <div
           className="pd-content"
@@ -723,8 +764,11 @@ function PersonalDetail(props, ref) {
                   cardid={"work"}
                   height={217}
                   component={Work}
-                  loading={ !SysUrl || (SysUrl["E34"]&& (WorkTerm === null  || work === null))}
-                  data={SysUrl&& SysUrl["E34"]&&WorkTerm && work}
+                  loading={
+                    !SysUrl ||
+                    (SysUrl["E34"] && (WorkTerm === null || work === null))
+                  }
+                  data={SysUrl && SysUrl["E34"] && WorkTerm && work}
                   componentProps={{
                     onTermSelect: (e) => {
                       setWorkTerm(e);
@@ -779,7 +823,9 @@ function PersonalDetail(props, ref) {
             <div
               className="pd-provesion"
               style={{ ...getPX([1920, 58]) }}
-            ></div>
+            >
+              {basePlatFormMsg&&basePlatFormMsg.ProVersion}
+            </div>
           </div>
         </div>
       ) : (

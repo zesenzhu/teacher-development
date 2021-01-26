@@ -199,6 +199,9 @@ function Information(props, ref) {
   }, [DayTimeList]);
 
   useLayoutEffect(() => {
+    if(!OnlineRef.current){
+      return 
+    }
     let myEchart = OnlineEchart;
 
     if (!myEchart) {
@@ -234,10 +237,15 @@ function Information(props, ref) {
       },
       legend: {
         show: true,
-        orient:'vertical',
-        bottom:50,right:10,itemHeight:11,itemWidth:11,textStyle:{
-          fontSize:12,color:'rgba(153,153,153,0.49)'
-        }
+        orient: "vertical",
+        bottom: 50,
+        right: 10,
+        itemHeight: 11,
+        itemWidth: 11,
+        textStyle: {
+          fontSize: 12,
+          color: "rgba(153,153,153,0.49)",
+        },
       },
       grid: {
         left: 10,
@@ -252,7 +260,7 @@ function Information(props, ref) {
         {
           name: "平均每日在线办公/\n教学时长占比",
           type: "pie",
-          center:['40%','45%'],
+          center: ["40%", "45%"],
           radius: ["35%", "55%"],
           // areaStyle: {normal: {}},
           // data: [
@@ -261,8 +269,8 @@ function Information(props, ref) {
           //     name: "次数",
           //   },
           // ],
-          label:{show:false},
-      
+          label: { show: false },
+
           // lineStyle: {
           //   color: "rgba(139,184,234,0.64)",
           // },
@@ -276,7 +284,7 @@ function Information(props, ref) {
         {
           name: "平均每日在线办公/\n教学时长占比",
           type: "pie",
-          center:['40%','45%'],
+          center: ["40%", "45%"],
           radius: ["55%", "60%"],
           // areaStyle: {normal: {}},
           // data: [
@@ -285,8 +293,8 @@ function Information(props, ref) {
           //     name: "次数",
           //   },
           // ],
-          label:{show:false},
- 
+          label: { show: false },
+
           // lineStyle: {
           //   color: "rgba(139,184,234,0.64)",
           // },
@@ -298,7 +306,7 @@ function Information(props, ref) {
         {
           name: "平均每日在线办公/\n教学时长占比",
           type: "pie",
-          center:['40%','45%'],
+          center: ["40%", "45%"],
           radius: ["35%", "40%"],
           // areaStyle: {normal: {}},
           // data: [
@@ -307,8 +315,8 @@ function Information(props, ref) {
           //     name: "次数",
           //   },
           // ],
-          label:{show:false},
- 
+          label: { show: false },
+
           // lineStyle: {
           //   color: "rgba(139,184,234,0.64)",
           // },
@@ -320,10 +328,10 @@ function Information(props, ref) {
       ],
     };
     let source = [["nodeName", "Count"]];
-    DayOnlineList.forEach((child)=>{
-      source.push([child.NodeName,child.Time])
-    })
-    timeOption.dataset.source = source
+    DayOnlineList.forEach((child) => {
+      source.push([child.NodeName, child.Time]);
+    });
+    timeOption.dataset.source = source;
     myEchart.setOption(timeOption);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [DayOnlineList]);
@@ -334,13 +342,13 @@ function Information(props, ref) {
       <div className="cc-div-box-1">
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={TimeSpan}>
-            {TimeSpan ? TimeSpan : "--"}
+            {TimeSpan ? TimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
           </p>
           <p className="ci-top-info-title">累计上机时长</p>
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={DayAvgTimeSpan}>
-            {DayAvgTimeSpan ? DayAvgTimeSpan : "--"}
+            {DayAvgTimeSpan ? DayAvgTimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
           </p>
           <p className="ci-top-info-title">平均每日上机时长</p>
         </div>
@@ -352,14 +360,18 @@ function Information(props, ref) {
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={AvgLoginTimeSpan}>
-            {AvgLoginTimeSpan ? AvgLoginTimeSpan : "--"}
+            {AvgLoginTimeSpan ? AvgLoginTimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
           </p>
           <p className="ci-top-info-title">平均每次上机时长</p>
         </div>
       </div>
       <div className="ci-echarts-box">
         <div className="ci-echarts-content" ref={TimeRef}></div>
-        <div className="ci-echarts-content" ref={OnlineRef}></div>
+        {DayOnlineList instanceof Array && DayOnlineList.length > 0 ? (
+          <div className="ci-echarts-content" ref={OnlineRef}></div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

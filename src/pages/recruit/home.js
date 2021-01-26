@@ -120,7 +120,7 @@ function Home(props, ref) {
             className="table-title"
             title={title}
           >
-            {title?title:'--'}
+            {title ? title : "--"}
           </span>
         );
       },
@@ -133,7 +133,7 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-source" title={data}>
-            {data?data:'--'}
+            {data ? data : "--"}
           </span>
         );
       },
@@ -146,7 +146,7 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-publisher" title={data}>
-            {data?data:'--'}
+            {data ? data : "--"}
           </span>
         );
       },
@@ -159,7 +159,7 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-time" title={data}>
-            {data?data:'--'}
+            {data ? data : "--"}
           </span>
         );
       },
@@ -191,7 +191,7 @@ function Home(props, ref) {
                   onOk: () => {
                     DeleteRecruit(
                       { RIDs: data.RID },
-                      tableRef.current.reloadList.bind(this,{},false)
+                      tableRef.current.reloadList.bind(this, {}, false)
                     );
                   },
                 });
@@ -233,7 +233,7 @@ function Home(props, ref) {
             className="table-title"
             title={title}
           >
-            {title?title:'--'}
+            {title ? title : "--"}
           </span>
         );
       },
@@ -247,7 +247,7 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-time" title={data}>
-            {data?data:'--'}
+            {data ? data : "--"}
           </span>
         );
       },
@@ -285,7 +285,7 @@ function Home(props, ref) {
                 //   },
                 // });
                 DeleteRecruit({ RIDs: data.RID }, () => {
-                  tableRef.current.reloadList({},false);
+                  tableRef.current.reloadList({}, false);
 
                   homeTopRef.current.reloadDraft();
                 });
@@ -336,12 +336,22 @@ function Home(props, ref) {
       initGet.current = true;
     } else {
       if (pathname === "/teacherRecruit") {
+        // console.log('adss')
         tableRef.current.reloadList();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
-
+  const topDraft = useMemo(() => {
+    return {
+      title: "草稿箱",
+      count: draft,
+      query: { selectLevel, schoolID, collegeID, rStatus: 0 },
+      api: getCruitList,
+      columns: draftColumns,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectLevel, schoolID, collegeID, draft]);
   // console.log(keyword)
   useImperativeHandle(ref, () => ({
     reloadList: tableRef.current.reloadList,
@@ -358,13 +368,7 @@ function Home(props, ref) {
             history.push("/publishRecruit");
           },
         }}
-        draft={{
-          title: "草稿箱",
-          count: draft,
-          query: { selectLevel, schoolID, collegeID, rStatus: 0 },
-          api: getCruitList,
-          columns: draftColumns,
-        }}
+        draft={topDraft}
         search={{
           onSearch: (value) => {
             // console.log(value)

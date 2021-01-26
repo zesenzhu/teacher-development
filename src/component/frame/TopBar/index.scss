@@ -34,12 +34,14 @@
 @import "../../common/mixin.scss";
 .Frame-topBar-default {
     position: relative;
+    z-index: 1;
     width: 100%;
     height: 64px;
     background: url(./images/image-top-bg.png) no-repeat right center / 100% 64px;
 }
 
 .Frame-topBar {
+    z-index: 1;
     .Frame-devide {
         position: relative;
         float: right;
@@ -114,6 +116,7 @@
             font-size: 14px;
             vertical-align: middle;
             color: #feffff;
+            cursor: pointer;
             opacity: 0.85;
             // margin: 0 4px 0 8px;
             @include textOverFlow;
@@ -146,7 +149,16 @@
                 opacity: 1;
             }
             &.open-msg {
-                background: url(./images/icon-msg.png) no-repeat left center / 14px 14px;
+                position: relative;
+                .msg {
+                    display: inline-block;
+                    height: 19px;
+                    width: 18px;
+                    top: 0;
+                    left: 0;
+                    position: absolute;
+                }
+                // background: url(./images/icon-msg.png) no-repeat left center / 14px 14px;
             }
             &.open-help {
                 background: url(./images/icon-help.png) no-repeat left center / 14px 14px;

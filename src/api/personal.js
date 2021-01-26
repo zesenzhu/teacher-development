@@ -32,7 +32,7 @@
 import fetch from "../util/fetch";
 import ipConfig from "../util/ipConfig";
 import moment from "moment";
-import { deepMap, SetNaNToNumber } from "../util/public";
+import { deepMap, SetNaNToNumber,transTime } from "../util/public";
 let { BasicProxy } = ipConfig;
 /**
  * @description:获取画像列表 http://192.168.129.1:8033/showdoc/web/#/21?page_id=2081
@@ -688,6 +688,135 @@ export function GetTeacherWork(payload = {}) {
         return {
           StatusCode: StatusCode,
           Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+/**
+ * @description: 教研统计
+ * @param {*} payload
+ * @return {*}
+ */
+export function GetResearchByUserID(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url =
+    BasicProxy + `/Statistics/Basic/GetResearchByUserID?UserID=${userID}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data) {
+        return {
+          StatusCode: json.StatusCode,
+          Data: [
+            json.Data.ProjectCount,
+            json.Data.CompletedCount,
+            json.Data.ActivityCount,
+          ],
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+/**
+ * @description: 个人发展
+ * @param {*} payload
+ * @return {*}
+ */
+export function GetDevelopmentHistory(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url =
+    BasicProxy + `/Statistics/Basic/GetDevelopmentHistory?UserID=${userID}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = json.Data.map((child, index) => {
+          return {
+            title: child.ChangeDetail,
+            time: child.ChangeTime,
+            ...child,
+          };
+        });
+        return {
+          StatusCode: json.StatusCode,
+          Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+
+export function GetLogInfoByUserID(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url =
+    BasicProxy + `/Statistics/Basic/GetLogInfoByUserID?UserID=${userID}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data) {
+        // 雷达
+        let DayTimeList = [
+          {
+            Time: "06:00~09:00",
+            Count: 0,
+          },
+          {
+            Time: "09:00~12:00",
+            Count: 0,
+          },
+          {
+            Time: "12:00~15:00",
+            Count: 0,
+          },
+          {
+            Time: "15:00~18:00",
+            Count: 0,
+          },
+          {
+            Time: "18:00~21:00",
+            Count: 0,
+          },
+          {
+            Time: "21:00~23:59",
+            Count: 0,
+          },
+        ];
+        DayTimeList[0].Count = json.Data["T0609"] || 0;
+        DayTimeList[1].Count = json.Data["T0912"] || 0;
+        DayTimeList[2].Count = json.Data["T1215"] || 0;
+        DayTimeList[3].Count = json.Data["T1518"] || 0;
+        DayTimeList[4].Count = json.Data["T1821"] || 0;
+        DayTimeList[5].Count = json.Data["T2124"] || 0;
+        let {
+          TimeSpan, //累计上机时长
+          DayAvgTimeSpan, //累计上机时长
+          // LoginCount, //上机总次数
+          AvgLoginTimeSpan, //平均每次上机时长
+        } = json.Data;
+        return {
+          StatusCode: json.StatusCode,
+          Data: {
+            ...json.Data,
+            TimeSpan:transTime(TimeSpan,'m','h').time, //累计上机时长
+            DayAvgTimeSpan:transTime(DayAvgTimeSpan,'m','h').time, //累计上机时长
+            // LoginCount:transTime(LoginCount,'m','h').time, //上机总次数
+            AvgLoginTimeSpan:transTime(AvgLoginTimeSpan,'m','h').time, //平均每次上机时长
+            DayTimeList,
+            DayOnlineList: [],
+          }, //现在DayOnlineList暂时没有
         };
       } else {
         return {

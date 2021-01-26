@@ -100,7 +100,6 @@ function TeacherGanger(props, ref) {
   useLayoutEffect(() => {
  
     let myEchart_sub = subEchart;
-
     let subOption = {
       // title: {
       //   text: "各年龄教师年龄/教龄分布情况",
@@ -113,6 +112,20 @@ function TeacherGanger(props, ref) {
       //   },
       // },
       // backgroundColor: "#f5f5f5",
+      dataZoom: {
+        type: "slider",
+        show: dataList.length>11,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (10 / (dataList.length-1  )) * 100,
+        maxSpan: (10 / (dataList.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       tooltip: {
         trigger: "axis",
         // appendToBody:true,
@@ -170,9 +183,9 @@ function TeacherGanger(props, ref) {
       grid: {
         left: 28,
         top: 40,
-        height: 190,
+        // height: 190,
         right: 58,
-        // bottom: 20,
+        bottom: 20,
         containLabel: true,
       },
       dataset: {
@@ -211,6 +224,13 @@ function TeacherGanger(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -300,9 +320,9 @@ function TeacherGanger(props, ref) {
           行政班共有<span className="tb-tip-1">{ClassCount}</span>
           个，班主任共有
           <span className="tb-tip-2">{GangerCount}</span>名，每名班主任平均管理
-          <span className="tb-tip-2">{MaxClass}</span>个行政班，
+          <span className="tb-tip-2">{ AvgClass}</span>个行政班，
           最大管理班级数量者共负责
-          <span className="tb-tip-2">{AvgClass}</span>个行政班
+          <span className="tb-tip-2">{MaxClass}</span>个行政班
         </p>
       </div>
       <div ref={subRef} className="tp-echarts"></div>

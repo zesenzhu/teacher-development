@@ -133,7 +133,7 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
     }
     if (index === tokenList.length - 1) {
       //最后都没通过，全部无效
-      alert("token失效");
+      // alert("token失效");
       callback(false);
       myTokenError();
     }

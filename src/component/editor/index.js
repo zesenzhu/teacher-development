@@ -146,6 +146,9 @@ function Editor(props, ref) {
   const [applyTimeTip, setApplyTimeTip] = useState("请选择报名起止时间");
   // 是否允许报名,控制报名人数限制和报名起止
   const [allowApply, setAllowApply] = useState(false);
+
+  // 上传文件状态
+  const UploadType = useRef(false)
   // 预览不用获取数据，数据由上面传下来
   const [detailData, handleChange, loading] = useDetailRequest(
     {},
@@ -396,7 +399,6 @@ function Editor(props, ref) {
       !allowApply ||checkApplyTime(),
       !allowApply || checkLimit(),
     ];
-    console.log(result)
 
     if (result.every((child) => child)) {
       typeof fn === "function" && fn();
@@ -508,6 +510,7 @@ function Editor(props, ref) {
   const fileUpload = useCallback(
     (File) => {
       setForbinClick(true);
+
       upload(
         File,
         0,
@@ -515,10 +518,13 @@ function Editor(props, ref) {
         (data) => {
           setFile([...file, data]);
           setForbinClick(false);
+          UploadType.current = false
+
         },
         (msg) => {
           autoAlert({ title: msg });
           setForbinClick(false);
+          UploadType.current = false
         }
       );
     },
@@ -537,6 +543,7 @@ function Editor(props, ref) {
       setAllowApply(true);
     }
   }, [applyFlag]);
+  console.log(UploadType)
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
       <table className="editor-table">
@@ -797,6 +804,7 @@ function Editor(props, ref) {
                                       )
                                     ) {
                                       setFileMD5([...fileMD5, file_md5]);
+                                      UploadType.current = true
                                       setForbinClick(true);
                                       fileUpload(File);
                                     } else {
@@ -814,6 +822,7 @@ function Editor(props, ref) {
                                     )
                                   ) {
                                     setForbinClick(true);
+                                    UploadType.current = true
 
                                     fileUpload(File);
                                   } else {
@@ -829,7 +838,7 @@ function Editor(props, ref) {
                           }
                         }}
                       ></input>
-                      {forbinClick ? <span className="forbinClick"></span> : ""}
+                      {UploadType.current ? <span className="forbinClick">1111</span> : ""}
                     </span>
                     <span className="file-tip">
                       提示: 附件会在正文文末以下载链接形式出现

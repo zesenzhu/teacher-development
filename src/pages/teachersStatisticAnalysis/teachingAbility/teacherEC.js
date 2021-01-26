@@ -133,7 +133,7 @@ function TeacherEC(props, ref) {
       ],
       [
         "人均课程精品",
-        (AvgCount / AvgECPercent) * (1 - AvgECPercent),
+        (Number(AvgCount) / Number(AvgECPercent)) * (1 - Number(AvgECPercent)),
         HasECPercent,
         // "教师总人数",
         TotalTeacher,
@@ -168,7 +168,7 @@ function TeacherEC(props, ref) {
           let { data } = params;
           return `<div  class="t-tooltip">
                 <p class="nodename" style='color:#fffd64;margin-bottom:0px'>有精品课程人数比例<span style='color:#fffd64;font-size:14px'>${parseInt(
-                  data[2] * 100
+                  !isNaN(data[2])?data[2] * 100:0
                 )}</span>%</p>
                 <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'  ><i style='position: absolute;
                 width: 5px;
@@ -268,7 +268,26 @@ function TeacherEC(props, ref) {
         },
       ],
     };
+    SubSet instanceof Array &&
+    SubSet.forEach((child, index) => {
+      let { NodeName, TotalTeacher, HasECTeaCount, HasECPercent } = child;
+      dataset_sub.push([NodeName, HasECPercent, TotalTeacher, HasECTeaCount]);
+    });
     let subOption = {
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 /(dataset_sub.length-1  )) * 100,
+        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       title: {
         text: "各" + productMsg.sub + "统计信息",
         // bottom: "4%",
@@ -377,6 +396,13 @@ function TeacherEC(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -441,11 +467,7 @@ function TeacherEC(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_tpr.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let { NodeName, TotalTeacher, HasECTeaCount, HasECPercent } = child;
-        dataset_sub.push([NodeName, HasECPercent, TotalTeacher, HasECTeaCount]);
-      });
+   
 
     if (!myEchart_tpr) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
@@ -508,7 +530,7 @@ function TeacherEC(props, ref) {
         <div className="ter-pie-left">
           <div ref={tplRef} className="ter-echarts"></div>
           <p className="ter-all">
-            <span>{HasECPercent * 100}</span>%
+            <span>{Number(HasECPercent) * 100}</span>%
           </p>
           <p className="ter-title">
             拥有精品课程人数比例
@@ -526,7 +548,7 @@ function TeacherEC(props, ref) {
         <div className="ter-pie-right">
           <div ref={tprRef} className="ter-echarts"></div>
           <p className="ter-all">
-            <span>{AvgECPercent * 100}</span>%
+            <span>{Number(AvgECPercent) * 100}</span>%
           </p>
           <p className="ter-title">
             人均课程精品率

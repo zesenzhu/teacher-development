@@ -49,7 +49,7 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy } from "../../../util/public";
+import { resizeForEcharts, deepCopy ,correctNumber} from "../../../util/public";
 function TeacherTP(props, ref) {
   let {
     className,
@@ -127,7 +127,7 @@ function TeacherTP(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `电子教案制作参与率${parseInt(UploadedPercent) * 100}%`;
+          return `电子教案制作参与率${!isNaN(UploadedPercent) ?correctNumber( UploadedPercent * 100) : 0}%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -188,6 +188,21 @@ function TeacherTP(props, ref) {
         },
       ],
     };
+    SubSet instanceof Array &&
+      SubSet.forEach((child, index) => {
+        let {
+          NodeName,
+          TotalTeacher,
+          HasUploadedCount,
+          UploadedPercent,
+        } = child;
+        dataset_sub.push([
+          NodeName,
+          UploadedPercent,
+          TotalTeacher,
+          HasUploadedCount,
+        ]);
+      });
     let subOption = {
       title: {
         text: "各" + productMsg.sub + "统计信息",
@@ -267,6 +282,20 @@ function TeacherTP(props, ref) {
       dataset: {
         source: [],
       },
+      dataZoom: {
+        type: "slider",
+        show: dataset_sub.length>6,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (4 /(dataset_sub.length-1  )) * 100,
+        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 8,
+        bottom: 0,
+      },
       xAxis: [
         {
           type: "category",
@@ -300,6 +329,13 @@ function TeacherTP(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
+            formatter: (value) => {
+              let data = value;
+              if (typeof value === "string" && value.length > 6) {
+                data = value.slice(0, 4) + "...";
+              }
+              return data;
+            },
           },
         },
       ],
@@ -367,21 +403,7 @@ function TeacherTP(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    SubSet instanceof Array &&
-      SubSet.forEach((child, index) => {
-        let {
-          NodeName,
-          TotalTeacher,
-          HasUploadedCount,
-          UploadedPercent,
-        } = child;
-        dataset_sub.push([
-          NodeName,
-          UploadedPercent,
-          TotalTeacher,
-          HasUploadedCount,
-        ]);
-      });
+    
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);

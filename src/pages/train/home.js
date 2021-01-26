@@ -363,7 +363,16 @@ function Home(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
-
+  const topDraft = useMemo(() => {
+    return {
+      title: "草稿箱",
+      count: draft,
+      query: { selectLevel, schoolID, collegeID, rStatus: 0 },
+      api: getCruitList,
+      columns: draftColumns,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectLevel, schoolID, collegeID, draft]);
   // console.log(keyword)
   useImperativeHandle(ref, () => ({
     reloadList: tableRef.current.reloadList,
@@ -380,13 +389,7 @@ function Home(props, ref) {
             history.push("/publishTrain");
           },
         }}
-        draft={{
-          title: "草稿箱",
-          count: draft,
-          query: { selectLevel, schoolID, collegeID, rStatus: 0 },
-          api: getCruitList,
-          columns: draftColumns,
-        }}
+        draft={topDraft}
         search={{
           onSearch: (value) => {
             // console.log(value)

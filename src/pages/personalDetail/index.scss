@@ -60,6 +60,73 @@
     position: relative;
     height: 100%;
     width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    .control-rate {
+        position: absolute;
+        top: 25px;
+        right: 50px;
+        width: 108px;
+        height: 54px;
+        background-color: rgba($color: #ffffff, $alpha: 0.2);
+        border-radius: 5px;
+        z-index: 10;
+        overflow: hidden;
+        cursor: pointer;
+        opacity: 0.95;
+        &:hover {
+            opacity: 1;
+        }
+        &::before {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            border-radius: 5px;
+            vertical-align: top;
+            background-color: rgba($color: #ffffff, $alpha: 0.3);
+            left: 0;
+            top: 0;
+            transition: left 0.1s linear;
+            -webkit-transition: left 0.1s linear;
+            -moz-transition: left 0.1s linear;
+            -ms-transition: left 0.1s linear;
+            -o-transition: left 0.1s linear;
+        }
+        &.control-rate-full {
+            &::before {
+                left: 0;
+            }
+        }
+        &.control-rate-ratio {
+            &::before {
+                left: 50%;
+            }
+        }
+        // opacity: 0.2;
+        i {
+            display: inline-block;
+            width: 50%;
+            height: 100%;
+            border-radius: 5px;
+            vertical-align: top;
+            // &.ct-select {
+            //     background-color: rgba($color: #ffffff, $alpha: 0.3);
+            // }
+        }
+        .ct-full {
+            background: url(./images/icon-full.png) no-repeat center center/26px 26px;
+            &.ct-select {
+                background: url(./images/icon-full-select.png) no-repeat center center/26px 26px;
+            }
+        }
+        .ct-ratio {
+            background: url(./images/icon-ratio.png) no-repeat center center/23px 15px;
+            &.ct-select {
+                background: url(./images/icon-ratio-select.png) no-repeat center center/23px 15px;
+            }
+        }
+    }
     .pd-content {
         position: relative;
         height: 100%;
@@ -133,7 +200,8 @@
                         @include textOverFlow;
                         padding-left: 20px;
                         line-height: 24px;
-                        color: rgba($color: #0a406f, $alpha: 0.64);
+                        // color: rgba($color: #0a406f, $alpha: 0.64);
+                        color: #5f88b5;
                         &::before {
                             content: "";
                             position: absolute;
@@ -160,7 +228,7 @@
                         top: 0;
                         height: 100%;
                         width: 100%;
-                        background: url(./images/image-people.png) no-repeat center 31px;
+                        background: url(./images/image-people.png) no-repeat center 15px;
                     }
                     .card-container {
                         position: absolute;
@@ -195,14 +263,14 @@
                         display: inline-block;
                         width: 168px;
                         height: 200px;
-                        box-shadow: 0 0 8px #fff;
+                        // box-shadow: 0 0 8px #fff;
                         transition: transform 1s ease 0s;
                         -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         -ms-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         -o-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         -moz-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                         &:hover {
-                            box-shadow: 0 0 15px #fffd;
+                            // box-shadow: 0 0 15px #fffd;
                             -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0007);
                             -ms-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
                             -o-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
@@ -211,24 +279,45 @@
                     }
                     .img-accout {
                         background: url(./images/image-accout.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-accout-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-information {
                         background: url(./images/image-information.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-information-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-teach {
                         background: url(./images/image-teach.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-teach-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-data {
                         background: url(./images/image-teach-data.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-teach-data-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-work {
                         background: url(./images/image-work.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-work-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-archives {
                         background: url(./images/image-archives.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-archives-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                     .img-history {
                         background: url(./images/image-history.png) no-repeat center center / 100% 100%;
+                        &:hover {
+                            background: url(./images/image-history-hover.png) no-repeat center center / 100% 100%;
+                        }
                     }
                 }
             }
@@ -237,6 +326,11 @@
             position: relative;
             width: 100%;
             height: 58px;
+            line-height: 58px;
+            text-align: center;
+            font-size: 14px;
+            color: #98f2ff;
+            opacity: 0.3;
         }
     }
 }
@@ -249,7 +343,20 @@
     &.card-select {
         // opacity: 1;
         .pc-content {
-            box-shadow: 0 0 10px -5px #fffd;
+            // box-shadow: 0 0 10px -5px #fffd;
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #2a75ff;
+                opacity: 0.3;
+            }
+        }
+        .pc-title {
+            background-image: url(./images/image-card-title-select.png);
         }
     }
     .pc-content {
@@ -287,12 +394,20 @@
             -moz-transform: translateY(-50%) translateX(-50%);
             -ms-transform: translateY(-50%) translateX(-50%);
             -o-transform: translateY(-50%) translateX(-50%);
+            .initTitle {
+                color: #2364a0;
+                margin-top: 0;
+            }
             &.pc-empty .tips-error-3 {
-                background: url(./images/image-empty.png) no-repeat center center/353px 93px;
+                width: 202px;
+                height: 109px;
+                background: url(./images/image-error-empty.png) no-repeat center center/202px 109px;
             }
             &.pc-lock {
                 .tips-error-3 {
-                    background: url(./images/image-empty.png) no-repeat center center/353px 93px;
+                    width: 202px;
+                    height: 105px;
+                    background: url(./images/iamge-error-lock.png) no-repeat center center/202px 105px;
                 }
             }
         }
@@ -819,6 +934,15 @@
 
 .card-history {
     padding: 50px 48px 0;
+    .ch-scrollbars {
+        &>div {
+            &:nth-of-type(2) {
+                &>div {
+                    background-color: rgba(256, 256, 256, 0.2) !important;
+                }
+            }
+        }
+    }
     .ch-dot {
         position: relative;
         display: inline-block;
@@ -1108,6 +1232,7 @@
     }
     .ci-echarts-box {
         padding: 10px 5px;
+        text-align: center;
         .ci-echarts-content {
             display: inline-block;
             width: 50%;

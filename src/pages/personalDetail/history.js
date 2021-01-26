@@ -68,7 +68,7 @@ function History(props, ref) {
   return (
     <div className={`card-content card-history ${className ? className : ""}`}>
       {
-        <Scrollbars>
+        <Scrollbars className='ch-scrollbars'>
           <div className="ch-dot-box">
             {data.map((child, index) => {
               // 第一个前面要有一个球，最后加4个，旗最长7个球的长度
