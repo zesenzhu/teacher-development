@@ -64,7 +64,7 @@ import "./index.scss";
 import { handleRoute } from "@/util/public";
 import $ from "jquery";
 import { withRouter } from "react-router-dom";
-import { debounce } from "@/util/public";
+import { debounce, BrowserMsg, Browser } from "@/util/public";
 import {
   GetSubSystemsMainServerBySubjectID,
   getTeacherDetailIntroduction,
@@ -149,7 +149,17 @@ function PersonalDetail(props, ref) {
     "archives",
     "history",
   ];
-
+  // 保存浏览器版本，如果是ie不要动画
+  const isIE = useMemo(() => {
+    let {
+      client: { isIE, isWebkit, ieVersion },
+    } = Browser;
+    let {
+      versions: { trident },
+    } = BrowserMsg;
+    // console.log(isIE, ieVersion(), isWebkit);
+    return isIE || trident;
+  }, []);
   // 获取各平台地址
   useEffect(() => {
     let sysIDs = [
@@ -533,12 +543,11 @@ function PersonalDetail(props, ref) {
     },
     [rate]
   );
-  useEffect(() => {
-    console.log(props);
-  }, [location]);
+  // useEffect(() => {
+  //   console.log(props);
+  // }, [location]);
   // 点击card 高亮模块
   const onCardClick = useCallback((id) => {}, []);
-
   return (
     <div
       ref={personalRef}
@@ -667,65 +676,68 @@ function PersonalDetail(props, ref) {
                   //   console.log(e);
                   // }}
                 >
-                  <div
-                    className={`drag-control  `}
-                    style={{
-                      transform: `rotateX(${-10}deg) rotateY(${100}deg) `,
-                      WebkitTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
-                      MozTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
-                      OTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
-                      MsTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
-                    }}
-                  >
+                  {!isIE && (
                     <div
-                      className={`card-container 
-                    `}
+                      className={`drag-control  `}
+                      style={{
+                        transform: `rotateX(${-10}deg) rotateY(${100}deg) `,
+                        WebkitTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
+                        MozTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
+                        OTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
+                        MsTransform: `rotateX(${-10}deg) rotateY(${100}deg) `,
+                      }}
                     >
-                      {cardList.map((child, index) => {
-                        let len = cardList.length;
-                        let width = 550;
-                        let reg = 360 / len;
-                        let rotateY = reg * index;
-                        let translateZ =
-                          (Math.cos(reg / 2) * width) / (1 + Math.cos(reg / 2));
-                        if (animationType && index === len - 1) {
-                          setTimeout(() => {
-                            setAnimationType(false);
-                          }, 100);
-                        }
-                        // if (animationType) {
-                        //   setTimeout(() => {
-                        //     isChange = true;
-                        //   },0);
-                        // }
-                        let transform = !animationType
-                          ? `rotateY(${rotateY}deg) translateZ(${translateZ}px)`
-                          : `rotateY(${0}deg) translateZ(${0}px)`;
-                        return (
-                          <i
-                            key={index}
-                            style={{
-                              // background: `url(./images/image-${child}.png) no-repeat center center / 100% 100%`,
-                              transform: transform,
-                              // transition: 'transform 1s ease 0s',
-                              WebkitTransform: transform,
-                              MozTransform: transform,
-                              OTransform: transform,
-                              MsTransform: transform,
-                            }}
-                            className={"img-" + child}
-                            onClick={onCardClick.bind(this, child)}
-                            onMouseEnter={(e) => {
-                              setSelectCard(child);
-                            }}
-                            onMouseLeave={(e) => {
-                              setSelectCard(false);
-                            }}
-                          ></i>
-                        );
-                      })}
+                      <div
+                        className={`card-container 
+                    `}
+                      >
+                        {cardList.map((child, index) => {
+                          let len = cardList.length;
+                          let width = 550;
+                          let reg = 360 / len;
+                          let rotateY = reg * index;
+                          let translateZ =
+                            (Math.cos(reg / 2) * width) /
+                            (1 + Math.cos(reg / 2));
+                          if (animationType && index === len - 1) {
+                            setTimeout(() => {
+                              setAnimationType(false);
+                            }, 100);
+                          }
+                          // if (animationType) {
+                          //   setTimeout(() => {
+                          //     isChange = true;
+                          //   },0);
+                          // }
+                          let transform = !animationType
+                            ? `rotateY(${rotateY}deg) translateZ(${translateZ}px)`
+                            : `rotateY(${0}deg) translateZ(${0}px)`;
+                          return (
+                            <i
+                              key={index}
+                              style={{
+                                // background: `url(./images/image-${child}.png) no-repeat center center / 100% 100%`,
+                                transform: transform,
+                                // transition: 'transform 1s ease 0s',
+                                WebkitTransform: transform,
+                                MozTransform: transform,
+                                OTransform: transform,
+                                MsTransform: transform,
+                              }}
+                              className={"img-" + child}
+                              onClick={onCardClick.bind(this, child)}
+                              onMouseEnter={(e) => {
+                                setSelectCard(child);
+                              }}
+                              onMouseLeave={(e) => {
+                                setSelectCard(false);
+                              }}
+                            ></i>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}{" "}
                   <div className="drag-bg"></div>
                 </div>
                 <div
@@ -820,11 +832,8 @@ function PersonalDetail(props, ref) {
                 ></Card>
               </div>
             </div>
-            <div
-              className="pd-provesion"
-              style={{ ...getPX([1920, 58]) }}
-            >
-              {basePlatFormMsg&&basePlatFormMsg.ProVersion}
+            <div className="pd-provesion" style={{ ...getPX([1920, 58]) }}>
+              {basePlatFormMsg && basePlatFormMsg.ProVersion}
             </div>
           </div>
         </div>

@@ -128,7 +128,7 @@ export function getNode(payload = {}) {
         json.Data instanceof Array &&
           deepMap(
             json.Data,
-            ({ child: { NodeID, NodeName, NodeType }, level }) => {
+            ({ child: { NodeID, NodeName, NodeType }, level,indexArray }) => {
               if (level === 1) {
                 data[0].push({
                   value: NodeID,
@@ -136,14 +136,15 @@ export function getNode(payload = {}) {
                   nodeType: NodeType,
                 });
               } else if (level === 2) {
-                if (data[0][NodeID] instanceof Array) {
-                  data[0][NodeID].push({
+                let parentID = json.Data[indexArray[0]].NodeID
+                if (data[1][parentID] instanceof Array) {
+                  data[1][parentID].push({
                     value: NodeID,
                     title: NodeName,
                     nodeType: NodeType,
                   });
                 } else {
-                  data[0][NodeID] = [
+                  data[1][parentID] = [
                     { value: NodeID, title: NodeName, nodeType: NodeType },
                   ];
                 }

@@ -78,6 +78,7 @@ function Datail(props, ref) {
   const [loading, setLoading] = useState(false);
   // 培训id
   const [ID, setID] = useState("");
+  const detailRef = useRef(null);
  
   //获取培训id
   useEffect(() => {
@@ -87,16 +88,21 @@ function Datail(props, ref) {
         Path[1] &&
         Path[1] !== ID &&
         setID(Path[1]);
+
+        if (Path[0] === "trainDetail" && ID && detailRef.current) {
+          //刷新
+          detailRef.current.reload();
+        }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.pathname]);
   return (
     <Loading opacity={0.5} spinning={loading}>
       <div
         className=" Reacruit-context   Train-Datail"
         style={controlSize===undefined||controlSize?{ height: contentHW.height + "px" }:{}}
       >
-        <FileDetail useScrollbars={useScrollbars} fileid={ID} type={'train'}></FileDetail>
+        <FileDetail  ref={detailRef} useScrollbars={useScrollbars} fileid={ID} type={'train'}></FileDetail>
       </div>
     </Loading>
   );

@@ -70,7 +70,8 @@ function Datail(props, ref) {
     removeTab,
     activeTab,
     contentHW,
-    location,id,
+    location,
+    id,
     history,
     dispatch,
   } = props;
@@ -79,7 +80,7 @@ function Datail(props, ref) {
   const [loading, setLoading] = useState(false);
   // 招聘id
   const [ID, setID] = useState("");
- 
+  const detailRef = useRef(null);
   //获取招聘id
   useEffect(() => {
     if (location.pathname) {
@@ -95,6 +96,10 @@ function Datail(props, ref) {
         Path[1] &&
         Path[1] !== ID &&
         setID(Path[1]);
+      if (Path[0] === "recruitDetail" && ID && detailRef.current) {
+        //刷新
+        detailRef.current.reload();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
@@ -104,7 +109,7 @@ function Datail(props, ref) {
         className=" Reacruit-context   Recruit-Datail"
         style={{ height: contentHW.height + "px" }}
       >
-        <FileDetail fileid={ID} type={'recruit'}></FileDetail>
+        <FileDetail ref={detailRef} fileid={ID} type={"recruit"}></FileDetail>
       </div>
     </Loading>
   );

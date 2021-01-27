@@ -521,7 +521,7 @@ function Data(props, ref) {
       <div className="ca-drop-box cd-week-box">
         {weekList instanceof Array && weekList.length > 0 ? (
           <Dropdown
-            width={120}
+            width={70}
             height={120}
             dropList={weekList}
             // title={""}

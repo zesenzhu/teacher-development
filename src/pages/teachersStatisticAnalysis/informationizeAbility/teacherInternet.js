@@ -32,7 +32,7 @@ import {
   useDispatch,
 } from "react-redux";
 import React, {
-  // useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
@@ -433,7 +433,17 @@ function TeacherInternet(props, ref) {
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SubSet, productMsg]);
+const TransTime = useCallback(
+  (time) => {
+    let tTime = transTime(time,'m')
+    if(tTime.time<1){
+      return '小于1分钟'
+    }
 
+    return tTime.Time_zh
+  },
+  [],
+)
   return (
     <div
       className={`teacher-bar TeacherInternet ${className ? className : ""} `}
@@ -442,11 +452,11 @@ function TeacherInternet(props, ref) {
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
           每人每日平均上机时长
-          <span className="tb-tip-2">{transTime(DayAvgTimeSpan,'m').Time_zh}</span>
+          <span className="tb-tip-2">{TransTime(DayAvgTimeSpan)}</span>
           ，每人每日平均上机
           <span className="tb-tip-2">{DayAvgLoginCount}</span>
           次，每次
-          <span className="tb-tip-2">{transTime(AvgLoginTimeSpan,'m').Time_zh}</span>
+          <span className="tb-tip-2">{TransTime(AvgLoginTimeSpan)}</span>
         </p>
         <div ref={taRef} className="ter-echarts"></div>
         <p className="ter-all">

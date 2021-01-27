@@ -199,8 +199,8 @@ function Information(props, ref) {
   }, [DayTimeList]);
 
   useLayoutEffect(() => {
-    if(!OnlineRef.current){
-      return 
+    if (!OnlineRef.current) {
+      return;
     }
     let myEchart = OnlineEchart;
 
@@ -342,13 +342,15 @@ function Information(props, ref) {
       <div className="cc-div-box-1">
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={TimeSpan}>
-            {TimeSpan ? TimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
+            {TimeSpan ? TimeSpan + "h" : "--"}
+            <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">累计上机时长</p>
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={DayAvgTimeSpan}>
-            {DayAvgTimeSpan ? DayAvgTimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
+            {DayAvgTimeSpan ? DayAvgTimeSpan + "h" : "--"}
+            <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">平均每日上机时长</p>
         </div>
@@ -360,7 +362,8 @@ function Information(props, ref) {
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={AvgLoginTimeSpan}>
-            {AvgLoginTimeSpan ? AvgLoginTimeSpan : "--"}<span style={{fontSize:'18px'}}>h</span>
+            {AvgLoginTimeSpan ? AvgLoginTimeSpan + "h" : "--"}
+            <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">平均每次上机时长</p>
         </div>

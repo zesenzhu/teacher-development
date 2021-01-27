@@ -49,7 +49,11 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy ,correctNumber} from "../../../util/public";
+import {
+  resizeForEcharts,
+  deepCopy,
+  correctNumber,
+} from "../../../util/public";
 function TeacherTP(props, ref) {
   let {
     className,
@@ -64,7 +68,6 @@ function TeacherTP(props, ref) {
       NoUploadedCount,
       UploadedPercent,
       SubSet,
- 
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -78,7 +81,7 @@ function TeacherTP(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoUploadedCount===undefined||HasUploadedCount===undefined){
+    if (NoUploadedCount === undefined || HasUploadedCount === undefined) {
       return;
     }
     let myEchart_ta = taEchart;
@@ -127,7 +130,9 @@ function TeacherTP(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `电子教案制作参与率${!isNaN(UploadedPercent) ?correctNumber( UploadedPercent * 100) : 0}%`;
+          return `电子教案制作参与率${
+            !isNaN(UploadedPercent) ? correctNumber(UploadedPercent * 100) : 0
+          }%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -135,7 +140,7 @@ function TeacherTP(props, ref) {
       },
       grid: {
         height: 220,
-        
+
         containLabel: true,
       },
       legend: {
@@ -227,14 +232,13 @@ function TeacherTP(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-        
           let row = params[0];
           let { data } = row;
 
           return `<div  class="t-tooltip">
-                <p class="nodename">电子教案制作参与率${
-                  parseInt(data[1] * 100)
-                }%</p><p class='msg msg-2'>教师总人数<span>${
+                <p class="nodename">电子教案制作参与率${parseInt(
+                  data[1] * 100
+                )}%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参与制作人数<span>${
             data[3]
@@ -284,12 +288,12 @@ function TeacherTP(props, ref) {
       },
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length > 6,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -368,7 +372,7 @@ function TeacherTP(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:24,
+          barMaxWidth: 24,
           itemStyle: {
             color: {
               type: "linear",
@@ -403,7 +407,7 @@ function TeacherTP(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);

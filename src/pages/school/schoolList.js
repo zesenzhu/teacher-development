@@ -84,7 +84,7 @@ import { getSchoolList } from "../../api/school";
 import { withRouter } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Tooltip } from "antd";
-import { handleRoute } from "../../util/public";
+import { handleRoute, correctNumber, transTime } from "../../util/public";
 
 //   import { Reducer, Context, initState } from "./reducer";
 function SchoolList(props, ref) {
@@ -203,7 +203,7 @@ function SchoolList(props, ref) {
       {
         title: levelMsg.belong + "名称",
         width: 124 * widthRate,
-        sorter: true,
+        // sorter: true,
         key: "SchoolName",
         align: "center",
         // dataIndex: "SchoolName",
@@ -225,7 +225,7 @@ function SchoolList(props, ref) {
       {
         title: levelMsg.belong + "学段",
         width: 124 * widthRate,
-        sorter: true,
+        // sorter: true,
         // colSpan:productLevel===1?1:0,//为大学时不渲染
         key: "Level",
         align: "center",
@@ -244,13 +244,13 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "教师人数",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TeacherCount",
             className: "two-col-bottom",
 
             width: 98 * widthRate,
-            dataIndex: "BenkePercent",
+            // dataIndex: "BenkePercent",
             render: (data) => {
               let { TeacherCount } = data;
               return (
@@ -262,7 +262,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "男性人数",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "MaleCount",
             className: "two-col-bottom",
@@ -279,7 +279,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "女性人数",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "FemaleCount",
             className: "two-col-bottom",
@@ -299,7 +299,7 @@ function SchoolList(props, ref) {
             ? [
                 {
                   title: "师生比例",
-                  sorter: true,
+                  // sorter: true,
                   align: "center",
                   key: "TeaStuRatio",
                   className: "two-col-bottom",
@@ -324,7 +324,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "平均年龄",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "AgeAvg",
             className: "two-col-bottom",
@@ -341,7 +341,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "平均教龄",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TeachAgeAvg",
             className: "two-col-bottom",
@@ -364,7 +364,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "本科率",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "BenkePercent",
             className: "two-col-bottom",
@@ -381,7 +381,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "博士研究生及以上",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "edu0",
             className: "two-col-bottom",
@@ -403,7 +403,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "硕士研究生",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "edu1",
             className: "two-col-bottom",
@@ -425,7 +425,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "本科",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "edu2",
             className: "two-col-bottom",
@@ -453,7 +453,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "中级职称人数比例",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "MiddleTitlePercent",
             className: "two-col-bottom",
@@ -470,7 +470,7 @@ function SchoolList(props, ref) {
           },
           {
             title: haveCollege ? "教授" : "正高级教师",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "title0",
             className: "two-col-bottom",
@@ -492,7 +492,7 @@ function SchoolList(props, ref) {
           },
           {
             title: haveCollege ? "副教授" : "高级教师",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "title1",
             className: "two-col-bottom",
@@ -514,7 +514,7 @@ function SchoolList(props, ref) {
           },
           {
             title: haveCollege ? "讲师" : "一级教师",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "title2",
             className: "two-col-bottom",
@@ -542,7 +542,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "人均周课时",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "WeekAvgCH",
             className: "two-col-bottom",
@@ -559,7 +559,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均学期总课时",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TermAvgCH",
             className: "two-col-bottom",
@@ -579,7 +579,7 @@ function SchoolList(props, ref) {
       {
         title: "行政班数量",
         // className: "two-col",
-        sorter: true,
+        // sorter: true,
         align: "center",
         key: "ClassCount",
         className: "two-col-center-border",
@@ -597,7 +597,7 @@ function SchoolList(props, ref) {
       {
         title: "班主任数量",
         // className: "two-col",
-        sorter: true,
+        // sorter: true,
         align: "center",
         key: "GangerCount",
         className: "two-col-center-border",
@@ -618,7 +618,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "总上传数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "ER_ResourceCount",
             className: "two-col-bottom",
@@ -635,7 +635,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均上传数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "ER_AvgUploadResourceCount",
             className: "two-col-bottom",
@@ -645,14 +645,14 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) : "--"}
+                  {data ? correctNumber(data) : "--"}
                 </span>
               );
             },
           },
           {
             title: "电子资源上传参与率",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "ER_UploadedPercent",
             className: "two-col-bottom",
@@ -662,7 +662,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) * 100 + "%" : "--"}
+                  {data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -675,7 +675,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "总制作量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TP_TPCount",
             className: "two-col-bottom",
@@ -692,7 +692,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均制作数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TP_AvgUploadTPCount",
             className: "two-col-bottom",
@@ -709,7 +709,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "电子教案制作参与率",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "TP_UploadedPercent",
             className: "two-col-bottom",
@@ -719,7 +719,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) * 100 + "%" : "--"}
+                  {data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -732,7 +732,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "精品课程数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "EXC_ECCount",
             className: "two-col-bottom",
@@ -749,7 +749,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均拥有数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "EXC_AvgCount",
             className: "two-col-bottom",
@@ -759,14 +759,14 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) : "--"}
+                  {data ? correctNumber(data) : "--"}
                 </span>
               );
             },
           },
           {
             title: "拥有精品课程人数比例",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "EXC_HasECPercent",
             className: "two-col-bottom",
@@ -776,7 +776,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) * 100 + "%" : "--"}
+                  {data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -786,7 +786,7 @@ function SchoolList(props, ref) {
       {
         title: "电子督课平均估值分",
         // className: "two-col",
-        sorter: true,
+        // sorter: true,
         align: "center",
         key: "EVC_AvgScore",
         className: "two-col-center-border",
@@ -796,7 +796,7 @@ function SchoolList(props, ref) {
         render: (data) => {
           return (
             <span className="table-count" title={data}>
-              {data ? Number(data) : "--"}
+              {data ? correctNumber(data) : "--"}
             </span>
           );
         },
@@ -807,7 +807,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "教研课题数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RP_ProjectCount",
             className: "two-col-bottom",
@@ -824,7 +824,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均参与次数",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RP_AvgJoinCount",
             className: "two-col-bottom",
@@ -834,14 +834,14 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) : "--"}
+                  {data ? correctNumber(data) : "--"}
                 </span>
               );
             },
           },
           {
             title: "成果数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RP_CompletedCount",
             className: "two-col-bottom",
@@ -858,7 +858,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "教研课题参与率",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RP_HasJoinPercent",
             className: "two-col-bottom",
@@ -868,7 +868,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data === 0 || data ? Number(data) * 100 + "%" : "--"}
+                  {data === 0 || data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -881,7 +881,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "教研活动数量",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RA_ActivityCount",
             className: "two-col-bottom",
@@ -898,7 +898,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "人均参与次数",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RA_AvgJoinCount",
             className: "two-col-bottom",
@@ -915,7 +915,7 @@ function SchoolList(props, ref) {
           },
           {
             title: "教研活动参与率",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "RA_HasJoinPercent",
             className: "two-col-bottom",
@@ -925,7 +925,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data === 0 || data ? Number(data) * 100 + "%" : "--"}
+                  {data === 0 || data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -938,7 +938,7 @@ function SchoolList(props, ref) {
         children: [
           {
             title: "每人每日平均上机时长",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "LI_DayAvgTimeSpan",
             className: "two-col-bottom",
@@ -946,9 +946,23 @@ function SchoolList(props, ref) {
             width: 178 * widthRate,
             dataIndex: "LI_DayAvgTimeSpan",
             render: (data) => {
+              // data = 120
+              let time = Number(data)
+              let title = "";
+              if ( time < 1) {
+                title = "小于一分钟";
+              } else if ( time < 60) {
+                title =  time + "分钟";
+              } else if ( time >= 60) {
+                let minute = ( time % 60) ;
+                title =
+                  ( time / 60).toFixed() +
+                  "小时" +
+                  (minute > 0 ? minute.toFixed() + "分钟" : "");
+              }
               return (
-                <span className="table-count" title={data}>
-                  {data ? data : "--"}
+                <span className="table-count" title={title}>
+                  {title ? title : "--"}
                 </span>
               );
             },
@@ -956,7 +970,7 @@ function SchoolList(props, ref) {
 
           {
             title: "均每日上机百分比",
-            sorter: true,
+            // sorter: true,
             align: "center",
             key: "LI_DayAvgOnlinePercent",
             className: "two-col-bottom",
@@ -966,7 +980,7 @@ function SchoolList(props, ref) {
             render: (data) => {
               return (
                 <span className="table-count" title={data}>
-                  {data ? Number(data) * 100 + "%" : "--"}
+                  {data ? correctNumber(data) * 100 + "%" : "--"}
                 </span>
               );
             },
@@ -1158,7 +1172,7 @@ function SchoolList(props, ref) {
   );
 }
 function TableTip(props, ref) {
-  let { CulomnsSelect, onCheckChange, Culomns,   } = props;
+  let { CulomnsSelect, onCheckChange, Culomns } = props;
   // 设置显示的boolean
   const [visible, setVisible] = useState(false);
   // const [ToolClassName] = useState('more-content'+new Date().getTime())
@@ -1209,7 +1223,7 @@ function TableTip(props, ref) {
         // trigger={["click"]}
         visible={visible}
         title={
-          <div ref={toolTipRef}   className={`more-content `}>
+          <div ref={toolTipRef} className={`more-content `}>
             <p className="more-title">列筛选</p>
             <CheckBoxGroup
               value={CulomnsSelect}

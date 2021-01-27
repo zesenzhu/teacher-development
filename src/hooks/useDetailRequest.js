@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-11 10:02:50
- * @LastEditTime: 2020-12-14 10:50:24
+ * @LastEditTime: 2021-01-26 13:49:20
  * @Description: 招聘，培训详情请求hooks
  * @FilePath: \teacher-development\src\hooks\useDetailRequest.js
  */
@@ -87,5 +87,8 @@ export default function useDetailRequest(query, api) {
   const handleChange = useCallback((id) => {
     setID(id);
   }, []);
-  return [detailData, handleChange, loading];
+  const reload = useCallback(()=>{
+    id && getDetailData({ id });
+  },[id])
+  return [detailData, handleChange, loading,reload];
 }

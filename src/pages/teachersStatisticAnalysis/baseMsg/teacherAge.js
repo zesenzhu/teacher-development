@@ -245,7 +245,7 @@ function TeacherAge(props, ref) {
             let { seriesName, data } = child;
             dom += `<p class='msg msg-2'>${seriesName}:<span>${
               data[index + 1]
-            }人</span></p>`;
+            }${index===0?'岁':'年'}</span></p>`;
           });
           return `<div  class="t-tooltip">
               <p class="nodename">${name}</p>${dom}</div>
@@ -335,7 +335,7 @@ function TeacherAge(props, ref) {
       yAxis: [
         {
           type: "value",
-          name: "人数",
+          name: "年龄/教龄",
 
           axisLabel: {
             color: "#7c7c7c",

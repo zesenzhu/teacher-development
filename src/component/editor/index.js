@@ -68,12 +68,14 @@ import {
   calculateFileSize,
   getToken,
   getDataStorage,
+  correctNumber,
 } from "../../util/public";
 import { getRecruitDetail } from "../../api/recruit";
 import { getTrainDetail } from "../../api/train";
 import moment from "moment";
 import SparkMD5 from "spark-md5";
 import UEditor from "../UEditor";
+import UplaodInput from "./UplaodInput";
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 let format = "YYYY-MM-DD HH:mm";
@@ -147,8 +149,11 @@ function Editor(props, ref) {
   // 是否允许报名,控制报名人数限制和报名起止
   const [allowApply, setAllowApply] = useState(false);
 
+  // 记录上传的完成度
+  const [CompletePercert, setCompletePercert] = useState(false);
   // 上传文件状态
-  const UploadType = useRef(false)
+  const UploadRef = useRef(false);
+
   // 预览不用获取数据，数据由上面传下来
   const [detailData, handleChange, loading] = useDetailRequest(
     {},
@@ -396,7 +401,7 @@ function Editor(props, ref) {
       checkTitle(),
       checkActivityFlag(),
       checkApplyFlag(),
-      !allowApply ||checkApplyTime(),
+      !allowApply || checkApplyTime(),
       !allowApply || checkLimit(),
     ];
 
@@ -481,22 +486,34 @@ function Editor(props, ref) {
         contentType: false,
         success: function (data, textStatus, jqXHR) {
           if (data.StatusCode !== 200) {
+            setCompletePercert(false);
+
             console.info("分开上传失败，当前第" + (skip + 1) + "块");
             error(data.Msg);
             return;
           }
           fileSavePath = data.Data.FileUrl;
           if (skip + 1 === totalCount) {
+            setCompletePercert(100);
+
             //此文件所有切块均已上传完毕
             success(data.Data);
+            // 1秒后关闭
+            setTimeout(() => {
+              setCompletePercert(false);
+            }, 1000);
             return;
           }
+          setCompletePercert(correctNumber(((skip + 1) / totalCount) * 100));
+
           //当接收到请求返回结果后，递归调用自己，切下一块继续上传
           // data.Data.FileUrl是分开上传的关键，上传第一块时不需要,从第二块开始需要从上一个请求结果中拿到此参数再传给服务器接口
           upload(file, ++skip, data.Data.FileUrl, success, error);
         },
         error: function (jqXHR, txtStatus, errorThrown) {
           console.info("分开上传失败，当前第" + (skip + 1) + "块");
+          setCompletePercert(false);
+
           error("程序异常");
           return;
         },
@@ -510,6 +527,7 @@ function Editor(props, ref) {
   const fileUpload = useCallback(
     (File) => {
       setForbinClick(true);
+      setCompletePercert(0);
 
       upload(
         File,
@@ -517,14 +535,9 @@ function Editor(props, ref) {
         "",
         (data) => {
           setFile([...file, data]);
-          setForbinClick(false);
-          UploadType.current = false
-
         },
         (msg) => {
           autoAlert({ title: msg });
-          setForbinClick(false);
-          UploadType.current = false
         }
       );
     },
@@ -543,7 +556,27 @@ function Editor(props, ref) {
       setAllowApply(true);
     }
   }, [applyFlag]);
-  console.log(UploadType)
+  // useEffect(() => {
+  //   console.log(CompletePercert);
+  // }, [CompletePercert]);
+  const dom = useMemo(() => {
+    return (
+      CompletePercert && (
+        <span className="dom-CompletePercert">{CompletePercert}</span>
+      )
+    );
+  }, [CompletePercert]);
+  const onUplaodPercert = useCallback((percert) => {
+    setCompletePercert(percert);
+  }, []);
+  const onFileUplaod = useCallback((file) => {
+    setCompletePercert(false);
+    setFile(file);
+  }, []);
+const onFileUpMD5 = useCallback((value)=>{
+setFileMD5(value)
+},[])
+
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
       <table className="editor-table">
@@ -769,13 +802,17 @@ function Editor(props, ref) {
                         <span className="file-size" title={fileSize}>
                           [{fileSize}]
                         </span>
-                        <b className="file-delete">×</b>
+                        <b onClick={()=>{
+                          setFile(file.slice(0,index).concat(file.slice(index+1)))
+                          setFileMD5(fileMD5.slice(0,index).concat(fileMD5.slice(index+1)))
+                          
+                        }} className="file-delete">×</b>
                       </span>
                     );
                   })}
                 {file instanceof Array && file.length < 5 ? (
                   <span className="handle-upload">
-                    <span className="file-upload">
+                    {/* <span className="file-upload">
                       添加附件
                       <input
                         type="file"
@@ -804,7 +841,6 @@ function Editor(props, ref) {
                                       )
                                     ) {
                                       setFileMD5([...fileMD5, file_md5]);
-                                      UploadType.current = true
                                       setForbinClick(true);
                                       fileUpload(File);
                                     } else {
@@ -822,7 +858,6 @@ function Editor(props, ref) {
                                     )
                                   ) {
                                     setForbinClick(true);
-                                    UploadType.current = true
 
                                     fileUpload(File);
                                   } else {
@@ -838,7 +873,25 @@ function Editor(props, ref) {
                           }
                         }}
                       ></input>
-                      {UploadType.current ? <span className="forbinClick">1111</span> : ""}
+                      {dom}
+                    </span>
+                    */}
+                    <span className="input-box">
+                      {/* {CompletePercert && (
+                        <span className="dom-CompletePercert">
+                          {CompletePercert}
+                        </span>
+                      )} */}
+                      <UplaodInput
+                        // onUplaodPercert={onUplaodPercert}
+                        initFile={file}
+                        onFileUplaod={onFileUplaod}
+                        onFileUpMD5={onFileUpMD5}
+                        fileMD5={fileMD5}
+                        ref={UploadRef}
+                        schoolId={schoolId}
+                        type={type}
+                      ></UplaodInput>
                     </span>
                     <span className="file-tip">
                       提示: 附件会在正文文末以下载链接形式出现
@@ -913,7 +966,6 @@ function Editor(props, ref) {
           <li
             className="handle-btn handle-draft"
             onClick={() => {
-             
               checkAll(
                 draft.onClick.bind(this, {
                   Title: title,

@@ -130,6 +130,7 @@ function PersonalList(props, ref) {
     if (productLevel !== 1) {
       getNode({ collegeID, schoolID }).then((res) => {
         if (res.StatusCode === 200) {
+          console.log(res)
           setFirstNodeList([
             { value: "", title: "全部" + levelMsg.sub },
             ...res.data[0],
@@ -335,6 +336,7 @@ function PersonalList(props, ref) {
                 onSelect={(e, option) => {
                   setQuery({ ...query, nodeID: e, nodeType: option.nodeType });
                   setFirstSelect(e);
+                  console.log(SecondNodeObj[e],e,SecondNodeObj)
                   setSecondNodeList(
                     SecondNodeObj[e]
                       ? SecondNodeObj[e]
@@ -346,7 +348,7 @@ function PersonalList(props, ref) {
                 <Dropdown
                   width={150}
                   height={240}
-                  disabled={firstSelect !== ""}
+                  disabled={firstSelect === ""}
                   dropList={SecondNodeList}
                   value={secondSelect}
                   className="second-dropdown"

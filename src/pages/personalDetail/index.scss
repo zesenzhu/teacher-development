@@ -1324,18 +1324,19 @@
         position: absolute;
         z-index: 10;
         top: 20px;
-        .ant-select-selector {
-            background-color: transparent !important;
-            border: none !important;
-            .ant-select-selection-item {
-                color: #fff;
-            }
-        }
-        .ant-select-arrow {
-            color: #fff;
-        }
+        // .ant-select-arrow {
+        //     color: #fff;
+        // }
     }
-    .week-dropdown {}
+    .week-dropdown {
+        // .ant-select-selector {
+        //     padding: 0;
+        //     .ant-select-selection-item {
+        //         font-size: 12px;
+        //         color: #5fa1d9;
+        //     }
+        // }
+    }
 }
 
 .cd-tooltip {
@@ -1385,6 +1386,28 @@
             -ms-border-radius: 50%;
             -o-border-radius: 50%;
             @include v-center;
+        }
+    }
+}
+
+.card-content {
+    .lg-dropdown {
+        .ant-select-selector {
+            background-color: transparent !important;
+            border: none !important;
+            // .ant-select-selection-item {
+            //     color: #fff;
+            // }
+        }
+        .ant-select-arrow {
+            color: #235987;
+        }
+        .ant-select-selector {
+            padding: 0;
+            .ant-select-selection-item {
+                font-size: 12px;
+                color: #5fa1d9;
+            }
         }
     }
 }

@@ -48,7 +48,7 @@ import React, {
   useMemo,
   useState,
   useLayoutEffect,
-  // useImperativeHandle,
+  useImperativeHandle,
   // useMemo,
   // useReducer,
   // createContext,
@@ -63,7 +63,7 @@ import $ from "jquery";
 import useDetailRequest from "../../hooks/useDetailRequest";
 import { getRecruitDetail } from "../../api/recruit";
 import { getTrainDetail } from "../../api/train";
-import { Loading, Empty,EmptyReact } from "../common";
+import { Loading, Empty, EmptyReact } from "../common";
 import { constructFileType, getDataStorage } from "../../util/public";
 function FileDetail(props, ref) {
   // *type:分为recruit招聘、train培训,默认招聘
@@ -83,14 +83,14 @@ function FileDetail(props, ref) {
   } = props;
   // 获取数据
   // 预览不用获取数据，数据由上面传下来
-  const [detailData, handleChange, loading] = useDetailRequest(
+  const [detailData, handleChange, loading, reload] = useDetailRequest(
     {},
     type === "train" ? getTrainDetail : getRecruitDetail
   );
   // 是否使用滚动条
-  const UseScrollbars= useMemo(() => {
-    return useScrollbars===undefined||useScrollbars?true:false
-  }, [useScrollbars])
+  const UseScrollbars = useMemo(() => {
+    return useScrollbars === undefined || useScrollbars ? true : false;
+  }, [useScrollbars]);
   // 主文
   const preRef = useRef(null);
   useEffect(() => {
@@ -123,8 +123,12 @@ function FileDetail(props, ref) {
     let BasePlatformMsg = getDataStorage("BasePlatformMsg");
     return BasePlatformMsg instanceof Object && BasePlatformMsg.ResHttpRootUrl;
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    reload,
+  }));
   return (
-    <EmptyReact component={UseScrollbars?Scrollbars:false}>
+    <EmptyReact component={UseScrollbars ? Scrollbars : false}>
       <Loading
         opacity={false}
         spinning={schema !== "preview" && loading}
@@ -201,7 +205,7 @@ function FileDetail(props, ref) {
                         }
                         filename[0] = FileName.slice(0, Index);
                         filename[1] = FileName.slice(Index);
-                      
+
                         return (
                           <div
                             key={index}

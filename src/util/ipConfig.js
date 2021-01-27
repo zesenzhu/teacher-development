@@ -56,9 +56,10 @@ const RootUrl = protocol + "//" + host + pathFolder;
 if (process.env.NODE_ENV === "development") {
   // 129.64:20103/Web_TeacherGrow/
   //  129.1:8023
-  let baseIP = 'http://192.168.129.1:10103/web_teachergrow';//基础平台服务器
+  // let baseIP = 'http://192.168.129.1:10103/web_teachergrow';//基础平台服务器
   // let baseIP = 'http://129.64:20103/Web_TeacherGrow';//中小学服务器
   // let baseIP = 'http://192.168.129.182:10103/Web_Teachergrow';//大学服务器
+  let baseIP = 'http://192.168.129.242:10101/Web_TeacherGrow';//大学服务器
   config = {
     TokenProxy: baseIP+"",
     // TokenProxy:'http://47.115.20.102:10102',

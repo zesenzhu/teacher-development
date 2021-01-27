@@ -189,7 +189,7 @@ function TeachingAbility(props, ref) {
           <TeacherEC data={teacherEC} productMsg={productMsg}></TeacherEC>
         </Bar>
        <Bar
-          barName={"学历职称统计 "}
+          barName={"电子督课评估值统计"}
           ref={raRef}
           loading={!teacherEvaluateCourse}
           topContext={HasHistory?{ title: "查看历年评估值变化 " }:false}
