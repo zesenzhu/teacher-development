@@ -49,7 +49,11 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy,correctNumber } from "../../../util/public";
+import {
+  resizeForEcharts,
+  deepCopy,
+  correctNumber,
+} from "../../../util/public";
 function TeacherRA(props, ref) {
   let {
     className,
@@ -126,7 +130,9 @@ function TeacherRA(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `教研活动参与率${!isNaN(HasJoinPercent) ?correctNumber( HasJoinPercent * 100) : 0}%`;
+          return `教研活动参与率${
+            !isNaN(HasJoinPercent) ? correctNumber(HasJoinPercent * 100) : 0
+          }%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -155,6 +161,7 @@ function TeacherRA(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
+          minAngle:4,
 
           height: "90%",
           itemStyle: {
@@ -188,31 +195,31 @@ function TeacherRA(props, ref) {
       ],
     };
     SubSet instanceof Array &&
-    SubSet.forEach((child, index) => {
-      let {
-        NodeName,
-        TotalTeacher,
-        HasJoinTeaCount,
-        HasJoinPercent,
-        NoJoinTeaCount,
-      } = child;
-      dataset_sub.push([
-        NodeName,
-        HasJoinPercent,
-        TotalTeacher,
-        HasJoinTeaCount,
-        NoJoinTeaCount,
-      ]);
-    });
+      SubSet.forEach((child, index) => {
+        let {
+          NodeName,
+          TotalTeacher,
+          HasJoinTeaCount,
+          HasJoinPercent,
+          NoJoinTeaCount,
+        } = child;
+        dataset_sub.push([
+          NodeName,
+          HasJoinPercent,
+          TotalTeacher,
+          HasJoinTeaCount,
+          NoJoinTeaCount,
+        ]);
+      });
     let subOption = {
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length > 6,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -247,7 +254,7 @@ function TeacherRA(props, ref) {
 
           return `<div  class="t-tooltip">
                 <p class="nodename">教研活动参与率${parseInt(
-                  data[1] * 100
+                  correctNumber(data[1] * 100)
                 )}%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参加人数<span>${
@@ -400,7 +407,7 @@ function TeacherRA(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-   
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);
@@ -462,7 +469,7 @@ function TeacherRA(props, ref) {
           <span>{TotalTeacher}</span>人
         </p>
         <p className="ter-title">
-        教研活动参与率
+          教研活动参与率
           <Tooltip
             title="疑问"
             color={"#0249a5"}

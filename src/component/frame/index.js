@@ -172,7 +172,7 @@ function Frame(props, ref) {
       moduleID,
       (data) => {
         //成功
-        // console.log(data);
+        console.log(data);
 
         if (data.identityDetail && data.role.version !== "noPower") {
           //true表示该身份有效

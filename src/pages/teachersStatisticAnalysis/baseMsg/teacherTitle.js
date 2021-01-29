@@ -237,6 +237,7 @@ function TeacherTitle(props, ref) {
           type: "pie",
           radius: ["35%", "70%"],
           top: "-30",
+          minAngle:4,
 
           // center: [70, "50%"],
           height: "100%",

@@ -153,6 +153,7 @@ function TeacherER(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
+          minAngle:4,
 
           // center: ["50% ", "50%"],
           height: "90%",
@@ -243,7 +244,7 @@ function TeacherER(props, ref) {
           let { data } = row;
           return `<div  class="t-tooltip">
                 <p class="nodename">电子资源上传参与率${
-                  !isNaN(data[1]) ? data[1] * 100 : 0
+                  !isNaN(data[1]) ? correctNumber(data[1] * 100) : 0
                 }%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参与上传人数<span>${

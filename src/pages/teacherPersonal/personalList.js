@@ -184,7 +184,7 @@ function PersonalList(props, ref) {
         },
       },
       {
-        title: "所属" + levelMsg.belong,
+        title: levelMsg.belongBefore + levelMsg.belong,
         sorter: true,
         align: "center",
         key: levelMsg.belondName,

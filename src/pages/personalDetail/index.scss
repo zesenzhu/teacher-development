@@ -373,6 +373,24 @@
             background-color: #0053a8;
             opacity: 0.21;
         }
+        .card-linkbtn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            padding-left: 16px;
+            opacity: 0.9;
+            color: #97d0d8;
+            z-index: 2;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 12px;
+            &.card-linkbtn-more {
+                background: url(./images/icon-more.png) no-repeat left center / 14px 14px;
+            }
+            &.card-linkbtn-archives {
+                background: url(./images/icon-archives.png) no-repeat left center / 14px 14px;
+            }
+        }
         background-image: url(./images/icon-angle-lt.png),
         url(./images/icon-angle-rt.png),
         url(./images/icon-angle-rb.png),

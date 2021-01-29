@@ -70,7 +70,7 @@ export default function useUEditorLaod(id, config) {
         // &&
         // params.src === document.getElementById(params.id).src
       ) {
-        callback(true);
+        callback("isExist");
         return;
       }
       document[parent].appendChild(Element);
@@ -99,7 +99,9 @@ export default function useUEditorLaod(id, config) {
           element,
           parent,
           (data) => {
-            // resolve(data);
+            if (data === "isExist") {
+              resolve(true);
+            }
           }
         );
       });
@@ -166,7 +168,7 @@ export default function useUEditorLaod(id, config) {
             id: "ueditor_script_lang_zh-cn",
             onLoad: () => {},
           }));
-        // console.log(jqLaod, configLaod, all_minLaod, parseLaod, langLaod);
+        console.log(jqLaod, configLaod, all_minLaod, parseLaod, langLaod);
         // js加载不成功
         if (!langLaod) {
           setReady(false);

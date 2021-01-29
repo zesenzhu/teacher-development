@@ -64,7 +64,7 @@ import "./index.scss";
 import { handleRoute } from "@/util/public";
 import $ from "jquery";
 import { withRouter } from "react-router-dom";
-import { debounce, BrowserMsg, Browser } from "@/util/public";
+import { debounce, BrowserMsg, Browser, removeSlashUrl } from "@/util/public";
 import {
   GetSubSystemsMainServerBySubjectID,
   getTeacherDetailIntroduction,
@@ -85,6 +85,7 @@ import Teach from "./teach";
 import Work from "./work";
 import HistoryDom from "./history";
 import Information from "./information";
+import Linkbtn from "./linkbtn";
 import Data from "./data";
 function PersonalDetail(props, ref) {
   let {
@@ -95,6 +96,7 @@ function PersonalDetail(props, ref) {
     teachermsg,
     teacherid,
     token,
+    roleMsg: { identityCode, userType },
     ...reset
   } = props;
   const [rate, setRate] = useState(null);
@@ -548,6 +550,28 @@ function PersonalDetail(props, ref) {
   // }, [location]);
   // 点击card 高亮模块
   const onCardClick = useCallback((id) => {}, []);
+  const archivesBtn = useMemo(() => {
+    // 先只有超级管理员进
+    if (
+      userType === 0 &&
+       SysUrl && SysUrl["E34"] && SysUrl["E34"].WsSvrAddr) {
+      let { UserID, UserName } = archives;
+      const onBtnClick = () => {
+        let toUrl =
+          removeSlashUrl(SysUrl["E34"].WsSvrAddr) +
+          `/index_user.html?lg_tk=${token}&tName=${UserName}&tId=${UserID}&lg_ic=${identityCode}#1|4|0`;
+        window.open(toUrl);
+      };
+
+      return (
+        <Linkbtn type={"archives"} onClick={onBtnClick}>
+          档案信息管理
+        </Linkbtn>
+      );
+    } else {
+      return null;
+    }
+  }, [SysUrl, token, identityCode, archives]);
   return (
     <div
       ref={personalRef}
@@ -607,6 +631,7 @@ function PersonalDetail(props, ref) {
                   cardid={"archives"}
                   select={SelectCard}
                   height={340}
+                  btn={archivesBtn}
                   loading={archives === null}
                   data={archives}
                   component={Archives}

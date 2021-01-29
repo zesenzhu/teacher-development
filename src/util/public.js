@@ -1207,15 +1207,18 @@ export const transTime = (time, front, back) => {
     time: time,
     unit_zh: "分钟",
     unit_En_Up: "M",
+    unit_En_Low: "m",
     // Time_zh: time + "分",
   };
   if (back === "h" || time >= 60) {
     data.time = Number((time / 60).toFixed(2));
     data.unit_zh = "小时";
     data.unit_En_Up = "H";
+    data.unit_En_Low = "h";
   }
   data.Time_zh = data.time + data.unit_zh;
   data.Time_En = data.time + data.unit_En_Up;
+  data.Time_En_Low = data.time + data.unit_En_Low;
   return data;
 };
 // 解决js数字失精问题
@@ -1420,3 +1423,23 @@ export const Browser=Browser || (function(window){
 	};
 
 })(window);
+/**
+ * @description: 
+ * @param {*} removeSlashUrl:需要去掉 / 的链接 
+ * @return {*}
+ */
+export const removeSlashUrl = (url)=>{
+
+  const urlArr = url.split('');
+
+  if (urlArr[urlArr.length-1]==='/'){
+
+      return url.substr(0,urlArr.length-1);
+
+  }else{
+
+      return url;
+
+  }
+
+};

@@ -143,7 +143,7 @@ function Home(props, ref) {
       title: "报名截止时间",
       align: "center",
       width: 172 * widthRate,
-      dataIndex: "ApplyEndTime",
+      // dataIndex: "ApplyEndTime",
       render: (data) => {
         let {ApplyFlag,ApplyEndTime} =data
         return (

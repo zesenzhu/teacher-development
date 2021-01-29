@@ -811,10 +811,10 @@ export function GetLogInfoByUserID(payload = {}) {
           StatusCode: json.StatusCode,
           Data: {
             ...json.Data,
-            TimeSpan:transTime(TimeSpan,'m','h').time, //累计上机时长
-            DayAvgTimeSpan:transTime(DayAvgTimeSpan,'m','h').time, //累计上机时长
+            TimeSpan: transTime(parseFloat(TimeSpan).toFixed(2),'m',).Time_En_Low, //累计上机时长
+            DayAvgTimeSpan:transTime(parseFloat(DayAvgTimeSpan).toFixed(2),'m',).Time_En_Low, //累计上机时长
             // LoginCount:transTime(LoginCount,'m','h').time, //上机总次数
-            AvgLoginTimeSpan:transTime(AvgLoginTimeSpan,'m','h').time, //平均每次上机时长
+            AvgLoginTimeSpan:transTime(parseFloat(AvgLoginTimeSpan).toFixed(2),'m',).Time_En_Low, //平均每次上机时长
             DayTimeList,
             DayOnlineList: [],
           }, //现在DayOnlineList暂时没有

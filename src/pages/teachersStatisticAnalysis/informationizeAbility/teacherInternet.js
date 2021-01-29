@@ -49,7 +49,7 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy, transTime } from "../../../util/public";
+import { resizeForEcharts, deepCopy, transTime,correctNumber } from "../../../util/public";
 function TeacherInternet(props, ref) {
   let {
     className,
@@ -126,7 +126,7 @@ function TeacherInternet(props, ref) {
         formatter: (params) => {
           // let { percent, value, dataIndex } = params;
 
-          return `平均每日上机人数占比${parseInt(DayAvgOnlinePercent) * 100}%`;
+          return `平均每日上机人数占比${correctNumber(DayAvgOnlinePercent * 100)}%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -151,6 +151,7 @@ function TeacherInternet(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
+          minAngle:4,
 
           // center: ["50% ", "50%"],
           height: "90%",

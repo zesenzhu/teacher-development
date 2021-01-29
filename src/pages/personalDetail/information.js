@@ -342,14 +342,14 @@ function Information(props, ref) {
       <div className="cc-div-box-1">
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={TimeSpan}>
-            {TimeSpan ? TimeSpan + "h" : "--"}
+            {TimeSpan ? TimeSpan  : "--"}
             <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">累计上机时长</p>
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={DayAvgTimeSpan}>
-            {DayAvgTimeSpan ? DayAvgTimeSpan + "h" : "--"}
+            {DayAvgTimeSpan ? DayAvgTimeSpan  : "--"}
             <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">平均每日上机时长</p>
@@ -362,7 +362,7 @@ function Information(props, ref) {
         </div>
         <div className="ci-top-info">
           <p className="ci-top-info-count" title={AvgLoginTimeSpan}>
-            {AvgLoginTimeSpan ? AvgLoginTimeSpan + "h" : "--"}
+            {AvgLoginTimeSpan ? AvgLoginTimeSpan  : "--"}
             <span style={{ fontSize: "18px" }}></span>
           </p>
           <p className="ci-top-info-title">平均每次上机时长</p>

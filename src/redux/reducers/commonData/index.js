@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2021-01-19 10:32:22
+ * @LastEditTime: 2021-01-28 20:40:51
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -42,11 +42,12 @@ const commonData = (
         title: "区域",
         sub: "学段", //教师基础信息文字显示
         belong: "学校", //选择教师下级
-        belondName: "SchoolName",//教师画像获取接口所属的属性
-        ganger:'学段',//班主任班级管理统计,
-        nextProductLevel:3,//下级的产品级别
-        nextSelectLevel:3,//下级的选择级别
-        nextTitle:'学校',//下级名称
+        belongBefore: "所属", //选择教师前缀
+        belondName: "SchoolName", //教师画像获取接口所属的属性
+        ganger: "学段", //班主任班级管理统计,
+        nextProductLevel: 3, //下级的产品级别
+        nextSelectLevel: 3, //下级的选择级别
+        nextTitle: "学校", //下级名称
       },
       2: {
         productLevel: 2,
@@ -54,39 +55,43 @@ const commonData = (
         title: "学校",
         sub: "学院",
         belong: "学院",
+        belongBefore: "所属", //选择教师前缀
         belondName: "CollegeName",
-        ganger:'学院',
-        nextProductLevel:4,//下级的产品级别
-        nextSelectLevel:3,//下级的选择级别
-        nextTitle:'学院',//下级名称
+        ganger: "学院",
+        nextProductLevel: 4, //下级的产品级别
+        nextSelectLevel: 3, //下级的选择级别
+        nextTitle: "学院", //下级名称
       },
       3: {
         productLevel: 3,
         selectLevel: 2,
         title: "学校",
         sub: "学科",
+        belongBefore: "所教", //选择教师前缀
         belong: "学科",
         belondName: "SubjectNames",
-        ganger:'学科'
+        ganger: "学科",
       },
       4: {
         productLevel: 4,
         selectLevel: 3,
         title: "学院",
         sub: "教研室",
+        belongBefore: "所属", //选择教师前缀
+
         belong: "教研室",
         belondName: "CroupName",
-        ganger:'学科'
+        ganger: "学科",
       },
     },
     contentHW: { height: 0, width: 0 },
-    systemServer:{}
+    systemServer: {},
   },
   actions
 ) => {
   switch (actions.type) {
     case commonActions.COMMON_SET_COMMON_DATA:
-      return Object.assign({}, state,  actions.data);
+      return Object.assign({}, state, actions.data);
     case commonActions.COMMON_SET_TERM_INFO:
       return Object.assign({}, state, {
         termInfo: actions.data,
@@ -119,10 +124,10 @@ const commonData = (
       return Object.assign({}, state, {
         roleMsg: actions.data,
       });
-      case commonActions.COMMON_SET_SYSTEM_SERVER:
-        return Object.assign({}, state, {
-          systemServer: actions.data,
-        });
+    case commonActions.COMMON_SET_SYSTEM_SERVER:
+      return Object.assign({}, state, {
+        systemServer: actions.data,
+      });
     default:
       return state;
   }

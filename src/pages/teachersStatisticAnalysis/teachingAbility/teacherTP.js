@@ -161,6 +161,7 @@ function TeacherTP(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
+          minAngle:4,
 
           height: "90%",
           itemStyle: {
@@ -237,7 +238,7 @@ function TeacherTP(props, ref) {
 
           return `<div  class="t-tooltip">
                 <p class="nodename">电子教案制作参与率${parseInt(
-                  data[1] * 100
+                  correctNumber(data[1] * 100)
                 )}%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参与制作人数<span>${

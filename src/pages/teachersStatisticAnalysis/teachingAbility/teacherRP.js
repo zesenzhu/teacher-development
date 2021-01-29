@@ -157,6 +157,7 @@ function TeacherRP(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
+          minAngle:4,
 
           height: "90%",
           itemStyle: {
@@ -234,7 +235,7 @@ function TeacherRP(props, ref) {
 
           return `<div  class="t-tooltip">
                 <p class="nodename">教研课题参与率${
-                  parseInt(data[1] * 100)
+                  correctNumber(data[1] * 100)
                 }%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参加人数<span>${

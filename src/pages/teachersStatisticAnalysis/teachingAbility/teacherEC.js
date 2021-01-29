@@ -49,7 +49,11 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy } from "../../../util/public";
+import {
+  resizeForEcharts,
+  deepCopy,
+  correctNumber,
+} from "../../../util/public";
 function TeacherEC(props, ref) {
   let {
     className,
@@ -124,7 +128,8 @@ function TeacherEC(props, ref) {
       ["nodeName", "Count"],
       [
         "高于人均课程精品",
-        AvgCount,
+        // AvgCount,
+        AvgECPercent,
         HasECPercent,
         // "教师总人数",
         TotalTeacher,
@@ -133,7 +138,8 @@ function TeacherEC(props, ref) {
       ],
       [
         "人均课程精品",
-        (Number(AvgCount) / Number(AvgECPercent)) * (1 - Number(AvgECPercent)),
+        1 - Number(AvgECPercent),
+        // Number(AvgECPercent)&& (Number(AvgCount) / Number(AvgECPercent)) * (1 - Number(AvgECPercent)),
         HasECPercent,
         // "教师总人数",
         TotalTeacher,
@@ -167,8 +173,8 @@ function TeacherEC(props, ref) {
         formatter: (params) => {
           let { data } = params;
           return `<div  class="t-tooltip">
-                <p class="nodename" style='color:#fffd64;margin-bottom:0px'>有精品课程人数比例<span style='color:#fffd64;font-size:14px'>${parseInt(
-                  !isNaN(data[2])?data[2] * 100:0
+                <p class="nodename" style='color:#fffd64;margin-bottom:0px'>拥有精品课程人数比例<span style='color:#fffd64;font-size:14px'>${parseInt(
+                  !isNaN(data[2]) ? correctNumber(data[2] * 100) : 0
                 )}</span>%</p>
                 <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'  ><i style='position: absolute;
                 width: 5px;
@@ -236,6 +242,7 @@ function TeacherEC(props, ref) {
           name: "精品课程制作参与率",
           type: "pie",
           radius: ["40%", "75%"],
+          minAngle:4,
           top: 10,
           height: "90%",
           itemStyle: {
@@ -269,19 +276,19 @@ function TeacherEC(props, ref) {
       ],
     };
     SubSet instanceof Array &&
-    SubSet.forEach((child, index) => {
-      let { NodeName, TotalTeacher, HasECTeaCount, HasECPercent } = child;
-      dataset_sub.push([NodeName, HasECPercent, TotalTeacher, HasECTeaCount]);
-    });
+      SubSet.forEach((child, index) => {
+        let { NodeName, TotalTeacher, HasECTeaCount, HasECPercent } = child;
+        dataset_sub.push([NodeName, HasECPercent, TotalTeacher, HasECTeaCount]);
+      });
     let subOption = {
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length > 6,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -316,7 +323,7 @@ function TeacherEC(props, ref) {
 
           return `<div  class="t-tooltip">
                 <p class="nodename">拥有精品课程人数比例${parseInt(
-                  data[1] * 100
+                  correctNumber(data[1] * 100)
                 )}%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>拥有精品课程人数<span>${
@@ -435,7 +442,7 @@ function TeacherEC(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:24,
+          barMaxWidth: 24,
           itemStyle: {
             color: {
               type: "linear",
@@ -467,7 +474,6 @@ function TeacherEC(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_tpr.push([NodeName, Total]);
     //   });
-   
 
     if (!myEchart_tpr) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
@@ -497,6 +503,7 @@ function TeacherEC(props, ref) {
     let tplOption = deepCopy(pieOption);
 
     tprOption.dataset.source = dataset_tpr;
+    tprOption.tooltip.show = false;
     tplOption.dataset.source = dataset_tpl;
     // tprOption.title.text = "教师教龄段人数分布";
 
@@ -530,7 +537,7 @@ function TeacherEC(props, ref) {
         <div className="ter-pie-left">
           <div ref={tplRef} className="ter-echarts"></div>
           <p className="ter-all">
-            <span>{Number(HasECPercent) * 100}</span>%
+            <span>{correctNumber(HasECPercent * 100)}</span>%
           </p>
           <p className="ter-title">
             拥有精品课程人数比例
@@ -548,7 +555,7 @@ function TeacherEC(props, ref) {
         <div className="ter-pie-right">
           <div ref={tprRef} className="ter-echarts"></div>
           <p className="ter-all">
-            <span>{Number(AvgECPercent) * 100}</span>%
+            <span>{correctNumber(AvgECPercent * 100)}</span>%
           </p>
           <p className="ter-title">
             人均课程精品率

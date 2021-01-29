@@ -59,6 +59,7 @@ function Card(props, ref) {
     height,
     title,
     cardid,
+    btn,
     select,
     loading, //控制loading
     lock, //控制锁显示
@@ -98,13 +99,21 @@ function Card(props, ref) {
                   title={"暂不开放该模块"}
                   type={"3"}
                 ></Empty>
-              ) : Component ? (
+              ) : Component ? (<>
+                {btn}
                 <Component data={data} {...componentProps}></Component>
-              ) : (
+                </>) : (
                 ""
               )
             ) : (
-              <Empty title={"暂无数据"} className="pc-empty" type={"3"}></Empty>
+              
+                
+                <Empty
+                  title={"暂无数据"}
+                  className="pc-empty"
+                  type={"3"}
+                ></Empty>
+              
             )
           ) : (
             ""
