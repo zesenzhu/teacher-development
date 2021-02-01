@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-11 10:02:50
- * @LastEditTime: 2021-01-26 13:49:20
+ * @LastEditTime: 2021-02-01 16:27:42
  * @Description: 招聘，培训详情请求hooks
  * @FilePath: \teacher-development\src\hooks\useDetailRequest.js
  */
@@ -70,7 +70,8 @@ export default function useDetailRequest(query, api) {
         if (data.ErrCode === -2) {
           setDetailData({ IsExist: false, IsError: true, IsLoaded: true });
         } else {
-          setDetailData({ IsExist: true, IsError: true, IsLoaded: true });
+          // 都当不存在处理
+          setDetailData({ IsExist: false, IsError: true, IsLoaded: true });
         }
       }
       setLoading(false);

@@ -51,13 +51,14 @@ import "./index.scss";
 import { withRouter } from "react-router-dom";
 import { Reducer, Context, initState } from "./reducer";
 import Edit from "./edit";
+import PageRecruit from './recruit';
 function Recruit(props, ref) {
   let {
     // teacherRecruitMsg,
     location,
     activeTab,
     removeTab,
-    tabid,
+    tabid,recruitid,
     param, //param控制显示的模块
   } = props;
   const [Component, setComponent] = useState("");
@@ -100,6 +101,7 @@ function Recruit(props, ref) {
         {tabid === "recruitDetail" ? <Detail removeTab={removeTab}></Detail> : ""}
         {/* {Component === "edit" ? <Home></Home> : ""} */}
         {Component === "details" ? <Home></Home> : ""}
+        {Component==='recruit'&&<PageRecruit id={recruitid}></PageRecruit>}
       </div>
     </Context.Provider>
   );

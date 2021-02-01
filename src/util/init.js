@@ -66,7 +66,7 @@ export const init = (params, success = () => {}, error = () => {}) => {
   // 默认权限身份IC0011、IC0012、IC0013
   let moduleID = "";
   // 先对params进行判断，是对象还是字符串，字符串就是moduleID，对象就是有很多数据存在里面
-
+let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功能
   if (!params) {
     //没定义或为null，undefiened,'',false,表示所有人都能进来
     moduleID = "";
@@ -74,6 +74,7 @@ export const init = (params, success = () => {}, error = () => {}) => {
     moduleID = params;
   } else if (typeof params === "object") {
     moduleID = params.moduleID || "";
+    onlyBase = params.onlyBase || false;
   }
   console.log(params);
   // tokencheck前需要进行基础信息的请求
@@ -81,6 +82,12 @@ export const init = (params, success = () => {}, error = () => {}) => {
   getBasePlatformMsg().then((data) => {
     //data：基础平台信息，object,{BasePlatformAddr}
     // console.log(data)
+    if(onlyBase){
+      success({
+        basePlatformMsg: data,
+      })
+      return;
+    }
     if (data) {
       TokenCheck({
         //里面进行token验证，用户信息获取，回调返回true才能正常，不然页面初始化失败

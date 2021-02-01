@@ -1740,7 +1740,7 @@ export class ErrorAlert extends React.Component {
     this.state = {
       show: props.show,
       autoHide: props.autoHide ? props.autoHide : false,
-      type: props.autoHide ? "warn" : props.type ? props.type : "btn-error",
+      type:props.type ? props.type : props.autoHide ? "warn" :  "btn-error",
     };
   }
   // componentWillReceiveProps(nextProps){

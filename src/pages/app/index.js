@@ -39,6 +39,7 @@ import SearchchAll from "../searchAll";
 import PersonalDetail from "../personalDetail";
 import { GetUserDetailForHX } from "@/api/personal";
 import School from "../school";
+import { getBasePlatformMsg } from "@/util/init";
 // let { get } = fetch;
 function App(props, ref) {
   // let commonData = useSelector((state) => state.commonData);
@@ -72,7 +73,12 @@ function App(props, ref) {
   // 教师id
   const [TeacherID, setTeacherID] = useState(null);
   // 存模块id
-  const [ModuleID, setModuleID] = useState("");
+  const [ModuleID, setModuleID] = useState(null);
+  // 需不需要初始化
+  const [OnlyBase, setOnlyBase] = useState(false);
+  // 招聘详情id
+  const [RecruitID, setRecruitID] = useState(null);
+
   // 模块类型
   const [ModuleType, setModuleType] = useState("");
   // 存frame返回的数据
@@ -99,6 +105,11 @@ function App(props, ref) {
     let moduleType = getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
     // 单页面
     if (Path[0] === "page" && Path[1]) {
+      // 招聘详情界面
+      if (Path[1] === "recruit") {
+        // 不需要初始化
+        setOnlyBase(true);
+      }
       setFrameType("page");
       // 现在Path[1]只有教师个人画像，不需要身份验证，也没有模块id，后面加page看情况配置mioduleid
       setModuleID("");
@@ -206,80 +217,111 @@ function App(props, ref) {
     async (data) => {
       let isInit = true;
       let Path = handleRoute(location.pathname);
-      // 保证返回的data包含identityDetail，userInfo，basePlatformMsg，role
-      dispatch({
-        type: commonActions.COMMON_SET_IDENTITY,
-        data: data.identityDetail,
-      });
-      dispatch({
-        type: commonActions.COMMON_SET_USER_INFO,
-        data: data.userInfo,
-      });
-      dispatch({
-        type: commonActions.COMMON_SET_BASE_PLAT_FORM_MSG,
-        data: data.basePlatformMsg,
-      });
-      dispatch({
-        type: commonActions.COMMON_SET_ROLE_MSG,
-        data: data.role,
-      });
-      dispatch({
-        type: commonActions.COMMON_SET_TERM_INFO,
-        data: data.termInfo,
-      });
-      dispatch({
-        type: commonActions.COMMON_SET_SYSTEM_SERVER,
-        data: data.systemServer,
-      });
-      data.token &&
-        dispatch(commonActions.SetCommonData({ token: data.token }));
+      // data为false表示没有初始化
+      if (data) {
+        // OnlyBase
+        // 保证返回的data包含identityDetail，userInfo，basePlatformMsg，role
+        data.identityDetail &&
+          dispatch({
+            type: commonActions.COMMON_SET_IDENTITY,
+            data: data.identityDetail,
+          });
+        data.userInfo &&
+          dispatch({
+            type: commonActions.COMMON_SET_USER_INFO,
+            data: data.userInfo,
+          });
+        data.basePlatformMsg &&
+          dispatch({
+            type: commonActions.COMMON_SET_BASE_PLAT_FORM_MSG,
+            data: data.basePlatformMsg,
+          });
+        data.role &&
+          dispatch({
+            type: commonActions.COMMON_SET_ROLE_MSG,
+            data: data.role,
+          });
+        data.termInfo &&
+          dispatch({
+            type: commonActions.COMMON_SET_TERM_INFO,
+            data: data.termInfo,
+          });
+        data.systemServer &&
+          dispatch({
+            type: commonActions.COMMON_SET_SYSTEM_SERVER,
+            data: data.systemServer,
+          });
+        data.token &&
+          data.token &&
+          dispatch(commonActions.SetCommonData({ token: data.token }));
 
-      // systemServer
-      // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
-      dispatch(
-        commonActions.SetLeftMenu(
-          data.role.productLevel,
-          !!data.systemServer[400]
-        )
-      );
-      // // 为空表示是学生，家长，不允许进来
-      // if(!data.role.frameType){
+        // systemServer
+        // 根据版本级别，显示不同的左侧,400为通知公告的系统id，没有就不显示通知告
+        data.role &&
+          dispatch(
+            commonActions.SetLeftMenu(
+              data.role.productLevel,
+              !!data.systemServer[400]
+            )
+          );
 
-      // }
-      // 如果还没定义可以再定义框架类型，因为上面的是先检查是否是page了
-      if (!frameType) {
-        // 根据用户角色显示不同的界面
+        // // 为空表示是学生，家长，不允许进来
+        // if(!data.role.frameType){
 
-        setFrameType(data.role.frameType);
-      } else {
-        //在单页面page的时候做用户信息处理，看是否合法，不合法跳转，只做page的检测，再具体的就由内部做
-        // 刚开始的page只有新版教师个人画像，所以会有多种角色查看该界面，暂不做当前登陆用户角色
-        if (Path[0] === "page" && Path[1] === "personalDetail") {
-          //先获取所看的用户id，检查是否有效
-          if (Path[2]) {
-            let res = await GetUserDetailForHX({
-              baseIP: data.basePlatformMsg.BasicWebRootUrl,
-              userID: Path[2],
-            });
-            if (res.StatusCode === 200) {
-              setTeacherMsg(res.Data);
-              setTeacherID(Path[2]); //这个要在最后改变，因为他控制个人画像里面的副作用的运行
+        // }
+        // 如果还没定义可以再定义框架类型，因为上面的是先检查是否是page了
+        if (!frameType) {
+          // 根据用户角色显示不同的界面
+
+          setFrameType(data.role.frameType);
+        } else {
+          //在单页面page的时候做用户信息处理，看是否合法，不合法跳转，只做page的检测，再具体的就由内部做
+          // 刚开始的page只有新版教师个人画像，所以会有多种角色查看该界面，暂不做当前登陆用户角色
+          if (Path[0] === "page" && Path[1]) {
+            //先获取所看的用户id，检查是否有效
+            if (Path[1] === "personalDetail" && Path[2]) {
+              let res = await GetUserDetailForHX({
+                baseIP: data.basePlatformMsg.BasicWebRootUrl,
+                userID: Path[2],
+              });
+              if (res.StatusCode === 200) {
+                setTeacherMsg(res.Data);
+                setTeacherID(Path[2]); //这个要在最后改变，因为他控制个人画像里面的副作用的运行
+              } else {
+                // if (res.ErrCode === -2) {//id有误
+                window.location.href =
+                  data.basePlatformMsg.BasicWebRootUrl +
+                  "/Error.aspx?errcode=E012";
+                isInit = false;
+                // }
+              }
+            } else if (Path[1] === "recruit" && Path[2]) {
+              setRecruitID(Path[2]);
             } else {
-              // if (res.ErrCode === -2) {//id有误
+              isInit = false;
+              // return ;
               window.location.href =
                 data.basePlatformMsg.BasicWebRootUrl +
-                "/Error.aspx?errcode=E001";
-              isInit = false;
-              // }
+                "/Error.aspx?errcode=E012"; //缺参数
             }
-          } else {
-            isInit = false;
-            // return ;
-            window.location.href =
-              data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E012"; //缺参数
           }
         }
       }
+      // else {
+      //   let res = await getBasePlatformMsg();
+      //   console.log(res);
+      //   // 招聘详情界面
+      //   if (Path[0] === "page" && Path[1] === "recruit"&&Path[2]) {
+
+      //     setRecruitID(Path[2])
+      //   } else {
+      //     isInit = false;
+      //     // return ;
+      //     window.location.href =
+      //     res.BasicWebRootUrl + "/Error.aspx?errcode=E012"; //缺参数
+      //   }
+      // }
+
       // }
       return isInit;
     },
@@ -326,6 +368,7 @@ function App(props, ref) {
       type={frameType}
       leftMenu={leftMenu}
       moduleID={ModuleID}
+      onlyBase={OnlyBase}
       search={
         <Search
           api={searchApi}
@@ -502,8 +545,18 @@ function App(props, ref) {
         teachermsg={TeacherMsg}
         teacherid={TeacherID}
       ></PersonalDetail>
-      {/* 个人画像end */}
 
+      {/* 个人画像end */}
+      {/* 招聘详情 */}
+      <Recruit
+        pageTitle={"招聘计划详情"}
+        frametype={"page"}
+        pageid={"recruit"}
+        param={"recruit"}
+        recruitid={RecruitID}
+      ></Recruit>
+
+      {/* PersonalDetail */}
       {/* 多学校 */}
 
       <School

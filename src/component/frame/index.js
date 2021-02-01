@@ -114,7 +114,8 @@ function Frame(props, ref) {
     tabPorps,
     // 回调函数，获取标签页主要区域的宽高
     onContentresize,
-
+    // 是否需要进行默认的趋势化操作，缺省为需要，false为不需要，配合不需要登陆逻辑的界面
+    onlyBase,
     search,
   } = props;
   // 是否初始化
@@ -133,8 +134,8 @@ function Frame(props, ref) {
   let [PlatMsg, setPlatMsg] = useState({ logo });
   // 各服务器url
   let [SystemServer, setSystemServer] = useState(null);
-// // init 的所有数据
-// const [InitData,setInitData] =useState(null)
+  // // init 的所有数据
+  // const [InitData,setInitData] =useState(null)
   // 左侧菜单
   let [MenuList, setMenuList] = useState([]);
   // tab的ref；
@@ -168,33 +169,39 @@ function Frame(props, ref) {
   // 页面初始化副作用，依赖moduleID，pageInit,type
   useEffect(() => {
     //初始化，didmount，只依赖moduleid，依赖type会请求多次
-    init(
-      moduleID,
-      (data) => {
-        //成功
-        console.log(data);
+    type &&
+      // onlyBase !== false &&
+      init(
+        {moduleID,onlyBase:onlyBase},//onlyBase:只要基础信息，不用验证用户，不用登陆功能
+        (data) => {
+          //成功
 
-        if (data.identityDetail && data.role.version !== "noPower") {
-          //true表示该身份有效
-          setIdentity(data.identityDetail);
-          data.userInfo && setUserInfo(data.userInfo);
-          data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
-          setSystemServer(data.systemServer?data.systemServer:false)
-          // typeof pageInit === "function" && pageInit(data);
-          setInitData(data);
-          // type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
-          setInit(true);
-        } else {
-          //身份无效
-          // console.log('无效')
-          document.location.href =
-            data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E011";
+          if (data.identityDetail && data.role.version !== "noPower") {
+            //true表示该身份有效
+            setIdentity(data.identityDetail);
+            data.userInfo && setUserInfo(data.userInfo);
+            data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
+            setSystemServer(data.systemServer ? data.systemServer : false);
+            // typeof pageInit === "function" && pageInit(data);
+            setInitData(data);
+            // type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
+            setInit(true);
+          }else if(onlyBase){
+            data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
+            setInitData(data);
+            setInit(true);
+            
+          } else {
+            //身份无效
+            // console.log('无效')
+            document.location.href =
+              data.basePlatformMsg.BasicWebRootUrl + "/Error.aspx?errcode=E011";
+          }
+        },
+        () => {
+          // type && setFrameLoading(true); //加载完毕，去掉laoding，需要type存在
         }
-      },
-      () => {
-        // type && setFrameLoading(true); //加载完毕，去掉laoding，需要type存在
-      }
-    );
+      );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moduleID]);
@@ -203,15 +210,15 @@ function Frame(props, ref) {
   // 初始化成功后的逻辑与初始化分开比较好
   useEffect(() => {
     // 初始化成功和loading还在才运行
-    if (Init && FrameLoading) {
-        typeof pageInit === "function" && pageInit(initData).then(isInit=>{
-        if (isInit) {
-          type && setFrameLoading(false);
-        }
-      })
-     
+    if ((Init ) && FrameLoading) {
+      typeof pageInit === "function" &&
+        pageInit(initData).then((isInit) => {
+          if (isInit) {
+            type && setFrameLoading(false);
+          }
+        });
     }
-  }, [type, initData, Init, pageInit, FrameLoading]);
+  }, [type, initData, Init, pageInit, FrameLoading, onlyBase]);
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -321,6 +328,7 @@ function Frame(props, ref) {
             }
           }
         });
+        console.log(pageList)
 
       setPageList(pageList);
       setProVersion(proversion);
@@ -362,7 +370,9 @@ function Frame(props, ref) {
   return (
     <frameContext.Provider value={{ state, dispatch }}>
       <Loading
-        spinning={FrameLoading || MenuList.length === 0}
+        spinning={FrameLoading 
+          // || MenuList.length === 0
+        }
         opacity={false}
         tip={"加载中..."}
       >

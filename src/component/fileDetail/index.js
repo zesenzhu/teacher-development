@@ -125,7 +125,7 @@ function FileDetail(props, ref) {
   }, []);
 
   useImperativeHandle(ref, () => ({
-    reload,
+    reload,detailData
   }));
   return (
     <EmptyReact component={UseScrollbars ? Scrollbars : false}>

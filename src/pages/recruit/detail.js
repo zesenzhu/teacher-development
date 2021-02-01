@@ -79,7 +79,9 @@ function Datail(props, ref) {
   // 转到预览
   const [loading, setLoading] = useState(false);
   // 招聘id
-  const [ID, setID] = useState("");
+  const [ID, setID] = useState(() => {
+    return id ? id : "";
+  });
   const detailRef = useRef(null);
   //获取招聘id
   useEffect(() => {
