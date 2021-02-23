@@ -45,6 +45,16 @@
         .table-index {
             padding-left: 10px;
         }
+        tr {
+            &:hover {
+                .table-handle {
+                    display: inline-block!important;
+                }
+            }
+            .table-handle {
+                display: none!important;
+            }
+        }
     }
 }
 

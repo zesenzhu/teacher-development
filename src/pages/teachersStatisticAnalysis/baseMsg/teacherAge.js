@@ -130,6 +130,7 @@ function TeacherAge(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       tooltip: {
@@ -139,7 +140,7 @@ function TeacherAge(props, ref) {
         formatter: (params) => {
           let { percent, value } = params;
 
-          return `${value[0]}<br/>${value[1]}人，占${percent}%`;
+          return `${value[0]}<br/>${value[1]}人，占 ${percent}%`;
         },
         textStyle: {
           color: "#fff",
@@ -169,8 +170,8 @@ function TeacherAge(props, ref) {
           itemStyle: {
             borderColor: "#fff",
             borderWidth: 1,
-            shadowColor: "rgba(0, 0, 0, 0.15)",
-            shadowBlur: 7,
+            // shadowColor: "rgba(0, 0, 0, 0.15)",
+            // shadowBlur: 7,
           },
           label: {
             show: true,
@@ -222,6 +223,7 @@ function TeacherAge(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       backgroundColor: "#f5f5f5",
@@ -484,7 +486,10 @@ function TeacherAge(props, ref) {
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [AgeList, productMsg]);
-
+// 柱状图
+// useLayoutEffect(() => {
+   
+// }, [])
   return (
     <div className={`TeacherAge ${className ? className : ""} `}>
       <div className="tt-top">

@@ -211,7 +211,7 @@ function Editor(props, ref) {
   //  普通输入检查
   const checkGeneralInput = useCallback(
     (value, success = () => {}, error = (isNull) => {}) => {
-      checkInput({ value, success, error });
+      checkInput({ value, success, error,regular:/^[A-Za-z0-9_(),.';!?":，。、？“”：‘’；《》（）\u4e00-\u9fa5-]{0,100}$/ });
     },
     []
   );

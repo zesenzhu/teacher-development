@@ -87,18 +87,11 @@ function Datail(props, ref) {
   useEffect(() => {
     if (location.pathname) {
       let Path = handleRoute(location.pathname);
-      // if(Path[0] === "recruitDetail" &&
-      // Path[1] ){
-      //   setID(Path[1])
-      // }else if(!Path[1]){
-      //   // console.log('teacherRecruit')
-      //   removeTab&&  removeTab("", "", "teacherRecruit", "")
-      // }
-      Path[0] === "recruitDetail" &&
-        Path[1] &&
-        Path[1] !== ID &&
-        setID(Path[1]);
-      if (Path[0] === "recruitDetail" && ID && detailRef.current) {
+ 
+      // 第一次进来赋值id
+      Path[0] === "recruitDetail" && Path[1] && ID === "" && setID(Path[1]);
+      // 第二次之后进来判断是否是本页在reload
+      if (Path[0] === "recruitDetail" && ID===Path[1] && detailRef.current) {
         //刷新
         detailRef.current.reload();
       }

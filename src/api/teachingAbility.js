@@ -63,7 +63,7 @@ export function getTeachER(payload = {}) {
         // "NoUploadedCount":60,
         // "UploadedPercent":0.963,            //参与率
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
         //     "HasUploadedCount":11,            //该节点参与上传人数
@@ -85,9 +85,11 @@ export function getTeachTP(payload = {}) {
   let { schoolID, collegeID, selectLevel, term } = payload;
   let url =
     BasicProxy +
-    `/Statistics/TeachingAbility/TP?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
-      collegeID ? collegeID : ""
-    }&SelectLevel=${selectLevel ? selectLevel : ""}&Term=${term ? term : ""}`;
+    `/Statistics/TeachingAbility/TP?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }&Term=${term ? term : ""}`;
   // "?" +
   // (pageIndex ? "pageIndex=" + pageIndex : "") +
   // (keyword ? "&keyword=" + keyword : "") +
@@ -105,7 +107,7 @@ export function getTeachTP(payload = {}) {
         // "NoUploadedCount":60,            //未参与制作人数
         // "UploadedPercent":0.963,            //参与率
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
         //     "HasUploadedCount":39,            //该节点参与上传人数
@@ -128,10 +130,12 @@ export function getTeachEC(payload = {}) {
   let { schoolID, collegeID, selectLevel, term } = payload;
   let url =
     BasicProxy +
-    `/Statistics/TeachingAbility/EC?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
-      collegeID ? collegeID : ""
-    }&SelectLevel=${selectLevel ? selectLevel : ""}&Term=${term ? term : ""}`;
- 
+    `/Statistics/TeachingAbility/EC?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }&Term=${term ? term : ""}`;
+
   return fetch
     .get({ url, securityLevel: 2 })
     .then((res) => res.json())
@@ -144,7 +148,7 @@ export function getTeachEC(payload = {}) {
         // "HasECPercent":0.963,            //拥有精品课程人数比例
         // "AvgECPercent":0.963,            //人均课程精品率
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
         //     "HasECTeaCount":11,            //拥有精品课程的教师人数
@@ -171,7 +175,7 @@ export function getEvaluateCourse(payload = {}) {
     }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
       selectLevel ? selectLevel : ""
     }&Term=${term ? term : ""}`;
- 
+
   return fetch
     .get({ url, securityLevel: 2 })
     .then((res) => res.json())
@@ -179,7 +183,7 @@ export function getEvaluateCourse(payload = {}) {
       if (json.StatusCode === 200) {
         // "AvgScore":4.5,            //平均估分
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "AvgScore":50,            //该节点下的教师平均估分
         // }]
@@ -203,7 +207,7 @@ export function getTeacherRA(payload = {}) {
     }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
       selectLevel ? selectLevel : ""
     }&Term=${term ? term : ""}`;
- 
+
   return fetch
     .get({ url, securityLevel: 2 })
     .then((res) => res.json())
@@ -216,7 +220,7 @@ export function getTeacherRA(payload = {}) {
         // "NoJoinTeaCount":60,                //未参与活动教师数量
         // "HasJoinPercent":0.96,                //参与活动教师数量
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
         //     "HasJoinTeaCount":39,            //该节点参与活动人数
@@ -243,7 +247,7 @@ export function getTeachRP(payload = {}) {
     }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
       selectLevel ? selectLevel : ""
     }&Term=${term ? term : ""}`;
- 
+
   return fetch
     .get({ url, securityLevel: 2 })
     .then((res) => res.json())
@@ -258,7 +262,7 @@ export function getTeachRP(payload = {}) {
         // "NoJoinTeaCount":60,                //未参与课题教师数量
         // "HasJoinPercent":0.96,                //参与活动教师百分比
         // "SubSet":[{
-        //     "NodeID":"XXXXXXXXXXX",            
+        //     "NodeID":"XXXXXXXXXXX",
         //     "NodeName":"语文",            //节点名称（学科、学院等）
         //     "TotalTeacher":50,            //该节点下的教师数量
         //     "HasJoinTeaCount":39,            //该节点参与课题人数
@@ -266,6 +270,426 @@ export function getTeachRP(payload = {}) {
         //     "HasJoinPercent":0.963,                    //参与率
         // }]
         return json.Data ? json.Data : {};
+      } else {
+        return false;
+      }
+    });
+}
+
+/**
+ * @description:历史电子资源上传参与率  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2260
+ * @return {*}
+ */
+export function getHistoryER(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/ER?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                TotalTeacher, //教师总数量
+                HasUploadedCount, //参与上传人数
+                NoUploadedCount, //未参与上传人数
+                UploadedPercent, //参与率
+                Value,
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [UploadedPercent],
+                dataList: [
+                  [Year, NodeName, UploadedPercent],
+                  [TotalTeacher],
+                  [HasUploadedCount],
+                  [NoUploadedCount],
+                ],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: "percent",
+
+            titleList: [
+              ["", "学期", "电子资源上传参与率 ", "%"],
+              ["教师总人数：", "人"],
+              ["已参与上传人数：", "人"],
+              ["未参与上传人数：", "人"],
+            ],
+            xName: "学期",
+            yName: "参与率",
+            type: ["参与率"],
+            children,
+          });
+        });
+        return data;
+      } else {
+        return false;
+      }
+    });
+}
+
+/**
+ * @description:历史电子教案制作参与率  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2261
+ * @return {*}
+ */
+export function getHistoryTP(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/TP?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                TotalTeacher, //教师总数量
+                HasUploadedCount, //参与上传人数
+                NoUploadedCount, //未参与上传人数
+                UploadedPercent, //参与率
+                Value,
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [UploadedPercent],
+                dataList: [
+                  [Year, NodeName, UploadedPercent],
+                  [TotalTeacher],
+                  [HasUploadedCount],
+                  [NoUploadedCount],
+                ],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: "percent",
+            titleList: [
+              ["", "学期", "电子教案制作参与率 ", "%"],
+              ["教师总人数：", "人"],
+              ["已参与上传人数：", "人"],
+              ["未参与上传人数：", "人"],
+            ],
+            xName: "学期",
+            yName: "参与率",
+            type: ["参与率"],
+            children,
+          });
+        });
+        return data;
+      } else {
+        return false;
+      }
+    });
+}
+/**
+ * @description:历史精品课程拥有率  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2262
+ * @return {*}
+ */
+export function getHistoryEC(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/EC?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                TotalTeacher, //教师总数量
+                HasECTeaCount, //拥有精品课程人数
+                NoECTeaCount, //未拥有精品课程人数
+                HasECPercent, //拥有精品课程人数比例
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [HasECPercent],
+                dataList: [
+                  [Year, NodeName, HasECPercent],
+                  [TotalTeacher],
+                  [HasECTeaCount],
+                  [NoECTeaCount],
+                ],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: "percent",
+            titleList: [
+              ["", "学期", "拥有精品课程人数比例 ", "%"],
+              ["教师总人数：", "人"],
+              ["拥有精品课程人数", "人"],
+              ["未拥有精品课程人数", "人"],
+            ],
+            xName: "学期",
+            yName: "拥有精品课程人数比例",
+            type: ["拥有精品课程人数比例"],
+            children,
+          });
+        });
+        return data;
+      } else {
+        return false;
+      }
+    });
+}
+/**
+ * @description:历史电子督课平均估分  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2263
+ * @return {*}
+ */
+export function getHistoryEvaluateCourse(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/EvaluateCourse?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                AvgScore, //拥有精品课程人数比例
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [AvgScore],
+                dataList: [[Year,  ],[NodeName,AvgScore]],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: 5,
+            titleList: [["", "学期"  ],[
+             '', "教师总体评估得分：", "分"
+            ]],
+            xName: "学期",
+            yName: "评估得分",
+            type: ["评估得分"],
+            children,
+          });
+        });
+        return data;
+      } else {
+        return false;
+      }
+    });
+}
+/**
+ * @description:历史教研活动参与率  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2264
+ * @return {*}
+ */
+export function getHistoryRA(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/RA?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                TotalTeacher, //教师总数量
+                HasJoinTeaCount, //拥有精品课程人数
+                NoJoinTeaCount, //未拥有精品课程人数
+                HasJoinPercent, //拥有精品课程人数比例
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [HasJoinPercent],
+                dataList: [
+                  [Year, NodeName, HasJoinPercent],
+                  [TotalTeacher],
+                  [HasJoinTeaCount],
+                  [NoJoinTeaCount],
+                ],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: "percent",
+            titleList: [
+              ["", "学期", "教研活动参与率 ", "%"],
+              ["教师总人数：", "人"],
+              ["已参与人数：", "人"],
+              ["未参与人数：", "人"],
+            ],
+            xName: "学期",
+            yName: "参与率",
+            type: ["参与率"],
+            children,
+          });
+        });
+        return data;
+      } else {
+        return false;
+      }
+    });
+}
+/**
+ * @description:历史教研课题参与率  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2265
+ * @return {*}
+ */
+export function getHistoryRP(payload = {}) {
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/TeachingAbility/History/RP?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        let data = [];
+
+        json.Data.forEach((c) => {
+          let { NodeName, NodeID, History } = c;
+          let children = [];
+          History instanceof Array &&
+            History.forEach((h, i) => {
+              let {
+                Year,
+
+                TotalTeacher, //教师总数量
+                HasJoinTeaCount, //拥有精品课程人数
+                NoJoinTeaCount, //未拥有精品课程人数
+                HasJoinPercent, //拥有精品课程人数比例
+              } = h;
+              children.push({
+                nodeName: Year,
+                nodeID: Year,
+                source: [HasJoinPercent],
+                dataList: [
+                  [Year, NodeName, HasJoinPercent],
+                  [TotalTeacher],
+                  [HasJoinTeaCount],
+                  [NoJoinTeaCount],
+                ],
+              });
+            });
+          data.push({
+            nodeName: NodeName,
+            nodeID: NodeID,
+            yType: "percent",
+            titleList: [
+              ["", "学期", "教研课题参与率 ", "%"],
+              ["教师总人数：", "人"],
+              ["已参与人数：", "人"],
+              ["未参与人数：", "人"],
+            ],
+            xName: "学期",
+            yName: "参与率",
+            type: ["参与率"],
+            children,
+          });
+        });
+        return data;
       } else {
         return false;
       }

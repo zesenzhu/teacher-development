@@ -248,8 +248,8 @@ function TeacherEC(props, ref) {
           itemStyle: {
             borderColor: "#fff",
             borderWidth: 1,
-            shadowColor: "rgba(0, 0, 0, 0.15)",
-            shadowBlur: 7,
+            // shadowColor: "rgba(0, 0, 0, 0.15)",
+            // shadowBlur: 7,
           },
           avoidLabelOverlap: true,
           label: {
@@ -303,6 +303,7 @@ function TeacherEC(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       // backgroundColor: "#f5f5f5",
@@ -537,7 +538,7 @@ function TeacherEC(props, ref) {
         <div className="ter-pie-left">
           <div ref={tplRef} className="ter-echarts"></div>
           <p className="ter-all">
-            <span>{correctNumber(HasECPercent * 100)}</span>%
+            <span>{correctNumber(HasECPercent * 100)||0}</span>%
           </p>
           <p className="ter-title">
             拥有精品课程人数比例

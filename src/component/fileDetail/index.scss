@@ -126,6 +126,7 @@
                 opacity: 0.9;
                 padding: 0 23px;
                 background-image: linear-gradient(90deg, #3bcd3b 0%, #2fb22f 100%), linear-gradient(#a1adb4, #a1adb4);
+                box-shadow: 0 10px 15px -10px #3bcd3b;
                 border-radius: 18px;
                 &:hover {
                     opacity: 1;
@@ -256,7 +257,7 @@
                     background: url(./images/txt.png) no-repeat center center / contain;
                 }
             }
-            &.file-type-pic {
+            .file-type-pic {
                 &::before {
                     background: url(./images/png.png) no-repeat center center / contain;
                 }

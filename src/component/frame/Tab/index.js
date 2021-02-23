@@ -44,6 +44,7 @@ import { Tabs } from "antd";
 import { Scrollbars } from "react-custom-scrollbars";
 import { frameContext } from "../index";
 import { debounce } from "../../../util/public";
+import {Loading} from '@/component/common'
 let { TabPane } = Tabs;
 
 function Tab(props, ref) {
@@ -70,12 +71,21 @@ function Tab(props, ref) {
   //   const [ComponentList, setComponentList] = useState(componentList);
   const [TabList, setTabList] = useState([]);
   const [, setTabListLength] = useState(TabList.length);
-
+  const [Height,setHeight] = useState(0)
+const [LoadingShow,setLoadingShow] = useState(false)
   const { state, dispatch } = useContext(frameContext);
   // 路径
   const Path = useMemo(() => {
     // console.log(location);
+    setLoadingShow(true)
 
+    setTimeout(() => {
+      // 主动触发resize，更新里面的echarts
+      var myEvent = new Event("resize");
+      window.dispatchEvent(myEvent);
+      console.log(myEvent);
+      setLoadingShow(false)
+    },0);
     return location && typeof location.pathname === "string"
       ? handleRoute(location.pathname)
       : "";
@@ -95,7 +105,10 @@ function Tab(props, ref) {
         let { props } = child;
         // 路由匹配包含，同事看tablist是否存在,尽量不要tabid有字符一样
         // 是否重定向，当节点设置了mustParam的时候，path没有param则会重定向到指定的redirct路径，没设置redirct则重定向到该节点key
-        resetRoute = props.tabid === Path[0] && props.mustparam && !Path[1];
+        if (!resetRoute) {
+          resetRoute = props.tabid === Path[0] && props.mustparam && !Path[1];
+        }
+
         if (
           Path[0] === props.tabid &&
           !TabList.some((tab) => {
@@ -141,18 +154,18 @@ function Tab(props, ref) {
           setTabList(TabList);
           setTabListLength(TabList.length);
         }
-        if (resetRoute) {
+        if (resetRoute === true) {
           resetRoute = props.redirect;
           // history.push(props.redirect);
         }
       });
-
     if (resetRoute) {
       history.push(resetRoute);
     } else {
       setTabActive(tabkey);
     }
     // console.log(Path, ComponentList);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Path, ComponentList]);
   // bar跳转
@@ -265,6 +278,7 @@ function Tab(props, ref) {
       typeof onContentresize === "function" && onContentresize(height, width);
 
       dispatch({ type: "RESIZE_CONTENT", data: height });
+      setHeight(height)
     };
     window.addEventListener("resize", debounce(resize, 500), false);
 
@@ -311,6 +325,7 @@ function Tab(props, ref) {
         let { children, props } = child;
         return (
           <TabPane
+            forceRender={true}
             tab={
               // <NavLink to={"/" + props.tabid} className="tab-name">
               <div
@@ -344,6 +359,7 @@ function Tab(props, ref) {
                     // 阻止与原生事件的冒泡
                     e.nativeEvent.stopImmediatePropagation();
                     // console.log(e);
+
                     removeTab(props.tabid, props.param);
                     // // 一个不许删
                     // if (TabList.length <= 1) {
@@ -385,7 +401,8 @@ function Tab(props, ref) {
             }
             key={props.tabkey}
           >
-            <Scrollbars>{children}</Scrollbars>
+            <Loading opacity={false} tip={'加载中...'} spinning={LoadingShow}>
+            <Scrollbars autoHeight={Height}  autoHeightMin={Height}  autoHeightMax={Height}>{children}</Scrollbars></Loading>
           </TabPane>
         );
       })}

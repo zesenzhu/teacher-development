@@ -41,11 +41,11 @@
         margin-bottom: 0;
         color: #999999;
         .tc-tip-1 {
-            font-weight: bold;
+            // font-weight: bold;
             color: #333333;
         }
         .tc-tip-2 {
-            font-weight: bold;
+            // font-weight: bold;
             color: #009900;
         }
     }
@@ -67,6 +67,7 @@
             color: #cccccc;
             span {
                 color: #fff;
+                padding: 0 3px;
             }
         }
         .msg {
@@ -283,10 +284,10 @@
         color: #999999;
         .tt-tip-1 {
             color: #333333;
-            font-weight: bold;
+            // font-weight: bold;
         }
         .tt-tip-2 {
-            font-weight: bold;
+            // font-weight: bold;
             color: #009900;
         }
     }
@@ -395,6 +396,7 @@
             text-align: left;
             span {
                 color: #fff;
+                padding: 0 3px;
             }
         }
         .msg {

@@ -61,7 +61,7 @@ import {
   //   useDispatch,
 } from "react-redux";
 import React, {
-  // useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
@@ -123,14 +123,17 @@ function PersonalList(props, ref) {
     nodeID: "",
     nodeType: "",
   });
-
+  const onClickName = useCallback((data) => {
+    window.open(
+      window.location.search + "#/page/personalDetail/" + data.UserID
+    );
+  }, []);
   // 初始化列表
   useEffect(() => {
     // 非教育局，使用node
     if (productLevel !== 1) {
       getNode({ collegeID, schoolID }).then((res) => {
         if (res.StatusCode === 200) {
-          console.log(res)
           setFirstNodeList([
             { value: "", title: "全部" + levelMsg.sub },
             ...res.data[0],
@@ -156,8 +159,13 @@ function PersonalList(props, ref) {
         sorter: true,
         render: (data) => {
           let { UserName, PhotoPath } = data;
+          
           return (
-            <span className="table-name" title={UserName}>
+            <span
+              className="table-name"
+              onClick={onClickName.bind(this,data)}
+              title={UserName}
+            >
               <i
                 style={{
                   background: `url(${PhotoPath})no-repeat center 0/24px`,
@@ -285,17 +293,7 @@ function PersonalList(props, ref) {
         render: (data) => {
           return (
             <span className="table-handle">
-              <span
-                className=" btn-check"
-                onClick={() => {
-                  // history.push("/personalDetail/" + data.UserID);
-                  window.open(
-                    window.location.search +
-                      "#/page/personalDetail/" +
-                      data.UserID
-                  );
-                }}
-              ></span>
+              <span className=" btn-check" onClick={onClickName.bind(this,data)}></span>
             </span>
           );
         },
@@ -303,6 +301,7 @@ function PersonalList(props, ref) {
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelMsg]);
+
   return (
     <div className="PersonalList" style={{ height: height }}>
       <div className="pl-top">
@@ -336,7 +335,7 @@ function PersonalList(props, ref) {
                 onSelect={(e, option) => {
                   setQuery({ ...query, nodeID: e, nodeType: option.nodeType });
                   setFirstSelect(e);
-                  console.log(SecondNodeObj[e],e,SecondNodeObj)
+                  console.log(SecondNodeObj[e], e, SecondNodeObj);
                   setSecondNodeList(
                     SecondNodeObj[e]
                       ? SecondNodeObj[e]

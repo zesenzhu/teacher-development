@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-29 16:47:13
- * @LastEditTime: 2021-01-05 10:00:20
+ * @LastEditTime: 2021-02-03 15:52:11
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\historyModal.js
  */
@@ -28,8 +28,8 @@ import React, {
   useRef,
   forwardRef,
 } from "react";
-import { Modal } from "../../component/common";
-import { deepMap, resizeForEcharts,changeToArray } from "../../util/public";
+import { Modal, Loading, Empty } from "../../component/common";
+import { deepMap, resizeForEcharts, changeToArray } from "../../util/public";
 import echarts from "echarts/lib/echarts";
 
 import "echarts/lib/chart/line";
@@ -43,7 +43,34 @@ function HistoryModal(props, ref) {
   // *title：弹窗的头部文案
   // *childKey:data有下级的时候的键,可缺省，默认为children
   // *类型选择名字，可缺省，默认类型选择
+
+  //data: [
+  //   {
+  //     nodeName: "全部",
+  //     nodeID: "all",
+  //     titleList: [
+  //       ["", "年", "教师人均周课时", "节次"],
+  //       ["人均总课时", "节"],
+  //       ["人均任教班级", "个"],
+  //       ["人均任教学生", "人"],
+  //     ],
+  //     xName: "周课时数",
+  //     yName: "年份",
+  //     source: [], //数据源
+  //     type: ["测试1", "测试2"], //多个数据时候的名称lengen
+  //     children: [
+  //       {
+  //         nodeName: "2018",
+  //         nodeID: 2018,
+  //         dataList: [["2018", "初中学段", "21"], ["150"], ["2"], ["60"]],
+  //         source: [70, 65],
+  //       },
+
+  //     ],
+  //   },
+  // ]
   let {
+    api,
     title,
     visible,
     data,
@@ -55,17 +82,59 @@ function HistoryModal(props, ref) {
     onClose,
   } = props;
   // 控制显示
-  const [Visible, setVisible] = useState(visible ? true : false);
+  // const [Visible, setVisible] = useState(visible ? true : false);
+
+  const [Visible, setVisible] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    controlVisible: (bool = true) => {
+      setVisible(!!bool);
+    },
+  }));
+
+  return (
+    <Modal
+      className={`HistoryModal ${className ? className : ""}`}
+      footer={null}
+      type={"4"}
+      visible={Visible}
+      width={width || 886}
+      title={title ? title : "历年人均"}
+      onCancel={() => {
+        setVisible(false);
+        typeof onClose === "function" && onClose(false);
+      }}
+    >
+      {Visible && <ModalContent {...props}></ModalContent>}
+    </Modal>
+  );
+}
+// 当弹窗隐藏，销毁这些数据
+function ModalContent(props) {
+  let {
+    api,
+
+    childKey,
+    color,
+    typeName,
+  } = props;
+  // 控制显示
+  // const [Visible, setVisible] = useState(visible ? true : false);
   // 处理后的数据
   const [Source, setSource] = useState([]);
   // 类型选择
   const [TypeSelect, setTypeSelect] = useState(0);
   // 展示的数据选择
   const [SourceSelect, setSourceSelect] = useState([]);
- 
+
+  const [Visible, setVisible] = useState(false);
+
+  const [Data, setData] = useState(null);
+
+  // loading加载
+  const [loading, setLoading] = useState(true);
   // 柱状
 
- 
   // 处理颜色
   const colors = useMemo(() => {
     return (
@@ -82,14 +151,25 @@ function HistoryModal(props, ref) {
     );
   }, [color]);
   useEffect(() => {
-    setVisible(!!visible);
-  }, [visible]);
+    if (typeof api === "function") {
+      api().then((res) => {
+        setLoading(false);
+        console.log(res);
+
+        setData(res);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // useEffect(() => {
+  //   setVisible(!!visible);
+  // }, [visible]);
   // 对data进行处理
   useEffect(() => {
-    if (data !== undefined && !(data instanceof Array)) {
+    if (Data !== undefined && !(Data instanceof Array)) {
       return;
     }
-    const myData = data || [
+    const myData = Data || [
       {
         nodeName: "全部",
         nodeID: "all",
@@ -257,7 +337,7 @@ function HistoryModal(props, ref) {
     deepMap(
       myData,
       ({ child, level, parent, indexArray }) => {
-        let { nodeName, nodeID, titleList, xName, yName, type } = child;
+        let { nodeName, nodeID, titleList, xName, yName, type,yType } = child;
         // 第一层
         if (level === 1) {
           typeIndex++;
@@ -272,7 +352,7 @@ function HistoryModal(props, ref) {
             nodeName,
             xName,
             yName,
-            nodeID,
+            nodeID,yType,
             type: changeToArray(type),
             children: [],
           };
@@ -297,14 +377,12 @@ function HistoryModal(props, ref) {
       // typeList_level_1[0].children = source_level_1;
       source_level_2 = source_level_1;
     }
-
     setTypeSelect(0);
     setSourceSelect(source_level_2[0].children);
     setSource(source_level_2);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, childKey]);
+  }, [Data, childKey]);
   // 进行echarts 的挂载
- 
 
   // 处理为数组
   const changeToArray = useCallback((param) => {
@@ -328,25 +406,9 @@ function HistoryModal(props, ref) {
     return end;
   }, []);
 
-  // useImperativeHandle(ref,()=>({
-  //   controlVisible:(bool)=>{
-  //     setVisible(!!bool)
-  //   }
-  // }))
   return (
-    <Modal
-      className={`HistoryModal ${className ? className : ""}`}
-      footer={null}
-      type={"4"}
-      visible={Visible}
-      width={width || 886}
-      title={title ? title : "历年人均"}
-      onCancel={() => {
-        setVisible(false);
-        onClose(false);
-      }}
-    >
-      {Visible ? (
+    <Loading spinning={loading} tip={"加载中"}>
+      {Data !== false ? (
         <>
           {Source.length > 1 ? (
             <p className="type-label">
@@ -369,27 +431,31 @@ function HistoryModal(props, ref) {
               })}
             </p>
           ) : (
-            <div style={{height:'40px'}}></div>
+            <div style={{ height: "40px" }}></div>
           )}
 
           {/* <div ref={echartsRef} className="teacher-bar hm-echarts">
-      
-          </div> */}
+
+  </div> */}
           <MyEcharts
             colors={colors}
             Source={Source}
-            Visible={Visible}
+            // Visible={Visible}
             TypeSelect={TypeSelect}
           ></MyEcharts>
         </>
       ) : (
-        ""
+        <Empty
+          style={{ marginTop: "130px" }}
+          type={"4"}
+          title={"暂无历年数据"}
+        ></Empty>
       )}
-    </Modal>
+    </Loading>
   );
 }
 function MyEcharts(props) {
-  let { colors, Source, Visible, TypeSelect } = props;
+  let { colors, Source,  TypeSelect } = props;
   // 柱状
 
   let [myEchart, setMyEchart] = useState(null);
@@ -399,7 +465,7 @@ function MyEcharts(props) {
 
   // 进行echarts 的挂载
   useLayoutEffect(() => {
-    if (!Visible || Source.length === 0 || !echartsRef.current) {
+    if ( Source.length === 0 || !echartsRef.current) {
       return;
     }
     if (!myEchart) {
@@ -420,7 +486,7 @@ function MyEcharts(props) {
         tip = changeToArray(tip);
         let title = "";
         tip.forEach((data) => {
-          title += data || "";
+          title += data === 0 || data ? data : "";
         });
         if (index === 0) {
           tooltip += `<p class="nodename">${title}</p>`;
@@ -436,9 +502,11 @@ function MyEcharts(props) {
         // xAxisIndex: 1,
         smooth: true,
         symbolSize: 7,
-        showSymbol: false,
+        showSymbol: true,
       });
     });
+    // yType为percent表示使用100%，有值表示使用这个max
+    let yMax = source.yType==='percent'?{max:100}:!isNaN(source.yType)?source.yType:{}
     let option = {
       dataset: {
         source: data,
@@ -459,7 +527,20 @@ function MyEcharts(props) {
           }</div>`;
         },
       },
-
+      dataZoom: {
+        type: "slider",
+        show: data.length > 7,
+        // xAxisIndex: [0],
+        // start: 0,
+        // end: 10/(dataset.length-1)*100,
+        minSpan: (6 / (data.length - 1)) * 100,
+        maxSpan: (6 / (data.length - 1)) * 100,
+        zoomLock: true,
+        showDetail: false,
+        showDataShadow: false,
+        height: 0,
+        bottom: 25,
+      },
       legend: {
         show: source.type.length > 1,
         right: 50,
@@ -517,6 +598,13 @@ function MyEcharts(props) {
           color: "#666666",
           fontSize: 12,
           margin: 13,
+          formatter: (value) => {
+            let data = value;
+            if (typeof value === "string" && value.length > 12) {
+              data = value.slice(0, 9) + "...";
+            }
+            return data;
+          },
         },
         splitLine: {
           show: false,
@@ -531,10 +619,14 @@ function MyEcharts(props) {
           color: "#b8b8b8",
           align: "left",
         },
+        ...yMax,
         axisLabel: {
           color: "#b8b8b8",
           margin: 20,
           fontSize: 12,
+          formatter: (value) => {
+            return source.yType==='percent'?`${value }%`:value;
+          },
         },
         splitLine: {
           lineStyle: {
@@ -547,7 +639,6 @@ function MyEcharts(props) {
     };
 
     // option.dataset.source = dataList;
-
     // 设置option
     myEchart.setOption(option);
     return () => {
@@ -555,8 +646,8 @@ function MyEcharts(props) {
 
       myEchart.off();
     };
-  }, [Source, Visible, TypeSelect]);
- 
- return  <div ref={echartsRef} className="teacher-bar hm-echarts"></div>;
+  }, [Source,  TypeSelect]);
+
+  return <div ref={echartsRef} className="teacher-bar hm-echarts"></div>;
 }
 export default memo(forwardRef(HistoryModal));

@@ -34,6 +34,12 @@
 .home-top {
     padding: 12px 0;
     height: 54px;
+    .lg-btn {
+        opacity: 0.9;
+        &:hover {
+            opacity: 1;
+        }
+    }
     .btn-publish {
         float: right;
         margin-left: 10px;
@@ -80,6 +86,7 @@
 .draft-box {
     max-width: 1000px;
     .ant-tooltip-inner {
-        padding-bottom: 16px;
+        padding: 10px 10px 16px;
+        // padding-bottom: 16px;
     }
 }

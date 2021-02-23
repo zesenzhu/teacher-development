@@ -68,7 +68,7 @@ function TeacherTitle(props, ref) {
     className,
     levelHash,
     productMsg,
-    data: { BenkePercent, MiddleTitlePercent, EduList, SubSet, TitleList },
+    data: { BenkePercent, MiddleTitlePercent, EduList, SubSet, TitleList,MiddleTitleName },
   } = props;
   productMsg = productMsg ? productMsg : {};
   // echart实例
@@ -204,6 +204,7 @@ function TeacherTitle(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       tooltip: {
@@ -244,8 +245,8 @@ function TeacherTitle(props, ref) {
           itemStyle: {
             borderColor: "#fff",
             borderWidth: 1,
-            shadowColor: "rgba(0, 0, 0, 0.15)",
-            shadowBlur: 7,
+            // shadowColor: "rgba(0, 0, 0, 0.15)",
+            // shadowBlur: 7,
           },
           label: {
             show: true,
@@ -290,6 +291,7 @@ function TeacherTitle(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       backgroundColor: "#f5f5f5",
@@ -522,7 +524,7 @@ function TeacherTitle(props, ref) {
         <p className="tt-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
           教师学历本科率<span className="tt-tip-2">{BenkePercent}</span>
-          ，一级教师及以上占比
+          ，{MiddleTitleName||'一级教师及以上占比'}
           <span className="tt-tip-2">{MiddleTitlePercent}</span>
         </p>
 

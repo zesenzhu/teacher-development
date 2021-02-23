@@ -32,7 +32,7 @@
 import fetch from "../util/fetch";
 import ipConfig from "../util/ipConfig";
 import moment from "moment";
-import { deepMap, SetNaNToNumber,transTime } from "../util/public";
+import { deepMap, SetNaNToNumber, transTime } from "../util/public";
 let { BasicProxy } = ipConfig;
 /**
  * @description:获取画像列表 http://192.168.129.1:8033/showdoc/web/#/21?page_id=2081
@@ -128,7 +128,7 @@ export function getNode(payload = {}) {
         json.Data instanceof Array &&
           deepMap(
             json.Data,
-            ({ child: { NodeID, NodeName, NodeType }, level,indexArray }) => {
+            ({ child: { NodeID, NodeName, NodeType }, level, indexArray }) => {
               if (level === 1) {
                 data[0].push({
                   value: NodeID,
@@ -136,7 +136,7 @@ export function getNode(payload = {}) {
                   nodeType: NodeType,
                 });
               } else if (level === 2) {
-                let parentID = json.Data[indexArray[0]].NodeID
+                let parentID = json.Data[indexArray[0]].NodeID;
                 if (data[1][parentID] instanceof Array) {
                   data[1][parentID].push({
                     value: NodeID,
@@ -711,12 +711,38 @@ export function GetResearchByUserID(payload = {}) {
     .then((res) => res.json())
     .then((json) => {
       if (json.StatusCode === 200 && json.Data) {
+        let {
+          ProjectCount,
+          CompletedCount,
+          ActivityCount,
+          ProjectList,
+          CompletedList,
+          ActivityList,
+        } = json.Data;
         return {
           StatusCode: json.StatusCode,
           Data: [
-            json.Data.ProjectCount,
-            json.Data.CompletedCount,
-            json.Data.ActivityCount,
+            {
+              count: !isNaN(ProjectCount) ? Number(ProjectCount) : 0,
+              list:
+                ProjectList instanceof Array
+                  ? ProjectList.map((child) => {
+                      return { ...child, Name: child.ProjectName };
+                    })
+                  : [],
+            },
+            {
+              count: !isNaN(CompletedCount) ? Number(CompletedCount) : 0,
+              list: CompletedList instanceof Array ? CompletedList.map((child) => {
+                return { ...child, Name: child.ProjectName };
+              }) : [],
+            },
+            {
+              count: !isNaN(ActivityCount) ? Number(ActivityCount) : 0,
+              list: ActivityList instanceof Array ? ActivityList.map((child) => {
+                return { ...child, Name: child.ActivityName };
+              }) : [],
+            },
           ],
         };
       } else {
@@ -811,10 +837,17 @@ export function GetLogInfoByUserID(payload = {}) {
           StatusCode: json.StatusCode,
           Data: {
             ...json.Data,
-            TimeSpan: transTime(parseFloat(TimeSpan).toFixed(2),'m',).Time_En_Low, //累计上机时长
-            DayAvgTimeSpan:transTime(parseFloat(DayAvgTimeSpan).toFixed(2),'m',).Time_En_Low, //累计上机时长
+            TimeSpan: transTime(parseFloat(TimeSpan).toFixed(2), "m")
+              .Time_En_Low, //累计上机时长
+            DayAvgTimeSpan: transTime(
+              parseFloat(DayAvgTimeSpan).toFixed(2),
+              "m"
+            ).Time_En_Low, //累计上机时长
             // LoginCount:transTime(LoginCount,'m','h').time, //上机总次数
-            AvgLoginTimeSpan:transTime(parseFloat(AvgLoginTimeSpan).toFixed(2),'m',).Time_En_Low, //平均每次上机时长
+            AvgLoginTimeSpan: transTime(
+              parseFloat(AvgLoginTimeSpan).toFixed(2),
+              "m"
+            ).Time_En_Low, //平均每次上机时长
             DayTimeList,
             DayOnlineList: [],
           }, //现在DayOnlineList暂时没有

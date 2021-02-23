@@ -81,7 +81,11 @@ function Archives(props, ref) {
     PhotoPath,
     EducationBackgroundDetailData,
   } = data;
-  const eduStageList = { 1: "博士研究生", 2: "硕士研究生", 3: "学士", 4: "无" };
+  const eduStageList = { 1: "大专",
+  2: "本科",
+  3: "硕士",
+  4: "博士",
+  5: "其他", };
   return (
     <div className={`card-content card-archives ${className ? className : ""}`}>
       <div className="cc-div-box-1">

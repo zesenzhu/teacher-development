@@ -18,7 +18,16 @@
  * @FilePath: \teacher-development\src\component\common\index.js
  */
 
-import React, { memo, useMemo, createRef } from "react";
+import React, {
+  memo,
+  useMemo,
+  createRef,
+  forwardRef,
+  useCallback,
+  useState,
+  useEffect,
+  useImperativeHandle,
+} from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import ReactDOM from "react-dom";
 import "es6-shim";
@@ -1740,7 +1749,7 @@ export class ErrorAlert extends React.Component {
     this.state = {
       show: props.show,
       autoHide: props.autoHide ? props.autoHide : false,
-      type:props.type ? props.type : props.autoHide ? "warn" :  "btn-error",
+      type: props.type ? props.type : props.autoHide ? "warn" : "btn-error",
     };
   }
   // componentWillReceiveProps(nextProps){
@@ -1888,7 +1897,7 @@ function DropDownComponent(props) {
 /*
  * 弹出框
  * */
-class Modal extends React.Component {
+class OldModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -2143,6 +2152,146 @@ class Modal extends React.Component {
     );
   }
 }
+
+function LgModal(props, ref) {
+  let {
+    className,
+    centered,
+    type,
+    footer,
+    cancelText,
+    onCancel,
+    okText,
+    onOk,
+    width,
+    bodyStyle,
+    height,
+    children,
+    destroyOnClose,
+    visible,
+    ...reset
+  } = props;
+  const [Footer, setFooter] = useState(footer);
+  const [Width, setWidth] = useState(width);
+  const [Height, setHeight] = useState(height);
+  const [ModalClassName, setModalClassName] = useState("");
+  const [Visible, setVisible] = useState(false);
+  useEffect(() => {
+    setVisible(!!visible);
+  }, [visible]);
+  useEffect(() => {
+    setHeight(height);
+  }, [height]);
+  useEffect(() => {
+    setWidth(width);
+  }, [width]);
+  useEffect(() => {
+    let Type = Number(type);
+    let width = 810;
+    let height = 456;
+    let ModalStyle = "Modal-1";
+    switch (Type) {
+      case 1:
+        width = 810;
+        height = 456;
+        ModalStyle = "Modal-1";
+        break;
+      case 2:
+        width = 810;
+        height = 411;
+        ModalStyle = "Modal-2";
+        setFooter(null);
+
+        break;
+      case 3:
+        width = 588;
+        height = 293;
+        ModalStyle = "Modal-3";
+        break;
+      default:
+        width = 810;
+        height = 456;
+        ModalStyle = "Modal-1";
+    }
+    setWidth(Width || width);
+    setHeight(Height || height);
+    setModalClassName(ModalStyle);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
+
+  const OnOk = useCallback(() => {
+    if (typeof onOk === "function") {
+      onOk();
+    } else {
+      setVisible(false);
+    }
+  }, [onOk]);
+  const OnCancel = useCallback(() => {
+    if (typeof onCancel === "function") {
+      onCancel();
+    } else {
+      setVisible(false);
+    }
+  }, [onCancel]);
+  const openModal = useCallback(() => {
+    setVisible(true);
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    openModal,
+  }));
+  return (
+    <AntdModal
+      className={`initModel ${ModalClassName} ${className || ""}`}
+      visible={Visible}
+      closeIcon={
+        ModalClassName === "Modal-1" ? (
+          <i className={"modal-close-icon"}></i>
+        ) : null
+      }
+      width={Width}
+      bodyStyle={Object.assign(
+        {},
+        Height ? { height: Height } : {},
+        bodyStyle || {}
+      )}
+      onOk={OnOk}
+      onCancel={OnCancel}
+      destroyOnClose={destroyOnClose || true}
+      // height={Height}
+      footer={
+        Footer === null
+          ? null
+          : Footer
+          ? Footer
+          : [
+            onOk!==null?<Button
+                key="onOk"
+                type="primary"
+                size="small"
+                color="green"
+                onClick={OnOk}
+              >
+                {okText || "确定"}
+              </Button>:null,
+             onCancel!==null? <Button
+                key="onCancel"
+                size="small"
+                color="blue"
+                onClick={OnCancel}
+              >
+                {cancelText || "取消"}
+              </Button>:null,
+            ]
+      }
+      {...reset}
+    >
+      {children}
+    </AntdModal>
+  );
+}
+
 /*
  * 按钮组件
  * */
@@ -2310,14 +2459,24 @@ class Button extends React.Component {
  * @return {*}
  */
 function EmptyReact(props) {
-  let { component: Component, children,props:Props } = props;
+  let { component: Component, children, props: Props } = props;
 
-  return <>{Component ? <Component {...Props}>{children}</Component> : <>{children}</>}</>;
+  return (
+    <>
+      {Component ? (
+        <Component {...Props}>{children}</Component>
+      ) : (
+        <>{children}</>
+      )}
+    </>
+  );
 }
 const PagiNation = memo(PageComponent);
 const Alert = memo(AppAlert);
 const DropDown = memo(DropComponent);
 const Dropdown = memo(DropDownComponent);
+
+const Modal = memo(forwardRef(LgModal));
 export {
   Alert,
   Loading,

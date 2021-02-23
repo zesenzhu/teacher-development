@@ -76,7 +76,7 @@ function UEditor(props, ref) {
       UE.setContent(defaultValue ? defaultValue : "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [UE, Ready]);
+  }, [UE, Ready,defaultValue]);
   //   设置事件
   useEffect(() => {
     if (Ready) {
@@ -88,7 +88,7 @@ function UEditor(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Ready]);
   useImperativeHandle(ref, () => ({
-    ...UE,
+    ...UE,UE
   }));
   const Blur = useCallback(() => {
     //   获取内容

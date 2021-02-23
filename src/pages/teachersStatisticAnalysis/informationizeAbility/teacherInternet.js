@@ -158,8 +158,8 @@ function TeacherInternet(props, ref) {
           itemStyle: {
             borderColor: "#fff",
             borderWidth: 1,
-            shadowColor: "rgba(0, 0, 0, 0.15)",
-            shadowBlur: 7,
+            // shadowColor: "rgba(0, 0, 0, 0.15)",
+            // shadowBlur: 7,
           },
 
           label: {
@@ -199,7 +199,7 @@ function TeacherInternet(props, ref) {
           transTime(DayAvgTimeSpan,'m','h').time, //每人每日平均上机时长
           DayAvgLoginCount, //每人每日平均上机次数
           transTime(AvgLoginTimeSpan,'m','h').time, //平均每次时间
-          DayAvgOnlinePercent, //平均每日上机百分比
+          correctNumber(DayAvgOnlinePercent*100), //平均每日上机百分比
         ]);
       });
     let subOption = {
@@ -211,6 +211,7 @@ function TeacherInternet(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       // backgroundColor: "#f5f5f5",

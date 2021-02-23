@@ -78,6 +78,10 @@ function Page(props, ref) {
     pageList.forEach((child, index) => {
       if (child.props.pageid === Path[1]) {
         isExist = true;
+        // console.log()
+        if (child.props.pageTitle) {
+          document.title = child.props.pageTitle;
+        }
         // 路由上有parma，但组件没有，改变路由
         if (Path[2] && !child.props.param) {
           history.push("/page/" + child.props.pageid);

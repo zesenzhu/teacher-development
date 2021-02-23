@@ -120,7 +120,9 @@ function UplaodInput(props, ref) {
         contentType: false,
         success: function (data, textStatus, jqXHR) {
           if (data.StatusCode !== 200) {
-            setCompletePercert(false);
+            // setCompletePercert(false);
+            // setForbinClick(false);
+
             // 每次创建完i后把file的outerHTML重置
             // eslint-disable-next-line no-self-assign
             // InputRef.current.outerHTML = InputRef.current.outerHTML;
@@ -132,8 +134,8 @@ function UplaodInput(props, ref) {
           if (skip + 1 === totalCount) {
             //   当完成的时候
             setCompletePercert(100);
-            setCompletePercert(false);
-            setForbinClick(false);
+            // setCompletePercert(false);
+            // setForbinClick(false);
 
             //此文件所有切块均已上传完毕
             success(data.Data);
@@ -156,7 +158,9 @@ function UplaodInput(props, ref) {
         },
         error: function (jqXHR, txtStatus, errorThrown) {
           console.info("分开上传失败，当前第" + (skip + 1) + "块");
-          setCompletePercert(false);
+          // setCompletePercert(false);
+          // setForbinClick(false);
+
           // 每次创建完i后把file的outerHTML重置
           // eslint-disable-next-line no-self-assign
           //   InputRef.current.outerHTML = InputRef.current.outerHTML;
@@ -177,14 +181,22 @@ function UplaodInput(props, ref) {
         0,
         "",
         (data) => {
+          setCompletePercert(false);
+          setForbinClick(false);
           //   setFile([...file, data]);
           onFileUplaod([...file, data]);
           //   onFileUpMD5(fileMD5);
         },
         (msg) => {
+          setCompletePercert(false);
+          setForbinClick(false);
           autoAlert({ title: msg });
         },
       ]);
+      // if (CompletePercert === false) {
+        // 当检测到文件上传的时候同事没有禁止点击，禁止点击
+        setForbinClick(true);
+      // }
       setCompletePercert(0);
 
       //   upload(
@@ -222,8 +234,10 @@ function UplaodInput(props, ref) {
       UplaodParams.length > 0 &&
       CompletePercert !== false &&
       CompletePercert !== 100
-    )
+    ) {
+      
       upload(...UplaodParams);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [CompletePercert]);
   return (
@@ -244,10 +258,10 @@ function UplaodInput(props, ref) {
         className="file-input"
         // disabled={!!ForbinClick}
         onClick={() => {
-          setForbinClick(true);
+          // setForbinClick(true);
         }}
         onChange={(e) => {
-        //   setForbinClick(true);
+          //   setForbinClick(true);
           const input = e.target;
           const files = e.target.files;
           if (files) {
@@ -258,7 +272,7 @@ function UplaodInput(props, ref) {
               if (File.size > 1024 * 1024 * 100) {
                 // fileTip.innerHTML = '文件大小不能超过3M!';
                 autoAlert({ title: "文件大小不能超过100M" });
-          setForbinClick(false);
+                setForbinClick(false);
 
                 // input.value = "";
                 return false;
@@ -273,7 +287,7 @@ function UplaodInput(props, ref) {
                       //   input.value = "";
                     } else {
                       autoAlert({ title: "文件已存在" });
-          setForbinClick(false);
+                      setForbinClick(false);
 
                       //   input.value = "";
                       return false;
@@ -291,7 +305,7 @@ function UplaodInput(props, ref) {
                     // input.value = "";
                   } else {
                     autoAlert({ title: "文件已存在" });
-          setForbinClick(false);
+                    setForbinClick(false);
 
                     // input.value = "";
                     return false;

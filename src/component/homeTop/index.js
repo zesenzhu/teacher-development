@@ -83,6 +83,7 @@ function HomeTop(props, ref) {
       tableRef.current.reloadList();
     },
   }));
+  console.log(tableRef.current.data)
   return (
     <div className={`home-top ${className ? className : ""}`} {...reset}>
       {publish ? (
@@ -116,7 +117,7 @@ function HomeTop(props, ref) {
             setVisible(visible);
           }}
           title={
-            <div style={{width:'984px',minHeight:'400px'}}>
+            <div style={{width:'980px',minHeight:'400px'}}>
               {/* <Scrollbars autoHeight autoHeightMax={590} autoHide> */}
                 <Table
                 style={{minWidth:'884px'}}
@@ -128,7 +129,7 @@ function HomeTop(props, ref) {
                   onDataChange={(data) => {}}
                   ref={tableRef}
                   api={draft.api}
-                  pageProps={{ showSizeChanger: false }}
+                  pageProps={{ showSizeChanger: false,hideOnSinglePage:true } }
                 ></Table>
               {/* </Scrollbars> */}
             </div>

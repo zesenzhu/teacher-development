@@ -15,6 +15,7 @@
 
 .lg-tip {
     // .ant-tooltip {
+    z-index: 10!important;
     max-width: 999px !important;
     .ant-tooltip-arrow:before {
         background-color: #d41414;

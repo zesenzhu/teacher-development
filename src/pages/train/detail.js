@@ -69,9 +69,12 @@ function Datail(props, ref) {
     removeTab,
     activeTab,
     contentHW,
-    location,id,
-    history,controlSize,
-    dispatch,useScrollbars
+    location,
+    id,
+    history,
+    controlSize,
+    dispatch,
+    useScrollbars,
   } = props;
   // let { state, setDispatch } = useContext(Context);
   // 转到预览
@@ -79,20 +82,18 @@ function Datail(props, ref) {
   // 培训id
   const [ID, setID] = useState("");
   const detailRef = useRef(null);
- 
+
   //获取培训id
   useEffect(() => {
     if (location.pathname) {
       let Path = handleRoute(location.pathname);
-      Path[0] === "trainDetail" &&
-        Path[1] &&
-        Path[1] !== ID &&
-        setID(Path[1]);
-
-        if (Path[0] === "trainDetail" && ID && detailRef.current) {
-          //刷新
-          detailRef.current.reload();
-        }
+      // 第一次进来赋值id
+      Path[0] === "trainDetail" && Path[1] && ID === "" && setID(Path[1]);
+      // 第二次之后进来判断是否是本页在reload
+      if (Path[0] === "trainDetail" && ID === Path[1] && detailRef.current) {
+        //刷新
+        detailRef.current.reload();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
@@ -100,9 +101,18 @@ function Datail(props, ref) {
     <Loading opacity={0.5} spinning={loading}>
       <div
         className=" Reacruit-context   Train-Datail"
-        style={controlSize===undefined||controlSize?{ height: contentHW.height + "px" }:{}}
+        style={
+          controlSize === undefined || controlSize
+            ? { height: contentHW.height + "px" }
+            : {}
+        }
       >
-        <FileDetail  ref={detailRef} useScrollbars={useScrollbars} fileid={ID} type={'train'}></FileDetail>
+        <FileDetail
+          ref={detailRef}
+          useScrollbars={useScrollbars}
+          fileid={ID}
+          type={"train"}
+        ></FileDetail>
       </div>
     </Loading>
   );

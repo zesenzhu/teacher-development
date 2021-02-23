@@ -42,32 +42,36 @@ const TESTKEY = "abcdefgabcdefg12";
 
 let notAuthorizedCounter = 0;
 let fetchService = {
-  fetch: (url, method, header, body) => {
+  fetch: ({ url, method, header, body, ...params }) => {
     if (!header) {
       header = {};
     }
 
-    return fetchService[method.toLowerCase()](url, header, body).catch(
-      function (exception) {
-        console.log("fetchService failed:" + exception);
+    return fetchService[method.toLowerCase()]({
+      url,
+      header,
+      body,
+      ...params,
+    }).catch(function (exception) {
+      console.log("fetchService failed:" + exception);
 
-        // token过期，重新获取token并发起请求
-        if (exception.code === "401" || exception.code === "403") {
-          notAuthorizedCounter++;
-          // 最多重试3次
-          if (notAuthorizedCounter > 2) {
-            notAuthorizedCounter = 0;
-            // loggerService.warn("401 or 403 received. Max attemps reached.");
-            return;
-          } else {
-            return fetchService.fetch(url, method, header, body);
-          }
+      // token过期，重新获取token并发起请求
+      if (exception.code === "401" || exception.code === "403") {
+        notAuthorizedCounter++;
+        // 最多重试3次
+        if (notAuthorizedCounter > 2) {
+          notAuthorizedCounter = 0;
+          // loggerService.warn("401 or 403 received. Max attemps reached.");
+          return;
+        } else {
+          return fetchService.fetch({ url, method, header, body, ...params });
         }
       }
-    );
+    });
   },
-  get: ({ url, header, securityLevel, config, advance }) => {
+  get: ({ url, header, securityLevel, config, advance, comfirmError }) => {
     //advance:是否提前处理,boolean:false表示不用提前，true表示使用，{}表示有选择的使用，里面为number，状态码
+    // comfirmError:当错误的时候点击确认按钮的回调
     if (!header) {
       //Content-Type: "application/x-www-form-urlencoded",
       // "application/json",
@@ -83,6 +87,9 @@ let fetchService = {
     }
     if (advance === undefined) {
       advance = true; //
+    }
+    if (comfirmError === undefined) {
+      comfirmError = () => {}; //
     }
     let result = fetch(url, {
       method: "GET",
@@ -115,12 +122,20 @@ let fetchService = {
       //做提前处理
       // console.log(res)
       if (advance) {
-        advanceFetch(res, advance);
+        advanceFetch(res, advance, comfirmError);
       }
     });
     return result;
   },
-  post: ({ url, header, body, securityLevel, config, advance }) => {
+  post: ({
+    url,
+    header,
+    body,
+    securityLevel,
+    config,
+    advance,
+    comfirmError,
+  }) => {
     // header["Content-Type"] = "application/json";
     if (!header) {
       header = {};
@@ -134,6 +149,9 @@ let fetchService = {
     }
     if (advance === undefined) {
       advance = true; //
+    }
+    if (comfirmError === undefined) {
+      comfirmError = () => {}; //
     }
     let content_type =
       header["Content-Type"] && header["Content-Type"] === "application/json"
@@ -160,7 +178,7 @@ let fetchService = {
     result.then((res) => {
       //做提前处理
       if (advance) {
-        advanceFetch(res, advance);
+        advanceFetch(res, advance, comfirmError);
       }
     });
 
@@ -178,7 +196,11 @@ let fetchService = {
         "&reqUrl=" +
         encodeURIComponent(reqUrl);
     try {
-      let res = await fetchService.get({ url, securityLevel: 2, advance:false});
+      let res = await fetchService.get({
+        url,
+        securityLevel: 2,
+        advance: false,
+      });
       let json = await res.json();
       data = JSON.parse(json);
       // console.log(json)
@@ -202,7 +224,7 @@ let fetchService = {
  * false表示不用提前，true表示使用，{}表示有选择的使用，里面为number，状态码}
  * @return {*}
  */
-function advanceFetch(res, advance) {
+function advanceFetch(res, advance, comfirmError) {
   //做提前处理
   let response = res.clone();
   // clone.then((response)=>{
@@ -221,6 +243,7 @@ function advanceFetch(res, advance) {
             key={"alert-400-" + Math.round(Math.random() * 10000)}
             show={true}
             title={title}
+            onOk={comfirmError}
           />,
           AlertDom
         );
@@ -236,6 +259,7 @@ function advanceFetch(res, advance) {
             key={"alert-400-" + Math.round(Math.random() * 10000)}
             show={true}
             title={title}
+            onOk={comfirmError}
           />,
           AlertDom
         );
@@ -266,6 +290,7 @@ function advanceFetch(res, advance) {
                 key={"alert-400-" + Math.round(Math.random() * 10000)}
                 show={true}
                 title={title}
+                onOk={comfirmError}
               />,
               AlertDom
             );
@@ -280,6 +305,7 @@ function advanceFetch(res, advance) {
                 key={"alert-400-" + Math.round(Math.random() * 10000)}
                 show={true}
                 title={title}
+                onOk={comfirmError}
               />,
               AlertDom
             );

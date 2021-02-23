@@ -69,6 +69,9 @@
         position: relative;
         font-size: 12px;
         color: #666666;
+        &:hover {
+            color: #02418c
+        }
         &::after {
             content: "";
             position: absolute;

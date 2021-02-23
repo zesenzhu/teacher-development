@@ -160,8 +160,8 @@ function TeacherER(props, ref) {
           itemStyle: {
             borderColor: "#fff",
             borderWidth: 1,
-            shadowColor: "rgba(0, 0, 0, 0.15)",
-            shadowBlur: 7,
+            // shadowColor: "rgba(0, 0, 0, 0.15)",
+            // shadowBlur: 7,
           },
 
           label: {
@@ -225,6 +225,7 @@ function TeacherER(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       // backgroundColor: "#f5f5f5",

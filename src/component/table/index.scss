@@ -79,6 +79,12 @@
                     color: #399cd0;
                     font-weight: bold;
                 }
+                .anticon {
+                    color: #98c1e6;
+                    &.active {
+                        color: #1890ff
+                    }
+                }
             }
             .ant-table-tbody {
                 &>tr>td {

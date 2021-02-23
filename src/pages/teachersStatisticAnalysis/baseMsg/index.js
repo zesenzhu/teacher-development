@@ -62,12 +62,19 @@ import {
   getHonorTeacher,
   getTeacherAge,
   getTeacherEduAndTitle,
+  getHistoryTeacherCount,
+  getHistoryEduAndTitle,
 } from "../../../api/baseMsg";
 import TeacherCount from "./teacherCount";
 import TeacherFamous from "./teacherFamous";
 import TeacherAge from "./teacherAge";
 import TeacherTitle from "./teacherTitle";
 import HistoryModal from "../historyModal";
+
+const ApiList = {
+  count: { api: getHistoryTeacherCount, title: "历年人数变化" },
+  eduAndTitle: { api: getHistoryEduAndTitle, title: "历年学历职称变化" },
+};
 function BaseMsg(props, ref) {
   // *selectLevel:这里的selectLevel与用户的没关系，与看的级别有关，例如教育局的看学校的，selectLevel===2
   // *productLevel:产品类型，给用户看的界面类型，用来控制界面的一些属性：1教育局，2大学学校，3教育局学校，4大学学院，
@@ -86,8 +93,11 @@ function BaseMsg(props, ref) {
   const [teacherFamous, setTeacherFamous] = useState(false);
   const [teacherAge, setTeacherAge] = useState(false);
   const [teacherEduAndTitle, setTeacherEduAndTitle] = useState(false);
+
   // 历年弹框
   const [visible, setVisible] = useState(false);
+  // 设置api
+  const [ApiSelect, setApiSelect] = useState("");
   //向上传bar的信息
   // const [anchorList, setAnchorList] = useState([]);
   // 获取每一块的ref，实现锚点功能
@@ -96,7 +106,7 @@ function BaseMsg(props, ref) {
   const ageRef = useRef(null);
   const educationRef = useRef(null);
 
-  const hisRef = useRef(null);
+  const historyRef = useRef({});
   useLayoutEffect(() => {
     // setAnchorList();
     typeof onAnchorComplete === "function" &&
@@ -169,7 +179,8 @@ function BaseMsg(props, ref) {
             ? {
                 title: "查看历年人数变化",
                 onClick: () => {
-                  setVisible(true);
+                  setApiSelect("count");
+                  historyRef.current.controlVisible();
                 },
               }
             : false
@@ -199,7 +210,8 @@ function BaseMsg(props, ref) {
             ? {
                 title: "查看历年学历职称统计 ",
                 onClick: () => {
-                  setVisible(true);
+                  setApiSelect("eduAndTitle");
+                  historyRef.current.controlVisible();
                 },
               }
             : false
@@ -211,47 +223,56 @@ function BaseMsg(props, ref) {
         ></TeacherTitle>
       </Bar>
       <HistoryModal
-        onClose={() => {
-          setVisible(false);
-        }}
-        visible={visible}
-        title={'历史人数变化'}
-        data={[
-          {
-            nodeName: "全部",
-            nodeID: "all",
-            titleList: [
-              ["", "年", "教师人均周课时", "节次"],
-              ["人均总课时", "节"],
-              ["人均任教班级", "个"],
-              ["人均任教学生", "人"],
-            ],
-            xName: "周课时数",
-            yName: "年份",
-            source: [], //数据源
-            type: ["测试1", "测试2"], //多个数据时候的名称lengen
-            children: [
-              {
-                nodeName: "2018",
-                nodeID: 2018,
-                dataList: [["2018", "初中学段", "21"], ["150"], ["2"], ["60"]],
-                source: [70, 65],
-              },
-              {
-                nodeName: "2019",
-                nodeID: 2019,
-                dataList: [["2019", "初中学段", "21"], ["150"], ["2"], ["60"]],
-                source: [60, 30],
-              },
-              {
-                nodeName: "2020",
-                nodeID: 2020,
-                dataList: [["2020", "初中学段", "21"], ["150"], ["2"], ["60"]],
-                source: [85, 40],
-              },
-            ],
-          },
-        ]}
+        // onClose={() => {
+        //   setVisible(false);
+        // }}
+        // visible={visible}
+        title={ApiSelect && ApiList[ApiSelect].title}
+        ref={historyRef}
+        api={
+          ApiSelect &&
+          ApiList[ApiSelect].api.bind(this, {
+            schoolID,
+            collegeID,
+            selectLevel,
+          })
+        }
+        // data={[
+        //   {
+        //     nodeName: "全部",
+        //     nodeID: "all",
+        //     titleList: [
+        //       ["", "年", "教师人均周课时", "节次"],
+        //       ["人均总课时", "节"],
+        //       ["人均任教班级", "个"],
+        //       ["人均任教学生", "人"],
+        //     ],
+        //     xName: "周课时数",
+        //     yName: "年份",
+        //     source: [], //数据源
+        //     type: ["测试1", "测试2"], //多个数据时候的名称lengen
+        //     children: [
+        //       {
+        //         nodeName: "2018",
+        //         nodeID: 2018,
+        //         dataList: [["2018", "初中学段", "21"], ["150"], ["2"], ["60"]],
+        //         source: [70, 65],
+        //       },
+        //       {
+        //         nodeName: "2019",
+        //         nodeID: 2019,
+        //         dataList: [["2019", "初中学段", "21"], ["150"], ["2"], ["60"]],
+        //         source: [60, 30],
+        //       },
+        //       {
+        //         nodeName: "2020",
+        //         nodeID: 2020,
+        //         dataList: [["2020", "初中学段", "21"], ["150"], ["2"], ["60"]],
+        //         source: [85, 40],
+        //       },
+        //     ],
+        //   },
+        // ]}
       ></HistoryModal>
     </div>
   );

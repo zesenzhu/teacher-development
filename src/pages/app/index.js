@@ -540,6 +540,8 @@ function App(props, ref) {
       {/* 个人画像 */}
       <PersonalDetail
         frametype={"page"}
+        pageTitle={"教师个人画像"}
+
         pageid={"personalDetail"}
         param={"id"}
         teachermsg={TeacherMsg}

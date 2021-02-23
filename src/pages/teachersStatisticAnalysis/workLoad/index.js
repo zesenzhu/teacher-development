@@ -57,23 +57,36 @@ import React, {
 } from "react";
 import "./index.scss";
 import Bar from "../../../component/bar";
-import TeacherPeriod from './teacherPeriod';
-import TeacherGanger from './teacherGanger';
+import TeacherPeriod from "./teacherPeriod";
+import TeacherGanger from "./teacherGanger";
 import {
   getClassHour,
   getTeacherGanger,
-  getTeacherAge,getTeacherEduAndTitle
+  getHistoryClassHour,
 } from "../../../api/workMsg";
+import HistoryModal from "../historyModal";
+
 // import TeacherCount from "./teacherCount";
 // import TeacherPeriod from "./teacherPeriod";
 // import TeacherAge from "./teacherAge";
 // import TeacherTitle from "./teacherTitle";
+const ApiList = {
+  TeaStuRatio: { api: "", title: "历年师生比变化" },
+  ClassHour: { api: getHistoryClassHour, title: "历年人均周课时变化" },
+};
 function WorkLoad(props, ref) {
   // *selectLevel:这里的selectLevel与用户的没关系，与看的级别有关，例如教育局的看学校的，selectLevel===2
   // *productLevel:产品类型，给用户看的界面类型，用来控制界面的一些属性：1教育局，2大学学校，3教育局学校，4大学学院，
   // *product:包含该productLevel的所有信息,有使用组件者使用productLevel和commonData的levelHash匹配使用，必须传，不传将出问题
-  let { term,HasHistory, onAnchorComplete, schoolID, collegeID, productMsg } = props;
-  const { selectLevel,productLevel } = productMsg;
+  let {
+    term,
+    HasHistory,
+    onAnchorComplete,
+    schoolID,
+    collegeID,
+    productMsg,
+  } = props;
+  const { selectLevel, productLevel } = productMsg;
   // 教师人数
   const [teacherCount, setTeacherCount] = useState(false);
   const [teacherPeriod, setTeacherPeriod] = useState(false);
@@ -81,10 +94,14 @@ function WorkLoad(props, ref) {
   const [teacherEduAndTitle, setTeacherEduAndTitle] = useState(false);
   //向上传bar的信息
   // const [anchorList, setAnchorList] = useState([]);
+  // 设置api
+  const [ApiSelect, setApiSelect] = useState("");
   // 获取每一块的ref，实现锚点功能
   const ratioRef = useRef(null);
   const periodRef = useRef(null);
   const gangerRef = useRef(null);
+
+  const historyRef = useRef({});
   useLayoutEffect(() => {
     // setAnchorList();
     typeof onAnchorComplete === "function" &&
@@ -110,8 +127,8 @@ function WorkLoad(props, ref) {
           setTeacherPeriod(data);
         }
       });
-       // 班主任管理班级统计
-       getTeacherGanger({
+      // 班主任管理班级统计
+      getTeacherGanger({
         term: term.value,
         schoolID,
         collegeID,
@@ -127,40 +144,84 @@ function WorkLoad(props, ref) {
   return (
     <div className="WorkLoad">
       {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
-      {productLevel===1?<Bar
-        barName={"师生比统计"}
-        ref={ratioRef}
-        topContext={HasHistory?{ title: "查看历年师生比变化" }:false}
-        loading={!teacherCount}
+      {productLevel === 1 ? (
+        <Bar
+          barName={"师生比统计"}
+          ref={ratioRef}
+          loading={!teacherCount}
+          topContext={
+            HasHistory
+              ? {
+                  title: "查看历年师生比变化",
+                  onClick: () => {
+                    setApiSelect("TeaStuRatio");
+                    historyRef.current.controlVisible();
+                  },
+                }
+              : false
+          }
+        ></Bar>
+      ) : (
+        ""
+      )}
+      <Bar
+        topContext={
+          HasHistory
+            ? {
+                title: "查看历年人均周课时变化",
+                onClick: () => {
+                  setApiSelect("ClassHour");
+                  historyRef.current.controlVisible();
+                },
+              }
+            : false
+        }
+        loading={!teacherPeriod}
+        barName={"课时数统计 "}
+        ref={periodRef}
       >
-        {/* <TeacherCount
-          data={teacherCount}
-          productMsg={productMsg}
-        ></TeacherCount> */}
-      </Bar>:''}
-      <Bar loading={!teacherPeriod} barName={"课时数统计 "} ref={periodRef}>
         <TeacherPeriod
           data={teacherPeriod}
           productMsg={productMsg}
         ></TeacherPeriod>
       </Bar>
-      <Bar loading={!teacherGanger} barName={"班主任班级管理统计"} ref={gangerRef}>
-        <TeacherGanger data={teacherGanger} productMsg={productMsg}></TeacherGanger>
-      </Bar>
-     {/*  <Bar
-        barName={"学历职称统计 "}
-        ref={educationRef}
-        topContext={HasHistory?{ title: "查看历年学历职称统计 " }:false}
+      <Bar
+        loading={!teacherGanger}
+        barName={"班主任班级管理统计"}
+        ref={gangerRef}
       >
-        <TeacherTitle data={teacherEduAndTitle} productMsg={productMsg}></TeacherTitle>
-      </Bar> */}
+        <TeacherGanger
+          data={teacherGanger}
+          productMsg={productMsg}
+        ></TeacherGanger>
+      </Bar>
+      <HistoryModal
+        // onClose={() => {
+        //   setVisible(false);
+        // }}
+        // visible={visible}
+        title={ApiSelect && ApiList[ApiSelect].title}
+        ref={historyRef}
+        api={
+          ApiSelect &&
+          ApiList[ApiSelect].api.bind(this, {
+            schoolID,
+            collegeID,
+            selectLevel,
+          })
+        }
+      ></HistoryModal>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  let { commonData:{termInfo:{HasHistory}} } = state;
+  let {
+    commonData: {
+      termInfo: { HasHistory },
+    },
+  } = state;
   // console.log(state)
-  return {HasHistory};
+  return { HasHistory };
 };
 export default connect(mapStateToProps)(memo(forwardRef(WorkLoad)));

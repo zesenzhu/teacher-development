@@ -49,6 +49,7 @@
             .home-search {
                 width: 280px;
                 border-radius: 3px;
+                border: solid 1px #dedede!important;
                 -webkit-border-radius: 3px;
                 -moz-border-radius: 3px;
                 -ms-border-radius: 3px;
@@ -66,7 +67,12 @@
             }
         }
         .table-name {
+            cursor: pointer;
+            opacity: 0.9;
             padding-left: 54px !important;
+            &:hover {
+                opacity: 1;
+            }
             i {
                 display: inline-block;
                 width: 24px;

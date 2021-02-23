@@ -102,7 +102,7 @@
                     display: inline-block;
                     vertical-align: top;
                     // width: 92px;
-                    background: #e0f0f3;
+                    background: #e9eff3;
                     border-radius: 3px;
                     margin: 8px 15px 8px 0;
                     font-family: Microsoft YaHei;
@@ -112,20 +112,20 @@
                     max-width: 300px;
                     height: 30px;
                     line-height: 30px;
-                    background-color: rgba($color: #80acc5, $alpha: 0.5);
+                    // background-color: rgba($color: #e9eff3, $alpha: 0.5);
                     .file-name,
                     .file-type {
                         color: #333333;
                     }
                     .file-size {
                         font-size: 14px;
-                        // margin-right: 20px;
+                        margin-right: 2px;
                         color: #999999;
                         vertical-align: top;
                     }
                     .file-type {
                         vertical-align: top;
-                        margin-right: 10px;
+                        margin-right: 5px;
                     }
                     .file-name {
                         display: inline-block;
@@ -138,8 +138,8 @@
                         @include v-center;
                         cursor: pointer;
                         font-size: 20px;
-                        right: 8px;
-                        color: #105764;
+                        right: 4px;
+                        color: #80acc5;
                         &:hover {
                             color: #f60;
                         }
@@ -232,7 +232,7 @@
                         display: inline-block;
                         width: 12px;
                         vertical-align: top;
-                        cursor: pointer;
+                        // cursor: pointer;
                         height: 100%;
                         margin-right: 4px;
                         background: url(./images/icon-add.png) no-repeat center center/contain;
@@ -347,12 +347,15 @@
         }
         .handle-draft {
             background-image: linear-gradient(90deg, #39d7ff 0%, #009cff 100%), linear-gradient(#a1adb4, #a1adb4);
+            box-shadow: 0 10px 15px -10px #39d7ff;
         }
         .handle-publish {
             background-image: linear-gradient(90deg, #3bcd3b 0%, #2fb22f 100%), linear-gradient(#a1adb4, #a1adb4);
+            box-shadow: 0 10px 15px -10px #3bcd3b;
         }
         .handle-cancel {
             background-image: linear-gradient(90deg, #ff586c 0%, #ff7b9d 100%), linear-gradient(#a1adb4, #a1adb4);
+            box-shadow: 0 10px 15px -10px #ff586c;
         }
     }
 }

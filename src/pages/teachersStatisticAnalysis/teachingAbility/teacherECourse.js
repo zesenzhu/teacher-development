@@ -85,6 +85,7 @@ function TeacherECourse(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
+          fontWeight:100
         },
       },
       // backgroundColor: "#f5f5f5",
