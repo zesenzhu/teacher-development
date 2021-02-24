@@ -87,7 +87,7 @@ function BaseMsg(props, ref) {
     collegeID,
     productMsg,
   } = props;
-  const { selectLevel } = productMsg;
+  const { selectLevel,middleTitleName } = productMsg;
   // 教师人数
   const [teacherCount, setTeacherCount] = useState(false);
   const [teacherFamous, setTeacherFamous] = useState(false);
@@ -227,6 +227,8 @@ function BaseMsg(props, ref) {
         //   setVisible(false);
         // }}
         // visible={visible}
+        typeName={productMsg.typeName}
+
         title={ApiSelect && ApiList[ApiSelect].title}
         ref={historyRef}
         api={

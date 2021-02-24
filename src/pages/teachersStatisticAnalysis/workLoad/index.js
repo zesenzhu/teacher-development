@@ -200,6 +200,7 @@ function WorkLoad(props, ref) {
         //   setVisible(false);
         // }}
         // visible={visible}
+        typeName={productMsg.typeName}
         title={ApiSelect && ApiList[ApiSelect].title}
         ref={historyRef}
         api={

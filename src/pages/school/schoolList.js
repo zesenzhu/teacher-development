@@ -149,10 +149,26 @@ function SchoolList(props, ref) {
   const [visible, setVisible] = useState(false);
   const searchRef = useRef(null);
   const toolTipRef = useRef(null);
+  // const ControlTips = useMemo(() => {
+  //   return (
+  //     <TableTip
+  //       CulomnsSelect={CulomnsSelect}
+  //       onCheckChange={(e) => {
+  //         setCulomnsSelect(
+  //           e.sort((a, b) => {
+  //             return a > b;
+  //           })
+  //         );
+  //       }}
+  //       // ToolClassName={ToolClassName}
+  //       Culomns={Culomns}
+  //     ></TableTip>
+  //   );
+  // }, [CulomnsSelect, Culomns]);
   // 学期
   const TermList = useMemo(() => {
     let data = [];
-    if (TermInfo instanceof Array) {
+    if (TermInfo instanceof Array && TermInfo.length > 0) {
       data = TermInfo.map((child) => ({
         value: child.Term,
         title: child.TermName,
@@ -947,16 +963,18 @@ function SchoolList(props, ref) {
             dataIndex: "LI_DayAvgTimeSpan",
             render: (data) => {
               // data = 120
-              let time = Number(data)
+              let time = Number(data);
               let title = "";
-              if ( time < 1) {
+              if (!time) {
+                title = "0";
+              } else if (time > 0 && time < 1) {
                 title = "小于一分钟";
-              } else if ( time < 60) {
-                title =  time + "分钟";
-              } else if ( time >= 60) {
-                let minute = ( time % 60) ;
+              } else if (time < 60) {
+                title = time + "分钟";
+              } else if (time >= 60) {
+                let minute = time % 60;
                 title =
-                  ( time / 60).toFixed() +
+                  (time / 60).toFixed() +
                   "小时" +
                   (minute > 0 ? minute.toFixed() + "分钟" : "");
               }
@@ -1038,10 +1056,12 @@ function SchoolList(props, ref) {
           child.title = "";
           child.width = 0;
           child.sorter = false;
+
           if (child.children) {
             child.children = child.children.map((c, i) => {
               c.title = "";
               c.width = 0;
+
               c.sorter = false;
               c.render = () => {
                 return "";
@@ -1152,20 +1172,23 @@ function SchoolList(props, ref) {
 
       <div className="pl-table">
         <Scrollbars>
-          <Table
-            // onHeaderRow={(c, i) => {
-            //   console.log(c, i);
-            // }}
-            scroll={{ x: "max-content" }}
-            className="Reacruit-table"
-            columns={columns}
-            // dataSource={data}
-            // prepare={!!query.selectLevel}
-            query={query}
-            onDataChange={(data) => {}}
-            ref={tableRef}
-            api={getSchoolList}
-          ></Table>
+          <div>
+            <Table
+              // onHeaderRow={(c, i) => {
+              //   console.log(c, i);
+              // }}
+              scroll={{ x: "max-content" }}
+              className="Reacruit-table"
+              columns={columns}
+              // dataSource={data}
+              // prepare={!!query.selectLevel}
+              query={query}
+              onDataChange={(data) => {}}
+              ref={tableRef}
+              api={getSchoolList}
+            ></Table>
+            <div className="control-culomn"></div>
+          </div>
         </Scrollbars>
       </div>
     </div>

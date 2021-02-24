@@ -26,7 +26,7 @@
  * @LastEditors: zhuzesen
  * @Date: 2020-12-09 11:46:56
  * @LastEditTime: 2020-12-22 21:37:44
- * @Description:
+ * @Description:  大学中小学的接口不一样，所以要做判断,都不一样
  * @FilePath: \teacher-development\src\api\personal.js
  */
 import fetch from "../util/fetch";
@@ -224,8 +224,13 @@ export function GetUserDetailForHX(payload = {}) {
 }
 
 export function getTeacherDetailIntroduction(payload = {}) {
-  let { userID, baseIP } = payload;
-  let url = baseIP + `admin/getTeacherDetailIntroduction?teacherId=${userID}`;
+  let { userID, baseIP, isUniversity } = payload;
+  // 大学中小学的接口不一样，所以要做判断
+  let url =
+    baseIP +
+    (isUniversity
+      ? `getTeacherDetailIntroduction?userId=${userID}`
+      : `admin/getTeacherDetailIntroduction?teacherId=${userID}`);
   return fetch
     .get({ url, securityLevel: 2, advance: false })
     .then((res) => res.json())
@@ -648,10 +653,20 @@ let constructTerm = (Term) => {
 };
 
 export function GetTeacherWork(payload = {}) {
-  let { userName, proxy, semester, pageSize, pageNum, token } = payload;
+  let {
+    userName,
+    proxy,
+    semester,
+    pageSize,
+    pageNum,
+    token,academyId,
+    isUniversity,
+  } = payload;
   let url =
     proxy +
-    `/admin/getTeacherWork?userName=${userName}&pageNum=${1}&pageSize=${10000}&token=${token}&semester=${semester}`;
+    (isUniversity
+      ? `getTeacherWorkCase?userName=${userName}&pageNum=${1}&pageSize=${10000}&academyId=${academyId}&semester=${semester}`
+      : `/admin/getTeacherWorkCase?userName=${userName}&pageNum=${1}&pageSize=${10000}&token=${token}&semester=${semester}`);
   return fetch
     .get({ url, securityLevel: 2, advance: false })
     .then((res) => res.json())
@@ -733,15 +748,21 @@ export function GetResearchByUserID(payload = {}) {
             },
             {
               count: !isNaN(CompletedCount) ? Number(CompletedCount) : 0,
-              list: CompletedList instanceof Array ? CompletedList.map((child) => {
-                return { ...child, Name: child.ProjectName };
-              }) : [],
+              list:
+                CompletedList instanceof Array
+                  ? CompletedList.map((child) => {
+                      return { ...child, Name: child.ProjectName };
+                    })
+                  : [],
             },
             {
               count: !isNaN(ActivityCount) ? Number(ActivityCount) : 0,
-              list: ActivityList instanceof Array ? ActivityList.map((child) => {
-                return { ...child, Name: child.ActivityName };
-              }) : [],
+              list:
+                ActivityList instanceof Array
+                  ? ActivityList.map((child) => {
+                      return { ...child, Name: child.ActivityName };
+                    })
+                  : [],
             },
           ],
         };

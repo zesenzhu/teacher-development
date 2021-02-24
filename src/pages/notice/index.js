@@ -69,7 +69,7 @@ import { getDataStorage } from "../../util/public";
 function Notice(props, ref) {
   let {
     commonData: {
-      roleMsg: { identityCode },
+      roleMsg: { identityCode,productLevel },
       systemServer,
     },
   } = props;
@@ -85,7 +85,7 @@ function Notice(props, ref) {
           "/WebPage/html/notice/?lg_tk=" +
           token +
           "&lg_ic=" +
-          identityCode +
+          identityCode +(productLevel===1?'&isEdu=true':'') +
           "&sysID=L10&iFrame=true#/"
         }
       ></iframe>

@@ -96,9 +96,11 @@ function PersonalDetail(props, ref) {
     teachermsg,
     teacherid,
     token,
-    roleMsg: { identityCode, userType },
+    roleMsg: { identityCode, userType, isUniversity },
     ...reset
   } = props;
+  console.log(props);
+
   const [rate, setRate] = useState(null);
   // 缩放模式，*ratio:等比，以宽的比例为准，*full:全屏，宽高各自比例
   const [zoomType, setZoomType] = useState("full");
@@ -198,6 +200,7 @@ function PersonalDetail(props, ref) {
         getTeacherDetailIntroduction({
           userID,
           baseIP: SysUrl["E34"].WebSvrAddr,
+          isUniversity,
         }).then((res) => {
           if (res.StatusCode === 200) {
             setArchives({ ...archives, ...res.Data });
@@ -404,14 +407,15 @@ function PersonalDetail(props, ref) {
       return;
     }
     let userID = teacherid;
-    let userName = teachermsg.UserName;
-
+    let { CollegeID } = teachermsg;
     if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WeekData) {
       GetTeacherWork({
         userName: userID,
         baseIP: DataParams.baseIP,
         proxy: SysUrl["E34"].WebSvrAddr,
         token,
+        academyId: CollegeID,
+        isUniversity,
         semester: WorkTerm.value,
       }).then((res) => {
         if (res.StatusCode === 200) {
@@ -554,7 +558,11 @@ function PersonalDetail(props, ref) {
     // 先只有超级管理员进
     if (
       userType === 0 &&
-       SysUrl && SysUrl["E34"] && SysUrl["E34"].WsSvrAddr) {
+      archives &&
+      SysUrl &&
+      SysUrl["E34"] &&
+      SysUrl["E34"].WsSvrAddr
+    ) {
       let { UserID, UserName } = archives;
       const onBtnClick = () => {
         let toUrl =
@@ -571,6 +579,7 @@ function PersonalDetail(props, ref) {
     } else {
       return null;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SysUrl, token, identityCode, archives]);
   return (
     <div

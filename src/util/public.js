@@ -380,6 +380,7 @@ export const addOrgToUrl = (url = "", paramName = "", replaceWith = "") => {
       url = urlPath + "?" + urlSearch + "&" + paraStr + "#/" + urlHash;
     }
   }
+  url = url.split("?&").join("?");
   return url;
 };
 

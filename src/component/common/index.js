@@ -2169,6 +2169,7 @@ function LgModal(props, ref) {
     children,
     destroyOnClose,
     visible,
+    maskClosable,
     ...reset
   } = props;
   const [Footer, setFooter] = useState(footer);
@@ -2251,6 +2252,8 @@ function LgModal(props, ref) {
         ) : null
       }
       width={Width}
+      centered={centered === undefined ? true : centered}
+      maskClosable={!!maskClosable}
       bodyStyle={Object.assign(
         {},
         Height ? { height: Height } : {},
@@ -2266,23 +2269,27 @@ function LgModal(props, ref) {
           : Footer
           ? Footer
           : [
-            onOk!==null?<Button
-                key="onOk"
-                type="primary"
-                size="small"
-                color="green"
-                onClick={OnOk}
-              >
-                {okText || "确定"}
-              </Button>:null,
-             onCancel!==null? <Button
-                key="onCancel"
-                size="small"
-                color="blue"
-                onClick={OnCancel}
-              >
-                {cancelText || "取消"}
-              </Button>:null,
+              onOk !== null ? (
+                <Button
+                  key="onOk"
+                  type="primary"
+                  size="small"
+                  color="green"
+                  onClick={OnOk}
+                >
+                  {okText || "确定"}
+                </Button>
+              ) : null,
+              onCancel !== null ? (
+                <Button
+                  key="onCancel"
+                  size="small"
+                  color="blue"
+                  onClick={OnCancel}
+                >
+                  {cancelText || "取消"}
+                </Button>
+              ) : null,
             ]
       }
       {...reset}

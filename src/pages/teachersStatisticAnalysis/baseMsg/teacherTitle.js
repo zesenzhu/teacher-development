@@ -66,7 +66,7 @@ import { resizeForEcharts, deepCopy } from "../../../util/public";
 function TeacherTitle(props, ref) {
   let {
     className,
-    levelHash,
+    levelHash ,
     productMsg,
     data: { BenkePercent, MiddleTitlePercent, EduList, SubSet, TitleList,MiddleTitleName },
   } = props;
@@ -524,7 +524,7 @@ function TeacherTitle(props, ref) {
         <p className="tt-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
           教师学历本科率<span className="tt-tip-2">{BenkePercent}</span>
-          ，{MiddleTitleName||'一级教师及以上占比'}
+          ，{MiddleTitleName||(productMsg.middleTitleName+'及以上占比')}
           <span className="tt-tip-2">{MiddleTitlePercent}</span>
         </p>
 

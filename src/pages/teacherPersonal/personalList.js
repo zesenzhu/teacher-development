@@ -159,11 +159,11 @@ function PersonalList(props, ref) {
         sorter: true,
         render: (data) => {
           let { UserName, PhotoPath } = data;
-          
+
           return (
             <span
               className="table-name"
-              onClick={onClickName.bind(this,data)}
+              onClick={onClickName.bind(this, data)}
               title={UserName}
             >
               <i
@@ -293,7 +293,10 @@ function PersonalList(props, ref) {
         render: (data) => {
           return (
             <span className="table-handle">
-              <span className=" btn-check" onClick={onClickName.bind(this,data)}></span>
+              <span
+                className=" btn-check"
+                onClick={onClickName.bind(this, data)}
+              ></span>
             </span>
           );
         },
@@ -335,12 +338,14 @@ function PersonalList(props, ref) {
                 onSelect={(e, option) => {
                   setQuery({ ...query, nodeID: e, nodeType: option.nodeType });
                   setFirstSelect(e);
-                  console.log(SecondNodeObj[e], e, SecondNodeObj);
-                  setSecondNodeList(
-                    SecondNodeObj[e]
-                      ? SecondNodeObj[e]
-                      : [{ value: "", title: "全部教研室" }]
-                  );
+                  let defaultList = [{ value: "", title: "全部教研室" }];
+                  // console.log(SecondNodeObj[e], e, SecondNodeObj);
+                  let secondList =
+                    SecondNodeObj[e] instanceof Array
+                      ? defaultList.concat(SecondNodeObj[e])
+                      : defaultList;
+                  setSecondNodeList(secondList);
+                  setSecondSelect(secondList[0].value);
                 }}
               ></Dropdown>
               {productLevel === 2 ? (

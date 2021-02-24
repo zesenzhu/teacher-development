@@ -44,7 +44,7 @@ import { Tabs } from "antd";
 import { Scrollbars } from "react-custom-scrollbars";
 import { frameContext } from "../index";
 import { debounce } from "../../../util/public";
-import {Loading} from '@/component/common'
+import { Loading } from "@/component/common";
 let { TabPane } = Tabs;
 
 function Tab(props, ref) {
@@ -71,21 +71,20 @@ function Tab(props, ref) {
   //   const [ComponentList, setComponentList] = useState(componentList);
   const [TabList, setTabList] = useState([]);
   const [, setTabListLength] = useState(TabList.length);
-  const [Height,setHeight] = useState(0)
-const [LoadingShow,setLoadingShow] = useState(false)
+  const [Height, setHeight] = useState(0);
+  const [LoadingShow, setLoadingShow] = useState(false);
   const { state, dispatch } = useContext(frameContext);
   // 路径
   const Path = useMemo(() => {
     // console.log(location);
-    setLoadingShow(true)
+    setLoadingShow(true);
 
     setTimeout(() => {
       // 主动触发resize，更新里面的echarts
       var myEvent = new Event("resize");
       window.dispatchEvent(myEvent);
-      console.log(myEvent);
-      setLoadingShow(false)
-    },0);
+      setLoadingShow(false);
+    }, 0);
     return location && typeof location.pathname === "string"
       ? handleRoute(location.pathname)
       : "";
@@ -278,7 +277,7 @@ const [LoadingShow,setLoadingShow] = useState(false)
       typeof onContentresize === "function" && onContentresize(height, width);
 
       dispatch({ type: "RESIZE_CONTENT", data: height });
-      setHeight(height)
+      setHeight(height);
     };
     window.addEventListener("resize", debounce(resize, 500), false);
 
@@ -401,8 +400,11 @@ const [LoadingShow,setLoadingShow] = useState(false)
             }
             key={props.tabkey}
           >
-            <Loading opacity={false} tip={'加载中...'} spinning={LoadingShow}>
-            <Scrollbars autoHeight={Height}  autoHeightMin={Height}  autoHeightMax={Height}>{children}</Scrollbars></Loading>
+            <Loading opacity={false} tip={"加载中..."} spinning={LoadingShow}>
+              <div style={{ height: Height }}>
+                <Scrollbars>{children}</Scrollbars>
+              </div>
+            </Loading>
           </TabPane>
         );
       })}

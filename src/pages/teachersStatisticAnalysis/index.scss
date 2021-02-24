@@ -269,23 +269,25 @@
         padding: 10px 0;
     }
     .type-label {
-        margin: 20px 0;
+        margin: 10px 0;
         line-height: 20px;
         font-size: 12px;
-        text-align: center;
+        text-align: left;
+        padding: 0 40px 0 60px;
         .type-name {
             color: #333333;
         }
         .type-select {
             position: relative;
             height: 20px;
+            display: inline-block;
             background-color: #d5e8f8;
             border-radius: 3px;
             padding: 0 8px;
             font-size: 12px;
             cursor: pointer;
             color: #034069;
-            margin: 0 6px 0 5px;
+            margin: 0 6px 10px 5px;
             &:first-of-type {
                 margin-left: 0;
             }

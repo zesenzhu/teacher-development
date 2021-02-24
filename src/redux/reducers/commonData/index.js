@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2021-01-28 20:40:51
+ * @LastEditTime: 2021-02-24 14:04:20
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -48,6 +48,8 @@ const commonData = (
         nextProductLevel: 3, //下级的产品级别
         nextSelectLevel: 3, //下级的选择级别
         nextTitle: "学校", //下级名称
+        middleTitleName:'一级教师',//大学和中小学这个学历职称有些不一样
+        typeName:'类型',//在历年弹窗有选择的时候的文案
       },
       2: {
         productLevel: 2,
@@ -61,6 +63,9 @@ const commonData = (
         nextProductLevel: 4, //下级的产品级别
         nextSelectLevel: 3, //下级的选择级别
         nextTitle: "学院", //下级名称
+        middleTitleName:'副教授',//大学和中小学这个学历职称有些不一样
+        typeName:'学院',//在历年弹窗有选择的时候的文案
+
       },
       3: {
         productLevel: 3,
@@ -71,6 +76,9 @@ const commonData = (
         belong: "学科",
         belondName: "SubjectNames",
         ganger: "学科",
+        middleTitleName:'一级教师',//大学和中小学这个学历职称有些不一样
+        typeName:'学科',//在历年弹窗有选择的时候的文案
+
       },
       4: {
         productLevel: 4,
@@ -82,6 +90,9 @@ const commonData = (
         belong: "教研室",
         belondName: "CroupName",
         ganger: "学科",
+        middleTitleName:'副教授',//大学和中小学这个学历职称有些不一样
+        typeName:'教研室',//在历年弹窗有选择的时候的文案
+
       },
     },
     contentHW: { height: 0, width: 0 },

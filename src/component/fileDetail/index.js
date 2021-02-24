@@ -125,7 +125,8 @@ function FileDetail(props, ref) {
   }, []);
 
   useImperativeHandle(ref, () => ({
-    reload,detailData
+    reload,
+    detailData,
   }));
   return (
     <EmptyReact component={UseScrollbars ? Scrollbars : false}>
@@ -205,7 +206,8 @@ function FileDetail(props, ref) {
                         }
                         filename[0] = FileName.slice(0, Index);
                         filename[1] = FileName.slice(Index);
-
+                        let enFileName = encodeURIComponent(FileName);
+                        let enFileUrl = encodeURIComponent(FileUrl);
                         return (
                           <div
                             key={index}
@@ -223,7 +225,14 @@ function FileDetail(props, ref) {
                               [{FileSize}]
                             </span>
                             <a
-                              href={fileIP + FileUrl}
+                              // 下载用ashx
+                              // 下载附件路径改为：{资源服务器地址}+
+                              // download.ashx?FileUrl={路径参数}&FileName={文件名称}
+                              href={
+                                fileIP +
+                                `download.ashx?FileUrl=${enFileUrl}&FileName=${enFileName}`
+                              }
+                              rel={"noreferrer"}
                               // ref={'noreferrer'}
                               download={filename[0]}
                               // eslint-disable-next-line react/jsx-no-target-blank

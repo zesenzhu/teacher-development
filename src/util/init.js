@@ -308,6 +308,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     Role = {
       ...Role,
       version,
+      isUniversity:version.indexOf('university')!==-1,
       selectLevel,
       collegeID,
       schoolID,

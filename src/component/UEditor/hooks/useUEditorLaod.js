@@ -196,7 +196,7 @@ export default function useUEditorLaod(id, config) {
               "lineheight",
               "link",
               "|",
-              "emotion",
+              // "emotion",
               "simpleupload",
               // "|",
               // "music",

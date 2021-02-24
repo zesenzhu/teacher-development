@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-29 16:47:13
- * @LastEditTime: 2021-02-03 15:52:11
+ * @LastEditTime: 2021-02-24 14:14:05
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\historyModal.js
  */
@@ -31,7 +31,7 @@ import React, {
 import { Modal, Loading, Empty } from "../../component/common";
 import { deepMap, resizeForEcharts, changeToArray } from "../../util/public";
 import echarts from "echarts/lib/echarts";
-
+import { Scrollbars } from "react-custom-scrollbars";
 import "echarts/lib/chart/line";
 import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
@@ -77,6 +77,7 @@ function HistoryModal(props, ref) {
     childKey,
     color,
     width,
+    height,
     typeName,
     className,
     onClose,
@@ -99,6 +100,7 @@ function HistoryModal(props, ref) {
       type={"4"}
       visible={Visible}
       width={width || 886}
+      height={height || 467}
       title={title ? title : "历年人均"}
       onCancel={() => {
         setVisible(false);
@@ -337,7 +339,7 @@ function ModalContent(props) {
     deepMap(
       myData,
       ({ child, level, parent, indexArray }) => {
-        let { nodeName, nodeID, titleList, xName, yName, type,yType } = child;
+        let { nodeName, nodeID, titleList, xName, yName, type, yType } = child;
         // 第一层
         if (level === 1) {
           typeIndex++;
@@ -352,7 +354,8 @@ function ModalContent(props) {
             nodeName,
             xName,
             yName,
-            nodeID,yType,
+            nodeID,
+            yType,
             type: changeToArray(type),
             children: [],
           };
@@ -411,25 +414,27 @@ function ModalContent(props) {
       {Data !== false ? (
         <>
           {Source.length > 1 ? (
-            <p className="type-label">
-              <span className="type-name">{typeName || "类型选择"}:</span>
-              {Source.map((child, index) => {
-                return (
-                  <span
-                    key={index}
-                    onClick={() => {
-                      setTypeSelect(index);
-                      setSourceSelect(Source[index]);
-                    }}
-                    className={`type-select ${
-                      index === TypeSelect ? "type-select-active" : ""
-                    }`}
-                  >
-                    {child.nodeName}
-                  </span>
-                );
-              })}
-            </p>
+            <Scrollbars autoHeight autoHeightMax={80}>
+              <p className="type-label">
+                <span className="type-name">{typeName || "类型"}选择:</span>
+                {Source.map((child, index) => {
+                  return (
+                    <span
+                      key={index}
+                      onClick={() => {
+                        setTypeSelect(index);
+                        setSourceSelect(Source[index]);
+                      }}
+                      className={`type-select ${
+                        index === TypeSelect ? "type-select-active" : ""
+                      }`}
+                    >
+                      {child.nodeName}
+                    </span>
+                  );
+                })}
+              </p>
+            </Scrollbars>
           ) : (
             <div style={{ height: "40px" }}></div>
           )}
@@ -455,7 +460,7 @@ function ModalContent(props) {
   );
 }
 function MyEcharts(props) {
-  let { colors, Source,  TypeSelect } = props;
+  let { colors, Source, TypeSelect } = props;
   // 柱状
 
   let [myEchart, setMyEchart] = useState(null);
@@ -465,7 +470,7 @@ function MyEcharts(props) {
 
   // 进行echarts 的挂载
   useLayoutEffect(() => {
-    if ( Source.length === 0 || !echartsRef.current) {
+    if (Source.length === 0 || !echartsRef.current) {
       return;
     }
     if (!myEchart) {
@@ -506,7 +511,12 @@ function MyEcharts(props) {
       });
     });
     // yType为percent表示使用100%，有值表示使用这个max
-    let yMax = source.yType==='percent'?{max:100}:!isNaN(source.yType)?source.yType:{}
+    let yMax =
+      source.yType === "percent"
+        ? { max: 100 }
+        : !isNaN(source.yType)
+        ? source.yType
+        : {};
     let option = {
       dataset: {
         source: data,
@@ -625,7 +635,7 @@ function MyEcharts(props) {
           margin: 20,
           fontSize: 12,
           formatter: (value) => {
-            return source.yType==='percent'?`${value }%`:value;
+            return source.yType === "percent" ? `${value}%` : value;
           },
         },
         splitLine: {
@@ -646,7 +656,7 @@ function MyEcharts(props) {
 
       myEchart.off();
     };
-  }, [Source,  TypeSelect]);
+  }, [Source, TypeSelect]);
 
   return <div ref={echartsRef} className="teacher-bar hm-echarts"></div>;
 }

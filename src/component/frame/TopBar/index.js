@@ -196,7 +196,6 @@ function TopBar(props, ref) {
                   cursor: BasePlatFormMsg ? "pointer" : "auto",
                 }}
                 onClick={() => {
-                
                   BasePlatFormMsg &&
                     window.open(
                       BasePlatFormMsg.BasicWebRootUrl +
@@ -210,7 +209,6 @@ function TopBar(props, ref) {
               </i>
               <span
                 onClick={() => {
-               
                   BasePlatFormMsg &&
                     window.open(
                       BasePlatFormMsg.BasicWebRootUrl +
@@ -251,24 +249,31 @@ function TopBar(props, ref) {
           ) : (
             ""
           )}
-          <div className="Frame-open Frame-devide">
-            {MsgInit ? (
-              <span className="open-msg" onClick={onMsgClick}>
-                <i ref={msgRef} className="msg" id={"Assistant_infoCenter"}></i>
-                消息
-              </span>
-            ) : (
-              ""
-            )}
-            <span
+          {/* 帮助没实现，暂不放出，放出后要把下面的MsgInit &&去掉 */}
+          {MsgInit && (
+            <div className="Frame-open Frame-devide">
+              {MsgInit ? (
+                <span className="open-msg" onClick={onMsgClick}>
+                  <i
+                    ref={msgRef}
+                    className="msg"
+                    id={"Assistant_infoCenter"}
+                  ></i>
+                  消息
+                </span>
+              ) : (
+                ""
+              )}
+              {/* <span
               className="open-help"
               onClick={() => {
                 console.log("帮助");
               }}
             >
               帮助
-            </span>
-          </div>
+            </span> */}
+            </div>
+          )}
           {Time ? <div className="Frame-time  Frame-devide">{Time}</div> : ""}
         </>
       )}

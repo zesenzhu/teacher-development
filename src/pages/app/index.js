@@ -102,7 +102,7 @@ function App(props, ref) {
   //  提前检查路由
   useEffect(() => {
     let Path = handleRoute(location.pathname);
-    let moduleType = getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
+    let moduleType =getQueryVariable("moduleType")|| getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
     // 单页面
     if (Path[0] === "page" && Path[1]) {
       // 招聘详情界面
