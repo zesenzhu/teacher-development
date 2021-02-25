@@ -27,7 +27,8 @@
  * @LastEditors: zhuzesen
  * @Date: 2021-01-12 19:19:01
  * @LastEditTime: 2021-01-12 19:19:01
- * @Description:
+ * @Description:教学资料
+ *
  * @FilePath: \worker-development\src\pages\personalDetail\card.js
  */
 import React, {
@@ -53,7 +54,7 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts } from "@/util/public";
+import { resizeForEcharts, removeToken, getToken } from "@/util/public";
 import { Dropdown } from "@/component/common";
 
 /**
@@ -72,7 +73,10 @@ function Data(props, ref) {
     Percentage, //精品课程
     TeachPlan, //教学方案
     SubjectList,
+    IsSelf,
+    identityCode,
   } = props;
+
   const [FirstEchart, setFirstEchart] = useState(null);
   const [SecondEchart, setSecondEchart] = useState(null);
   const [ThirdEchart, setThirdEchart] = useState(null);
@@ -88,6 +92,8 @@ function Data(props, ref) {
   const FirstRef = useRef(null);
   const SecondRef = useRef(null);
   const ThirdRef = useRef(null);
+
+
   // let {
   //   ResView, //电子资源
   //   Percentage, //精品课程
@@ -101,9 +107,17 @@ function Data(props, ref) {
     if (!ResView) {
       return;
     }
-    let { AllCount, UseCount, AllScale, AllSubject } = ResView;
+    let { AllCount, UseCount, AllScale, AllSubject, Url } = ResView;
     AllScale = typeof AllScale !== "number" || AllScale > 0.3 ? AllScale : 0.3;
-    let source = ["nodeName", "同学科", "全校教师", "上传电子资源", "浏览"];
+    let source = [
+      "nodeName",
+      "同学科",
+      "全校教师",
+      "上传电子资源",
+      "浏览",
+      "学科ID",
+      "跳转链接",
+    ];
     let subjectList = {}; //学科索引
     let firstSub = "";
     // 初始先把同学科的预设
@@ -118,6 +132,8 @@ function Data(props, ref) {
           AllScale,
           AllCount,
           UseCount,
+          child.SubjectID,
+          Url,
         ];
         if (index === 0) firstSub = child.SubjectName;
       });
@@ -130,12 +146,22 @@ function Data(props, ref) {
             AllScale,
             AllCount,
             UseCount,
+            child.key,
+            Url,
           ];
         }
       });
     } else {
       //不要学科
-      subjectList["同学科"] = ["同学科", null, AllScale, AllCount, UseCount];
+      subjectList["同学科"] = [
+        "同学科",
+        null,
+        AllScale,
+        AllCount,
+        UseCount,
+        "",
+        Url,
+      ];
       firstSub = "同学科";
     }
     setResViewData({
@@ -156,9 +182,17 @@ function Data(props, ref) {
     if (!TeachPlan) {
       return;
     }
-    let { AllCount, UseCount, AllScale, AllSubject } =  TeachPlan;
+    let { AllCount, UseCount, AllScale, AllSubject, Url } = TeachPlan;
     AllScale = typeof AllScale !== "number" || AllScale > 0.3 ? AllScale : 0.3;
-    let source = ["nodeName", "同学科", "全校教师", "制作教学方案", "应用数"];
+    let source = [
+      "nodeName",
+      "同学科",
+      "全校教师",
+      "制作教学方案",
+      "应用数",
+      "学科ID",
+      "跳转链接",
+    ];
     let subjectList = {}; //学科索引
     let firstSub = "";
     // 初始先把同学科的预设
@@ -173,6 +207,8 @@ function Data(props, ref) {
           AllScale,
           AllCount,
           UseCount,
+          child.SubjectID,
+          Url,
         ];
         if (index === 0) firstSub = child.SubjectName;
       });
@@ -185,12 +221,22 @@ function Data(props, ref) {
             AllScale,
             AllCount,
             UseCount,
+            child.key,
+            Url,
           ];
         }
       });
     } else {
       //不要学科
-      subjectList["同学科"] = ["同学科", null, AllScale, AllCount, UseCount];
+      subjectList["同学科"] = [
+        "同学科",
+        null,
+        AllScale,
+        AllCount,
+        UseCount,
+        "",
+        Url,
+      ];
       firstSub = "同学科";
     }
     setTeachPlanData({
@@ -204,6 +250,7 @@ function Data(props, ref) {
         subjectList[firstSub],
       ]);
     }
+
     //  // 如果没有挂载，就挂载
     //  if (!ThirdEchart && firstSub === "同学科") {
     //   SetEchart(ThirdEchart, ThirdRef, setThirdEchart, [
@@ -215,13 +262,21 @@ function Data(props, ref) {
   }, [TeachPlan, SubjectList]);
   // 精品课程
   useLayoutEffect(() => {
-    console.log(Percentage)
+    console.log(Percentage);
     if (!Percentage) {
       return;
     }
-    let { AllCount, UseCount, AllScale, AllSubject } = Percentage;
+    let { AllCount, UseCount, AllScale, AllSubject, Url } = Percentage;
     AllScale = typeof AllScale !== "number" || AllScale > 0.3 ? AllScale : 0.3;
-    let source = ["nodeName", "同学科", "全校教师", "录制精品课程", "浏览"];
+    let source = [
+      "nodeName",
+      "同学科",
+      "全校教师",
+      "录制精品课程",
+      "浏览",
+      "学科ID",
+      "跳转链接",
+    ];
     let subjectList = {}; //学科索引
     let firstSub = "";
     // 初始先把同学科的预设
@@ -236,6 +291,8 @@ function Data(props, ref) {
           AllScale,
           AllCount,
           UseCount,
+          child.SubjectID,
+          Url,
         ];
         if (index === 0) firstSub = child.SubjectName;
       });
@@ -248,15 +305,25 @@ function Data(props, ref) {
             AllScale,
             AllCount,
             UseCount,
+            child.key,
+            Url,
           ];
         }
       });
     } else {
       //不要学科
-      subjectList["同学科"] = ["同学科", null, AllScale, AllCount, UseCount];
+      subjectList["同学科"] = [
+        "同学科",
+        null,
+        AllScale,
+        AllCount,
+        UseCount,
+        "",
+        Url,
+      ];
       firstSub = "同学科";
     }
-     setPercentageData({
+    setPercentageData({
       source,
       subjectList,
     });
@@ -267,12 +334,18 @@ function Data(props, ref) {
         subjectList[firstSub],
       ]);
     }
-   
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Percentage, SubjectList]);
   // 轮播循环
   useLayoutEffect(() => {
-    if (!(SubjectList instanceof Array && SubjectList.length > 1)) {
+    if (!(SubjectList instanceof Array && SubjectList.length > 0)) {
+      return;
+    }
+    // 一个不用轮播
+    if (SubjectList.length === 1) {
+      setSubjectName(SubjectList[0].value);
+
       return;
     }
     let index = 0;
@@ -326,8 +399,8 @@ function Data(props, ref) {
     ) {
       //数据上有学科才更新
       let data = [TeachPlanData.source, TeachPlanData.subjectList[SubjectName]];
+
       SetEchart(SecondEchart, SecondRef, setSecondEchart, data);
-      
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -335,8 +408,8 @@ function Data(props, ref) {
 
   // 公共渲染echart
   const SetEchart = (myEchart, myRef, setEchart, data) => {
-    // console.log(data);
     // let myEchart = FirstEchart;
+    console.log(data);
     // return;
     if (!myRef.current || !(data instanceof Array)) {
       return;
@@ -432,30 +505,31 @@ function Data(props, ref) {
           roundCap: true,
           barWidth: 8,
           barGap: "50%",
-
+          cursor: IsSelf ? "pointer" : "auto",
           itemStyle: {
-            color: {
-              type: "linear",
-              x: 1,
-              y: 1,
-              x2: 0,
-              y2: 0,
-              colorStops: [
-                // {
-                //   offset: 0,
-                //   color: "#073547", // 0% 处的颜色
-                // },
+            color: "#f14753", // 100% 处的颜色
+            // color: {
+            //   type: "linear",
+            //   x: 1,
+            //   y: 1,
+            //   x2: 0,
+            //   y2: 0,
+            //   colorStops: [
+            //     // {
+            //     //   offset: 0,
+            //     //   color: "#073547", // 0% 处的颜色
+            //     // },
 
-                {
-                  offset: 0,
-                  color: "rgba(255,82,90, 0.1)", // 0% 处的颜色
-                },
-                {
-                  offset: 1,
-                  color: "#ff525a", // 100% 处的颜色
-                },
-              ],
-            },
+            //     {
+            //       offset: 0,
+            //       color: "rgba(255,82,90, 0.1)", // 0% 处的颜色
+            //     },
+            //     {
+            //       offset: 1,
+            //       color: "#ff525a", // 100% 处的颜色
+            //     },
+            //   ],
+            // },
           },
         },
         {
@@ -463,42 +537,49 @@ function Data(props, ref) {
           coordinateSystem: "polar",
           roundCap: true,
           barWidth: 8,
+          cursor: IsSelf ? "pointer" : "auto",
           barGap: "50%",
           itemStyle: {
-            color: {
-              type: "linear",
-              x: 1,
-              y: 1,
-              x2: 0,
-              y2: 0,
-              colorStops: [
-                // {
-                //   offset: 0,
-                //   color: "#073547", // 0% 处的颜色
-                // },
-                {
-                  offset: 0,
-                  color: "rgba(3, 134, 169, 0 ) ", // 0% 处的颜色
-                },
-                {
-                  offset: 0.5,
-                  color: "rgba(3, 134, 169, 0.5) ", // 0% 处的颜色
-                },
-                // {
-                //   offset: 0,
-                //   color: "#073547", // 0% 处的颜色
-                // },
+            // color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            //   {
+            //     offset: 0,
+            //     color: "#0d2f50",
+            //   },
 
-                // {
-                //   offset: 0.01,
-                //   color: "rgba(7, 53, 71, 0)", // 0% 处的颜色
-                // },
-                {
-                  offset: 1,
-                  color: "#00b7e5", // 100% 处的颜色
-                },
-              ],
-            },
+            //   {
+            //     offset: 1,
+            //     color: "#00b7e5",
+            //   },
+            // ]),
+
+            color: "#19b0df", // 100% 处的颜色
+            // color: {
+            //   type: "linear",
+            //   x: 0,
+            //   y: 1,
+            //   x2: 0,
+            //   y2: 0,
+       
+            //   colorStops: [
+                
+            //     {
+            //       offset: 0,
+            //       color: "#0d2f50", // 0% 处的颜色
+            //     },
+            //     {
+            //       offset: 0.2,
+            //       color: "#0d2f50", // 0% 处的颜色
+            //     },
+            //     {
+            //       offset: 0.99,
+            //       color: "#00b7e5", // 100% 处的颜色
+            //     },
+            //     {
+            //       offset: 1,
+            //       color: "#0d2f50", // 100% 处的颜色
+            //     },
+            //   ],
+            // },
           },
         },
       ],
@@ -510,13 +591,47 @@ function Data(props, ref) {
     // myOption.dataset.source = source
     myEchart.clear(); //清空数据缓存
     myEchart.setOption(myOption);
+    // 清除旧的
+    // console.log(IsSelf, identityCode);
+    if (IsSelf) {
+      myEchart.off("click");
+      myEchart.on("click", (params) => {
+        let { value } = params;
+        let URL = value[6];
+        let subjectID = value[5];
+        if (typeof URL !== "string") {
+          return;
+        }
+        // let token = getToken();
+        let Index = URL.indexOf("?");
+        // let lg_tk = URL.indexOf("lg_tk");
+        if (Index === -1) {
+          URL += "?";
+        }
+        // if (lg_tk === -1) {
+        //   URL += "&lg_tk=" + token;
+        // }
+        if (subjectID) {
+          URL += "&subjectid=" + subjectID;
+        }
+        URL += "&lg_ic=" + identityCode;
+        window.open(URL);
+        console.log(params, URL);
+
+        // let url =  +
+      });
+    }
   };
   return (
     <div className={`card-content card-data ${className ? className : ""}`}>
       {/* <div className="ci-echarts-box"> */}
       <div className="cd-legend">
         <span className="cd-legend-tea">全校教师</span>
-        {<span className="cd-legend-sub">{SubjectName?SubjectName:'同学科'}</span>}
+        {
+          <span className="cd-legend-sub">
+            {SubjectName ? SubjectName : "同学科"}
+          </span>
+        }
       </div>
       <div className="ca-drop-box cd-week-box">
         {weekList instanceof Array && weekList.length > 0 ? (
@@ -546,7 +661,13 @@ function Data(props, ref) {
         )}
       </div>
       {ResView ? (
-        <div className="cd-echarts-content">
+        <div
+          className={`cd-echarts-content ${
+            ResView.AllSubject instanceof Array && ResView.AllSubject.length > 0
+              ? "cd-echarts-content-sub"
+              : ""
+          }`}
+        >
           <div className="cd-echarts" ref={FirstRef}></div>
           <p className="all-count" title={ResView.AllCount}>
             {ResView.AllCount ? ResView.AllCount : 0}
@@ -565,7 +686,14 @@ function Data(props, ref) {
       )}
 
       {TeachPlan ? (
-        <div className="cd-echarts-content">
+        <div
+          className={`cd-echarts-content ${
+            TeachPlan.AllSubject instanceof Array &&
+            TeachPlan.AllSubject.length > 0
+              ? "cd-echarts-content-sub"
+              : ""
+          }`}
+        >
           <div className="cd-echarts" ref={SecondRef}></div>
           <p className="all-count" title={TeachPlan.AllCount}>
             {TeachPlan.AllCount ? TeachPlan.AllCount : 0}
@@ -583,7 +711,14 @@ function Data(props, ref) {
         ""
       )}
       {Percentage ? (
-        <div className="cd-echarts-content">
+        <div
+          className={`cd-echarts-content ${
+            Percentage.AllSubject instanceof Array &&
+            Percentage.AllSubject.length > 0
+              ? "cd-echarts-content-sub"
+              : ""
+          }`}
+        >
           <div className="cd-echarts" ref={ThirdRef}></div>
           <p className="all-count" title={Percentage.AllCount}>
             {Percentage.AllCount ? Percentage.AllCount : 0}

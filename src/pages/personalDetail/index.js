@@ -95,11 +95,10 @@ function PersonalDetail(props, ref) {
     basePlatFormMsg,
     teachermsg,
     teacherid,
-    token,
+    token,userInfo:{UserID},
     roleMsg: { identityCode, userType, isUniversity },
     ...reset
   } = props;
-  console.log(props);
 
   const [rate, setRate] = useState(null);
   // 缩放模式，*ratio:等比，以宽的比例为准，*full:全屏，宽高各自比例
@@ -153,6 +152,10 @@ function PersonalDetail(props, ref) {
     "archives",
     "history",
   ];
+   // 是否是本人
+   const IsSelf = useMemo(() => {
+    return UserID===teacherid
+  }, [teacherid,UserID])
   // 保存浏览器版本，如果是ie不要动画
   const isIE = useMemo(() => {
     let {
@@ -167,8 +170,8 @@ function PersonalDetail(props, ref) {
   // 获取各平台地址
   useEffect(() => {
     let sysIDs = [
-      310, //教学方案
-      // 300, //教学方案
+      310, //教学方案，教案数据
+      300, //教学方案,跳转链接
       "D21", //精品课程
       "E34", //档案
       "C10", //电子资源
@@ -403,12 +406,14 @@ function PersonalDetail(props, ref) {
   }, [teacherid]);
   // 工作量，依赖学期和sysurl
   useEffect(() => {
-    if (!SysUrl || !WorkTerm) {
+    if (!SysUrl || !WorkTerm || !teachermsg) {
       return;
     }
     let userID = teacherid;
-    let { CollegeID } = teachermsg;
     if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WeekData) {
+      // 可能teachermsg会慢
+      let { CollegeID } = teachermsg || {};
+
       GetTeacherWork({
         userName: userID,
         baseIP: DataParams.baseIP,
@@ -427,7 +432,7 @@ function PersonalDetail(props, ref) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SysUrl, WorkTerm]);
+  }, [SysUrl, WorkTerm, teachermsg]);
   // 教学资料需要依赖周次和sysURl
   useEffect(() => {
     let userID = teacherid;
@@ -459,6 +464,7 @@ function PersonalDetail(props, ref) {
         userID,
         baseIP: DataParams.baseIP,
         proxy: SysUrl["310"].WebSvrAddr,
+        urlProxy:SysUrl["300"].WebSvrAddr,
         token,
         // schoolID: DataParams.schoolID,
         // subjectIDs: DataParams.subjectIDs,
@@ -487,7 +493,6 @@ function PersonalDetail(props, ref) {
         endTime: WeekData.endTime,
       }).then((res) => {
         if (res.StatusCode === 200) {
-          console.log(res.Data);
           setPercentage(res.Data);
           // changeData({ ResView: res.Data });
         }
@@ -838,6 +843,8 @@ function PersonalDetail(props, ref) {
                     Percentage: Percentage,
                     TeachPlan: TeachPlan,
                     ResView: ResView,
+                    identityCode,
+                    IsSelf
                   }}
                   loading={
                     !SysUrl ||

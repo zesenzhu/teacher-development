@@ -101,7 +101,7 @@ export  function useTableRequest(query = {}, api, prepare = true) {
   }, [pageOptions]);
   /* 改变查询条件。重新请求数据 */
   useEffect(() => {
-    // console.log(query)
+    // console.log(query,prepare)
 
     prepare &&
       getList({

@@ -68,6 +68,18 @@ p {
     border-radius: 3px;
 }
 
+.lg-btn,
+.handle-btn,
+.input-box,
+.anchor-link {
+    // 禁止按钮复制
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+}
+
 // 项目的发布编辑界面的公共样式
 .Publish-context {
     .context-top {

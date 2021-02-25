@@ -442,7 +442,7 @@ export function GetTeacherResView(payload = {}) {
             UploadSubjectScale.forEach((child) => {
               data.AllSubject.push({
                 SubjectName: child.SubjectName,
-                SUbjectID: child.SubjectID,
+                SubjectID: child.SubjectID,
                 Scale: SetNaNToNumber(child.SubjectScale) * 100,
               });
             });
@@ -464,7 +464,7 @@ export function GetTeachPlanStatistics(payload = {}) {
   let {
     userID,
     baseIP,
-    proxy,
+    proxy,urlProxy,
     // schoolID,
     token,
     // subjectNames,
@@ -503,13 +503,13 @@ export function GetTeachPlanStatistics(payload = {}) {
         data.AllCount = SetNaNToNumber(UploadCount);
         data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
         data.UseCount = SetNaNToNumber(UseCount);
-        data.Url = PCLink ? proxy + PCLink + "?lg_tk=" + token : "";
+        data.Url = PCLink ? urlProxy + PCLink + "?lg_tk=" + token : "";
         data.AllSubject = [];
         UploadSubjectScale instanceof Array &&
           UploadSubjectScale.forEach((child) => {
             data.AllSubject.push({
               SubjectName: child.SubjectName,
-              SUbjectID: child.SubjectID,
+              SubjectID: child.SubjectID,
               Scale: SetNaNToNumber(child.SubjectScale) * 100,
             });
           });
@@ -586,7 +586,7 @@ export function GetTeacherpercentage(payload = {}) {
             uploadSubjectScale.forEach((child) => {
               data.AllSubject.push({
                 SubjectName: child.subjectName,
-                SUbjectID: child.subjectID,
+                SubjectID: child.subjectID,
                 Scale: SetNaNToNumber(child.subjectScale) * 100,
               });
             });

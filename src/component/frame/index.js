@@ -328,7 +328,6 @@ function Frame(props, ref) {
             }
           }
         });
-        console.log(pageList)
 
       setPageList(pageList);
       setProVersion(proversion);

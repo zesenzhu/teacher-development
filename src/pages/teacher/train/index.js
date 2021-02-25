@@ -39,8 +39,8 @@ import { withRouter } from "react-router-dom";
 import Table from "@/component/table";
 import { getCruitListByTeacher, applyTrain } from "@/api/train";
 import moment from "moment";
-import {autoAlert} from '@/util/public'
-import { Search,  } from "@/component/common";
+import { autoAlert } from "@/util/public";
+import { Search } from "@/component/common";
 function Train(props, ref) {
   let {
     history,
@@ -53,6 +53,17 @@ function Train(props, ref) {
     collegeID,
     selectLevel,
   });
+  // console.log(selectLevel);
+  useEffect(() => {
+    setQuery((pre) => ({
+      ...pre,
+      keyword,
+      schoolID,
+      collegeID,
+      selectLevel,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectLevel, collegeID, schoolID,keyword]);
   const [SearchValue, setSearchValue] = useState("");
   // 获取table组件的ref
   const tableRef = useRef({});
@@ -130,7 +141,8 @@ function Train(props, ref) {
           return (
             <span
               onClick={() => {
-                history.push("/trainDetail/" + TID);
+                let { origin, search } = window.location;
+                window.open(origin + search + "#/trainDetail/" + TID);
               }}
               className="table-title"
               title={title}
@@ -178,7 +190,7 @@ function Train(props, ref) {
                 <>
                   <span className="table-time-top">
                     {ApplyEndTime && ApplyBeginTime
-                      ? ApplyEndTime + "~" + ApplyEndTime
+                      ? ApplyBeginTime + "~" + ApplyEndTime
                       : "--"}
                   </span>
                   {typeList[ApplyStatus].title ? (
@@ -253,7 +265,7 @@ function Train(props, ref) {
         render: (data) => {
           let { ApplyStatus, ApplyFlag } = data;
           let type = typeList[ApplyStatus];
-        //   console.log(type, typeList, ApplyStatus, data);
+          //   console.log(type, typeList, ApplyStatus, data);
           return (
             <span className="table-handle">
               {type.handleType ? (
@@ -265,12 +277,11 @@ function Train(props, ref) {
                       autoAlert({
                         title: type.handleTitle + "成功",
                         type: "warn",
-                        autoHide:true
+                        autoHide: true,
                         // cancelShow: true,
                       });
-                      tableRef.current.reloadList()
+                      tableRef.current.reloadList();
                     });
-
                   }}
                 >
                   {type.handleTitle}
@@ -298,7 +309,7 @@ function Train(props, ref) {
     },
     []
   );
-  
+
   return (
     <div className="frame-type-route teacher-train">
       <div className="tt-handle-top">
@@ -312,7 +323,7 @@ function Train(props, ref) {
           }}
           onClickSearch={(e) => {
             setKeyword(e.value);
-            setQuery({ schoolID, collegeID, keyword: e.value, selectLevel });
+            // setQuery({ schoolID, collegeID, keyword: e.value, selectLevel });
           }}
           onCancelSearch={(e) => {
             setSearchValue("");

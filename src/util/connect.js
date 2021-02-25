@@ -40,9 +40,11 @@ import {
   setDataStorage,
   SimpleArrayNoRepeat,
   urlRemLg_tk,
-  addOrgToUrl,removeParam
+  addOrgToUrl,
+  removeParam,
+  addScript,
 } from "./public";
-import {getBasePlatformMsg} from './init';
+import { getBasePlatformMsg } from "./init";
 // import { useHistory, useLocation } from "react-router-dom";
 // import { createHashHistory } from "history";
 // let history = createHashHistory();
@@ -60,9 +62,10 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
 
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
   // session暂无基础平台链接，先写死；
-  let { BasicWebRootUrl: baseIP } =
- await getBasePlatformMsg(['BasicWebRootUrl'])
-      // console.log(getDataStorage("BasePlatformMsg").BasicWebRootUrl,baseIP)
+  let { BasicWebRootUrl: baseIP } = await getBasePlatformMsg([
+    "BasicWebRootUrl",
+  ]);
+  // console.log(getDataStorage("BasePlatformMsg").BasicWebRootUrl,baseIP)
   // // 柯里化
   const myTokenError = () => {
     tokenError(baseIP);
@@ -125,9 +128,12 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
       }
 
       // 最后，执行回调
-      callback(UserInfo,child);
+      callback(UserInfo, child);
       // 通过后需要轮询是否在线
-      CirculTokenCheck();
+      // 使用js，不需要这个了
+      // CirculTokenCheck();
+      // 使用这个检测掉线
+      CheckIsOnline(baseIP, child, sysID);
       isComplete = true;
       return true;
     }
@@ -141,12 +147,23 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
   });
 };
 
+// 使用动态加载js
+// http://192.168.129.1:8033/showdoc/web/#/6?page_id=2015
+function CheckIsOnline(baseIP, token, sysID) {
+  addScript({
+    src: baseIP + "/UserMgr/Login/JS/CheckIsOnline2.js",
+    id: "check_script_CheckIsOnline2",
+    onLoad: () => {
+      window._LgBase_initCheck(baseIP, token, sysID);
+    },
+  });
+}
 /**
  * @description: 退出登陆
  * @param {*}
  * @return {*}
  */
-export async function  LogOut ({ baseIP, sysID }) {
+export async function LogOut({ baseIP, sysID }) {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
 
   if (sysID) {
@@ -157,10 +174,10 @@ export async function  LogOut ({ baseIP, sysID }) {
   //   : getDataStorage("BasePlatformMsg") instanceof Object
   //   ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
   //   : "";
-    if(!baseIP){
-     let {BasicWebRootUrl} = await getBasePlatformMsg(['BasicWebRootUrl'])
-     baseIP = BasicWebRootUrl
-    }
+  if (!baseIP) {
+    let { BasicWebRootUrl } = await getBasePlatformMsg(["BasicWebRootUrl"]);
+    baseIP = BasicWebRootUrl;
+  }
   let token = URL_TOKEN || SESSION_TOKEN || LOCAL_TOKEN;
 
   setDataStorage("LogOuting", true);
@@ -177,7 +194,7 @@ export async function  LogOut ({ baseIP, sysID }) {
         //result为true
 
         sessionStorage.setItem("LogOuting", false);
-        tokenError(baseIP,false);
+        tokenError(baseIP, false);
       }
     },
     error: (err) => {
@@ -193,9 +210,9 @@ export async function  LogOut ({ baseIP, sysID }) {
  * @return {*}
  */
 
- const loginApi =async ({ baseIP, token, method, sysID, success, error }) => {
+const loginApi = async ({ baseIP, token, method, sysID, success, error }) => {
   if (!baseIP) {
-    const { BasicWebRootUrl } = await getBasePlatformMsg(['BasicWebRootUrl'])
+    const { BasicWebRootUrl } = await getBasePlatformMsg(["BasicWebRootUrl"]);
     baseIP = BasicWebRootUrl;
   }
 
@@ -279,7 +296,7 @@ export const getUserInfo = async (
   //   ? getDataStorage("BasePlatformMsg").BasicWebRootUrl
   //   : "";
   if (!baseIP) {
-    const { BasicWebRootUrl } = await getBasePlatformMsg(['BasicWebRootUrl'])
+    const { BasicWebRootUrl } = await getBasePlatformMsg(["BasicWebRootUrl"]);
     baseIP = BasicWebRootUrl;
   }
   return new Promise((resolve) => {
@@ -302,8 +319,8 @@ export const getUserInfo = async (
         let UserInfo = {};
 
         UserInfo["TruethUserType"] = loginInfo["UserType"];
-        for(let key in loginInfo){
-          let value = loginInfo[key]
+        for (let key in loginInfo) {
+          let value = loginInfo[key];
           // console.log(key,value)
           if (key === "PhotoPath") {
             let date = new Date();
@@ -428,11 +445,11 @@ const tokenSuccess = (token) => {
  * @param {*initType:是否带上lg_preurl}
  * @return {*}
  */
-const tokenError = (baseIP,initType=true) => {
+const tokenError = (baseIP, initType = true) => {
   // 清掉storage
   sessionStorage.clear();
   localStorage.removeItem("token");
-  routeToDisconnect(baseIP,initType); //掉线后重新定向到登陆页
+  routeToDisconnect(baseIP, initType); //掉线后重新定向到登陆页
 };
 /**
  * @description: 更新url上的token，有就替换，没有就加上
