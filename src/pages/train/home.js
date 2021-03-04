@@ -390,6 +390,8 @@ function Home(props, ref) {
           },
         }}
         draft={topDraft}
+        searchTips={'输入培训计划标题搜索...'}
+
         search={{
           onSearch: (value) => {
             // console.log(value)

@@ -368,6 +368,7 @@ function Home(props, ref) {
             history.push("/publishRecruit");
           },
         }}
+        searchTips={'输入招聘计划标题搜索...'}
         draft={topDraft}
         search={{
           onSearch: (value) => {

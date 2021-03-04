@@ -81,6 +81,7 @@ function Archives(props, ref) {
     PhotoPath,
     EducationBackgroundDetailData,
   } = data;
+  console.log(data)
   const eduStageList = { 1: "大专",
   2: "本科",
   3: "硕士",

@@ -98,6 +98,7 @@
         .content-box {
             overflow-y: auto;
             overflow-x: hidden;
+            padding-bottom: 6px; //控制底部，让阴影出来
         }
     }
     .ProVersion {
@@ -105,8 +106,8 @@
         margin-bottom: 0;
         text-align: center;
         width: 100%;
-        line-height: 48px;
-        margin-bottom: 18px;
+        line-height: 42px;
+        // margin-bottom: 18px;
         color: #b8b8b8;
         // bottom: 18px;
     }
@@ -333,5 +334,14 @@
         .title-2 {
             color: #fff;
         }
+    }
+}
+
+.emptyBox {
+    .tips-error-3 {
+        background-size: 200px 60px;
+    }
+    .initTitle {
+        font-size: 12px;
     }
 }

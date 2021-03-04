@@ -141,8 +141,8 @@ function Train(props, ref) {
           return (
             <span
               onClick={() => {
-                let { origin, search } = window.location;
-                window.open(origin + search + "#/trainDetail/" + TID);
+                let { origin, search,pathname } = window.location;
+                window.open(origin +pathname+ search + "#/trainDetail/" + TID);
               }}
               className="table-title"
               title={title}
@@ -315,7 +315,7 @@ function Train(props, ref) {
       <div className="tt-handle-top">
         <Search
           width={264}
-          placeHolder={"请输入关键词进行搜索..."}
+          placeHolder={"请输入培训标题进行搜索..."}
           className="tht-search"
           Value={SearchValue}
           onChange={(e) => {

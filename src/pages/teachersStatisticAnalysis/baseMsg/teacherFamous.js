@@ -62,7 +62,7 @@ function TeacherFamous(props, ref) {
 
   return (
     <div className={`TeacherFamous ${className ? className : ""} `}>
-      {data instanceof Array&&data.length>0
+      {!data instanceof Array&&data.length>0
         ? data.map((child, index) => {
             let { NodeName, Total } = child;
             return (

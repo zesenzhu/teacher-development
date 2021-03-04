@@ -1342,7 +1342,7 @@ class Search extends React.Component {
       placeHolder,
       selectOptions,
       onClickSearch,
-      onCancelSearch,
+      onCancelSearch,inputTitle,
       className,
       CancelBtnShow,
       Value,
@@ -1465,6 +1465,7 @@ class Search extends React.Component {
                   onFocus={this.onInputFocus.bind(this)}
                   onBlur={this.onInputBlur.bind(this)}
                   onKeyUp={this.handleEnterKey.bind(this)}
+                  title={inputTitle}
                   value={Value ? Value : this.state.Value}
                   onChange={onChange ? onChange : this.InputChange.bind(this)}
                 />

@@ -266,7 +266,7 @@ function construtorCountData(Data) {
       nodeName: NodeName,
       nodeID: NodeID,
       titleList: [
-        ["", "学期", "教师总人数", "人"],
+        ["", "学期", "教师", "人"],
         ["男性教师", "人,占比"],
         ["女性教师", "人,占比"],
       ],

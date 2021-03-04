@@ -55,7 +55,7 @@ import React, {
   useLayoutEffect,
   forwardRef,
 } from "react";
-import echarts from "echarts/lib/echarts";
+import * as echarts from "echarts/lib/echarts";
 import "echarts/lib/chart/bar";
 import "echarts/lib/chart/pie";
 import "echarts/lib/component/tooltip";
@@ -395,7 +395,7 @@ function TeacherTitle(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,
+            fontSize: 12,margin:12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 6) {

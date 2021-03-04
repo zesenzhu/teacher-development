@@ -63,7 +63,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     .control-rate {
-        position: absolute;
+        position: fixed;
         top: 25px;
         right: 50px;
         width: 108px;
@@ -1335,6 +1335,7 @@
         font-size: 12px;
         @include textOverFlow;
         color: #999999;
+        z-index: 10;
         span {
             position: relative;
             display: inline-block;

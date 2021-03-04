@@ -46,7 +46,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import "./index.scss";
-import echarts from "echarts/lib/echarts";
+import * as echarts from "echarts/lib/echarts";
 // import "echarts/lib/chart/radar";
 import "echarts/lib/chart/bar";
 import "echarts/lib/component/polar";
@@ -628,7 +628,7 @@ function Data(props, ref) {
       <div className="cd-legend">
         <span className="cd-legend-tea">全校教师</span>
         {
-          <span className="cd-legend-sub">
+          <span className="cd-legend-sub" title={'学科'}>
             {SubjectName ? SubjectName : "同学科"}
           </span>
         }

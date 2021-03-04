@@ -128,8 +128,9 @@ function LGSearch(props, ref) {
       >
         {/* <div style={{ width: "100px", height: "10px" }}></div> */}
         <Search
-          placeHolder={"输入关键词搜索..."}
+          placeHolder={'输入关键词搜索...'}
           className="lg-search-in"
+          inputTitle={'输入教师姓名/招聘标题/培训标题搜索'}
           width={width ? width : 180}
           Value={SearchValue}
           onChange={(e) => {

@@ -36,8 +36,9 @@
         .lg-table .ant-table .ant-table-tbody>tr>td>* {
             line-height: 68px;
             padding: 0;
-            border-top: transparent 2px solid;
-            border-bottom: transparent 2px solid;
+            // border-top: transparent 2px solid;
+            // border-bottom: transparent 2px solid;
+            border: none!important;
         }
         .lg-table .ant-table .ant-table-tbody>tr {
             // &:nth-of-type(2n+1) {

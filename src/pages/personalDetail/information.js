@@ -45,7 +45,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import "./index.scss";
-import echarts from "echarts/lib/echarts";
+import * as echarts from "echarts/lib/echarts";
 import "echarts/lib/chart/radar";
 import "echarts/lib/chart/pie";
 // import "echarts/lib/chart/pie";
@@ -179,6 +179,7 @@ function Information(props, ref) {
               name: "次数",
             },
           ],
+          // max:100,
           symbol: "circle",
           symbolSize: 6,
           lineStyle: {

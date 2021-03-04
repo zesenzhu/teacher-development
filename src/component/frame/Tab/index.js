@@ -43,7 +43,7 @@ import { handleRoute, autoAlert } from "../../../util/public";
 import { Tabs } from "antd";
 import { Scrollbars } from "react-custom-scrollbars";
 import { frameContext } from "../index";
-import { debounce } from "../../../util/public";
+import { debounce, Browser, BrowserMsg } from "../../../util/public";
 import { Loading } from "@/component/common";
 let { TabPane } = Tabs;
 
@@ -81,8 +81,20 @@ function Tab(props, ref) {
 
     setTimeout(() => {
       // 主动触发resize，更新里面的echarts
-      var myEvent = new Event("resize");
-      window.dispatchEvent(myEvent);
+      try {
+        let {
+          client: { isIE },
+        } = Browser;
+        let { trident } = BrowserMsg.versions;
+        let myEvent = "";
+        if (isIE || trident) {
+          myEvent = document.createEvent("HTMLEvents");
+          myEvent.initEvent("input", false, true);
+        } else {
+          myEvent = new Event("resize");
+        }
+        window.dispatchEvent(myEvent);
+      } catch (e) {}
       setLoadingShow(false);
     }, 0);
     return location && typeof location.pathname === "string"
@@ -271,6 +283,8 @@ function Tab(props, ref) {
     let width = tabContent.width();
     typeof onContentresize === "function" && onContentresize(height, width);
     dispatch({ type: "RESIZE_CONTENT", data: height });
+    setHeight(height);
+
     let resize = (e) => {
       let height = tabContent.height();
       let width = tabContent.width();
@@ -402,7 +416,7 @@ function Tab(props, ref) {
           >
             <Loading opacity={false} tip={"加载中..."} spinning={LoadingShow}>
               <div style={{ height: Height }}>
-                <Scrollbars>{children}</Scrollbars>
+                <Scrollbars autoHide>{children}</Scrollbars>
               </div>
             </Loading>
           </TabPane>

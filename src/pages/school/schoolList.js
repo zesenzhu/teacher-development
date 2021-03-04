@@ -147,6 +147,7 @@ function SchoolList(props, ref) {
   });
   // 设置显示的boolean
   const [visible, setVisible] = useState(false);
+  const [ListData,setListData] =useState(null)
   const searchRef = useRef(null);
   const toolTipRef = useRef(null);
   // const ControlTips = useMemo(() => {
@@ -207,6 +208,7 @@ function SchoolList(props, ref) {
         key: "index",
         // colSpan: 2,
         align: "center",
+        fixed: "left",
         dataIndex: "index",
         render: (data) => {
           return (
@@ -220,6 +222,7 @@ function SchoolList(props, ref) {
         title: levelMsg.belong + "名称",
         width: 124 * widthRate,
         // sorter: true,
+        fixed: "left",
         key: "SchoolName",
         align: "center",
         // dataIndex: "SchoolName",
@@ -1005,31 +1008,31 @@ function SchoolList(props, ref) {
           },
         ],
       },
-      {
-        title: (
-          <TableTip
-            CulomnsSelect={CulomnsSelect}
-            onCheckChange={(e) => {
-              setCulomnsSelect(
-                e.sort((a, b) => {
-                  return a > b;
-                })
-              );
-            }}
-            // ToolClassName={ToolClassName}
-            Culomns={Culomns}
-          ></TableTip>
-        ),
-        align: "center",
-        width: 60 * widthRate,
-        fixed: "right",
-        className: "two-col-center-border",
+      // {
+      //   title: (
+      //     <TableTip
+      //       CulomnsSelect={CulomnsSelect}
+      //       onCheckChange={(e) => {
+      //         setCulomnsSelect(
+      //           e.sort((a, b) => {
+      //             return a > b;
+      //           })
+      //         );
+      //       }}
+      //       // ToolClassName={ToolClassName}
+      //       Culomns={Culomns}
+      //     ></TableTip>
+      //   ),
+      //   align: "center",
+      //   width: 60 * widthRate,
+      //   fixed: "right",
+      //   className: "two-col-center-border",
 
-        // dataIndex: "time",
-        render: (data) => {
-          return <span className="table-columns"></span>;
-        },
-      },
+      //   // dataIndex: "time",
+      //   render: (data) => {
+      //     return <span className="table-columns"></span>;
+      //   },
+      // },
     ];
     EndCulomns = EndCulomns.concat(
       culomnsData.slice(0, productLevel === 1 ? 3 : 2)
@@ -1042,7 +1045,9 @@ function SchoolList(props, ref) {
     // });
     culomnsData.forEach((child, index) => {
       // 前三和最后的都不可控
-      if (index >= 3 && index !== culomnsData.length - 1) {
+      if (index >= 3 
+        // && index !== culomnsData.length - 1
+        ) {
         // value 是从0开始的，0是学校基础信息，不能取消，所以要为1以后，
         // index要3（包括3，index是0开始的）以后才是可选的
         if (
@@ -1051,33 +1056,34 @@ function SchoolList(props, ref) {
           })
         ) {
           EndCulomns.push(child);
-        } else {
-          //隐藏，改宽度
-          child.title = "";
-          child.width = 0;
-          child.sorter = false;
-
-          if (child.children) {
-            child.children = child.children.map((c, i) => {
-              c.title = "";
-              c.width = 0;
-
-              c.sorter = false;
-              c.render = () => {
-                return "";
-              };
-              return c;
-            });
-          } else {
-            child.render = () => {
-              return "";
-            };
-          }
-          EndCulomns.push(child);
         }
+        // else {
+        //   //隐藏，改宽度
+        //   child.title = "";
+        //   child.width = 0;
+        //   child.sorter = false;
+
+        //   if (child.children) {
+        //     child.children = child.children.map((c, i) => {
+        //       c.title = "";
+        //       c.width = 0;
+
+        //       c.sorter = false;
+        //       c.render = () => {
+        //         return "";
+        //       };
+        //       return c;
+        //     });
+        //   } else {
+        //     child.render = () => {
+        //       return "";
+        //     };
+        //   }
+        //   EndCulomns.push(child);
+        // }
       }
     });
-    EndCulomns.push(culomnsData[culomnsData.length - 1]); //控制列
+    // EndCulomns.push(culomnsData[culomnsData.length - 1]); //控制列
     return EndCulomns;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelMsg, CulomnsSelect, visible]);
@@ -1155,7 +1161,7 @@ function SchoolList(props, ref) {
           <Search
             className="home-search"
             Value={SearchValue}
-            placeHolder={"输入" + levelMsg.belong + "名称搜索"}
+            placeHolder={"输入" + levelMsg.belong + "名称搜索..."}
             onChange={(e) => {
               setSearchValue(e.target.value);
             }}
@@ -1171,25 +1177,41 @@ function SchoolList(props, ref) {
       </div>
 
       <div className="pl-table">
-        <Scrollbars>
-          <div>
-            <Table
-              // onHeaderRow={(c, i) => {
-              //   console.log(c, i);
-              // }}
-              scroll={{ x: "max-content" }}
-              className="Reacruit-table"
-              columns={columns}
-              // dataSource={data}
-              // prepare={!!query.selectLevel}
-              query={query}
-              onDataChange={(data) => {}}
-              ref={tableRef}
-              api={getSchoolList}
-            ></Table>
-            <div className="control-culomn"></div>
-          </div>
-        </Scrollbars>
+        {/* <Scrollbars> */}
+        <div>
+          <Table
+            // onHeaderRow={(c, i) => {
+            //   console.log(c, i);
+            // }}
+            scroll={{ x: "max-content", y: height - 210 }}
+            className="Reacruit-table"
+            columns={columns}
+            // dataSource={data}
+            // prepare={!!query.selectLevel}
+            query={query}
+            onDataChange={(data) => {
+              console.log(data)
+              setListData(data)
+            }}
+            ref={tableRef}
+            api={getSchoolList}
+          ></Table>
+          {/* <div className="control-culomn"></div> */}
+        </div>
+
+        {ListData&&ListData.List instanceof Array&& ListData.List.length>0&&<TableTip
+          CulomnsSelect={CulomnsSelect}
+          onCheckChange={(e) => {
+            setCulomnsSelect(
+              e.sort((a, b) => {
+                return a > b;
+              })
+            );
+          }}
+          // ToolClassName={ToolClassName}
+          Culomns={Culomns}
+        ></TableTip>}
+        {/* </Scrollbars> */}
       </div>
     </div>
   );
@@ -1285,6 +1307,7 @@ function TableTip(props, ref) {
           onClick={() => {
             setVisible(true);
           }}
+          title={'列筛选'}
           ref={searchRef}
         ></i>
       </Tooltip>

@@ -211,7 +211,12 @@ function Editor(props, ref) {
   //  普通输入检查
   const checkGeneralInput = useCallback(
     (value, success = () => {}, error = (isNull) => {}) => {
-      checkInput({ value, success, error,regular:/^[A-Za-z0-9_(),.';!?":，。、？“”：‘’；《》（）\u4e00-\u9fa5-]{0,100}$/ });
+      checkInput({
+        value,
+        success,
+        error,
+        regular: /^[A-Za-z0-9_(),.';!?":，。、？“”：‘’；《》（）\u4e00-\u9fa5-]{0,100}$/,
+      });
     },
     []
   );
@@ -573,9 +578,9 @@ function Editor(props, ref) {
     setCompletePercert(false);
     setFile(file);
   }, []);
-const onFileUpMD5 = useCallback((value)=>{
-setFileMD5(value)
-},[])
+  const onFileUpMD5 = useCallback((value) => {
+    setFileMD5(value);
+  }, []);
 
   return (
     <div className={`lg-editor ${className ? className : ""}`} {...reset}>
@@ -588,8 +593,8 @@ setFileMD5(value)
                 <Input
                   value={title}
                   className="editor-input title-input"
-                  maxLength={100}
-                  placeholder={"请输入标题..."}
+                  maxLength={50}
+                  placeholder={"请输入50位以内的标题..."}
                   onChange={(e) => {
                     setTitle(e.target.value);
                   }}
@@ -710,9 +715,10 @@ setFileMD5(value)
                       applyEndTime ? moment(applyEndTime) : "",
                     ]}
                     disabledDate={(date) => {
-                      let time = moment();
-                      // console.log(date);
-                      return time > date;
+                      let format = "YYYY-MM-DD";
+                      let now = moment(moment().format(format));
+                      let time = moment(date.format(format));
+                      return now > time;
                     }}
                     // disabledTime={(date, partial) => {
                     // let now = moment();
@@ -802,11 +808,21 @@ setFileMD5(value)
                         <span className="file-size" title={fileSize}>
                           [{fileSize}]
                         </span>
-                        <b onClick={()=>{
-                          setFile(file.slice(0,index).concat(file.slice(index+1)))
-                          setFileMD5(fileMD5.slice(0,index).concat(fileMD5.slice(index+1)))
-                          
-                        }} className="file-delete">×</b>
+                        <b
+                          onClick={() => {
+                            setFile(
+                              file.slice(0, index).concat(file.slice(index + 1))
+                            );
+                            setFileMD5(
+                              fileMD5
+                                .slice(0, index)
+                                .concat(fileMD5.slice(index + 1))
+                            );
+                          }}
+                          className="file-delete"
+                        >
+                          ×
+                        </b>
                       </span>
                     );
                   })}

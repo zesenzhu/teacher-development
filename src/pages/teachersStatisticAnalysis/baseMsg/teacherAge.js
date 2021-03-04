@@ -55,7 +55,7 @@ import React, {
   useLayoutEffect,
   forwardRef,
 } from "react";
-import echarts from "echarts/lib/echarts";
+import * as echarts from "echarts/lib/echarts";
 import "echarts/lib/chart/bar";
 import "echarts/lib/chart/pie";
 import "echarts/lib/component/tooltip";
@@ -63,6 +63,7 @@ import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
 import { resizeForEcharts, deepCopy } from "../../../util/public";
+// const echarts = require('echarts')
 function TeacherAge(props, ref) {
   let {
     className,
@@ -216,7 +217,7 @@ function TeacherAge(props, ref) {
         bottom: 0,
       },
       title: {
-        text: "各年龄教师年龄/教龄分布情况",
+        text: "各" + productMsg.sub +"教师年龄/教龄分布情况",
         // bottom: "4%",
         left: "center",
         top: 20,
@@ -323,7 +324,7 @@ function TeacherAge(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,
+            fontSize: 12,margin:12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 6) {

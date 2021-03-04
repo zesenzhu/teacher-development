@@ -157,6 +157,13 @@
                     top: 0;
                     left: 0;
                     position: absolute;
+                    b {
+                        transform: scale(0.75)!important;
+                        -webkit-transform: scale(0.75)!important;
+                        -moz-transform: scale(0.75)!important;
+                        -ms-transform: scale(0.75)!important;
+                        -o-transform: scale(0.75)!important;
+                    }
                 }
                 // background: url(./images/icon-msg.png) no-repeat left center / 14px 14px;
             }

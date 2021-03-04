@@ -110,7 +110,7 @@ function SchoolDetail(props, ref) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelMsg,id]);
   return (
-    <div className="SchoolDetail">
+    <div className="SchoolDetail" style={{height:'100%'}}>
       {roleData&&roleData.productLevel ? (
         <Analysis
           type={"school"}

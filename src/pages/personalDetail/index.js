@@ -191,7 +191,25 @@ function PersonalDetail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basePlatFormMsg]);
-
+useEffect(() => {
+  if (SysUrl&&teacherid) {
+    let userID = teacherid;
+    // 档案啊
+    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
+      // 获取档案-教务
+      getTeacherDetailIntroduction({
+        userID,
+        baseIP: SysUrl["E34"].WebSvrAddr,
+        isUniversity,
+      }).then((res) => {
+        if (res.StatusCode === 200) {
+          setArchives({ ...archives, ...res.Data });
+        }
+      });
+    }
+  }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [SysUrl,teacherid]);
   // 获取接口
   useEffect(() => {
     let baseIP = basePlatFormMsg.BasicWebRootUrl;
@@ -200,15 +218,15 @@ function PersonalDetail(props, ref) {
       // 档案啊
       if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
         // 获取档案-教务
-        getTeacherDetailIntroduction({
-          userID,
-          baseIP: SysUrl["E34"].WebSvrAddr,
-          isUniversity,
-        }).then((res) => {
-          if (res.StatusCode === 200) {
-            setArchives({ ...archives, ...res.Data });
-          }
-        });
+        // getTeacherDetailIntroduction({
+        //   userID,
+        //   baseIP: SysUrl["E34"].WebSvrAddr,
+        //   isUniversity,
+        // }).then((res) => {
+        //   if (res.StatusCode === 200) {
+        //     setArchives({ ...archives, ...res.Data });
+        //   }
+        // });
         // 获取教师工作量学期
         GetAllTerm({ proxy: SysUrl["E34"].WsSvrAddr }).then((res) => {
           if (res.StatusCode === 200) {
@@ -410,7 +428,7 @@ function PersonalDetail(props, ref) {
       return;
     }
     let userID = teacherid;
-    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WeekData) {
+    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WorkTerm) {
       // 可能teachermsg会慢
       let { CollegeID } = teachermsg || {};
 

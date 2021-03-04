@@ -294,17 +294,19 @@ export function getTeacherDetailIntroduction(payload = {}) {
           if (json.data.educationBackgroundDetailData instanceof Array) {
             let eduCard = []; //两个一个轮播
             json.data.educationBackgroundDetailData.forEach((child, index) => {
+              eduCard.push(child);
+              // eduCard.push(child);
               if (
                 eduCard.length === 2 ||
                 index === json.data.educationBackgroundDetailData.length - 1
               ) {
                 EducationBackgroundDetailData.push(eduCard);
                 eduCard = [];
-              } else {
-                eduCard.push(child);
               }
+               
             });
           }
+          // EducationBackgroundDetailData = EducationBackgroundDetailData.concat(EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData)
           data = {
             ...json.data,
             EducationBackgroundDetailData,
@@ -578,7 +580,7 @@ export function GetTeacherpercentage(payload = {}) {
             uploadSubjectScale,
           } = json.data;
           data.AllCount = SetNaNToNumber(uploadCount);
-          data.AllScale = SetNaNToNumber(uploadAllScale) * 100;
+          data.AllScale = data.AllCount?SetNaNToNumber(uploadAllScale) * 100:0;
           data.UseCount = SetNaNToNumber(browseCount);
           data.Url = url ? decodeURIComponent(url) + "?lg_tk=" + token : ""; //教师才能看
           data.AllSubject = [];
@@ -587,7 +589,7 @@ export function GetTeacherpercentage(payload = {}) {
               data.AllSubject.push({
                 SubjectName: child.subjectName,
                 SubjectID: child.subjectID,
-                Scale: SetNaNToNumber(child.subjectScale) * 100,
+                Scale: data.AllCount?SetNaNToNumber(child.subjectScale) * 100:0,
               });
             });
           console.log(data.Url);
@@ -734,37 +736,42 @@ export function GetResearchByUserID(payload = {}) {
           CompletedList,
           ActivityList,
         } = json.Data;
+        let Data = [
+          {
+            // count: !isNaN(ProjectCount) ? Number(ProjectCount) : 0,
+            list:
+              ProjectList instanceof Array
+                ? ProjectList.map((child) => {
+                    return { ...child, Name: child.ProjectName };
+                  })
+                : [],
+          },
+          {
+            // count: !isNaN(CompletedCount) ? Number(CompletedCount) : 0,
+            list:
+              CompletedList instanceof Array
+                ? CompletedList.map((child) => {
+                    return { ...child, Name: child.ProjectName };
+                  })
+                : [],
+          },
+          {
+            // count: !isNaN(ActivityCount) ? Number(ActivityCount) : 0,
+            list:
+              ActivityList instanceof Array
+                ? ActivityList.map((child) => {
+                    return { ...child, Name: child.ActivityName };
+                  })
+                : [],
+          },
+        ];
+        Data = Data.map(d=>{
+          d.count = d.list.length
+          return d
+        })
         return {
           StatusCode: json.StatusCode,
-          Data: [
-            {
-              count: !isNaN(ProjectCount) ? Number(ProjectCount) : 0,
-              list:
-                ProjectList instanceof Array
-                  ? ProjectList.map((child) => {
-                      return { ...child, Name: child.ProjectName };
-                    })
-                  : [],
-            },
-            {
-              count: !isNaN(CompletedCount) ? Number(CompletedCount) : 0,
-              list:
-                CompletedList instanceof Array
-                  ? CompletedList.map((child) => {
-                      return { ...child, Name: child.ProjectName };
-                    })
-                  : [],
-            },
-            {
-              count: !isNaN(ActivityCount) ? Number(ActivityCount) : 0,
-              list:
-                ActivityList instanceof Array
-                  ? ActivityList.map((child) => {
-                      return { ...child, Name: child.ActivityName };
-                    })
-                  : [],
-            },
-          ],
+          Data:Data
         };
       } else {
         return {
@@ -848,6 +855,11 @@ export function GetLogInfoByUserID(payload = {}) {
         DayTimeList[3].Count = json.Data["T1518"] || 0;
         DayTimeList[4].Count = json.Data["T1821"] || 0;
         DayTimeList[5].Count = json.Data["T2124"] || 0;
+        // 控制大于100控制为100
+        DayTimeList = DayTimeList.map(d=>{
+          d.Count = d.Count>100?100: d.Count
+          return d
+        })
         let {
           TimeSpan, //累计上机时长
           DayAvgTimeSpan, //累计上机时长

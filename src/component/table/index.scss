@@ -82,7 +82,7 @@
                 .anticon {
                     color: #98c1e6;
                     &.active {
-                        color: #1890ff
+                        color: #1890ff;
                     }
                 }
             }
@@ -108,12 +108,19 @@
                         // height: 44px;
                         // background-color: #f2f9ff;
                         border-bottom: 1px solid #dbeeff;
+                        // background: transparent;
+                    }
+                    & td {
+                        background-color: #fff;
+                    }
+                    &:nth-child(2n) td {
+                        background-color: #fcfcfc;
                     }
                     &:hover {
+                        // &:not(.ant-table-expanded-row) td {
+                        //     background: none;
+                        // }
                         background: transparent;
-                        &:not(.ant-table-expanded-row) td {
-                            background: transparent;
-                        }
                         .ant-table-cell {
                             // height: 44px;
                             &>* {
@@ -124,6 +131,9 @@
                             }
                         }
                     }
+                    // &>.ant-table-cell-fix-right {
+                    //     background: none;
+                    // }
                 }
                 // td里面的span
                 .table-index {

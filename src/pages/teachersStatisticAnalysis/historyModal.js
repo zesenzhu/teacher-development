@@ -30,7 +30,7 @@ import React, {
 } from "react";
 import { Modal, Loading, Empty } from "../../component/common";
 import { deepMap, resizeForEcharts, changeToArray } from "../../util/public";
-import echarts from "echarts/lib/echarts";
+import * as echarts from "echarts/lib/echarts";
 import { Scrollbars } from "react-custom-scrollbars";
 import "echarts/lib/chart/line";
 import "echarts/lib/component/tooltip";

@@ -68,6 +68,7 @@ import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
 import { Scrollbars } from "react-custom-scrollbars";
 import Anchor from "../../component/anchor";
+require("echarts");
 function Analysis(props, ref) {
   let {
     tabid,
@@ -138,7 +139,7 @@ function Analysis(props, ref) {
       <AnalysisTop
         // type={Path[0] === "schoolDetail" ? "module" : "tab"}
         getHeight={(height) => {
-          // console.log(height);
+          console.log(height);
           setTopHeight(height);
         }}
         className={"AnalysisTop"}
@@ -147,7 +148,7 @@ function Analysis(props, ref) {
         }}
         onTypeChange={(e) => {
           setTypeSelect(e);
-          setModuleID(e.value)
+          setModuleID(e.value);
         }}
         termlist={TermInfo.map((child) => ({
           value: child.Term,
@@ -251,6 +252,14 @@ function Analysis(props, ref) {
   );
 }
 
+function UseScrollbars(props) {
+  let { use, children, ...reset } = props;
+  const [Use, setUse] = useState(true);
+  useEffect(() => {
+    setUse(use === undefined || !!use);
+  }, [use]);
+  return Use ? <Scrollbars {...reset}>{children}</Scrollbars> : <>{children}</>;
+}
 const mapStateToProps = (state) => {
   let {
     commonData: { roleMsg, basePlatFormMsg, contentHW, termInfo, levelHash },

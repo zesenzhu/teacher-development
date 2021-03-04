@@ -148,7 +148,7 @@ function AnalysisTop(props, ref) {
   useLayoutEffect(() => {
     typeof getHeight === "function" && getHeight($(boxRef.current).height());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isSchool]);
   return (
     <div ref={boxRef} className={`Analysis-Top ${className ? className : ""}`}>
       {isSchool ? (

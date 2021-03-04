@@ -67,7 +67,7 @@ function HomeTop(props, ref) {
     children,
     draft,
     search,
-    tableProps,
+    tableProps,searchTips,
     ...reset
   } = props;
   const [SearchValue, setSearchValue] = useState("");
@@ -83,7 +83,7 @@ function HomeTop(props, ref) {
       tableRef.current.reloadList();
     },
   }));
-  console.log(tableRef.current.data)
+  // console.log(tableRef.current.data)
   return (
     <div className={`home-top ${className ? className : ""}`} {...reset}>
       {publish ? (
@@ -154,7 +154,7 @@ function HomeTop(props, ref) {
       )}
       {search ? (
         <Search
-          placeHolder={"输入关键词搜索..."}
+          placeHolder={searchTips?searchTips:"输入关键词搜索..."}
           className="home-search"
           Value={SearchValue}
           onChange={(e) => {
