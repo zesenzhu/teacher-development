@@ -131,7 +131,9 @@ function Teach(props, ref) {
         data.map((child, index) => {
           let teach = teachList[index];
           let { count, list } = child;
-          let len = count || list.length;
+          let len = 
+          // count ||
+           list.length;
           return (
             <div
               key={index}
@@ -141,14 +143,14 @@ function Teach(props, ref) {
               <span
                 className={`ct-ball ${len ? "ct-ball-active" : ""}`}
                 // style={{  cursor:count?'pointer':'auto',textDecoration:count?'underline':'auto' }}
-                title={count}
+                title={len}
                 onClick={onClickBall.bind(this, child, teach)}
               >
                 <span
                   style={{ background: teach.color }}
                   className="ball-bg"
                 ></span>
-                {count}
+                {len}
               </span>
               <p className="ct-title">{teach.title}</p>
             </div>

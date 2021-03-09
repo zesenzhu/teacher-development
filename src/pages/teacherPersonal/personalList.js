@@ -69,7 +69,7 @@ import React, {
   useMemo,
   // useImperativeHandle,
   useRef,
-  forwardRef,
+  forwardRef,useLayoutEffect
 } from "react";
 import { Dropdown, Search } from "../../component/common";
 import Table from "../../component/table";
@@ -304,7 +304,19 @@ function PersonalList(props, ref) {
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelMsg]);
-
+  const initGet = useRef(false);
+  useLayoutEffect(() => {
+    
+    
+    if (!initGet.current) {
+      initGet.current = true;
+      return;
+    }
+    if(location.pathname === "/teacherPersonal"){
+      tableRef.current.reloadList()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
   return (
     <div className="PersonalList" style={{ height: height }}>
       <div className="pl-top">

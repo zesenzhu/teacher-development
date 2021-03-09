@@ -943,6 +943,8 @@ function Editor(props, ref) {
                       checkContent(e);
                       setMain(e);
                     }}
+                    width={'auto'}
+                    style={{width:'100%'}}
                     defaultValue={main}
                     ref={UEditorRef}
                   ></UEditor>

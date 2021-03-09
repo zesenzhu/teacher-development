@@ -303,7 +303,6 @@ export function getTeacherDetailIntroduction(payload = {}) {
                 EducationBackgroundDetailData.push(eduCard);
                 eduCard = [];
               }
-               
             });
           }
           // EducationBackgroundDetailData = EducationBackgroundDetailData.concat(EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData)
@@ -393,7 +392,22 @@ export function GetTermAndPeriodAndWeekNOInfo(payload = {}) {
       }
     });
 }
+/**
+ * @description: 创建个promise，做假数据
+ * @param {*}
+ * @return {*}
+ */
+function PromiseData(data) {
+  return new Promise((resolve, reject) => {
+    resolve(data);
+  });
+}
 // 电子资源
+/**
+ * @description: 教学资料的都是在没有该系统的时候作假数据
+ * @param {*} payload
+ * @return {*}
+ */
 export function GetTeacherResView(payload = {}) {
   let {
     userID,
@@ -409,77 +423,137 @@ export function GetTeacherResView(payload = {}) {
   let url =
     proxy +
     `/api/Public/GetTeacherResView?SchoolID=${schoolID}&TeacherID=${userID}&Token=${token}&SubjectIDs=${subjectIDs}&SubjectNames=${subjectNames}&startTime=${startTime}&endTime=${endTime}`;
+  let promise = "";
+  if (proxy) {
+    promise = fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
+  } else {
+    promise = PromiseData({
+      error: 0,
+      data: {
+        TeacherID: userID,
+        Url: "",
+        UploadCount: 0,
+        BrowseCount: 0,
+        UploadAllScale: 0,
+        // UploadSubjectScale: subjectIDs.split(",").map((d, i) => {
+        //   return {
+        //     SubjectScale: 0,
+        //     SubjectID: d,
+        //     SubjectName: subjectNames.split(",")[i],
+        //   };
+        // }),
+      },
+    });
+  }
+  subjectIDs = subjectIDs || "";
+  subjectNames = subjectNames || "";
   return (
-    fetch
-      .tranfer({ reqUrl: url, basicProxy: baseIP, token })
-      // .then((res) => res.json())
-      .then((json) => {
-        if (json.error === 0 && json.data) {
-          let data = {};
-          let StatusCode = 200;
-          //         "TeacherID":"t0001",
-          // "Url":"/xxxxxxxxx",
-          // "UploadCount":"500",
-          // "BrowseCount":"1290",
-          // "UploadAllScale":"0.236",
-          // "UploadSubjectScale":[{
-          // 	"SubjectScale":"0.562",
-          // 	"SubjectID":"",
-          // 	"SubjectName":""
-          // }]
+    // fetch
+    //   .tranfer({ reqUrl: url, basicProxy: baseIP, token })
+    // .then((res) => res.json())
+    promise.then((json) => {
+      if (json.error === 0 && json.data) {
+        let data = {};
+        let StatusCode = 200;
+        //         "TeacherID":"t0001",
+        // "Url":"/xxxxxxxxx",
+        // "UploadCount":"500",
+        // "BrowseCount":"1290",
+        // "UploadAllScale":"0.236",
+        // "UploadSubjectScale":[{
+        // 	"SubjectScale":"0.562",
+        // 	"SubjectID":"",
+        // 	"SubjectName":""
+        // }]
 
-          let {
-            UploadCount,
-            UploadAllScale,
-            BrowseCount,
-            Url,
-            UploadSubjectScale,
-          } = json.data;
-          data.AllCount = SetNaNToNumber(UploadCount);
-          data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
-          data.UseCount = SetNaNToNumber(BrowseCount);
-          data.Url = Url ? proxy + Url + "?lg_tk=" + token : "";
-          data.AllSubject = [];
-          UploadSubjectScale instanceof Array &&
-            UploadSubjectScale.forEach((child) => {
-              data.AllSubject.push({
-                SubjectName: child.SubjectName,
-                SubjectID: child.SubjectID,
-                Scale: SetNaNToNumber(child.SubjectScale) * 100,
-              });
-            });
-          return {
-            StatusCode: StatusCode,
-            Data: { ...data },
-          };
-        } else {
-          return {
-            StatusCode: 400,
-          };
+        let {
+          UploadCount,
+          UploadAllScale,
+          BrowseCount,
+          Url,
+          UploadSubjectScale,
+        } = json.data;
+        data.AllCount = SetNaNToNumber(UploadCount);
+        data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
+        data.UseCount = SetNaNToNumber(BrowseCount);
+        data.Url = Url ? proxy + Url + "?lg_tk=" + token : "";
+        data.AllSubject = [];
+        if (
+          !(UploadSubjectScale instanceof Array) ||
+          UploadSubjectScale.length === 0
+        ) {
+          UploadSubjectScale = subjectIDs.split(",").map((d, i) => {
+            return {
+              SubjectScale: 0,
+              SubjectID: d,
+              SubjectName: subjectNames.split(",")[i],
+            };
+          });
         }
-      })
+        UploadSubjectScale instanceof Array &&
+          UploadSubjectScale.forEach((child) => {
+            data.AllSubject.push({
+              SubjectName: child.SubjectName,
+              SubjectID: child.SubjectID,
+              Scale: SetNaNToNumber(child.SubjectScale) * 100,
+            });
+          });
+        return {
+          StatusCode: StatusCode,
+          Data: { ...data },
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    })
   );
 }
 
 // 教学方案
+/**
+ * @description: 教学资料的都是在没有该系统的时候作假数据
+ * @param {*} payload
+ * @return {*}
+ */
 export function GetTeachPlanStatistics(payload = {}) {
   let {
     userID,
     baseIP,
-    proxy,urlProxy,
+    proxy,
+    urlProxy,
     // schoolID,
     token,
-    // subjectNames,
+    subjectNames,
     startTime,
-    // subjectIDs,
+    subjectIDs,
     endTime,
   } = payload;
   let url =
     proxy +
     `TeachingPlan/ApiForOutside/GetTeachPlanStatistics?UserID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
-  return fetch
-    .get({ url, securityLevel: 2 })
-    .then((res) => res.json())
+  let promise = "";
+  if (proxy) {
+    promise = fetch.get({ url, securityLevel: 2 }).then((res) => res.json());
+  } else {
+    promise = PromiseData({
+      StatusCode: 0,
+      Data: {
+        TeacherID: userID,
+        Url: "",
+        BrowseCount: 0,
+        UploadAllScale: 0,
+        UploadCount: 0,
+        UseCount: 0,
+        PCLink: "",
+      },
+    });
+  }
+  subjectIDs = subjectIDs || "";
+  subjectNames = subjectNames || "";
+  return promise
+    
     .then((json) => {
       if (json.StatusCode === 200 && json.Data) {
         let data = {};
@@ -507,6 +581,18 @@ export function GetTeachPlanStatistics(payload = {}) {
         data.UseCount = SetNaNToNumber(UseCount);
         data.Url = PCLink ? urlProxy + PCLink + "?lg_tk=" + token : "";
         data.AllSubject = [];
+        if (
+          !(UploadSubjectScale instanceof Array) ||
+          UploadSubjectScale.length === 0
+        ) {
+          UploadSubjectScale = subjectIDs.split(",").map((d, i) => {
+            return {
+              SubjectScale: 0,
+              SubjectID: d,
+              SubjectName: subjectNames.split(",")[i],
+            };
+          });
+        }
         UploadSubjectScale instanceof Array &&
           UploadSubjectScale.forEach((child) => {
             data.AllSubject.push({
@@ -537,6 +623,11 @@ export function GetTeachPlanStatistics(payload = {}) {
 }
 
 // 精品课程
+/**
+ * @description: 教学资料的都是在没有该系统的时候作假数据
+ * @param {*} payload
+ * @return {*}
+ */
 export function GetTeacherpercentage(payload = {}) {
   let {
     userID,
@@ -552,9 +643,31 @@ export function GetTeacherpercentage(payload = {}) {
   let url =
     proxy +
     `api/common/teacherpercentage?schoolId=${schoolID}&TeacherID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
+  let promise = "";
+  if (proxy) {
+    promise = fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
+  } else {
+    promise = PromiseData({
+      code: 0,
+      data: {
+        TeacherID: userID,
+        Url: "",
+        BrowseCount: 0,
+        UploadAllScale: 0,
+        UploadCount: 0,
+        UseCount: 0,
+        PCLink: "",
+        uploadCount: 0,
+        uploadAllScale: 0,
+        browseCount: 0,
+        url: "",
+      },
+    });
+  }
+  subjectIDs = subjectIDs || "";
+  subjectNames = subjectNames || "";
   return (
-    fetch
-      .tranfer({ reqUrl: url, basicProxy: baseIP, token })
+    promise
       // .then((res) => res.json())
       .then((json) => {
         // console.log(json);
@@ -580,19 +693,36 @@ export function GetTeacherpercentage(payload = {}) {
             uploadSubjectScale,
           } = json.data;
           data.AllCount = SetNaNToNumber(uploadCount);
-          data.AllScale = data.AllCount?SetNaNToNumber(uploadAllScale) * 100:0;
+          data.AllScale = data.AllCount
+            ? SetNaNToNumber(uploadAllScale) * 100
+            : 0;
           data.UseCount = SetNaNToNumber(browseCount);
           data.Url = url ? decodeURIComponent(url) + "?lg_tk=" + token : ""; //教师才能看
           data.AllSubject = [];
+          if (
+            !(uploadSubjectScale instanceof Array) ||
+            uploadSubjectScale.length === 0
+          ) {
+            uploadSubjectScale = subjectIDs.split(",").map((d, i) => {
+              return {
+                subjectScale: 0,
+                subjectID: d,
+                subjectName: subjectNames.split(",")[i],
+              };
+            });
+          }
+
           uploadSubjectScale instanceof Array &&
             uploadSubjectScale.forEach((child) => {
               data.AllSubject.push({
                 SubjectName: child.subjectName,
                 SubjectID: child.subjectID,
-                Scale: data.AllCount?SetNaNToNumber(child.subjectScale) * 100:0,
+                Scale: data.AllCount
+                  ? SetNaNToNumber(child.subjectScale) * 100
+                  : 0,
               });
             });
-          console.log(data.Url);
+
           return {
             StatusCode: StatusCode,
             Data: { ...data },
@@ -661,7 +791,8 @@ export function GetTeacherWork(payload = {}) {
     semester,
     pageSize,
     pageNum,
-    token,academyId,
+    token,
+    academyId,
     isUniversity,
   } = payload;
   let url =
@@ -765,13 +896,13 @@ export function GetResearchByUserID(payload = {}) {
                 : [],
           },
         ];
-        Data = Data.map(d=>{
-          d.count = d.list.length
-          return d
-        })
+        Data = Data.map((d) => {
+          d.count = d.list.length;
+          return d;
+        });
         return {
           StatusCode: json.StatusCode,
-          Data:Data
+          Data: Data,
         };
       } else {
         return {
@@ -856,10 +987,10 @@ export function GetLogInfoByUserID(payload = {}) {
         DayTimeList[4].Count = json.Data["T1821"] || 0;
         DayTimeList[5].Count = json.Data["T2124"] || 0;
         // 控制大于100控制为100
-        DayTimeList = DayTimeList.map(d=>{
-          d.Count = d.Count>100?100: d.Count
-          return d
-        })
+        DayTimeList = DayTimeList.map((d) => {
+          d.Count = d.Count > 100 ? 100 : d.Count;
+          return d;
+        });
         let {
           TimeSpan, //累计上机时长
           DayAvgTimeSpan, //累计上机时长

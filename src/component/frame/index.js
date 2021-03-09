@@ -116,6 +116,7 @@ function Frame(props, ref) {
     onContentresize,
     // 是否需要进行默认的趋势化操作，缺省为需要，false为不需要，配合不需要登陆逻辑的界面
     onlyBase,
+    otherMsg,//左侧菜单底部的其它信息区域
     search,
   } = props;
   // 是否初始化
@@ -411,7 +412,7 @@ function Frame(props, ref) {
                 >
                   {checkType("default") ? (
                     <div className="Frame-contain-left">
-                      <LeftMenu list={MenuList}></LeftMenu>
+                      <LeftMenu otherMsg={otherMsg} list={MenuList}></LeftMenu>
                     </div>
                   ) : (
                     ""

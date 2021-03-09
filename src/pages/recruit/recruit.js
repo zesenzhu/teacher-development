@@ -22,9 +22,8 @@ function Recruit(props, ref) {
   let { id, basePlatFormMsg } = props;
   const detailRef = useRef({});
   useEffect(() => {
-    console.log(detailRef.current);
+    // console.log(detailRef.current);
   }, [detailRef.current.detailData]);
-  console.log(detailRef.current);
 
   return (
     <div className="page-recruit">

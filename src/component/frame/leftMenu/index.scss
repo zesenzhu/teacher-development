@@ -51,6 +51,17 @@
     background-position: bottom center, top center;
     background-size: 100%, 100% 100%;
     background-repeat: no-repeat;
+    .other-msg-box {
+        height: 40px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+    .left-box {
+        min-height: 100%;
+        position: relative;
+    }
     .link-select {
         font-weight: bold;
         .link-level-1 {

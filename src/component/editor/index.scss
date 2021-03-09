@@ -284,7 +284,8 @@
                     color: #fe0000;
                 }
                 .main-input {
-                    width: 931px;
+                    // width: 931px;
+                    width: 85%;
                     // height: 234px;
                     height: auto;
                 }
@@ -312,7 +313,7 @@
         height: 30px;
         line-height: 28px;
         border-radius: 3px;
-        border: solid 1px #dedede;
+        // border: solid 1px #dedede;
         &:focus {
             box-shadow: none;
             border-color: rgb(88, 151, 237);

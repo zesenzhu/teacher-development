@@ -1855,7 +1855,7 @@ function DropDownComponent(props) {
     dropList,
     width,
     className,
-    dropdownClassName,
+    dropDownClassName,
     style,
     title,
     onSelect,
@@ -1870,7 +1870,7 @@ function DropDownComponent(props) {
     >
       {title ? <span className="dropdown-title">{title}:</span> : ""}
       <Select
-        className={`dropdown-box ${dropdownClassName ? dropdownClassName : ""}`}
+        className={`dropdown-box ${dropDownClassName ? dropDownClassName : ""}`}
         width={width}
         style={{ width: (width ? width : 200) + "px", ...style }}
         onSelect={(e, option) => {

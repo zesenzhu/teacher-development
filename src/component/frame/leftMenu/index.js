@@ -124,6 +124,8 @@ function MenuLink(props, ref) {
     setPath(Path);
     // let Path = location && location.pathname ? location.pathname : "";
     deepMap(List, ({ child, index, level, parent }) => {
+      // console.log(child, index, level, parent,)
+
       if (level === 1) {
         if (
           Path.some((path) => child.key === path) ||
@@ -133,8 +135,13 @@ function MenuLink(props, ref) {
           setOpenMenu(child.key);
         }
       } else if (level === 2) {
+        // console.log(Path.some((path) => child.key === path),child.params instanceof Array&&Path.some((path) =>child.params.some(param=>param.key === path) ))
         if (Path.some((path) => child.key === path)) {
           setSelectMenu(parent[level - 2].key);
+          // 可能有二级选中
+        }else if(child.params instanceof Array&&Path.some((path) =>child.params.some(param=>param.key === path) )){
+          // console.log(child.key)
+          setOpenMenu(parent[level - 2].key);
         }
       }
     });
@@ -285,12 +292,19 @@ function MenuLink(props, ref) {
   );
 }
 function LeftMenu(props, ref) {
-  let { list: List, location } = props;
-
+  let { list: List, location, otherMsg } = props;
+  let { props: otherProps, children: otherChild } = otherMsg ? otherMsg : {};
   return (
     <div className="LeftMenu">
       <Scrollbars>
-        <MenuLink children={List} location={location}></MenuLink>{" "}
+        <div className="left-box">
+          <MenuLink children={List} location={location}></MenuLink>
+          {otherMsg && (
+            <div className="other-msg-box" {...otherProps}>
+              {otherChild}
+            </div>
+          )}
+        </div>
       </Scrollbars>
     </div>
   );

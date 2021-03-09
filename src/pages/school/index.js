@@ -78,7 +78,7 @@ import SchoolList from "./schoolList";
 import SchoolDetail from "./schoolDetail";
 import { Loading } from "@/component/common";
 import { getSchoolMsg } from "@/api/school";
-
+import { getTermInfo } from "@/util/init";
 //   import { Reducer, Context, initState } from "./reducer";
 function School(props, ref) {
   let {
@@ -98,6 +98,7 @@ function School(props, ref) {
   const [loading, setLoading] = useState(true);
   // const [state, setDispatch] = useReducer(Reducer, initState);
   // let { component } = state;
+  const [TermInfo,setTermInfo] = useState(null)
   // 获取当前级别的信息
   const levelMsg = useMemo(() => {
     return levelHash[productLevel]
@@ -119,7 +120,6 @@ function School(props, ref) {
     if (location.pathname) {
       let Path = handleRoute(location.pathname);
       if (Path[0] === "schoolDetail" && Path[1]) {
-        console.log(levelMsg)
         getSchoolMsg({ nodeID: Path[1] }).then((res) => {
           if (res.StatusCode === 200) {
             setID(Path[1]);
@@ -134,14 +134,27 @@ function School(props, ref) {
             } else {
               removeTab("", "", "teacherBaseMsg", "", () => {});
             }
+            setLoading(false);
           }
-          setLoading(false);
         });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  useEffect(() => {
+    if (SchoolMsg && productLevel) {
+      // 教育局的学校为nodeid
+      getTermInfo({
+        SchoolID:
+           productLevel !== 1 ?  schoolID : SchoolMsg.NodeID,
+        CollegeID:  productLevel === 2 ? SchoolMsg.NodeID : '',
+      }).then((res) => {
+        // console.log(res)
+        setTermInfo(res)
+        setLoading(false);
+      });
+    }
+  }, [SchoolMsg, productLevel,schoolID]);
   return (
     <Loading
       spinning={Component === "detail" && loading}
@@ -154,10 +167,11 @@ function School(props, ref) {
         ) : (
           <></>
         )}
-        {Component === "detail" ? (
+        {Component === "detail"&&TermInfo ? (
           <SchoolDetail
             levelMsg={levelMsg}
             schoolMsg={SchoolMsg}
+            termInfo={{...TermInfo,child:true}}
             id={ID}
           ></SchoolDetail>
         ) : (

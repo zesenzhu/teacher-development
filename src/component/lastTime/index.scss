@@ -1,0 +1,18 @@
+.reload-data {
+    color: #9bc4db;
+    font-size: 12px;
+    text-align: center;
+    line-height: 30px;
+    .btn-reload {
+        // padding: 5px;
+        display: inline-block;
+        cursor: pointer;
+        height: 30px;
+        vertical-align: top;
+        width: 20px;
+        background: url(./images/btn-reload.png) no-repeat center center/14px 10px;
+        &:hover {
+            background: url(./images/btn-reload-hover.png) no-repeat center center/14px 10px;
+        }
+    }
+}

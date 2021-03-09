@@ -106,7 +106,7 @@ let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功
             }
             let identityDetail = getIdentityDetail(moduleID);
             let termInfo = getTermInfo(
-              userInfo.SchoolID ? userInfo.SchoolID : ""
+              {SchoolID:userInfo.SchoolID || "",CollegeID:userInfo.CollegeID||''}
             );
             let systemServer = getSystemServer([
               310, //教学方案
@@ -580,8 +580,8 @@ export const getBasePlatformMsg = async (keys = []) => {
  * @param {*SchoolID:}
  * @return {*promise}
  */
-export const getTermInfo = async (SchoolID) => {
-  let url = BasicProxy + "/Global/GetTermInfo";
+export const getTermInfo = async ({SchoolID,CollegeID}) => {
+  let url = BasicProxy + "/Global/GetTermInfo?SchoolID="+SchoolID+'&CollegeID='+CollegeID;
   let TermInfo = getDataStorage("TermInfo"); //具体有什么字段这里不做判断，外部判断
   let json = "";
   //  界面第一次加载获取后保存，基本不会出错

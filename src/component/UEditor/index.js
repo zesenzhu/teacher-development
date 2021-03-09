@@ -100,7 +100,7 @@ function UEditor(props, ref) {
         <div
           id={Id}
           onBlur={() => {
-            console.log("dasdsa");
+            // console.log("dasdsa");
           }}
           className={`LG_UEditor ${className ? className : ""}`}
           //   type="text/plain"
@@ -113,7 +113,7 @@ function UEditor(props, ref) {
           defaultValue={defaultValue}
           className="LG_Input_default"
           onBlur={(e) => {
-            console.log(e)
+            // console.log(e)
             onBlur(e.target.value);
           }}
           rows={10}

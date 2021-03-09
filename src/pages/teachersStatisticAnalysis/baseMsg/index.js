@@ -85,7 +85,7 @@ function BaseMsg(props, ref) {
     onAnchorComplete,
     schoolID,
     collegeID,
-    productMsg,
+    productMsg,reload
   } = props;
   const { selectLevel,middleTitleName } = productMsg;
   // 教师人数
@@ -118,6 +118,7 @@ function BaseMsg(props, ref) {
       ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
   // 初始请求
   useEffect(() => {
     // 第一次进来的时候可能为undefined
@@ -167,7 +168,7 @@ function BaseMsg(props, ref) {
         }
       });
     }
-  }, [term, schoolID, collegeID, selectLevel]);
+  }, [term, schoolID, collegeID, selectLevel,reload]);
   return (
     <div className="BaseMsg">
       {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
@@ -287,6 +288,6 @@ const mapStateToProps = (state) => {
     },
   } = state;
   // console.log(state)
-  return { HasHistory };
+  return {   };
 };
 export default connect(mapStateToProps)(memo(forwardRef(BaseMsg)));

@@ -54,6 +54,7 @@ import React, {
   useMemo,
   useRef,
   forwardRef,
+  useLayoutEffect,
 } from "react";
 import {
   withRouter,
@@ -75,7 +76,7 @@ function Analysis(props, ref) {
     tabname,
     children,
     param,
-    termInfo: { TermInfo, HasHistory },
+    termInfo,
     roleMsg, //当前最高级用户信息，决定学校信息
     location,
     type,
@@ -85,6 +86,7 @@ function Analysis(props, ref) {
     basePlatFormMsg: { ProVersion },
     contentHW: { height },
   } = props;
+  let { TermInfo, HasHistory } = termInfo;
   // 设置头部的类型
   const [topType, setTopType] = useState("default");
   // 设置路由路径，初始就设置
@@ -114,7 +116,37 @@ function Analysis(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
   // console.log({ schoolID, collegeID, selectLevel, productLevel });
-
+  //刷新
+  const initGet = useRef(false);
+  const [ReloadTeacherBaseMsg, setReloadTeacherBaseMsg] = useState(false);
+  const [ReloadWorkMsg, setReloadWorkMsg] = useState(false);
+  const [ReloadTeachingAbility, setReloadTeachingAbility] = useState(false);
+  const [
+    ReloadInformationizeAbility,
+    setReloadInformationizeAbility,
+  ] = useState(false);
+  useLayoutEffect(() => {
+    let { pathname } = location;
+    //第一次进来不请求
+    if (!initGet.current) {
+      initGet.current = true;
+    } else {
+      if (pathname === "/teacherBaseMsg") {
+        // tableRef.current.reloadList();
+        setReloadTeacherBaseMsg((pre) => !pre);
+      } else if (pathname === "/workMsg") {
+        // tableRef.current.reloadList();
+        setReloadWorkMsg((pre) => !pre);
+      } else if (pathname === "/teachingAbility") {
+        // tableRef.current.reloadList();
+        setReloadTeachingAbility((pre) => !pre);
+      } else if (pathname === "/informationizeAbility") {
+        // tableRef.current.reloadList();
+        setReloadInformationizeAbility((pre) => !pre);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
   // 头部ref
   const topRef = useRef({});
   // contentref
@@ -180,12 +212,14 @@ function Analysis(props, ref) {
                   // console.log(anchor);
                   setAnchorList(anchor);
                 }}
+                reload={ReloadTeacherBaseMsg}
                 schoolID={schoolID}
                 collegeID={collegeID}
                 productLevel={productLevel}
                 selectLevel={selectLevel}
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
+                HasHistory={HasHistory}
               ></BaseMsg>
             ) : (
               ""
@@ -196,12 +230,14 @@ function Analysis(props, ref) {
                   // console.log(anchor);
                   setAnchorList(anchor);
                 }}
+                reload={ReloadWorkMsg}
                 schoolID={schoolID}
                 collegeID={collegeID}
                 productLevel={productLevel}
                 selectLevel={selectLevel}
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
+                HasHistory={HasHistory}
               ></WorkLoad>
             ) : (
               ""
@@ -213,11 +249,13 @@ function Analysis(props, ref) {
                   setAnchorList(anchor);
                 }}
                 schoolID={schoolID}
+                reload={ReloadTeachingAbility}
                 collegeID={collegeID}
                 productLevel={productLevel}
                 selectLevel={selectLevel}
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
+                HasHistory={HasHistory}
               ></TeachingAbility>
             ) : (
               ""
@@ -229,11 +267,13 @@ function Analysis(props, ref) {
                   setAnchorList(anchor);
                 }}
                 schoolID={schoolID}
+                reload={ReloadInformationizeAbility}
                 collegeID={collegeID}
                 productLevel={productLevel}
                 selectLevel={selectLevel}
                 productMsg={levelHash[productLevel]}
                 term={topRef.current.TermSelect}
+                HasHistory={HasHistory}
               ></InformationizeAbility>
             ) : (
               ""
@@ -260,10 +300,16 @@ function UseScrollbars(props) {
   }, [use]);
   return Use ? <Scrollbars {...reset}>{children}</Scrollbars> : <>{children}</>;
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   let {
     commonData: { roleMsg, basePlatFormMsg, contentHW, termInfo, levelHash },
   } = state;
-  return { roleMsg, basePlatFormMsg, contentHW, termInfo, levelHash };
+  return {
+    roleMsg,
+    basePlatFormMsg,
+    contentHW,
+    termInfo: props.termInfo || termInfo,
+    levelHash,
+  };
 };
 export default connect(mapStateToProps)(withRouter(memo(forwardRef(Analysis))));

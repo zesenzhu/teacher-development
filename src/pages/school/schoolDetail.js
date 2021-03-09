@@ -83,7 +83,7 @@ function SchoolDetail(props, ref) {
     roleMsg: { identityCode, schoolID },
     levelMsg,
     contentHW: { width },
-    schoolMsg,
+    schoolMsg,termInfo
   } = props;
   const [SelectTab, setSelectTab] = useState({
     tabid: "teacherBaseMsg",
@@ -117,6 +117,7 @@ function SchoolDetail(props, ref) {
           roleData={roleData}
           schoolMsg={schoolMsg}
           tabid={SelectTab.tabid}
+          termInfo={termInfo}
         ></Analysis>
       ) : (
         ""

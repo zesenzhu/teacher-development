@@ -82,7 +82,7 @@ function TeachingAbility(props, ref) {
     onAnchorComplete,
     schoolID,
     collegeID,
-    productMsg,
+    productMsg,reload
   } = props;
   const { selectLevel, productLevel } = productMsg;
   // 教师人数
@@ -189,7 +189,7 @@ function TeachingAbility(props, ref) {
         }
       });
     }
-  }, [term, schoolID, collegeID, selectLevel]);
+  }, [term, schoolID, collegeID, selectLevel,reload]);
 
   return (
     <div className="TeachingAbility">
@@ -334,6 +334,6 @@ const mapStateToProps = (state) => {
     },
   } = state;
   // console.log(state)
-  return { HasHistory };
+  return {  };
 };
 export default connect(mapStateToProps)(memo(forwardRef(TeachingAbility)));

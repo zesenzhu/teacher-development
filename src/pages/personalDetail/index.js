@@ -485,8 +485,8 @@ useEffect(() => {
         urlProxy:SysUrl["300"].WebSvrAddr,
         token,
         // schoolID: DataParams.schoolID,
-        // subjectIDs: DataParams.subjectIDs,
-        // subjectNames: DataParams.subjectNames,
+        subjectIDs: DataParams.subjectIDs,
+        subjectNames: DataParams.subjectNames,
         startTime: WeekData.startTime,
         endTime: WeekData.endTime,
       }).then((res) => {

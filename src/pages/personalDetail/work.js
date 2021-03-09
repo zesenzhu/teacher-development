@@ -80,7 +80,9 @@ function Work(props, ref) {
             width={120}
             height={120}
             dropList={termList}
+            dropdownStyle={{width:'220px'}}
             // title={""}
+            dropdownClassName={'Dropdown'}
             value={termSelect.value}
             className="term-dropdown"
             onChange={(e) => {}}

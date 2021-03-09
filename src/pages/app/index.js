@@ -39,6 +39,7 @@ import SearchchAll from "../searchAll";
 import PersonalDetail from "../personalDetail";
 import { GetUserDetailForHX } from "@/api/personal";
 import School from "../school";
+import LastTime from '@/component/lastTime';
 import { getBasePlatformMsg } from "@/util/init";
 // let { get } = fetch;
 function App(props, ref) {
@@ -362,6 +363,16 @@ function App(props, ref) {
     dispatch(handleActions.setActiveTab(activeTab));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
+  const onReload = useCallback(
+    (time,isFirst) => {
+      if(!isFirst){
+        console.log(history,window.location)
+        history.replace(history.location.pathname )
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
   return (
     <Frame
       pageInit={pageInit}
@@ -395,6 +406,9 @@ function App(props, ref) {
         onEdit: (e, action) => {
           console.log(e, action);
         },
+      }}
+      otherMsg={{
+        otherProps:{},children:<LastTime onReload={onReload}></LastTime>
       }}
     >
       {/* <Analysis

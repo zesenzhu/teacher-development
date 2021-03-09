@@ -12,6 +12,8 @@ import { HashRouter as Router } from "react-router-dom";
 // console.log(history);
 
 // const history = require("history").createHashHistory();
+// console.log(store)
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>

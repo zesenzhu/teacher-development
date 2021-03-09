@@ -409,7 +409,8 @@ function Data(props, ref) {
   // 公共渲染echart
   const SetEchart = (myEchart, myRef, setEchart, data) => {
     // let myEchart = FirstEchart;
-    console.log(data);
+    console.log(data,data[1][3],IsSelf);
+    let canClick = data[1][3]&&IsSelf
     // return;
     if (!myRef.current || !(data instanceof Array)) {
       return;
@@ -505,7 +506,7 @@ function Data(props, ref) {
           roundCap: true,
           barWidth: 8,
           barGap: "50%",
-          cursor: IsSelf ? "pointer" : "auto",
+          cursor:canClick ? "pointer" : "auto",
           itemStyle: {
             color: "#f14753", // 100% 处的颜色
             // color: {
@@ -537,7 +538,7 @@ function Data(props, ref) {
           coordinateSystem: "polar",
           roundCap: true,
           barWidth: 8,
-          cursor: IsSelf ? "pointer" : "auto",
+          cursor:canClick ? "pointer" : "auto",
           barGap: "50%",
           itemStyle: {
             // color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -593,7 +594,7 @@ function Data(props, ref) {
     myEchart.setOption(myOption);
     // 清除旧的
     // console.log(IsSelf, identityCode);
-    if (IsSelf) {
+    if (canClick) {
       myEchart.off("click");
       myEchart.on("click", (params) => {
         let { value } = params;
@@ -616,7 +617,7 @@ function Data(props, ref) {
         }
         URL += "&lg_ic=" + identityCode;
         window.open(URL);
-        console.log(params, URL);
+        // console.log(params, URL);
 
         // let url =  +
       });

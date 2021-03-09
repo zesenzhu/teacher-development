@@ -647,6 +647,7 @@
         .ant-select-selector {
             background-color: transparent !important;
             border: none !important;
+            box-shadow: none;
             .ant-select-selection-item {
                 color: #fff;
             }
@@ -958,6 +959,10 @@
     padding: 69px 16px 0;
 }
 
+.ant-select-dropdown.Dropdown {
+    width: 190px!important;
+}
+
 .teach-modal {
     .ant-modal-body {
         padding: 20px;
@@ -1038,7 +1043,7 @@
         -o-border-radius: 50%;
     }
     .ch-dot-box {
-        line-height: 215px;
+        line-height: 218px;
         white-space: nowrap;
     }
     .ch-dot-active {
@@ -1487,6 +1492,7 @@
         .ant-select-selector {
             background-color: transparent !important;
             border: none !important;
+            box-shadow: none;
             // .ant-select-selection-item {
             //     color: #fff;
             // }
@@ -1496,6 +1502,7 @@
         }
         .ant-select-selector {
             padding: 0;
+            box-shadow: none;
             .ant-select-selection-item {
                 font-size: 12px;
                 color: #5fa1d9;
