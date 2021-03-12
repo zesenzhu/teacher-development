@@ -116,7 +116,7 @@ function Frame(props, ref) {
     onContentresize,
     // 是否需要进行默认的趋势化操作，缺省为需要，false为不需要，配合不需要登陆逻辑的界面
     onlyBase,
-    otherMsg,//左侧菜单底部的其它信息区域
+    otherMsg, //左侧菜单底部的其它信息区域
     search,
   } = props;
   // 是否初始化
@@ -173,7 +173,7 @@ function Frame(props, ref) {
     type &&
       // onlyBase !== false &&
       init(
-        {moduleID,onlyBase:onlyBase},//onlyBase:只要基础信息，不用验证用户，不用登陆功能
+        { moduleID, onlyBase: onlyBase }, //onlyBase:只要基础信息，不用验证用户，不用登陆功能
         (data) => {
           //成功
 
@@ -187,11 +187,10 @@ function Frame(props, ref) {
             setInitData(data);
             // type && setFrameLoading(false); //加载完毕，去掉laoding，需要type存在
             setInit(true);
-          }else if(onlyBase){
+          } else if (onlyBase) {
             data.basePlatformMsg && setBasePlatFormMsg(data.basePlatformMsg);
             setInitData(data);
             setInit(true);
-            
           } else {
             //身份无效
             // console.log('无效')
@@ -211,7 +210,7 @@ function Frame(props, ref) {
   // 初始化成功后的逻辑与初始化分开比较好
   useEffect(() => {
     // 初始化成功和loading还在才运行
-    if ((Init ) && FrameLoading) {
+    if (Init && FrameLoading) {
       typeof pageInit === "function" &&
         pageInit(initData).then((isInit) => {
           if (isInit) {
@@ -220,6 +219,7 @@ function Frame(props, ref) {
         });
     }
   }, [type, initData, Init, pageInit, FrameLoading, onlyBase]);
+
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -370,7 +370,8 @@ function Frame(props, ref) {
   return (
     <frameContext.Provider value={{ state, dispatch }}>
       <Loading
-        spinning={FrameLoading 
+        spinning={
+          FrameLoading
           // || MenuList.length === 0
         }
         opacity={false}

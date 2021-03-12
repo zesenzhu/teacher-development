@@ -30,7 +30,7 @@ function LastTime(props, ref) {
       <div className="reload-data" title={Time}>
         最后刷新：{Time}
         <i
-          className="btn-reload"
+          className={`btn-reload ${Reload?'btn-reload-animation':''}`}
           title={"刷新时间"}
           onClick={() => {
             if (Reload) {

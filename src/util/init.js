@@ -55,6 +55,8 @@ import {
   changeToArray,
 } from "./public";
 import fetch from "./fetch";
+import listenAppDurationTime from "./listen_app_duration_time";
+
 let { BasicProxy } = config;
 let { get, post } = fetch;
 let initCount = 0;
@@ -66,7 +68,7 @@ export const init = (params, success = () => {}, error = () => {}) => {
   // 默认权限身份IC0011、IC0012、IC0013
   let moduleID = "";
   // 先对params进行判断，是对象还是字符串，字符串就是moduleID，对象就是有很多数据存在里面
-let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功能
+  let onlyBase = false; //只要基础信息，不用验证用户，不用登陆功能
   if (!params) {
     //没定义或为null，undefiened,'',false,表示所有人都能进来
     moduleID = "";
@@ -79,13 +81,14 @@ let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功
   console.log(params);
   // tokencheck前需要进行基础信息的请求
   initCount++;
+  
   getBasePlatformMsg().then((data) => {
     //data：基础平台信息，object,{BasePlatformAddr}
     // console.log(data)
-    if(onlyBase){
+    if (onlyBase) {
       success({
         basePlatformMsg: data,
-      })
+      });
       return;
     }
     if (data) {
@@ -105,9 +108,10 @@ let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功
               return;
             }
             let identityDetail = getIdentityDetail(moduleID);
-            let termInfo = getTermInfo(
-              {SchoolID:userInfo.SchoolID || "",CollegeID:userInfo.CollegeID||''}
-            );
+            let termInfo = getTermInfo({
+              SchoolID: userInfo.SchoolID || "",
+              CollegeID: userInfo.CollegeID || "",
+            });
             let systemServer = getSystemServer([
               310, //教学方案
               // 300, //教学方案
@@ -136,6 +140,8 @@ let onlyBase = false;//只要基础信息，不用验证用户，不用登陆功
                   token,
                   role: setUnifyRole(userInfo, identityDetail, data),
                 });
+                SetDataDeliver(moduleID, userInfo.UserID);
+                 
               }
             );
           } else {
@@ -161,6 +167,31 @@ const getPromise = (promise) => {
       resolve(res);
     });
   });
+};
+//智慧校园大数据采集需求
+const SetDataDeliver = (moduleID, userID) => {
+  if(!moduleID){
+    return 
+}
+  let { BasicWebRootUrl: baseIP } =
+    getDataStorage("BasePlatformMsg") instanceof Object
+      ? getDataStorage("BasePlatformMsg")
+      : {};
+  get({
+    url: `${baseIP}/Base/GetSingleSubsystemServer?SysID=850&SubjectID=`,
+    securityLevel: 1,
+  })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        try {
+          listenAppDurationTime(json.Data.WebSvrAddr, "L10", moduleID, userID);
+        } catch (e) {
+          console.log(e);
+        }
+        // return res.Data;
+      }
+    });
 };
 // 获取子系统的服务器地址信息
 /**
@@ -308,7 +339,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     Role = {
       ...Role,
       version,
-      isUniversity:version.indexOf('university')!==-1,
+      isUniversity: version.indexOf("university") !== -1,
       selectLevel,
       collegeID,
       schoolID,
@@ -376,7 +407,7 @@ const getIdentityDetail = async (moduleID = "") => {
     //   // console.log(identityDetail);
     // }
   }
-  identityDetail =await IdentityRecognition(identityList, moduleID);
+  identityDetail = await IdentityRecognition(identityList, moduleID);
   identityDetail &&
     window.history.pushState(
       null,
@@ -580,8 +611,13 @@ export const getBasePlatformMsg = async (keys = []) => {
  * @param {*SchoolID:}
  * @return {*promise}
  */
-export const getTermInfo = async ({SchoolID,CollegeID}) => {
-  let url = BasicProxy + "/Global/GetTermInfo?SchoolID="+SchoolID+'&CollegeID='+CollegeID;
+export const getTermInfo = async ({ SchoolID, CollegeID }) => {
+  let url =
+    BasicProxy +
+    "/Global/GetTermInfo?SchoolID=" +
+    SchoolID +
+    "&CollegeID=" +
+    CollegeID;
   let TermInfo = getDataStorage("TermInfo"); //具体有什么字段这里不做判断，外部判断
   let json = "";
   //  界面第一次加载获取后保存，基本不会出错
