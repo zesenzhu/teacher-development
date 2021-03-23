@@ -51,6 +51,8 @@ import fetch from "@/util/fetch";
 import "./index.scss";
 import moment from "moment";
 import $ from "jquery";
+import Config from '@/util/ipConfig';
+let {BasicProxy} =Config
 let { get, post } = fetch;
 
 function TopBar(props, ref) {
@@ -264,14 +266,18 @@ function TopBar(props, ref) {
               ) : (
                 ""
               )}
-              {/* <span
-              className="open-help"
-              onClick={() => {
-                console.log("帮助");
-              }}
-            >
-              帮助
-            </span> */}
+              <span
+                className="open-help"
+                onClick={() => {
+                  console.log("帮助");
+                  BasicProxy &&
+                    window.open(
+                      BasicProxy + "/UserHelp/L10-M.html"
+                    );
+                }}
+              >
+                帮助
+              </span>
             </div>
           )}
           {Time ? <div className="Frame-time  Frame-devide">{Time}</div> : ""}

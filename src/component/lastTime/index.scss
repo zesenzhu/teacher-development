@@ -15,11 +15,11 @@
             background: url(./images/btn-reload-hover.png) no-repeat center center/14px 10px;
         }
         &.btn-reload-animation {
-            animation: circle infinite linear 0.8s;
-            -webkit-animation: circle infinite linear 0.8s;
+            animation: circle_reload infinite linear 0.8s;
+            -webkit-animation: circle_reload infinite linear 0.8s;
         }
     }
-    @keyframes circle {
+    @keyframes circle_reload {
         from {
             transform: rotateZ(0);
             -webkit-transform: rotateZ(0);

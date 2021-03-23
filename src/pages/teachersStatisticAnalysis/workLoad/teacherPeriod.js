@@ -347,7 +347,7 @@ function TeacherPeriod(props, ref) {
           <span className="tb-tip-2">{AvgTeachClass}</span>个， 人均任教学生人数
           <span className="tb-tip-2">{AvgTeachStu}</span>人
         </p>
-        <p className="tp-tilte">各{productMsg.sub}教师年龄/教龄分布情况</p>
+        <p className="tp-tilte">各{productMsg.sub}教师周课时数分布情况</p>
         {typeList.length > 1 ? (
           <div className="tp-handle">
             <span className="tph-title">{productMsg.sub}:</span>

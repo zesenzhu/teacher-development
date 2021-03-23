@@ -98,53 +98,162 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
   // 第一步：验证token
 
   let isComplete = false; //是否完成
-  tokenList.forEach(async (child, index) => {
-    if (isComplete) {
-      return;
+//   // 同时检测token
+//   let propmiseList = tokenList.map((child, index) => {
+//     return new Promise((resolve, reject) => {
+//       myCheckToken(
+//         child,
+//         () => {},
+//         () => {
+//           console.log(++loop, child);
+//         }
+//       ).then(async (result) => {
+//         if (result) {
+//           //验证通过
+//           // 第二步：获取用户信息
+//           // 获取用户信息，不成功则跳登陆页
+//           let UserInfo = getDataStorage("UserInfo");
+//           if (!UserInfo || firstLoad) {
+//             //不存在就获取
+//             UserInfo = await getUserInfo();
+
+//             if (!UserInfo) {
+//               callback(false);
+//               // myTokenError();
+//               resolve(false);
+
+//               return false;
+//             }
+//           }
+
+//           // 最后，执行回调
+//           callback(UserInfo, child);
+//           // 通过后需要轮询是否在线
+//           // 使用js，不需要这个了
+//           // CirculTokenCheck();
+//           // // alert(baseIP+','+child+','+ sysID)
+//           // // 使用这个检测掉线
+//           // CheckIsOnline(baseIP, child, sysID);
+//           // isComplete = true;
+//           // return true;
+//         }
+//         resolve(result);
+//       });
+//     });
+//   });
+//   console.log(propmiseList);
+//   Promise.all(propmiseList).then((res) => {
+//     res.forEach((end) => {
+//       if (end) {
+//         console.log(end)
+//       }
+//     });
+//   });
+// return ;
+let len = tokenList.length
+for(let index =0;index<len;index++){
+  let child = tokenList[index];
+  if (isComplete) {
+    return;
+  }
+  //some 返回true结束遍历，false继续遍历
+  let result = await myCheckToken(
+    child,
+    () => {},
+    // eslint-disable-next-line no-loop-func
+    () => {
+      console.log(++loop, child);
     }
-    //some 返回true结束遍历，false继续遍历
-    let result = await myCheckToken(
-      child,
-      () => {},
-      () => {
-        console.log(++loop, child);
+  );
+
+  if (result) {
+    //验证通过
+    // 第二步：获取用户信息
+    // 获取用户信息，不成功则跳登陆页
+    let UserInfo = getDataStorage("UserInfo");
+    if (!UserInfo || firstLoad) {
+      //不存在就获取
+      UserInfo = await getUserInfo();
+
+      if (!UserInfo) {
+        callback(false);
+        // myTokenError();
+        return;
       }
-    );
-
-    if (result) {
-      //验证通过
-      // 第二步：获取用户信息
-      // 获取用户信息，不成功则跳登陆页
-      let UserInfo = getDataStorage("UserInfo");
-      if (!UserInfo || firstLoad) {
-        //不存在就获取
-        UserInfo = await getUserInfo();
-
-        if (!UserInfo) {
-          callback(false);
-          // myTokenError();
-          return;
-        }
-      }
-
-      // 最后，执行回调
-      callback(UserInfo, child);
-      // 通过后需要轮询是否在线
-      // 使用js，不需要这个了
-      // CirculTokenCheck();
-      // 使用这个检测掉线
-      CheckIsOnline(baseIP, child, sysID);
-      isComplete = true;
-      return true;
     }
-    if (index === tokenList.length - 1) {
-      //最后都没通过，全部无效
-      // alert("token失效");
-      callback(false);
-      myTokenError();
-    }
-    return result;
-  });
+
+    // 最后，执行回调
+    callback(UserInfo, child);
+    // 通过后需要轮询是否在线
+    // 使用js，不需要这个了
+    // CirculTokenCheck();
+    // alert(baseIP+','+child+','+ sysID)
+    // 使用这个检测掉线
+    CheckIsOnline(baseIP, child, sysID);
+    isComplete = true;
+    return true;
+  }
+  if (index === len - 1) {
+    //最后都没通过，全部无效
+    // alert("token失效");
+    callback(false);
+    // console.log(tokenList);
+    // alert(index + "," + result + "," + len);
+    // debugger;
+    myTokenError();
+  }
+}
+  // tokenList.forEach(async (child, index) => {
+  //   if (isComplete) {
+  //     return;
+  //   }
+  //   //some 返回true结束遍历，false继续遍历
+  //   let result = await myCheckToken(
+  //     child,
+  //     () => {},
+  //     () => {
+  //       console.log(++loop, child);
+  //     }
+  //   );
+
+  //   if (result) {
+  //     //验证通过
+  //     // 第二步：获取用户信息
+  //     // 获取用户信息，不成功则跳登陆页
+  //     let UserInfo = getDataStorage("UserInfo");
+  //     if (!UserInfo || firstLoad) {
+  //       //不存在就获取
+  //       UserInfo = await getUserInfo();
+
+  //       if (!UserInfo) {
+  //         callback(false);
+  //         // myTokenError();
+  //         return;
+  //       }
+  //     }
+
+  //     // 最后，执行回调
+  //     callback(UserInfo, child);
+  //     // 通过后需要轮询是否在线
+  //     // 使用js，不需要这个了
+  //     CirculTokenCheck();
+  //     // alert(baseIP+','+child+','+ sysID)
+  //     // 使用这个检测掉线
+  //     CheckIsOnline(baseIP, child, sysID);
+  //     isComplete = true;
+  //     return true;
+  //   }
+  //   if (index === tokenList.length - 1) {
+  //     //最后都没通过，全部无效
+  //     // alert("token失效");
+  //     callback(false);
+  //     console.log(tokenList);
+  //     alert(index + "," + result + "," + tokenList.length);
+  //     debugger;
+  //     myTokenError();
+  //   }
+  //   return result;
+  // });
 };
 
 // 使用动态加载js
@@ -154,6 +263,8 @@ function CheckIsOnline(baseIP, token, sysID) {
     src: baseIP + "/UserMgr/Login/JS/CheckIsOnline2.js",
     id: "check_script_CheckIsOnline2",
     onLoad: () => {
+      // alert(baseIP + "," + token + "," + sysID);
+
       window._LgBase_initCheck(baseIP, token, sysID);
     },
   });
@@ -395,7 +506,7 @@ const checkToken = (
   return new Promise((resolve, reject) => {
     if (!baseIP || !token || !sysID) {
       resolve(false);
-      console.error("baseIP or token or sysID is not undefined");
+      // console.error("baseIP or token or sysID is not undefined");
       return;
     }
     loginApi({

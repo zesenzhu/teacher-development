@@ -61,7 +61,7 @@ function Archives(props, ref) {
     data,
     children,
   } = props;
- 
+
   let {
     UserName,
     UserID,
@@ -80,13 +80,18 @@ function Archives(props, ref) {
     HomeAddress,
     PhotoPath,
     EducationBackgroundDetailData,
+    isBase,
   } = data;
-  console.log(data)
-  const eduStageList = { 1: "大专",
-  2: "本科",
-  3: "硕士",
-  4: "博士",
-  5: "其他", };
+  // console.log(data);
+  // debugger
+
+  const eduStageList = {
+    1: "大专",
+    2: "本科",
+    3: "硕士",
+    4: "博士",
+    5: "其他",
+  };
   return (
     <div className={`card-content card-archives ${className ? className : ""}`}>
       <div className="cc-div-box-1">
@@ -211,6 +216,7 @@ function Archives(props, ref) {
                       extend2,
                       eduStage,
                     } = detail;
+
                     return (
                       <p key={index2} className="cc-p-2 edu-details">
                         {moment(startTime).format("YYYY.MM") +

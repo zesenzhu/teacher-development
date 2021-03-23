@@ -74,6 +74,18 @@ function LGSearch(props, ref) {
   useEffect(() => {
     setMyResult(result);
   }, [result]);
+  useEffect(() => {
+    // iframe的点击监听不到，要界面postmsg
+   let msg = window.addEventListener("message", (e) => {
+      let { data } = e;
+      if (data === "noticeClick") {
+        setVisible(false);
+      }
+    });
+    return ()=>{
+      window.removeEventListener('message',msg)
+    }
+  }, []);
   useLayoutEffect(() => {
     let dom = searchRef.current;
     // 点击iframe
@@ -128,9 +140,9 @@ function LGSearch(props, ref) {
       >
         {/* <div style={{ width: "100px", height: "10px" }}></div> */}
         <Search
-          placeHolder={'输入关键词搜索...'}
+          placeHolder={"输入关键词搜索..."}
           className="lg-search-in"
-          inputTitle={'输入教师姓名/招聘标题/培训标题搜索'}
+          inputTitle={"输入教师姓名/招聘标题/培训标题搜索"}
           width={width ? width : 180}
           Value={SearchValue}
           onChange={(e) => {

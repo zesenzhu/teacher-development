@@ -64,16 +64,58 @@ import {
   // useSelector,
   useDispatch,
 } from "react-redux";
+import {
+  withRouter,
+  // , Route, Switch, NavLink
+} from "react-router-dom";
 import "./index.scss";
 import { getDataStorage } from "../../util/public";
+import { handleRoute } from "@/util/public";
+
 function Notice(props, ref) {
   let {
     commonData: {
-      roleMsg: { identityCode,productLevel },
+      roleMsg: { identityCode, productLevel },
       systemServer,
     },
+    history,
+    location,
   } = props;
   let token = getDataStorage("token");
+  const [Url, setUrl] = useState("");
+  // useEffect(() => {
+  //   window.addEventListener("message", (e) => {
+  //     try {
+  //       let { btnName, sysid, url } = JSON.parse(e.data);
+  //       // console.log(data)
+  //       if (btnName && url) {
+  //         window.open(url);
+  //         history.push('/notice/'+encodeURIComponent(url))
+  //       }
+  //     } catch (e) {}
+  //   });
+  // }, []);
+  // 监听列表，进来就更新，除了第一次
+  useLayoutEffect(() => {
+    let Path = handleRoute(location.pathname);
+
+    if (!Path[1]) {
+      setUrl(
+        systemServer[400].WebSvrAddr +
+          "/WebPage/html/notice/?lg_tk=" +
+          token +
+          "&lg_ic=" +
+          identityCode +
+          (productLevel === 1 ? "&isEdu=true" : "") +
+          "&sysID=L10&iFrame=true#/"
+      );
+    }else{
+      
+      setUrl(decodeURIComponent(Path[1]))
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="Notice">
       <iframe
@@ -81,12 +123,7 @@ function Notice(props, ref) {
         title="通知公告"
         // src={'http://192.168.129.64:20105/publicinfo//WebPage/html/notice/?lg_tk=4FF1FDEC-D573-4EAD-9DEB-78B278973073&lg_ic=IC0002&sysID=E34&iFrame=true#/'}
         src={
-          systemServer[400].WebSvrAddr +
-          "/WebPage/html/notice/?lg_tk=" +
-          token +
-          "&lg_ic=" +
-          identityCode +(productLevel===1?'&isEdu=true':'') +
-          "&sysID=L10&iFrame=true#/"
+          Url
         }
       ></iframe>
     </div>
@@ -97,4 +134,4 @@ const mapStateToProps = (state) => {
   // console.log(state)
   return state;
 };
-export default connect(mapStateToProps)(memo(forwardRef(Notice)));
+export default connect(mapStateToProps)(withRouter(memo(forwardRef(Notice))));

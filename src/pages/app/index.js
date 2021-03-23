@@ -39,7 +39,8 @@ import SearchchAll from "../searchAll";
 import PersonalDetail from "../personalDetail";
 import { GetUserDetailForHX } from "@/api/personal";
 import School from "../school";
-import LastTime from '@/component/lastTime';
+import LastTime from "@/component/lastTime";
+import Import from "../import";
 import { getBasePlatformMsg } from "@/util/init";
 // let { get } = fetch;
 function App(props, ref) {
@@ -99,11 +100,27 @@ function App(props, ref) {
     }
     return data;
   }, [productLevel]);
+  useEffect(() => {
+    let message = window.addEventListener("message", (e) => {
+      try {
+        let { btnName, sysid, url } = JSON.parse(e.data);
+        if (btnName && url) {
+          // window.open(url);
+          // console.log('/notice/'+encodeURIComponent(url))
 
+          history.push("/notice/" + encodeURIComponent(url));
+        }
+      } catch (e) {}
+    });
+    return () => {
+      window.removeEventListener("message", message);
+    };
+  }, [history]);
   //  提前检查路由
   useEffect(() => {
     let Path = handleRoute(location.pathname);
-    let moduleType =getQueryVariable("moduleType")|| getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
+    let moduleType =
+      getQueryVariable("moduleType") || getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
     // 单页面
     if (Path[0] === "page" && Path[1]) {
       // 招聘详情界面
@@ -262,7 +279,9 @@ function App(props, ref) {
           dispatch(
             commonActions.SetLeftMenu(
               data.role.productLevel,
-              !!data.systemServer[400]
+              !!data.systemServer[400],
+              !!data.systemServer['E34'],
+
             )
           );
 
@@ -364,15 +383,15 @@ function App(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
   const onReload = useCallback(
-    (time,isFirst) => {
-      if(!isFirst){
-        console.log(history,window.location)
-        history.replace(history.location.pathname )
+    (time, isFirst) => {
+      if (!isFirst) {
+        console.log(history, window.location);
+        history.replace(history.location.pathname);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
+    []
+  );
   return (
     <Frame
       pageInit={pageInit}
@@ -408,7 +427,8 @@ function App(props, ref) {
         },
       }}
       otherMsg={{
-        otherProps:{},children:<LastTime onReload={onReload}></LastTime>
+        otherProps: {},
+        children: <LastTime onReload={onReload}></LastTime>,
       }}
     >
       {/* <Analysis
@@ -526,7 +546,7 @@ function App(props, ref) {
       >
         教师画像详情
       </TeacherPersonal>
-      <Notice tabid={"notice"} tabname={"通知公告"}></Notice>
+      <Notice tabid={"notice"} tabname={"通知公告"} param={"id"}></Notice>
       {/* 有frame类型的属性，*teacher：为教师类型，缺省则为default类型 */}
       {/* 教师端 */}
       <TeacherTrain
@@ -555,7 +575,6 @@ function App(props, ref) {
       <PersonalDetail
         frametype={"page"}
         pageTitle={"教师个人画像"}
-
         pageid={"personalDetail"}
         param={"id"}
         teachermsg={TeacherMsg}
@@ -589,6 +608,14 @@ function App(props, ref) {
         redirect={"schoolResource"}
         removeTab={RemoveTab}
       ></School>
+      <Import
+        tabid={"import"}
+        tabname={"导入师资信息"}
+        // mustparam={"true"}
+        param={"type"}
+        removeTab={RemoveTab}
+        title
+      ></Import>
       <p proversion={ProVersion} className="page-ProVersion" frametype={"page"}>
         {ProVersion}
       </p>

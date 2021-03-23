@@ -144,7 +144,7 @@ function TeacherGanger(props, ref) {
           let dom = "";
           params.forEach((child, index) => {
             let { seriesName, data } = child;
-            dom += `<p class='msg '>班级数量:<span>${
+            dom += `<p class='msg '>平均管理班级数量:<span>${
               data[index + 1]
             }个</span></p>`;
           });

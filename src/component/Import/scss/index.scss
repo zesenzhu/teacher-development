@@ -1,0 +1,591 @@
+@charset "utf8";
+@import "~compass-mixins/lib/compass/css3";
+$image-url:'../images';
+@mixin flex {
+    display: flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+}
+
+@mixin justify-content($dir) {
+    justify-content: $dir;
+    -ms-flex-pack: $dir;
+}
+
+@mixin flex-direction($dir) {
+    flex-direction: $dir;
+    -ms-flex-direction: $dir;
+}
+
+@mixin align-items($dir) {
+    align-items: $dir;
+    -ms-flex-align: $dir;
+}
+
+#ImportComponent {
+    padding: 72px 0;
+    color: #333333;
+    /* 导入导出页面 start */
+    #file {
+        display: none;
+    }
+    .usermgr_step_bar {
+        width: 767px;
+        height: 30px;
+        margin: 32px auto 42px auto;
+        background: url('#{$image-url}/grey-start.png') no-repeat left center,
+        url('#{$image-url}/grey-middle.png') no-repeat 189px center,
+        url('#{$image-url}/grey-middle.png') no-repeat 378px center,
+        url('#{$image-url}/grey-end.png') no-repeat right center;
+        background-color: pink;
+    }
+    .usermgr_step_bar.step1 {
+        background: url('#{$image-url}/active-start.png') no-repeat left center,
+        url('#{$image-url}/grey-middle.png') no-repeat 189px center,
+        url('#{$image-url}/grey-middle.png') no-repeat 378px center,
+        url('#{$image-url}/grey-end.png') no-repeat right center;
+    }
+    .usermgr_step_bar.step2 {
+        background: url('#{$image-url}/finish-start.png') no-repeat left center,
+        url('#{$image-url}/active-middle.png') no-repeat 189px center,
+        url('#{$image-url}/grey-middle.png') no-repeat 378px center,
+        url('#{$image-url}/grey-end.png') no-repeat right center;
+    }
+    .usermgr_step_bar.step3 {
+        background: url('#{$image-url}/finish-start.png') no-repeat left center,
+        url('#{$image-url}/finish-middle.png') no-repeat 189px center,
+        url('#{$image-url}/active-middle.png') no-repeat 378px center,
+        url('#{$image-url}/grey-end.png') no-repeat right center;
+    }
+    .usermgr_step_bar.step4 {
+        background: url('#{$image-url}/finish-start.png') no-repeat left center,
+        url('#{$image-url}/finish-middle.png') no-repeat 189px center,
+        url('#{$image-url}/finish-middle.png') no-repeat 378px center,
+        url('#{$image-url}/active-end.png') no-repeat right center;
+    }
+    .usermgr_step_item {
+        float: left;
+        width: 191px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        font-size: 12px;
+    }
+    .usermgr_step_bar.step1 .usermgr_step_item:nth-child(1) {
+        color: #fff;
+    }
+    .usermgr_step_bar.step2 .usermgr_step_item:nth-child(1) {
+        color: #666666;
+    }
+    .usermgr_step_bar.step2 .usermgr_step_item:nth-child(2) {
+        color: #fff;
+    }
+    .usermgr_step_bar.step3 .usermgr_step_item:nth-child(1),
+    .usermgr_step_bar.step3 .usermgr_step_item:nth-child(2) {
+        color: #666666;
+    }
+    .usermgr_step_bar.step3 .usermgr_step_item:nth-child(3) {
+        color: #fff;
+    }
+    .usermgr_step_bar.step4 .usermgr_step_item:nth-child(1),
+    .usermgr_step_bar.step4 .usermgr_step_item:nth-child(2),
+    .usermgr_step_bar.step4 .usermgr_step_item:nth-child(3) {
+        color: #666666;
+    }
+    .usermgr_step_bar.step4 .usermgr_step_item:nth-child(4) {
+        color: #fff;
+    }
+    .usermgr_step_tips_title {
+        padding-left: 239px;
+        color: #333333;
+        font-size: 12px;
+        line-height: 19px;
+        background: url('#{$image-url}/step-tips-icon.png') no-repeat 216px center;
+    }
+    .usermgr_step_tips_list {
+        margin-top: 10px;
+        padding-left: 239px;
+    }
+    .usermgr_step_tips_list li {
+        font-size: 12px;
+        color: #999999;
+        line-height: 25px;
+    }
+    .usermgr_upload_pic_container {
+        cursor: pointer;
+        width: 640px;
+        height: 40px;
+        margin: 44px auto 72px auto;
+        line-height: 40px;
+        border: 1px solid #bac7d9;
+        border-radius: 3px;
+        box-sizing: content-box;
+        /*	background: -webkit-linear-gradient(bottom, #f8fcfd, #e7f9fd);
+      background: linear-gradient(to top, #f8fcfd, #e7f9fd);*/
+        cursor: pointer;
+    }
+    .usermgr_upload_pic_btn {
+        width: 178px;
+        height: 39px;
+        color: #fff;
+        border-radius: 3px;
+        border: none;
+        outline: none;
+        border-bottom: 3px solid #13461f;
+        background: -webkit-linear-gradient(bottom, #058c1f, #01db44);
+        background: linear-gradient(to top, #058c1f, #01db44);
+    }
+    .usermgr_upload_pic_url {
+        float: left;
+        display: inline-block;
+        vertical-align: middle;
+        *vertical-align: auto;
+        *zoom: 1;
+        *display: inline;
+        width: 515px;
+        height: 40px;
+        padding-left: 13px;
+        font-size: 13px;
+        color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .usermgr_view_pic_btn {
+        float: right;
+        width: 98px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        /*background: -webkit-linear-gradient(bottom, #d2e8f2, #ffffff);
+  background: linear-gradient(to top, #d2e8f2, #ffffff);*/
+        border-left: 1px solid #bac7d9;
+        font-size: 16px;
+        color: #3c6a77;
+        cursor: pointer;
+        //border-radius: ;
+    }
+    .usermgr_progress_container {
+        padding-top: 111px;
+        text-align: center;
+    }
+    .usermgr_uploading_pic_progress {
+        display: inline-block;
+        vertical-align: middle;
+        *vertical-align: auto;
+        *zoom: 1;
+        *display: inline;
+        width: 540px;
+        height: 12px;
+        margin-right: 12px;
+        border-radius: 6px;
+        background-color: #cccccc;
+    }
+    .color_green {
+        font-size: 15px;
+        color: #009900;
+    }
+    .usermgr_uploading_pic_progress_inner {
+        width: 24%;
+        height: 12px;
+        background-color: #009900;
+        border-radius: 6px;
+    }
+    .usermgr_progress_check_text {
+        font-size: 16px;
+        color: #0d51c2;
+    }
+    .usermgr_progress_animate_container {
+        /*display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  width: 187px;
+  height: 10px;
+  margin-bottom: 23px;
+  border: 2px solid #939393;
+  border-radius: 4px;*/
+        /*background: url('#{$image-url}/uploading.gif") no-repeat;*/
+        margin: 0 auto 18px auto;
+        width: 104px;
+        height: 24px;
+        line-height: 24px;
+    }
+    .load {
+        float: left;
+        width: 0px;
+        height: 0px;
+        padding: 9px;
+        border-radius: 50%;
+        margin-top: 3px;
+    }
+    .load:first-child {
+        margin-left: 4px;
+    }
+    .load:not(:first-child) {
+        margin-left: 8px;
+    }
+    .load1 {
+        animation: load1 1s infinite;
+    }
+    .load2 {
+        animation: load2 1s infinite;
+    }
+    .load3 {
+        animation: load3 1s infinite;
+    }
+    .load4 {
+        animation: load4 1s infinite;
+    }
+    .usermgr_step4_container {
+        text-align: center;
+    }
+    .usermgr_step4_tick {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        margin-top: 80px;
+        background: url('#{$image-url}/success.png') no-repeat center;
+    }
+    .usermgr_step4_tick.false {
+        background: url('#{$image-url}/fail.png') no-repeat center;
+    }
+    .usermgr_step4_tips_p {
+        margin-top: 20px;
+        margin-bottom: 70px;
+        font-size: 15px;
+        color: #333333;
+        line-height: 1;
+        .fail-tips {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    }
+    .usermgr_upload_error_item {
+        display: inline-block;
+        vertical-align: middle;
+        *vertical-align: auto;
+        *zoom: 1;
+        *display: inline;
+        width: 240px;
+        height: 215px;
+        margin: 0 10px;
+        border-radius: 4px;
+    }
+    /*.usermgr_upload_error_title {
+    height: 43px;
+    padding-left: 31px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    background: url('#{$image-url}/error-icon.png') no-repeat 10px 0px;
+}*/
+    .usermgr_upload_error_item_list {
+        width: 238px;
+        height: 167px;
+        border: 1px solid #ffcbcd;
+        background-color: #ffefef;
+        overflow-y: auto;
+        border-radius: 4px;
+    }
+    .usermgr_upload_error_item_ul {
+        margin-top: 10px;
+    }
+    .usermgr_upload_error_item_ul li {
+        padding-left: 16px;
+        padding-right: 16px;
+        text-align: left;
+        font-size: 12px;
+        color: #666666;
+        line-height: 24px;
+        @include word-break(break-all);
+    }
+    .usermgr_step4_tips_p .new_alink {
+        padding-left: 40px;
+        font-size: 12px;
+        background: url('#{$image-url}/step-download-icon.png') no-repeat 20px center;
+    }
+    .usermgr_step4_tips_p .new_alink:hover {
+        background: url('#{$image-url}/step-download-icon-hover.png') no-repeat 20px center;
+    }
+    @-webkit-keyframes progress-bar-stripes {
+        from {
+            background-position: 35px 0;
+        }
+        to {
+            background-position: 0 0;
+        }
+    }
+    @keyframes progress-bar-stripes {
+        from {
+            background-position: 35px 0;
+        }
+        to {
+            background-position: 0 0;
+        }
+    }
+    .new_alink {
+        color: #0099ff;
+        text-decoration: none;
+    }
+    .new_alink:hover {
+        color: #ff6600;
+    }
+    /* 导入表格 */
+    .usermgr_upload_table {
+        margin: 0 auto;
+        margin-bottom: 35px;
+        border-collapse: collapse;
+        th,
+        td {
+            text-align: center;
+        }
+    }
+    .usermgr_upload_table th,
+    .usermgr_upload_table td {
+        border: 1px solid #d9d9d9;
+    }
+    .usermgr_upload_table th {
+        height: 28px;
+        font-weight: normal;
+        background-color: #f5f5f5;
+        font-size: 12px;
+        color: #648684;
+    }
+    .usermgr_upload_table td {
+        height: 42px;
+    }
+    .usermgr_upload_table td.head_td {
+        font-weight: normal;
+        background-color: #f5f5f5;
+        font-size: 12px;
+        color: #648684;
+        text-align: center;
+    }
+    .usermgr_upload_table .col1 {
+        width: 200px;
+    }
+    .usermgr_upload_table .col2 {
+        width: 350px;
+        text-align: center;
+    }
+    .usermgr_upload_table .col3 {
+        width: 350px;
+        text-align: center;
+        font-size: 12px;
+    }
+    /* 导入导出页面 end */
+    .loading_mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+    }
+    .loading_container {
+        display: inline-block;
+        *zoom: 1;
+        *display: inline;
+        height: 60px;
+        position: relative;
+        top: 50%;
+        margin-top: -30px;
+    }
+    .loading_content {
+        display: inline-block;
+        float: left;
+        padding-left: 2px;
+        padding-right: 22px;
+    }
+    .usermgr_upload_pic_container:hover {
+        border-color: #3095be;
+    }
+    .usermgr_emptyrow {
+        position: relative;
+        display: none;
+        height: 700px;
+        margin-bottom: 20px;
+        background-image: url('#{$image-url}/empty-row.png');
+        background-position-x: center;
+        background-position-y: 18px;
+        background-repeat: no-repeat;
+    }
+    /*自适应新增 start*/
+    .dodown {
+        color: #0099ff;
+        margin-left: 6px;
+    }
+    @keyframes load4 {
+        0% {
+            background-color: #1aadf8;
+        }
+        25% {
+            background-color: #5dc5fb;
+        }
+        50% {
+            background-color: #9eddfd;
+        }
+        75% {
+            background-color: #d4f0fe;
+        }
+        100% {
+            background-color: #1aadf8;
+        }
+    }
+    @keyframes load3 {
+        0% {
+            background-color: #5dc5fb;
+        }
+        25% {
+            background-color: #9eddfd;
+        }
+        50% {
+            background-color: #d4f0fe;
+        }
+        75% {
+            background-color: #1aadf8;
+        }
+        100% {
+            background-color: #5dc5fb;
+        }
+    }
+    @keyframes load2 {
+        0% {
+            background-color: #9eddfd;
+        }
+        25% {
+            background-color: #d4f0fe;
+        }
+        50% {
+            background-color: #1aadf8;
+        }
+        75% {
+            background-color: #5dc5fb;
+        }
+        100% {
+            background-color: #9eddfd;
+        }
+    }
+    @keyframes load1 {
+        0% {
+            background-color: #d4f0fe;
+        }
+        25% {
+            background-color: #1aadf8;
+        }
+        50% {
+            background-color: #5dc5fb;
+        }
+        75% {
+            background-color: #9eddfd;
+        }
+        100% {
+            background-color: #d4f0fe;
+        }
+    }
+    //2019-11-19制作
+    //公共
+    .import-title {
+        width: 760px;
+        margin: 0 auto;
+        padding-left: 20px;
+        font-size: 18px;
+        background:url("#{$image-url}/position.png") no-repeat left center;
+    }
+    .new_alink {
+        cursor: pointer;
+    }
+    .color_red {
+        color: #ff6600;
+    }
+    .hide {
+        display: none!important;
+    }
+    input[type="button"],
+    button {
+        outline: none;
+        border: 0;
+        cursor: pointer;
+    }
+    .frame_big_green_btn {
+        width: 240px;
+        height: 42px;
+        background-image: linear-gradient(90deg, #00e566 0%, #12d033 62%, #23ba00 100%), linear-gradient( #ffffff, #ffffff);
+        background-blend-mode: normal, normal;
+        border-radius: 21px;
+        font-size: 20px;
+        @include box-shadow(0px 8px 16px -6px #00e566);
+        color: #ffffff;
+        &:hover {
+            background-image: linear-gradient(90deg, #00f36d 0%, #14e037 62%, #27cd00 100%), linear-gradient(#ffffff, #ffffff);
+        }
+    }
+    .frame_big_red_btn {
+        width: 160px;
+        height: 42px;
+        background-image: linear-gradient(90deg, #ffba15 0%, #ff9f0b 45%, #ff8400 100%), linear-gradient(#ffffff, #ffffff);
+        background-blend-mode: normal, normal;
+        @include box-shadow(0px 5px 22px -6px #ff8400);
+        @include border-radius(21px);
+        color: #ffffff;
+        &:hover {
+            background-image: linear-gradient(90deg, #ffcf5b 0%, #ffb42e 45%, #ff9900 100%), linear-gradient(#ffffff, #ffffff);
+        }
+    }
+    //第一步中
+    .step1-commit-wrapper {
+        text-align: center;
+    }
+    //第二步
+    #btnResetRelation {
+        margin: 0 24px;
+    }
+    #btnPreImport {
+        text-decoration: underline;
+    }
+    .step2-btn-wrapper {
+        text-align: center;
+    }
+    //第四步
+    .step4-btn-wrapper {
+        text-align: center;
+    }
+    //导入照片步奏三动画
+    .usermgr_progress_animate_container.photo {
+        display: inline-block;
+        vertical-align: middle;
+        width: 188px;
+        height: 10px;
+        margin-bottom: 23px;
+        border: 2px solid #939393;
+        border-radius: 4px;
+        background-color: #2a82e8;
+        background-image: -webkit-linear-gradient(-45deg, rgb(112, 202, 248) 25%, transparent 25%, transparent 50%, rgb(112, 202, 248) 50%, rgb(112, 202, 248) 75%, transparent 75%, transparent);
+        background-image: -o-linear-gradient(-45deg, rgb(112, 202, 248) 25%, transparent 25%, transparent 50%, rgb(112, 202, 248) 50%, rgb(112, 202, 248) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(-45deg, rgb(112, 202, 248) 25%, transparent 25%, transparent 50%, rgb(112, 202, 248) 50%, rgb(112, 202, 248) 75%, transparent 75%, transparent);
+        -webkit-background-size: 35px 35px;
+        background-size: 35px 35px;
+    }
+    .usermgr_progress_animate_container.photo.active {
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite;
+    }
+    .usermgr_upload_error_title {
+        height: 44px;
+        padding-left: 31px;
+        text-align: left;
+        font-size: 12px;
+        color: #000000;
+        background: url('#{$image-url}/error-icon.png') no-repeat 10px 0;
+    }
+    .usermgr-upload-error-container {
+        @include flex;
+        @include justify-content(center);
+    }
+}

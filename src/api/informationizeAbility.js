@@ -88,7 +88,7 @@ export function getTeachTP(payload = {}) {
   let { schoolID, collegeID, selectLevel, term } = payload;
   let url =
     BasicProxy +
-    `/Statistics/NetInfo/TP?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
+    `/Statistics/NetInfo/GetAccessInfo?SchoolID=${schoolID ? schoolID : ""}&CollegeID=${
       collegeID ? collegeID : ""
     }&SelectLevel=${selectLevel ? selectLevel : ""}&Term=${term ? term : ""}`;
   // "?" +
@@ -100,20 +100,15 @@ export function getTeachTP(payload = {}) {
     .then((res) => res.json())
     .then((json) => {
       if (json.StatusCode === 200) {
-        // "TPCount":150,            //教案总制作数量
-        // "AvgUploadTPCount":14,    //人均制作数量
-        // "AvgUploadUserCount":2,            //平均每日上传人数
-        // "TotalTeacher":60,                //教师总数量
-        // "HasUploadedCount":60,            //参与制作人数
-        // "NoUploadedCount":60,            //未参与制作人数
-        // "UploadedPercent":0.963,            //参与率
+        // "DayAvgWorkTimeSpan":"66",            //办公时长（单位分钟）
+        // "DayAvgWorkCount":"2",                //办公次数
+        // "DayAvgTeachTimeSpan":"99",            //教学时长（单位分钟）
+        // "DayAvgTeachCount":"2",                //教学次数
         // "SubSet":[{
         //     "NodeID":"XXXXXXXXXXX",            
         //     "NodeName":"语文",            //节点名称（学科、学院等）
-        //     "TotalTeacher":50,            //该节点下的教师数量
-        //     "HasUploadedCount":39,            //该节点参与上传人数
-        //     "NoUploadedCount":11,            //该节点参与上传人数
-        //     "UploadedPercent":0.963,                    //参与率
+        //     "DayAvgWorkTimeSpan":"3",            //办公时长（单位分钟）
+        //     "DayAvgTeachTimeSpan":"2",                //教学时长（单位分钟）
         // }]
         return json.Data ? json.Data : {};
       } else {

@@ -77,6 +77,8 @@ import {
   GetResearchByUserID,
   GetDevelopmentHistory,
   GetLogInfoByUserID,
+  GetTeacherWorkByBase,
+  GetTeacherExtra,
 } from "@/api/personal";
 import Card from "./card";
 import Archives from "./archives";
@@ -95,7 +97,8 @@ function PersonalDetail(props, ref) {
     basePlatFormMsg,
     teachermsg,
     teacherid,
-    token,userInfo:{UserID},
+    token,
+    userInfo: { UserID },
     roleMsg: { identityCode, userType, isUniversity },
     ...reset
   } = props;
@@ -152,10 +155,10 @@ function PersonalDetail(props, ref) {
     "archives",
     "history",
   ];
-   // 是否是本人
-   const IsSelf = useMemo(() => {
-    return UserID===teacherid
-  }, [teacherid,UserID])
+  // 是否是本人
+  const IsSelf = useMemo(() => {
+    return UserID === teacherid;
+  }, [teacherid, UserID]);
   // 保存浏览器版本，如果是ie不要动画
   const isIE = useMemo(() => {
     let {
@@ -191,25 +194,45 @@ function PersonalDetail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basePlatFormMsg]);
-useEffect(() => {
-  if (SysUrl&&teacherid) {
-    let userID = teacherid;
-    // 档案啊
-    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
-      // 获取档案-教务
-      getTeacherDetailIntroduction({
-        userID,
-        baseIP: SysUrl["E34"].WebSvrAddr,
-        isUniversity,
-      }).then((res) => {
-        if (res.StatusCode === 200) {
-          setArchives({ ...archives, ...res.Data });
-        }
-      });
+  useEffect(() => {
+    if (SysUrl && teacherid) {
+      let userID = teacherid;
+      // 档案啊
+      if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
+        // 获取档案-教务
+        getTeacherDetailIntroduction({
+          userID,
+          baseIP: SysUrl["E34"].WebSvrAddr,
+          isUniversity,
+        }).then((res) => {
+          if (res.StatusCode === 200) {
+            setArchives((pre) => {
+              if (!pre) {
+                return res.Data;
+              }
+              return { ...pre, ...res.Data };
+            });
+            // debugger
+          }
+        });
+      } else {
+        GetTeacherExtra({
+          userID,
+        }).then((res) => {
+          if (res.StatusCode === 200) {
+            setArchives((pre) => {
+              if (!pre) {
+                return res.Data;
+              }
+              return { ...pre, ...res.Data };
+            });
+            // debugger
+          }
+        });
+      }
     }
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [SysUrl,teacherid]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [SysUrl, teacherid]);
   // 获取接口
   useEffect(() => {
     let baseIP = basePlatFormMsg.BasicWebRootUrl;
@@ -235,6 +258,16 @@ useEffect(() => {
             setWorkTerm(res.Data[0]);
           } else {
             setWorkTerm(false);
+          }
+        });
+      } else {
+        //当E34不存在，使用师资自己的
+        GetTeacherWorkByBase({ userID }).then((res) => {
+          if (res.StatusCode === 200) {
+            setWork(res.Data);
+            // changeData({ ResView: res.Data });
+          } else {
+            setWork(false);
           }
         });
       }
@@ -458,11 +491,17 @@ useEffect(() => {
       return;
     }
     // 电子资源
-    if (SysUrl["C10"] && SysUrl["C10"].WebSvrAddr && WeekData) {
+    if (
+      // SysUrl["C10"] && SysUrl["C10"].WebSvrAddr &&
+      WeekData
+    ) {
       GetTeacherResView({
         userID,
         baseIP: DataParams.baseIP,
-        proxy: SysUrl["C10"].WebSvrAddr,
+        proxy:
+          SysUrl["C10"] && SysUrl["C10"].WebSvrAddr
+            ? SysUrl["C10"].WebSvrAddr
+            : "",
         token,
         schoolID: DataParams.schoolID,
         subjectIDs: DataParams.subjectIDs,
@@ -477,12 +516,18 @@ useEffect(() => {
       });
     }
     // 教学方案
-    if (SysUrl["310"] && SysUrl["310"].WebSvrAddr && WeekData) {
+    if (
+      // SysUrl["310"] && SysUrl["310"].WebSvrAddr &&
+      WeekData
+    ) {
       GetTeachPlanStatistics({
         userID,
         baseIP: DataParams.baseIP,
-        proxy: SysUrl["310"].WebSvrAddr,
-        urlProxy:SysUrl["300"].WebSvrAddr,
+        proxy:
+          SysUrl["310"] && SysUrl["310"].WebSvrAddr
+            ? SysUrl["310"].WebSvrAddr
+            : "",
+        urlProxy: SysUrl["300"].WebSvrAddr,
         token,
         // schoolID: DataParams.schoolID,
         subjectIDs: DataParams.subjectIDs,
@@ -498,11 +543,17 @@ useEffect(() => {
       });
     }
     // 精品课程
-    if (SysUrl["D21"] && SysUrl["D21"].WsSvrAddr && WeekData) {
+    if (
+      // SysUrl["D21"] && SysUrl["D21"].WsSvrAddr &&
+      WeekData
+    ) {
       GetTeacherpercentage({
         userID,
         baseIP: DataParams.baseIP,
-        proxy: SysUrl["D21"].WsSvrAddr,
+        proxy:
+          SysUrl["D21"] && SysUrl["D21"].WsSvrAddr
+            ? SysUrl["D21"].WsSvrAddr
+            : "",
         token,
         schoolID: DataParams.schoolID,
         subjectIDs: DataParams.subjectIDs,
@@ -511,6 +562,8 @@ useEffect(() => {
         endTime: WeekData.endTime,
       }).then((res) => {
         if (res.StatusCode === 200) {
+          // console.log(res.Data);
+
           setPercentage(res.Data);
           // changeData({ ResView: res.Data });
         }
@@ -583,6 +636,8 @@ useEffect(() => {
       userType === 0 &&
       archives &&
       SysUrl &&
+      archives.UserName &&
+      archives.UserID &&
       SysUrl["E34"] &&
       SysUrl["E34"].WsSvrAddr
     ) {
@@ -837,7 +892,7 @@ useEffect(() => {
                     !SysUrl ||
                     (SysUrl["E34"] && (WorkTerm === null || work === null))
                   }
-                  data={SysUrl && SysUrl["E34"] && WorkTerm && work}
+                  data={SysUrl && ((SysUrl["E34"] && WorkTerm && work) || work)}
                   componentProps={{
                     onTermSelect: (e) => {
                       setWorkTerm(e);
@@ -862,7 +917,7 @@ useEffect(() => {
                     TeachPlan: TeachPlan,
                     ResView: ResView,
                     identityCode,
-                    IsSelf
+                    IsSelf,
                   }}
                   loading={
                     !SysUrl ||

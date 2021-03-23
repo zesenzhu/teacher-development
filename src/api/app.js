@@ -15,7 +15,7 @@ export function getLastTime(payload = {}) {
       .then((res) => res.json())
       .then((json) => {
         // if (json.StatusCode === 200) {
-          return moment(json.Data ? json.Data : new Date()).format('YYYY-MM-DD mm:ss');
+          return moment(json.Data ? json.Data : new Date()).format('YYYY-MM-DD HH:mm');
         // } else {
         //   return false;
         // }
@@ -35,7 +35,7 @@ export function getLastTime(payload = {}) {
       .then((res) => res.json())
       .then((json) => {
         // if (json.StatusCode === 200) {
-          return moment(json.Data ? json.Data : new Date()).format('YYYY-MM-DD mm:ss');
+          return moment(json.Data ? json.Data : new Date()).format('YYYY-MM-DD HH:mm');
         // } else {
         //   return false;
         // }

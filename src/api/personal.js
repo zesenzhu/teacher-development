@@ -342,6 +342,67 @@ export function getTeacherDetailIntroduction(payload = {}) {
       }
     });
 }
+export function GetTeacherExtra(payload = {}) {
+  let { userID, baseIP, isUniversity } = payload;
+  // 大学中小学的接口不一样，所以要做判断
+  let url = BasicProxy + `/Teacher/GetTeacherExtra?UserID=${userID}`;
+
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data) {
+        let data = {};
+        let {
+          Nation, //民族
+          NativePlace, //籍贯
+          Education, //最高学历
+          Degree, //最高学位
+          Politics, //政治面貌
+          Birth,
+        } = json.Data;
+        let EducationBackgroundDetailData = [];
+        if (json.Data.EduBg instanceof Array) {
+          let eduCard = []; //两个一个轮播
+          json.Data.EduBg.forEach((child, index) => {
+            eduCard.push({
+              startTime: child.BeginTime,
+              endTime: child.EndTime,
+              currentSchool: child.SchoolName,
+              ...child,
+            });
+            // eduCard.push(child);
+            if (eduCard.length === 2 || index === json.Data.EduBg.length - 1) {
+              EducationBackgroundDetailData.push(eduCard);
+              eduCard = [];
+            }
+          });
+        }
+        // EducationBackgroundDetailData = EducationBackgroundDetailData.concat(EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData,EducationBackgroundDetailData)
+        data = {
+          ...json.Data,
+          EducationBackgroundDetailData,
+          birthday: Birth,
+          nation: Nation,
+          nativeSpace: NativePlace,
+          politicStatus: Politics,
+          degree: Education,
+          educationBackground: Degree,
+          isBase: true,
+        };
+
+        return {
+          StatusCode: 200,
+          Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
+          Data:{}
+        };
+      }
+    });
+}
 
 // 获取周次
 export function GetTermAndPeriodAndWeekNOInfo(payload = {}) {
@@ -408,7 +469,7 @@ function PromiseData(data) {
  * @param {*} payload
  * @return {*}
  */
-export function GetTeacherResView(payload = {}) {
+export async function GetTeacherResView(payload = {}) {
   let {
     userID,
     baseIP,
@@ -424,9 +485,15 @@ export function GetTeacherResView(payload = {}) {
     proxy +
     `/api/Public/GetTeacherResView?SchoolID=${schoolID}&TeacherID=${userID}&Token=${token}&SubjectIDs=${subjectIDs}&SubjectNames=${subjectNames}&startTime=${startTime}&endTime=${endTime}`;
   let promise = "";
+  let isError = false;
+
   if (proxy) {
-    promise = fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
-  } else {
+    let res = await fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
+    isError = res === false;
+
+    promise = PromiseData(res);
+  }
+  if (!proxy || isError) {
     promise = PromiseData({
       error: 0,
       data: {
@@ -517,7 +584,7 @@ export function GetTeacherResView(payload = {}) {
  * @param {*} payload
  * @return {*}
  */
-export function GetTeachPlanStatistics(payload = {}) {
+export async function GetTeachPlanStatistics(payload = {}) {
   let {
     userID,
     baseIP,
@@ -534,9 +601,16 @@ export function GetTeachPlanStatistics(payload = {}) {
     proxy +
     `TeachingPlan/ApiForOutside/GetTeachPlanStatistics?UserID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
   let promise = "";
+  let isError = false;
+
   if (proxy) {
-    promise = fetch.get({ url, securityLevel: 2 }).then((res) => res.json());
-  } else {
+    let res = await fetch.get({ url, securityLevel: 2 });
+    let json = await res.json();
+    isError = json.StatusCode !== 200;
+    // console.log(json)
+    promise = PromiseData(json);
+  }
+  if (!proxy || isError) {
     promise = PromiseData({
       StatusCode: 0,
       Data: {
@@ -552,74 +626,72 @@ export function GetTeachPlanStatistics(payload = {}) {
   }
   subjectIDs = subjectIDs || "";
   subjectNames = subjectNames || "";
-  return promise
-    
-    .then((json) => {
-      if (json.StatusCode === 200 && json.Data) {
-        let data = {};
-        let StatusCode = 200;
-        //         "TeacherID":"t0001",
-        // "Url":"/xxxxxxxxx",
-        // "UploadCount":"500",
-        // "BrowseCount":"1290",
-        // "UploadAllScale":"0.236",
-        // "UploadSubjectScale":[{
-        // 	"SubjectScale":"0.562",
-        // 	"SubjectID":"",
-        // 	"SubjectName":""
-        // }]
+  return promise.then((json) => {
+    if (json.StatusCode === 200 && json.Data) {
+      let data = {};
+      let StatusCode = 200;
+      //         "TeacherID":"t0001",
+      // "Url":"/xxxxxxxxx",
+      // "UploadCount":"500",
+      // "BrowseCount":"1290",
+      // "UploadAllScale":"0.236",
+      // "UploadSubjectScale":[{
+      // 	"SubjectScale":"0.562",
+      // 	"SubjectID":"",
+      // 	"SubjectName":""
+      // }]
 
-        let {
-          UploadCount,
-          UploadAllScale,
-          UseCount,
-          PCLink,
-          UploadSubjectScale,
-        } = json.Data;
-        data.AllCount = SetNaNToNumber(UploadCount);
-        data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
-        data.UseCount = SetNaNToNumber(UseCount);
-        data.Url = PCLink ? urlProxy + PCLink + "?lg_tk=" + token : "";
-        data.AllSubject = [];
-        if (
-          !(UploadSubjectScale instanceof Array) ||
-          UploadSubjectScale.length === 0
-        ) {
-          UploadSubjectScale = subjectIDs.split(",").map((d, i) => {
-            return {
-              SubjectScale: 0,
-              SubjectID: d,
-              SubjectName: subjectNames.split(",")[i],
-            };
-          });
-        }
-        UploadSubjectScale instanceof Array &&
-          UploadSubjectScale.forEach((child) => {
-            data.AllSubject.push({
-              SubjectName: child.SubjectName,
-              SubjectID: child.SubjectID,
-              Scale: SetNaNToNumber(child.SubjectScale) * 100,
-            });
-          });
-        // window.open(
-        //   Urls["300"].WebUrl +
-        //     "html/TeachingPlan/?subjectid=" +
-        //     SubjectID +
-        //     "&lg_tk=" +
-        //     token +
-        //     "&lg_ic=" +
-        //     IdentityCode
-        // );
-        return {
-          StatusCode: StatusCode,
-          Data: { ...data },
-        };
-      } else {
-        return {
-          StatusCode: 400,
-        };
+      let {
+        UploadCount,
+        UploadAllScale,
+        UseCount,
+        PCLink,
+        UploadSubjectScale,
+      } = json.Data;
+      data.AllCount = SetNaNToNumber(UploadCount);
+      data.AllScale = SetNaNToNumber(UploadAllScale) * 100;
+      data.UseCount = SetNaNToNumber(UseCount);
+      data.Url = PCLink ? urlProxy + PCLink + "?lg_tk=" + token : "";
+      data.AllSubject = [];
+      if (
+        !(UploadSubjectScale instanceof Array) ||
+        UploadSubjectScale.length === 0
+      ) {
+        UploadSubjectScale = subjectIDs.split(",").map((d, i) => {
+          return {
+            SubjectScale: 0,
+            SubjectID: d,
+            SubjectName: subjectNames.split(",")[i],
+          };
+        });
       }
-    });
+      UploadSubjectScale instanceof Array &&
+        UploadSubjectScale.forEach((child) => {
+          data.AllSubject.push({
+            SubjectName: child.SubjectName,
+            SubjectID: child.SubjectID,
+            Scale: SetNaNToNumber(child.SubjectScale) * 100,
+          });
+        });
+      // window.open(
+      //   Urls["300"].WebUrl +
+      //     "html/TeachingPlan/?subjectid=" +
+      //     SubjectID +
+      //     "&lg_tk=" +
+      //     token +
+      //     "&lg_ic=" +
+      //     IdentityCode
+      // );
+      return {
+        StatusCode: StatusCode,
+        Data: { ...data },
+      };
+    } else {
+      return {
+        StatusCode: 400,
+      };
+    }
+  });
 }
 
 // 精品课程
@@ -628,7 +700,7 @@ export function GetTeachPlanStatistics(payload = {}) {
  * @param {*} payload
  * @return {*}
  */
-export function GetTeacherpercentage(payload = {}) {
+export async function GetTeacherpercentage(payload = {}) {
   let {
     userID,
     baseIP,
@@ -644,9 +716,22 @@ export function GetTeacherpercentage(payload = {}) {
     proxy +
     `api/common/teacherpercentage?schoolId=${schoolID}&TeacherID=${userID}&StartTime=${startTime}&EndTime=${endTime}`;
   let promise = "";
+  let isError = false;
   if (proxy) {
-    promise = fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
-  } else {
+    try {
+      let res = await fetch.tranfer({ reqUrl: url, basicProxy: baseIP, token });
+
+      // console.log(res);
+      isError = res === false;
+
+      promise = PromiseData(res);
+    } catch (e) {
+      isError = true;
+    }
+  }
+  // console.log(promise);
+
+  if (!proxy || isError) {
     promise = PromiseData({
       code: 0,
       data: {
@@ -799,7 +884,7 @@ export function GetTeacherWork(payload = {}) {
     proxy +
     (isUniversity
       ? `getTeacherWorkCase?userName=${userName}&pageNum=${1}&pageSize=${10000}&academyId=${academyId}&semester=${semester}`
-      : `/admin/getTeacherWorkCase?userName=${userName}&pageNum=${1}&pageSize=${10000}&token=${token}&semester=${semester}`);
+      : `/admin/getTeacherWork?userName=${userName}&pageNum=${1}&pageSize=${10000}&token=${token}&semester=${semester}`);
   return fetch
     .get({ url, securityLevel: 2, advance: false })
     .then((res) => res.json())
@@ -837,6 +922,43 @@ export function GetTeacherWork(payload = {}) {
         return {
           StatusCode: StatusCode,
           Data: data,
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+/**
+ * @description: 当没有E34时用师资的数据
+ * @param {*} payload
+ * @return {*}
+ */
+export function GetTeacherWorkByBase(payload = {}) {
+  let { userID, baseIP } = payload;
+  let url = BasicProxy + `/Teacher/GetTeacherLoadCase?UserID=${userID}`;
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data) {
+        // "Term": "2020-202101",
+        // "ClassHourCount": 0, //课程总数量（课时）
+        // "ClassCount": 0,     //行政班数量
+        // "CourseClassCount": 0,//教学班数量
+        // "ExamCount": 0        //监考数量（当该值等于-1时，表示考务系统不存在，不显示监考数量）
+        let {
+          ClassHourCount,
+          ClassCount,
+          CourseClassCount,
+          ExamCount,
+        } = json.Data;
+        let Data = [ClassHourCount, ClassCount, CourseClassCount, ExamCount];
+
+        return {
+          StatusCode: json.StatusCode,
+          Data: Data,
         };
       } else {
         return {

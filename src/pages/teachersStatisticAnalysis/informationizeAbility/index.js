@@ -128,16 +128,16 @@ function InformationizeAbility(props, ref) {
         }
       });
       // // 电子教案
-      // getTeachTP({
-      //   term: term.value,
-      //   schoolID,
-      //   collegeID,
-      //   selectLevel,
-      // }).then((data) => {
-      //   if (data) {
-      //     setTeacherOnline(data);
-      //   }
-      // });
+      getTeachTP({
+        term: term.value,
+        schoolID,
+        collegeID,
+        selectLevel,
+      }).then((data) => {
+        if (data) {
+          setTeacherOnline(data);
+        }
+      });
     }
   }, [term, schoolID, collegeID, selectLevel,reload]);
 
@@ -146,14 +146,14 @@ function InformationizeAbility(props, ref) {
       <Bar loading={!teacherInternet} barName={"上机信息统计 "} ref={erRef}>
         <TeacherInternet data={teacherInternet} productMsg={productMsg}></TeacherInternet>
       </Bar>
-      {/* <Bar
+      <Bar
         loading={!teacherOnline}
         barName={"在线教学\\办公统计"}
         ref={tpRef}
-        topContext={HasHistory ? { title: "查看历年参与率变化 " } : false}
+        // topContext={HasHistory ? { title: "查看历年参与率变化 " } : false}
       >
         <TeacherOnline data={teacherOnline} productMsg={productMsg}></TeacherOnline>
-      </Bar> */}
+      </Bar>
     </div>
   );
 }

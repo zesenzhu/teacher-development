@@ -32,7 +32,7 @@ import {
   useDispatch,
 } from "react-redux";
 import React, {
-  // useCallback,
+  useCallback,
   memo,
   useEffect,
   useState,
@@ -49,18 +49,18 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy } from "../../../util/public";
+import { resizeForEcharts, deepCopy,transTime } from "../../../util/public";
 function TeacherOnline(props, ref) {
   let {
     className,
     levelHash,
     productMsg,
     data: {
-      TPCount,
-      AvgUploadTPCount,
-      AvgUploadUserCount,
-      TotalTeacher,
-      HasUploadedCount,
+      DayAvgTimeSpan,
+      DayAvgTeachTimeSpan,
+      DayAvgWorkCount,
+      DayAvgWorkTimeSpan,
+      // DayAvgTeachTimeSpan,
       NoUploadedCount,
       UploadedPercent,
       SubSet,
@@ -76,9 +76,7 @@ function TeacherOnline(props, ref) {
   // dom ref
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoUploadedCount===undefined||HasUploadedCount===undefined){
-      return;
-    }
+  
     let myEchart_sub = subEchart;
     
 
@@ -91,15 +89,15 @@ function TeacherOnline(props, ref) {
     SubSet.forEach((child, index) => {
       let {
         NodeName,
-        TotalTeacher,
-        HasUploadedCount,
+        DayAvgWorkTimeSpan,
+        DayAvgTeachTimeSpan,
         UploadedPercent,
       } = child;
       dataset_sub.push([
         NodeName,
-        TotalTeacher,
-        HasUploadedCount,
-        TotalTeacher,
+        transTime(DayAvgWorkTimeSpan).time,
+        transTime(DayAvgTeachTimeSpan).time,
+        DayAvgWorkTimeSpan,
 
       ]);
     });
@@ -117,12 +115,12 @@ function TeacherOnline(props, ref) {
       // backgroundColor: "#f5f5f5",
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length>11,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (10 /(dataset_sub.length-1  )) * 100,
+        maxSpan: (10 /(dataset_sub.length-1  )) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -148,9 +146,9 @@ function TeacherOnline(props, ref) {
           return `<div  class="t-tooltip">
                 <p class="nodename">${
                   name
-                }</p><p class='msg msg-2'>在线办公<span>${
+                }</p><p class='msg msg-2'>平均在线办公时长<span>${
             data[1]
-          }小时</span></p><p class='msg msg-2'>在线教学<span>${
+          }小时</span></p><p class='msg msg-2'>平均在线教学时长<span>${
             data[2]
           }小时</span></p></div>
             `;
@@ -186,10 +184,10 @@ function TeacherOnline(props, ref) {
         },
       },
       grid: {
-        left: 58,
-        height: 175,
-        right: 88,
-        bottom: 0,
+        left: 28,
+        height: 'auto',
+        right: 58,
+        bottom: 20,
         containLabel: true,
       },
       dataset: {
@@ -241,7 +239,7 @@ function TeacherOnline(props, ref) {
       yAxis: [
         {
           type: "value",
-          name: "时长",
+          name: "时长(单位:小时)",
           // max: 1,
           axisLabel: {
             color: "#7c7c7c",
@@ -256,7 +254,7 @@ function TeacherOnline(props, ref) {
             color: "#7c7c7c",
             fontSize: 12,
 
-            padding: [0, 0, 0, 100],
+            padding: [0, 0, 0, 50],
           },
           nameGap: 20,
         },
@@ -363,17 +361,27 @@ function TeacherOnline(props, ref) {
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SubSet, productMsg]);
-
+  const TransTime = useCallback(
+    (time) => {
+      let tTime = transTime(time,'m')
+      if(tTime.time<1){
+        return '小于1分钟'
+      }
+  
+      return tTime.Time_zh
+    },
+    [],
+  )
   return (
     <div className={`teacher-bar TeacherOnline ${className ? className : ""} `}>
        <div className="tb-top">
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          每人每日平均在线办公<span className="tb-tip-2">{TPCount}</span>
+          每人每日平均在线办公<span className="tb-tip-2">{DayAvgTimeSpan}</span>
           次，共
-          <span className="tb-tip-2">{AvgUploadTPCount}</span>小时；每人每日平均在线教学
-          <span className="tb-tip-2">{AvgUploadUserCount}</span>次，共
-          <span className="tb-tip-2">{TotalTeacher}</span>小时
+          <span className="tb-tip-2">{TransTime(DayAvgTeachTimeSpan)}</span>；每人每日平均在线教学
+          <span className="tb-tip-2">{DayAvgWorkCount}</span>次，共
+          <span className="tb-tip-2">{TransTime(DayAvgWorkTimeSpan)}</span>
         </p>
         <p className="tp-tilte">各{productMsg.sub}教师每日办公教学\办公统计信息</p>
         

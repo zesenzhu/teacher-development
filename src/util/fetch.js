@@ -69,7 +69,15 @@ let fetchService = {
       }
     });
   },
-  get: ({ url, header, securityLevel, config, advance, comfirmError }) => {
+  get: ({
+    url,
+    header,
+    securityLevel,
+    config,
+    advance,
+    comfirmError,
+    limitTime,
+  }) => {
     //advance:是否提前处理,boolean:false表示不用提前，true表示使用，{}表示有选择的使用，里面为number，状态码
     // comfirmError:当错误的时候点击确认按钮的回调
     if (!header) {
@@ -91,6 +99,8 @@ let fetchService = {
     if (comfirmError === undefined) {
       comfirmError = () => {}; //
     }
+    limitTime = limitTime || 20000;
+    let timeOut = false;
     let result = fetch(url, {
       method: "GET",
       headers: {
@@ -118,13 +128,18 @@ let fetchService = {
     //     return false;
     //   }
     // )
+    // let TimeOut = setTimeout(() => {
+    //   timeOut = true;
+    // }, timeOut);
     result.then((res) => {
       //做提前处理
       // console.log(res)
+      // clearTimeout(TimeOut);
       if (advance) {
         advanceFetch(res, advance, comfirmError);
       }
     });
+
     return result;
   },
   post: ({

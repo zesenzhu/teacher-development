@@ -409,7 +409,6 @@ function Data(props, ref) {
   // 公共渲染echart
   const SetEchart = (myEchart, myRef, setEchart, data) => {
     // let myEchart = FirstEchart;
-    console.log(data,data[1][3],IsSelf);
     let canClick = data[1][3]&&IsSelf
     // return;
     if (!myRef.current || !(data instanceof Array)) {
