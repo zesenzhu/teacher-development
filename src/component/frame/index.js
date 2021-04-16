@@ -59,13 +59,10 @@ import React, {
 import "./index.scss";
 import { withRouter, useLocation } from "react-router-dom";
 import $ from "jquery";
-
 import logo from "./images/image-top-name.png";
 import { init } from "@/util/init";
 import { Loading } from "@/component/common";
-
 import LeftMenu from "./leftMenu";
-
 import Tab from "./Tab";
 import TopBar from "./TopBar";
 import RouteTab from "./routeTab";
@@ -117,6 +114,7 @@ function Frame(props, ref) {
     // 是否需要进行默认的趋势化操作，缺省为需要，false为不需要，配合不需要登陆逻辑的界面
     onlyBase,
     otherMsg, //左侧菜单底部的其它信息区域
+    tabMsg, //标签头部的信息{id:title},id:为tabid|param组合
     search,
   } = props;
   // 是否初始化
@@ -145,7 +143,6 @@ function Frame(props, ref) {
   const [state, dispatch] = useReducer(frameReducer, initState);
   // ComponentList
   const [ComponentList, setComponentList] = useState([]);
-
   // 单页面的,还保留头部的
   //   存得到路由标签
   const [routeList, setRouteList] = useState([]);
@@ -153,14 +150,11 @@ function Frame(props, ref) {
   const [domList, setDomList] = useState([]);
   //   存底部版本
   const [proversion, setProVersion] = useState("");
-
   // 路由
   const location = useLocation();
-
   // 设置modulename
   const [moduleName, setModuleName] = useState(undefined);
   // end 单页面
-
   // 单页面2
   //   存得到路由标签
   const [pageList, setPageList] = useState([]);
@@ -176,7 +170,6 @@ function Frame(props, ref) {
         { moduleID, onlyBase: onlyBase }, //onlyBase:只要基础信息，不用验证用户，不用登陆功能
         (data) => {
           //成功
-
           if (data.identityDetail && data.role.version !== "noPower") {
             //true表示该身份有效
             setIdentity(data.identityDetail);
@@ -205,7 +198,6 @@ function Frame(props, ref) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moduleID]);
-
   // 监听type变化，修改loading,解决接口因为type变化请求多次问题请求多次
   // 初始化成功后的逻辑与初始化分开比较好
   useEffect(() => {
@@ -219,7 +211,6 @@ function Frame(props, ref) {
         });
     }
   }, [type, initData, Init, pageInit, FrameLoading, onlyBase]);
-
   // 平台信息副作用,
   useEffect(() => {
     // 对platMsg做把控，防止传进来的数据不对
@@ -247,13 +238,11 @@ function Frame(props, ref) {
         setModuleName(child.props.routename);
       }
     });
-
     return () => {};
   }, [location, routeList]);
   // 当type不一样的时候，处理界面显示不同的模式，返回不同的节点列表
   useEffect(() => {
     // 默认的才有tab
-
     if (checkType("default")) {
       let List = [];
       children.forEach((child) => {
@@ -310,7 +299,6 @@ function Frame(props, ref) {
       setProVersion(proversion);
       setDomList(domList);
     }
-
     // 单页面,新开界面
     if (checkType("page")) {
       let pageList = [];
@@ -337,7 +325,6 @@ function Frame(props, ref) {
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, type, leftMenu]);
-
   // 对type字段解析，查看是否包含
   const checkType = useCallback(
     (key = null) => {
@@ -366,7 +353,6 @@ function Frame(props, ref) {
     // dispatch(handleActions.setActiveTab(activeTab));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
-
   return (
     <frameContext.Provider value={{ state, dispatch }}>
       <Loading
@@ -437,6 +423,7 @@ function Frame(props, ref) {
                       ) : ComponentList instanceof Array &&
                         ComponentList.length > 0 ? (
                         <Tab
+                          tabMsg={tabMsg}
                           tabPorps={tabPorps}
                           ref={tabRef}
                           componentList={ComponentList}

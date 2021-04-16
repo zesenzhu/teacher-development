@@ -69,20 +69,23 @@ import React, {
   useMemo,
   // useImperativeHandle,
   useRef,
-  forwardRef,useLayoutEffect
+  forwardRef,
+  useLayoutEffect,
 } from "react";
 import { Dropdown, Search } from "../../component/common";
 import Table from "../../component/table";
 import { getTeacherList, getNode } from "../../api/personal";
 // import { handleRoute } from "../../util/public";
 import { withRouter } from "react-router-dom";
+import { getToken } from "@/util/public";
+
 import { Scrollbars } from "react-custom-scrollbars";
 //   import { Reducer, Context, initState } from "./reducer";
 function PersonalList(props, ref) {
   let {
     location,
     history,
-    roleMsg: { productLevel, schoolID, collegeID },
+    roleMsg: { productLevel, schoolID, collegeID, IsEdu },
     levelHash,
     contentHW: { height },
   } = props;
@@ -102,15 +105,20 @@ function PersonalList(props, ref) {
   }, [levelHash, productLevel]);
   // 学校node
   const [SchoolList, setSchoolList] = useState([
-    { value: "", title: "全部学校" },
+    { value: schoolID, title: "全部学校", nodeType: "-1" },
   ]);
   // 第一node
+  // 筛选节点类型，-1：全部，1：学科，2：学院，3：教研室
   const [FirstNodeList, setFirstNodeList] = useState([
-    { value: "", title: "全部" + levelMsg.sub },
+    {
+      value: "",
+      nodeType: "-1",
+      title: "全部" + levelMsg.sub,
+    },
   ]);
   // 第二node,只有大学学校级别才有才有
   const [SecondNodeList, setSecondNodeList] = useState([
-    { value: "", title: "全部教研室" },
+    { value: "", nodeType: "2", title: "全部教研室" },
   ]);
   // 保存第二级所有节点
   const [SecondNodeObj, setSecondNodeObj] = useState({});
@@ -119,29 +127,47 @@ function PersonalList(props, ref) {
   const [secondSelect, setSecondSelect] = useState("");
   const [query, setQuery] = useState({
     keyword: "",
-    schoolID: productLevel === 1 ? "" : schoolID,
+    schoolID: schoolID,
     nodeID: "",
-    nodeType: "",
+    nodeType: "-1",
   });
   const onClickName = useCallback((data) => {
+    let ip = IsEdu ? data.TGServerAddr : "";
+    // TGServerAddr有值表明是教育局
+
     window.open(
-      window.location.search + "#/page/personalDetail/" + data.UserID
+      ip +
+        "?lg_tk=" +
+        getToken() +
+        (IsEdu ? "_Edu" : "") +
+        "#/page/personalDetail/" +
+        data.UserID
     );
-  }, []);
+  }, [IsEdu]);
   // 初始化列表
   useEffect(() => {
     // 非教育局，使用node
-    if (productLevel !== 1) {
-      getNode({ collegeID, schoolID }).then((res) => {
-        if (res.StatusCode === 200) {
-          setFirstNodeList([
-            { value: "", title: "全部" + levelMsg.sub },
-            ...res.data[0],
-          ]);
+    getNode({ collegeID, schoolID }).then((res) => {
+      if (res.StatusCode === 200) {
+        if (productLevel !== 1) {
+          setFirstNodeList((pre) => {
+            return pre.slice(0, 1).concat([
+              // { value: "", title: "全部" + levelMsg.sub },
+              ...res.data[0],
+            ]);
+          });
           setSecondNodeObj(res.data[1]);
+        } else {
+          setSchoolList((pre) => {
+            return pre.slice(0, 1).concat([
+              // { value: "", title: "全部" + levelMsg.sub },
+              ...res.data[0],
+            ]);
+          });
         }
-      });
-    }
+      }
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productLevel]);
   // 获取table组件的ref
@@ -292,7 +318,7 @@ function PersonalList(props, ref) {
         // dataIndex: "time",
         render: (data) => {
           return (
-            <span className="table-handle">
+            <span className="table-handle" title={"查看画像"}>
               <span
                 className=" btn-check"
                 onClick={onClickName.bind(this, data)}
@@ -306,14 +332,12 @@ function PersonalList(props, ref) {
   }, [levelMsg]);
   const initGet = useRef(false);
   useLayoutEffect(() => {
-    
-    
     if (!initGet.current) {
       initGet.current = true;
       return;
     }
-    if(location.pathname === "/teacherPersonal"){
-      tableRef.current.reloadList()
+    if (location.pathname === "/teacherPersonal") {
+      tableRef.current.reloadList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
@@ -331,7 +355,7 @@ function PersonalList(props, ref) {
               className="school-dropdown"
               onChange={(e) => {}}
               onSelect={(e, option) => {
-                setQuery({ ...query, schoolID: e });
+                setQuery({ ...query, schoolID: e, nodeType: option.nodeType });
               }}
             ></Dropdown>
           ) : (
@@ -372,8 +396,8 @@ function PersonalList(props, ref) {
                   onSelect={(e, option) => {
                     setQuery({
                       ...query,
-                      nodeID: e,
-                      nodeType: option.nodeType,
+                      nodeID: e === "" ? firstSelect : e,
+                      nodeType: e === "" ? 2 : option.nodeType,
                     });
                     setSecondSelect(e);
                   }}

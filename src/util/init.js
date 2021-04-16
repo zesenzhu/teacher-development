@@ -56,14 +56,12 @@ import {
 } from "./public";
 import fetch from "./fetch";
 import listenAppDurationTime from "./listen_app_duration_time";
-
 let { BasicProxy } = config;
 let { get, post } = fetch;
 let initCount = 0;
 export const init = (params, success = () => {}, error = () => {}) => {
   //   L10001 师资发展管理       管理员、教师（学校领导）
   // 默认权限身份IC0002、IC0010
-
   // L10002   师资发展培训  教师
   // 默认权限身份IC0011、IC0012、IC0013
   let moduleID = "";
@@ -81,7 +79,6 @@ export const init = (params, success = () => {}, error = () => {}) => {
   console.log(params);
   // tokencheck前需要进行基础信息的请求
   initCount++;
-  
   getBasePlatformMsg().then((data) => {
     //data：基础平台信息，object,{BasePlatformAddr}
     // console.log(data)
@@ -91,7 +88,18 @@ export const init = (params, success = () => {}, error = () => {}) => {
       });
       return;
     }
+
     if (data) {
+      // 检查是否是教育局
+      let IsEduCenter = false;
+      // data.ProductUseRange = 4//测试用
+      if (
+        data.IsEduCenter ||
+        data.ProductUseRange === 4 ||
+        data.ProductUseRange === 8  
+      ) {
+        IsEduCenter = true;
+      }
       TokenCheck({
         //里面进行token验证，用户信息获取，回调返回true才能正常，不然页面初始化失败
         firstLoad: true,
@@ -107,7 +115,23 @@ export const init = (params, success = () => {}, error = () => {}) => {
                 userInfo.LockerState;
               return;
             }
-            let identityDetail = getIdentityDetail(moduleID);
+            // let SchoolID = userInfo.SchoolID;
+
+            // 教育局不用身份
+            let identityDetail = IsEduCenter
+              ? {
+                  IconUrl: false,
+                  IdentityCode: "IC0101",
+                  IdentityName: "教育局管理员",
+                  IsPreset: true,
+                  IsEdu: true, //是true表明不显示身份，undefined等显示
+                }
+              : getIdentityDetail(moduleID);
+            if (IsEduCenter) {
+              //教育局的学校ID固定传EduCenterRoot
+               
+              userInfo.SchoolID = "EduCenterRoot"
+            }
             let termInfo = getTermInfo({
               SchoolID: userInfo.SchoolID || "",
               CollegeID: userInfo.CollegeID || "",
@@ -118,8 +142,9 @@ export const init = (params, success = () => {}, error = () => {}) => {
               "D21", //精品课程
               "E34", //档案
               "C10", //电子资源
+              // todo
+              //400,//消息中心，教育局现在还没有，去掉
             ]);
-
             // 多个接口，不能用await阻塞，要用Promise
             // let identityDetail = getPromise(
             //   getIdentityDetail.bind(this, moduleID)
@@ -127,7 +152,6 @@ export const init = (params, success = () => {}, error = () => {}) => {
             // let termInfo = getPromise(
             //   getTermInfo.bind(this, userInfo.SchoolID ? userInfo.SchoolID : "")
             // );
-
             Promise.all([identityDetail, termInfo, systemServer]).then(
               (res) => {
                 let [identityDetail, termInfo, systemServer] = res;
@@ -141,7 +165,6 @@ export const init = (params, success = () => {}, error = () => {}) => {
                   role: setUnifyRole(userInfo, identityDetail, data),
                 });
                 SetDataDeliver(moduleID, userInfo.UserID);
-                 
               }
             );
           } else {
@@ -154,12 +177,10 @@ export const init = (params, success = () => {}, error = () => {}) => {
       if (initCount <= 2) {
         init();
       }
-
       error();
     }
   });
 };
-
 // 传个promise进去，返回promise
 const getPromise = (promise) => {
   return new Promise((resolve, reject) => {
@@ -170,9 +191,9 @@ const getPromise = (promise) => {
 };
 //智慧校园大数据采集需求
 const SetDataDeliver = (moduleID, userID) => {
-  if(!moduleID){
-    return 
-}
+  if (!moduleID) {
+    return;
+  }
   let { BasicWebRootUrl: baseIP } =
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
@@ -204,15 +225,13 @@ const getSystemServer = async (sysID) => {
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
-  // 200:个人信息管理系统ID
-  sysID = [400, 200].concat(changeToArray(sysID)).join(","); //处理为数组
+  // 200:个人信息管理系统ID,400为消息中心
+  sysID = [200].concat(changeToArray(sysID)).join(","); //处理为数组
   // 先处理，看storage里是否有全部的sysid,
-
   const result = await get({
     url: `${baseIP}/BaseApi/Global/GetSubSystemsMainServerBySubjectID?appid=L10&access_token=7f0fc0ce1335b77b0f3f944003713e09&subjectID=&sysIDs=${sysID}`,
     securityLevel: 2,
   });
-
   const res = await result.json();
   if (res.StatusCode === 200) {
     let data = {};
@@ -254,12 +273,11 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
   };
   try {
     let { ProductUseRange } = baseMsg;
-    let { IdentityCode, IdentityName } = identity;
+    let { IdentityCode, IdentityName ,IsEdu} = identity;
     Role.userType = parseInt(userInfo.UserType);
     Role.userClass = parseInt(userInfo.UserClass);
     Role.identityCode = IdentityCode;
     Role.identityName = IdentityName;
-
     ProductUseRange = parseInt(ProductUseRange);
     let version = "noPower";
     // 中小学教育局端没有学校id，用户信息拿到什么就传什么
@@ -299,7 +317,6 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "education-school";
         selectLevel = 2;
         productLevel = 3;
-
         // } else {
         //   version = 'noPower'; //无权限进入
         // }
@@ -310,7 +327,6 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "education-school";
         selectLevel = 2;
         productLevel = 3;
-
         //非g管理员
         if (IdentityCode.includes("IC000")) {
           //code之后会有
@@ -337,7 +353,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     //   return;
     // }
     Role = {
-      ...Role,
+      ...Role,IsEdu,
       version,
       isUniversity: version.indexOf("university") !== -1,
       selectLevel,
@@ -438,9 +454,7 @@ const GetIdentityTypeByCode = async (IdentityCodes) => {
     url: `${baseIP}/UserMgr/PowerMgr/GetIdentityTypeByCode?SchoolID=${SchoolID}&IdentityCodes=${IdentityCodes}`,
     securityLevel: 2,
   });
-
   const res = await result.json();
-
   if (res.StatusCode === 200) {
     return res.Data;
   }
@@ -463,18 +477,14 @@ const IdentityRecognition = async (
   if (ModuleID) {
     const promiseList = IdentityList.map((i) => {
       const res = ValidateIdentity(i.IdentityCode, ModuleID);
-
       return res;
     });
     // 需要等所有请求返回
     let res = await Promise.all(promiseList);
-
     const index = res.findIndex((i) => i === true);
     if (index >= 0) {
       const IdentityItem = IdentityList[index];
-
       setDataStorage("IdentityMsg", IdentityItem);
-
       typeof callBack === "function" && callBack(IdentityItem);
       IdentityMsg = IdentityItem;
     } else {
@@ -483,7 +493,6 @@ const IdentityRecognition = async (
     }
   } else {
     setDataStorage("IdentityMsg", IdentityList[0]);
-
     typeof callBack === "function" && callBack(IdentityList[0]);
     IdentityMsg = IdentityList[0];
   }
@@ -521,9 +530,7 @@ const ValidateIdentity = async (IdentityCode, ModuleID) => {
     },
     securityLevel: 2,
   });
-
   const res = await result.json();
-
   if (res.StatusCode === 200) {
     return res.Data;
   }
@@ -541,12 +548,10 @@ const getIdentityList = async () => {
     getDataStorage("BasePlatformMsg") instanceof Object
       ? getDataStorage("BasePlatformMsg")
       : {};
-
   const result = await get({
     url: `${baseIP}/UserMgr/PowerMgr/GetIdentityTypeByUserID?UserID=${UserID}`,
     securityLevel: 2,
   });
-
   const res = await result.json();
   if (res.StatusCode === 200) {
     setDataStorage("IdentityList", res.Data);
@@ -575,7 +580,6 @@ export const getBasePlatformMsg = async (keys = []) => {
   } else {
     isExist = false;
   }
-
   if (isExist) {
     json = await new Promise((resolve, reject) => {
       resolve({
@@ -587,7 +591,6 @@ export const getBasePlatformMsg = async (keys = []) => {
     let res = await get({ url });
     json = await res.json();
   }
-
   // let json = await pro();
   // let res = await getData(url, 2, "cors", false, false);
   // let json = await res.json();
@@ -599,11 +602,9 @@ export const getBasePlatformMsg = async (keys = []) => {
     } else {
       BasePlatformMsg = false; //有错误
     }
-
     // return ;
   }
   setDataStorage("BasePlatformMsg", json.Data);
-
   return BasePlatformMsg;
 };
 /**
@@ -621,7 +622,6 @@ export const getTermInfo = async ({ SchoolID, CollegeID }) => {
   let TermInfo = getDataStorage("TermInfo"); //具体有什么字段这里不做判断，外部判断
   let json = "";
   //  界面第一次加载获取后保存，基本不会出错
-
   if (TermInfo && TermInfo.TermInfo instanceof Array && TermInfo.length > 0) {
     json = await new Promise((resolve, reject) => {
       resolve({
@@ -633,7 +633,6 @@ export const getTermInfo = async ({ SchoolID, CollegeID }) => {
     let res = await get({ url });
     json = await res.json();
   }
-
   // let json = await pro();
   // let res = await getData(url, 2, "cors", false, false);
   // let json = await res.json();
@@ -645,6 +644,5 @@ export const getTermInfo = async ({ SchoolID, CollegeID }) => {
   // console.log(TermInfo)
   // if(!(json.Data instanceof Array)&&)
   setDataStorage("TermInfo", TermInfo);
-
   return TermInfo;
 };

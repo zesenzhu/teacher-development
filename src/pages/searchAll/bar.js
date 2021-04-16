@@ -36,6 +36,7 @@ import {
   useHistory,
   // , Route, Switch, NavLink
 } from "react-router-dom";
+import { getToken } from "@/util/public";
 import $ from "jquery";
 function Bar(props, ref) {
   const { data } = props;
@@ -68,12 +69,16 @@ function Bar(props, ref) {
               return (
                 <div
                   className="bar-content-title"
-                  key={index}
+                  key={child.key + index}
                   onClick={() => {
                     if (child.key === "TeacherList") {
                       //教师的打开个人画像
+                      // TGServerAddr有值表明是教育局
                       window.open(
-                        window.location.search +
+                        (child.TGServerAddr || "") +
+                          "?lg_tk=" +
+                          getToken() +
+                          (child.TGServerAddr ? "_Edu" : "") +
                           "#/page/personalDetail/" +
                           child.id
                       );

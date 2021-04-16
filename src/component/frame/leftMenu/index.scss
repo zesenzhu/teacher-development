@@ -149,6 +149,9 @@
             &:hover,
             &.link-select {
                 @include select-1;
+                .link-name {
+                    color: #fff;
+                }
             }
         }
         &.link-level-2 {
@@ -190,6 +193,9 @@
             &:hover,
             &.link-select {
                 @include select-2;
+                .link-name {
+                    color: #fff;
+                }
             }
         }
         .link-name {

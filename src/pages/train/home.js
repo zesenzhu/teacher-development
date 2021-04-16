@@ -120,7 +120,7 @@ function Home(props, ref) {
             className="table-title"
             title={title}
           >
-            {title?title:'--'}
+            {title ? title : "--"}
           </span>
         );
       },
@@ -145,10 +145,10 @@ function Home(props, ref) {
       width: 172 * widthRate,
       // dataIndex: "ApplyEndTime",
       render: (data) => {
-        let {ApplyFlag,ApplyEndTime} =data
+        let { ApplyFlag, ApplyEndTime } = data;
         return (
           <span className="table-time" title={ApplyEndTime}>
-            {ApplyFlag&&ApplyEndTime?ApplyEndTime:'--'}
+            {ApplyFlag && ApplyEndTime ? ApplyEndTime : "--"}
           </span>
         );
       },
@@ -159,11 +159,14 @@ function Home(props, ref) {
       width: 90 * widthRate,
       // dataIndex: "publisher",
       render: (data) => {
-        let { Limit,ApplyCount,ApplyFlag } = data;
-        let title = (ApplyCount?ApplyCount:0)+'/'+(Limit?Limit:'--')
+        let { Limit, ApplyCount, ApplyFlag, HasApplied } = data;
+        //因后台问题，这里暂时把已报名的人数字段ApplyCount改到HasApplied，后面后台改完就改回来
+        //todo
+        let title =
+          (HasApplied ? HasApplied : 0) + "/" + (Limit ? Limit : "--");
         return (
           <span className="table-limit" title={title}>
-            {ApplyFlag?title:'--'}
+            {ApplyFlag ? title : "--"}
           </span>
         );
       },
@@ -178,9 +181,14 @@ function Home(props, ref) {
           { value: 1, title: "线上" },
           { value: 0, title: "线下" },
         ];
-        let title = ActivityList[parseInt(data)]?ActivityList[parseInt(data)].title:'--';
+        let title = ActivityList[parseInt(data)]
+          ? ActivityList[parseInt(data)].title
+          : "--";
         return (
-          <span className={`table-activity table-activity-${data}`} title={title}>
+          <span
+            className={`table-activity table-activity-${data}`}
+            title={title}
+          >
             {title}
           </span>
         );
@@ -193,7 +201,9 @@ function Home(props, ref) {
 
       // dataIndex: "time",
       render: (data) => {
-        return (
+        let { FromEdu } = data;
+
+        return !FromEdu ? (
           <span className="table-handle">
             <span
               className="table-btn btn-edit"
@@ -210,10 +220,11 @@ function Home(props, ref) {
                   title: "确定删除该培训计划?",
                   type: "btn-warn",
                   cancelShow: true,
+                  abstract: "删除后不可恢复......",
                   onOk: () => {
                     DeleteTrain(
                       { TIDs: data.TID },
-                      tableRef.current.reloadList.bind(this,{},false)
+                      tableRef.current.reloadList.bind(this, {}, false)
                     );
                   },
                 });
@@ -222,6 +233,8 @@ function Home(props, ref) {
               删除
             </span>
           </span>
+        ) : (
+          <></>
         );
       },
     },
@@ -255,7 +268,7 @@ function Home(props, ref) {
             className="table-title"
             title={title}
           >
-            {title?title:'--'}
+            {title ? title : "--"}
           </span>
         );
       },
@@ -269,7 +282,7 @@ function Home(props, ref) {
       render: (data) => {
         return (
           <span className="table-time" title={data}>
-            {data?data:'--'}
+            {data ? data : "--"}
           </span>
         );
       },
@@ -307,7 +320,7 @@ function Home(props, ref) {
                 //   },
                 // });
                 DeleteTrain({ TIDs: data.TID }, () => {
-                  tableRef.current.reloadList({},false);
+                  tableRef.current.reloadList({}, false);
 
                   homeTopRef.current.reloadDraft();
                 });
@@ -390,8 +403,7 @@ function Home(props, ref) {
           },
         }}
         draft={topDraft}
-        searchTips={'输入培训计划标题搜索...'}
-
+        searchTips={"输入培训计划标题搜索..."}
         search={{
           onSearch: (value) => {
             // console.log(value)

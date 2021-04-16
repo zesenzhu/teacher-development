@@ -61,7 +61,18 @@ const setActiveTab = (data) => {
     dispatch({ type: COMMON_SET_ACTIVE_TAB, data });
   };
 };
+
+// 修改tab的名字，通过id对上对应tab
+const HANDLE_SET_TAB_MSG = "HANDLE_SET_TAB_MSG";
+const setTabMsg = (data) => {
+  return (dispatch, getProp) => {
+    dispatch({ type: HANDLE_SET_TAB_MSG, data });
+  };
+};
 const actions = {
+  setTabMsg,
+  HANDLE_SET_TAB_MSG,
+
   COMMON_SET_ACTIVE_TAB,
   setActiveTab,
 

@@ -47,7 +47,7 @@ import React, {
 import "./index.scss";
 import { Input } from "antd";
 import { Loading } from "@/component/common";
-// import $ from "jquery";
+import $ from "jquery";
 import useUEditorLaod from "./hooks/useUEditorLaod";
 /**
  * @description: 使用前需要配置部署在服务器上的js文件:config.js,具体配置自己看官网文档，
@@ -76,7 +76,7 @@ function UEditor(props, ref) {
       UE.setContent(defaultValue ? defaultValue : "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [UE, Ready,defaultValue]);
+  }, [UE, Ready, defaultValue]);
   //   设置事件
   useEffect(() => {
     if (Ready) {
@@ -88,14 +88,21 @@ function UEditor(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Ready]);
   useImperativeHandle(ref, () => ({
-    ...UE,UE
+    ...UE,
+    UE,
   }));
   const Blur = useCallback(() => {
     //   获取内容
     onBlur(UE.getContent());
   }, [UE, onBlur]);
+  // useEffect(() => {
+  //   console.log(style)
+  //   if (style.heigth) {
+  //     $(Id+">.edui-editor-iframeholder").css({ height: style.heigth + "px !important",'font-size':'14px' });
+  //   }
+  // }, [style.heigth]);
   return (
-    <Loading spinning={Ready === null} opacity={false} tip={'加载中...'}>
+    <Loading spinning={Ready === null} opacity={false} tip={"加载中..."}>
       {Ready !== false && (
         <div
           id={Id}
@@ -104,7 +111,7 @@ function UEditor(props, ref) {
           }}
           className={`LG_UEditor ${className ? className : ""}`}
           //   type="text/plain"
-          style={{ width: "931px", height: "370px", ...style }}
+          style={{ width: "931px", minHeight: "370px", ...style }}
         ></div>
       )}
       {/* 当加载失败后，使用默认input */}

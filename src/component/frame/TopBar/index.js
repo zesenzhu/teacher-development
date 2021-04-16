@@ -51,10 +51,10 @@ import fetch from "@/util/fetch";
 import "./index.scss";
 import moment from "moment";
 import $ from "jquery";
-import Config from '@/util/ipConfig';
-let {BasicProxy} =Config
+import Config from "@/util/ipConfig";
+let { BasicProxy } = Config;
 let { get, post } = fetch;
-
+// 教育局的暂时没有消息中心，先不请求，查看Identity.IsEdu
 function TopBar(props, ref) {
   let {
     userInfo: UserInfo,
@@ -95,7 +95,7 @@ function TopBar(props, ref) {
     //       }
     //     });
     // }
-    if (initData && initData.systemServer && initData.systemServer[200]) {
+    if (!Identity.IsEdu&&initData && initData.systemServer && initData.systemServer[200]) {
       let wsAddr = initData.systemServer[200].WebSvrAddr;
       let {
         token,
@@ -120,6 +120,7 @@ function TopBar(props, ref) {
       sessionStorage.setItem("PsnMgrToken", token); //用户Token
       sessionStorage.setItem("PsnMgrMainServerAddr", BasicWebRootUrl); //基础平台IP地址和端口号形如：http://192.168.129.1:30103/
       sessionStorage.setItem("PsnMgrLgAssistantAddr", wsAddr); //个人信息管理系统Web站点IP地址和端口号形如：http://192.168.129.1:10103/
+      sessionStorage.setItem("PsnMgrIdentityCode", Identity.IdentityCode); //身份id，传了由我们控制，不传他们控制
       // 3.引入js
       //
       addScript({
@@ -202,7 +203,7 @@ function TopBar(props, ref) {
                     window.open(
                       BasePlatFormMsg.BasicWebRootUrl +
                         "/html/personalMgr/?lg_tk=" +
-                        getDataStorage("token") +
+                        initData.token +
                         "#/"
                     );
                 }}
@@ -215,16 +216,18 @@ function TopBar(props, ref) {
                     window.open(
                       BasePlatFormMsg.BasicWebRootUrl +
                         "/html/personalMgr/?lg_tk=" +
-                        getDataStorage("token") +
+                        initData.token +
                         "#/"
                     );
                 }}
                 title={UserInfo.UserName}
                 className={"user-name"}
+                style={Identity.IsEdu?{marginRight:'5px'}:{}}
+
               >
                 {UserInfo.UserName}
               </span>
-              <span
+             {!Identity.IsEdu&& <span
                 className="user-iden"
                 style={{
                   background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
@@ -233,9 +236,10 @@ function TopBar(props, ref) {
                 {Identity.IdentityCode && Identity.IdentityCode.includes("IC1")
                   ? Identity.IdentityName
                   : ""}
-              </span>
+              </span>}
               <span
                 className="logout"
+                style={Identity.IsEdu?{marginLeft:'5px'}:{}}
                 onClick={() => {
                   autoAlert({
                     title: "确定要退出登录吗?",
@@ -272,7 +276,9 @@ function TopBar(props, ref) {
                   console.log("帮助");
                   BasicProxy &&
                     window.open(
-                      BasicProxy + "/UserHelp/L10-M.html"
+                      BasicProxy +
+                        "/UserHelp/L10-M.html?lg_tk=" +
+                        initData.token
                     );
                 }}
               >
@@ -310,7 +316,7 @@ function TopBar(props, ref) {
                       window.open(
                         BasePlatFormMsg.BasicWebRootUrl +
                           "/html/personalMgr/?lg_tk=" +
-                          getDataStorage("token") +
+                          initData.token +
                           "#/"
                       );
                   }}
@@ -323,7 +329,7 @@ function TopBar(props, ref) {
                       window.open(
                         BasePlatFormMsg.BasicWebRootUrl +
                           "/html/personalMgr/?lg_tk=" +
-                          getDataStorage("token") +
+                          initData.token +
                           "#/"
                       );
                   }}
@@ -353,8 +359,9 @@ function TopBar(props, ref) {
             ) : (
               ""
             )}
-            <div className="Frame-open Frame-devide">
-              {MsgInit ? (
+            {MsgInit ? (
+              <div className="Frame-open Frame-devide">
+                
                 <span className="open-msg" onClick={onMsgClick}>
                   <i
                     ref={msgRef}
@@ -363,10 +370,11 @@ function TopBar(props, ref) {
                   ></i>
                   {/* 消息 */}
                 </span>
-              ) : (
-                ""
-              )}
-            </div>
+                
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="tb-name">
             {moduleName ? (

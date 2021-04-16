@@ -94,6 +94,8 @@ function Editor(props, ref) {
     // 文件上传使用
     schoolId,
     error,
+    getData,
+    contentHW,
     ...reset
   } = props;
   type = type || "recruitment";
@@ -148,7 +150,8 @@ function Editor(props, ref) {
   const [applyTimeTip, setApplyTimeTip] = useState("请选择报名起止时间");
   // 是否允许报名,控制报名人数限制和报名起止
   const [allowApply, setAllowApply] = useState(false);
-
+  // 设置编辑高度
+  const [UEditorHeigth, setUEditorHeigth] = useState(null);
   // 记录上传的完成度
   const [CompletePercert, setCompletePercert] = useState(false);
   // 上传文件状态
@@ -182,7 +185,22 @@ function Editor(props, ref) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileid]);
+  useEffect(() => {
+    typeof getData === "function" && getData(detailData);
+  }, [getData, detailData]);
 
+  useEffect(() => {
+    if (!UEditorHeigth) {
+      let height = 370;
+      if (type === "recruitment") {
+        height = contentHW.height - 400;
+      } else if (type === "train") {
+        height = contentHW.height - 450;
+      }
+      setUEditorHeigth(height < 370 ? 370 : height);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentHW]);
   // 赋值
   useEffect(() => {
     if (detailData.IsLoaded && detailData.IsExist) {
@@ -351,6 +369,7 @@ function Editor(props, ref) {
       let [begin, end] = value || [applyBeginTime, applyEndTime];
       begin = moment(begin);
       end = moment(end);
+      console.log(begin.isValid(), end.isValid());
       if (!begin.isValid() && !end.isValid()) {
         setApplyTimeTip("请选择报名起止时间");
         setApplyTimeVisible(true);
@@ -412,6 +431,12 @@ function Editor(props, ref) {
 
     if (result.every((child) => child)) {
       typeof fn === "function" && fn();
+    } else {
+      autoAlert({
+        type: "warn",
+        autoHide: () => {},
+        title: "输入有误，请重新输入",
+      });
     }
   };
   // 计算文件md5，判断文件是否重复
@@ -687,11 +712,14 @@ function Editor(props, ref) {
                 >
                   <RangePicker
                     onChange={(dates, dateString) => {
-                      // console.log(dates, dateString);
+                      console.log(dates, dateString);
                       setApplyBeginTime(dateString[0]);
                       setApplyEndTime(dateString[1]);
                       // checkApplyTime(dateString)
-                      if (dateString[0] && dateString[1]) {
+                      if (
+                        allowApply
+                        // dateString[0] && dateString[1]
+                      ) {
                         // 两个时间都选择了才进行检查
                         checkApplyTime(dates);
 
@@ -703,8 +731,10 @@ function Editor(props, ref) {
                     }}
                     // 禁用，没选开始，不能选择结束
                     disabled={[
-                      !allowApply || false,
-                      !allowApply || !applyBeginTime,
+                      !allowApply,
+                      //  || false
+                      !allowApply,
+                      //  || !applyBeginTime
                     ]}
                     allowEmpty={[
                       !allowApply || false,
@@ -943,8 +973,11 @@ function Editor(props, ref) {
                       checkContent(e);
                       setMain(e);
                     }}
-                    width={'auto'}
-                    style={{width:'100%'}}
+                    width={"auto"}
+                    style={Object.assign(
+                      { width: "100%" },
+                      UEditorHeigth ? { height: UEditorHeigth } : {}
+                    )}
                     defaultValue={main}
                     ref={UEditorRef}
                   ></UEditor>

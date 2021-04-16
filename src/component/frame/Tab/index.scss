@@ -48,6 +48,17 @@
             color: #666666;
             margin: 0;
             cursor: auto;
+            .tab-bar {
+                max-width: 150px;
+                display: inline-block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                vertical-align: top;
+            }
+            &:hover {
+                color: #0375fc
+            }
             &::before {
                 content: "";
                 position: absolute;

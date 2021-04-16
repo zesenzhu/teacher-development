@@ -55,7 +55,7 @@ import React, {
 import "./index.scss";
 import { Carousel } from "antd";
 import { withRouter } from "react-router-dom";
-// import { handleActions } from "../../redux/actions";
+import { handleActions } from "../../redux/actions";
 import Editor from "../../component/editor";
 import { Context } from "./reducer";
 import { Loading } from "../../component/common";
@@ -97,8 +97,24 @@ function Datail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+    // 给tab设置动态title
+    const getData = useCallback((data) => {
+      if (data) {
+        if (data.ID) {
+          dispatch(
+            handleActions.setTabMsg({
+              ["trainDetail|" + data.ID]: {
+                name: "查看: " +data.Title,
+                title: "教师培训计划详情：" + data.Title,
+              },
+            })
+          );
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   return (
-    <Loading opacity={0.5} spinning={loading}>
+    <Loading opacity={1} spinning={loading}>
       <div
         className=" Reacruit-context   Train-Datail"
         style={
@@ -108,6 +124,7 @@ function Datail(props, ref) {
         }
       >
         <FileDetail
+        getData={getData}
           ref={detailRef}
           useScrollbars={useScrollbars}
           fileid={ID}

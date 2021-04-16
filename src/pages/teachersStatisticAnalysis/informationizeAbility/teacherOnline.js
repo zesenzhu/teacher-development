@@ -49,22 +49,21 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy,transTime } from "../../../util/public";
+import { resizeForEcharts, deepCopy, transTime } from "../../../util/public";
 function TeacherOnline(props, ref) {
   let {
     className,
     levelHash,
     productMsg,
     data: {
-      DayAvgTimeSpan,
-      DayAvgTeachTimeSpan,
       DayAvgWorkCount,
+      DayAvgTeachTimeSpan,
+      DayAvgTeachCount,
       DayAvgWorkTimeSpan,
       // DayAvgTeachTimeSpan,
       NoUploadedCount,
       UploadedPercent,
       SubSet,
- 
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -76,31 +75,28 @@ function TeacherOnline(props, ref) {
   // dom ref
   const subRef = useRef(null);
   useLayoutEffect(() => {
-  
     let myEchart_sub = subEchart;
-    
 
-  
     let labelColor = {};
     let labelSize = {};
- 
+
     let dataset_sub = [["nodeName", "平均在线办公时长", "平均在线教学时长"]];
     SubSet instanceof Array &&
-    SubSet.forEach((child, index) => {
-      let {
-        NodeName,
-        DayAvgWorkTimeSpan,
-        DayAvgTeachTimeSpan,
-        UploadedPercent,
-      } = child;
-      dataset_sub.push([
-        NodeName,
-        transTime(DayAvgWorkTimeSpan).time,
-        transTime(DayAvgTeachTimeSpan).time,
-        DayAvgWorkTimeSpan,
-
-      ]);
-    });
+      SubSet.forEach((child, index) => {
+        let {
+          NodeName,
+          DayAvgWorkTimeSpan,
+          DayAvgTeachTimeSpan,
+          UploadedPercent,
+        } = child;
+        // DayAvgWorkTimeSpan= 0.59
+        dataset_sub.push([
+          NodeName,
+          transTime(DayAvgWorkTimeSpan,'m','h').time,
+          transTime(DayAvgTeachTimeSpan,'m','h').time,
+          DayAvgWorkTimeSpan,
+        ]);
+      });
     let subOption = {
       // title: {
       //   text: "各" + productMsg.sub + "统计信息",
@@ -115,12 +111,12 @@ function TeacherOnline(props, ref) {
       // backgroundColor: "#f5f5f5",
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>11,
+        show: dataset_sub.length > 11,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (10 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (10 /(dataset_sub.length-1  )) * 100,
+        minSpan: (10 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (10 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -139,18 +135,11 @@ function TeacherOnline(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-        
           let row = params[0];
-          let { data ,name} = row;
+          let { data, name } = row;
 
           return `<div  class="t-tooltip">
-                <p class="nodename">${
-                  name
-                }</p><p class='msg msg-2'>平均在线办公时长<span>${
-            data[1]
-          }小时</span></p><p class='msg msg-2'>平均在线教学时长<span>${
-            data[2]
-          }小时</span></p></div>
+                <p class="nodename">${name}</p><p class='msg msg-2'>平均在线办公时长<span>${data[1]}小时</span></p><p class='msg msg-2'>平均在线教学时长<span>${data[2]}小时</span></p></div>
             `;
         },
         // textStyle: {
@@ -185,7 +174,7 @@ function TeacherOnline(props, ref) {
       },
       grid: {
         left: 28,
-        height: 'auto',
+        height: "auto",
         right: 58,
         bottom: 20,
         containLabel: true,
@@ -225,7 +214,8 @@ function TeacherOnline(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 5) {
@@ -265,7 +255,7 @@ function TeacherOnline(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:32,
+          barMaxWidth: 32,
           itemStyle: {
             color: {
               type: "linear",
@@ -291,12 +281,13 @@ function TeacherOnline(props, ref) {
             borderRadius: [3, 3, 0, 0],
           },
           // data: [120, 132, 101, 134, 90, 230, 210],
-        },{
+        },
+        {
           // name: "女性教师",
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:32,
+          barMaxWidth: 32,
           itemStyle: {
             color: {
               type: "linear",
@@ -309,7 +300,7 @@ function TeacherOnline(props, ref) {
                   offset: 0,
                   color: "#a0dea0", // 0% 处的颜色
                 },
-                 
+
                 {
                   offset: 1,
                   color: "#51ca51", // 100% 处的颜色
@@ -318,7 +309,7 @@ function TeacherOnline(props, ref) {
             },
             borderRadius: [3, 3, 0, 0],
           },
-        }
+        },
       ],
     };
 
@@ -327,7 +318,7 @@ function TeacherOnline(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-   
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);
@@ -336,7 +327,7 @@ function TeacherOnline(props, ref) {
     //   // 对界面resize进行监听重绘echart
     //   resizeForEcharts(myEchart_avg);
     // }
-     
+
     if (!myEchart_sub) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_sub = echarts.init(subRef.current);
@@ -361,30 +352,28 @@ function TeacherOnline(props, ref) {
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SubSet, productMsg]);
-  const TransTime = useCallback(
-    (time) => {
-      let tTime = transTime(time,'m')
-      if(tTime.time<1){
-        return '小于1分钟'
-      }
-  
-      return tTime.Time_zh
-    },
-    [],
-  )
+  const TransTime = useCallback((time) => {
+    let tTime = transTime(time, "m");
+    if (tTime.time < 1) {
+      return "小于1分钟";
+    }
+
+    return tTime.Time_zh;
+  }, []);
   return (
     <div className={`teacher-bar TeacherOnline ${className ? className : ""} `}>
-       <div className="tb-top">
+      <div className="tb-top">
         <p className="tb-tip">
           {productMsg && productMsg.title ? productMsg.title : ""}
-          每人每日平均在线办公<span className="tb-tip-2">{DayAvgTimeSpan}</span>
+          每人每日平均在线办公
+          <span className="tb-tip-2">{DayAvgWorkCount}</span>
           次，共
-          <span className="tb-tip-2">{TransTime(DayAvgTeachTimeSpan)}</span>；每人每日平均在线教学
-          <span className="tb-tip-2">{DayAvgWorkCount}</span>次，共
           <span className="tb-tip-2">{TransTime(DayAvgWorkTimeSpan)}</span>
+          ；每人每日平均在线教学
+          <span className="tb-tip-2">{DayAvgTeachCount}</span>次，共
+          <span className="tb-tip-2">{TransTime(DayAvgTeachTimeSpan)}</span>
         </p>
-        <p className="tp-tilte">各{productMsg.sub}教师每日办公教学\办公统计信息</p>
-        
+        <p className="tp-tilte">各{productMsg.sub}教师每日办公\教学统计信息</p>
       </div>
 
       <div ref={subRef} className="tb-charts"></div>

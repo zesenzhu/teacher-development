@@ -79,6 +79,8 @@ import SchoolDetail from "./schoolDetail";
 import { Loading } from "@/component/common";
 import { getSchoolMsg } from "@/api/school";
 import { getTermInfo } from "@/util/init";
+import { commonActions, handleActions } from "../../redux/actions";
+
 //   import { Reducer, Context, initState } from "./reducer";
 function School(props, ref) {
   let {
@@ -90,6 +92,7 @@ function School(props, ref) {
     tabid,
     contentHW: { height },
     schoolMsg,
+    dispatch,
     param, //param控制显示的模块
   } = props;
   const [Component, setComponent] = useState("");
@@ -98,7 +101,7 @@ function School(props, ref) {
   const [loading, setLoading] = useState(true);
   // const [state, setDispatch] = useReducer(Reducer, initState);
   // let { component } = state;
-  const [TermInfo,setTermInfo] = useState(null)
+  const [TermInfo, setTermInfo] = useState(null);
   // 获取当前级别的信息
   const levelMsg = useMemo(() => {
     return levelHash[productLevel]
@@ -124,6 +127,14 @@ function School(props, ref) {
           if (res.StatusCode === 200) {
             setID(Path[1]);
             setSchoolMsg(res.Data);
+            dispatch(
+              handleActions.setTabMsg({
+                ["schoolDetail|" + Path[1]]: {
+                  name: "查看: " + res.Data.NodeName,
+                  title: levelMsg.belong + "详情：" + res.Data.NodeName,
+                },
+              })
+            );
           } else {
             //不存在
             setSchoolMsg(false);
@@ -145,16 +156,15 @@ function School(props, ref) {
     if (SchoolMsg && productLevel) {
       // 教育局的学校为nodeid
       getTermInfo({
-        SchoolID:
-           productLevel !== 1 ?  schoolID : SchoolMsg.NodeID,
-        CollegeID:  productLevel === 2 ? SchoolMsg.NodeID : '',
+        SchoolID: productLevel !== 1 ? schoolID : SchoolMsg.NodeID,
+        CollegeID: productLevel === 2 ? SchoolMsg.NodeID : "",
       }).then((res) => {
         // console.log(res)
-        setTermInfo(res)
+        setTermInfo(res);
         setLoading(false);
       });
     }
-  }, [SchoolMsg, productLevel,schoolID]);
+  }, [SchoolMsg, productLevel, schoolID]);
   return (
     <Loading
       spinning={Component === "detail" && loading}
@@ -167,11 +177,11 @@ function School(props, ref) {
         ) : (
           <></>
         )}
-        {Component === "detail"&&TermInfo ? (
+        {Component === "detail" && TermInfo ? (
           <SchoolDetail
             levelMsg={levelMsg}
             schoolMsg={SchoolMsg}
-            termInfo={{...TermInfo,child:true}}
+            termInfo={{ ...TermInfo, child: true }}
             id={ID}
           ></SchoolDetail>
         ) : (

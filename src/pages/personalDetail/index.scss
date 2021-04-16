@@ -547,6 +547,13 @@
         }
         // }
     }
+    &.HistoryDom {
+        .pc-content {
+            &::before {
+                opacity: 0.4;
+            }
+        }
+    }
 }
 
 // 动画
@@ -1285,6 +1292,7 @@
             .ci-top-info-count {
                 font-size: 24px;
                 line-height: 36px;
+                height: 36px;
                 color: #0099ff;
                 @include textOverFlow;
             }

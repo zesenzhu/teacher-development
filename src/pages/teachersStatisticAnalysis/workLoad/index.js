@@ -59,10 +59,11 @@ import "./index.scss";
 import Bar from "../../../component/bar";
 import TeacherPeriod from "./teacherPeriod";
 import TeacherGanger from "./teacherGanger";
+import TeacherRatio from "./teacherRatio";
 import {
   getClassHour,
   getTeacherGanger,
-  getHistoryClassHour,
+  getHistoryClassHour,getTeaStuRatio,getHistoryTeaStuRatio
 } from "../../../api/workMsg";
 import HistoryModal from "../historyModal";
 
@@ -71,7 +72,7 @@ import HistoryModal from "../historyModal";
 // import TeacherAge from "./teacherAge";
 // import TeacherTitle from "./teacherTitle";
 const ApiList = {
-  TeaStuRatio: { api: "", title: "历年师生比变化" },
+  TeaStuRatio: { api: getHistoryTeaStuRatio, title: "历年师生比变化" },
   ClassHour: { api: getHistoryClassHour, title: "历年人均周课时变化" },
 };
 function WorkLoad(props, ref) {
@@ -88,7 +89,7 @@ function WorkLoad(props, ref) {
   } = props;
   const { selectLevel, productLevel } = productMsg;
   // 教师人数
-  const [teacherCount, setTeacherCount] = useState(false);
+  const [teacherStuRatio, setTeaStuRatio] = useState(false);
   const [teacherPeriod, setTeacherPeriod] = useState(false);
   const [teacherGanger, setTeacherGanger] = useState(false);
   const [teacherEduAndTitle, setTeacherEduAndTitle] = useState(false);
@@ -138,6 +139,16 @@ function WorkLoad(props, ref) {
           setTeacherGanger(data);
         }
       });
+      getTeaStuRatio({
+        term: term.value,
+        schoolID,
+        collegeID,
+        selectLevel,
+      }).then((data) => {
+        if (data) {
+          setTeaStuRatio(data);
+        }
+      });
     }
   }, [term, schoolID, collegeID, selectLevel,reload]);
 
@@ -148,7 +159,7 @@ function WorkLoad(props, ref) {
         <Bar
           barName={"师生比统计"}
           ref={ratioRef}
-          loading={!teacherCount}
+          loading={!teacherStuRatio}
           topContext={
             HasHistory
               ? {
@@ -160,7 +171,10 @@ function WorkLoad(props, ref) {
                 }
               : false
           }
-        ></Bar>
+        >
+          <TeacherRatio  data={teacherStuRatio}
+          productMsg={productMsg}></TeacherRatio>
+        </Bar>
       ) : (
         ""
       )}

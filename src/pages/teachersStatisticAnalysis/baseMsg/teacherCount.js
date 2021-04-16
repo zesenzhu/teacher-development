@@ -330,9 +330,9 @@ function TeacherCount(props, ref) {
               ? SubSet.map((child, index) => {
                   return (
                     <React.Fragment key={index}>
-                      {child.NodeName}
+                      {child.NodeName}教师
                       <span className="tc-tip-2">{child.Total}</span>人
-                      {index === SubSet.length - 1 && index !== 0 ? "，" : ""}
+                      {index !== SubSet.length - 1  ||index === 0 ? "，" : ""}
                     </React.Fragment>
                   );
                 })

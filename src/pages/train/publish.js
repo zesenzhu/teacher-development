@@ -140,6 +140,7 @@ function Publish(props, ref) {
             </div>
             <Editor
               type={"train"}
+              contentHW={contentHW}
               preview={{
                 onClick: (data) => {
                   // data:{title, source, main}

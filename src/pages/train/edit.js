@@ -55,7 +55,7 @@ import React, {
 import "./index.scss";
 import { Carousel, Tabs } from "antd";
 import { withRouter } from "react-router-dom";
-// import { handleActions } from "../../redux/actions";
+import { handleActions } from "../../redux/actions";
 import Editor from "../../component/editor";
 import { Context } from "./reducer";
 import { Loading } from "../../component/common";
@@ -139,6 +139,22 @@ function Publish(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+    // 给tab设置动态title
+    const getData = useCallback((data) => {
+      if (data) {
+        if (data.ID) {
+          dispatch(
+            handleActions.setTabMsg({
+              ["editTrain|" + data.ID]: {
+                name: "编辑: " +data.Title,
+                title: "编辑培训计划：" + data.Title,
+              },
+            })
+          );
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   return (
     // <Carousel ref={CarouselRef} dots={false}>
     <Loading opacity={0.5} spinning={loading}>
@@ -159,6 +175,8 @@ function Publish(props, ref) {
             </div>
             <Editor
             type={'train'}
+            contentHW={contentHW}
+            getData={getData}
               fileid={ID}
               schema={"edit"}
               error={() => {

@@ -338,7 +338,7 @@ function TeacherAge(props, ref) {
       yAxis: [
         {
           type: "value",
-          name: "年龄/教龄",
+          name: "平均年龄/平均教龄",
 
           axisLabel: {
             color: "#7c7c7c",

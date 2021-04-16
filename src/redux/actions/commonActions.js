@@ -52,6 +52,8 @@ import Icon_2 from "./images/icon-select-2.png";
 import Icon_3 from "./images/icon-select-3.png";
 import Icon_4 from "./images/icon-select-4.png";
 import Icon_5 from "./images/icon-select-5.png";
+import Icon_6 from "./images/icon-select-6.png";
+
 const leftMenu_1 = [
   {
     key: "teacherBaseMsg",
@@ -112,7 +114,7 @@ const leftMenu_1 = [
     ],
   },
   { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
-  { key: "import", name: "导入师资信息", icon: Icon_5, children: [] },
+  { key: "import", name: "导入师资信息", icon: Icon_6, children: [] },
 ];
 const leftMenu_0 = [
   {
@@ -173,7 +175,7 @@ const leftMenu_0 = [
     ],
   },
   { key: "notice", name: "通知公告", icon: Icon_5, children: [] },
-  { key: "import", name: "导入师资信息", icon: Icon_5, children: [] },
+  { key: "import", name: "导入师资信息", icon: Icon_6, children: [] },
 ];
 const COMMON_SET_TEST = "COMMON_SET_TEST";
 const COMMON_SET_IDENTITY = "COMMON_SET_IDENTITY";

@@ -79,6 +79,7 @@ function FileDetail(props, ref) {
     onComfirm,
     previewData,
     useScrollbars,
+    getData,
     ...reset
   } = props;
   // 获取数据
@@ -98,7 +99,9 @@ function FileDetail(props, ref) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileid]);
-
+  useEffect(() => {
+    typeof getData === "function" && getData(detailData);
+  }, [getData, detailData]);
   let { IsLoaded, IsExist, Title, Issue, ReleaseTime, Content, FileList } =
     schema !== "preview"
       ? detailData

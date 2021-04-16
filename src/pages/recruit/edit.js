@@ -55,7 +55,7 @@ import React, {
 import "./index.scss";
 import { Carousel, Tabs } from "antd";
 import { withRouter } from "react-router-dom";
-// import { handleActions } from "../../redux/actions";
+import { handleActions } from "../../redux/actions";
 import Editor from "../../component/editor";
 import { Context } from "./reducer";
 import { Loading } from "../../component/common";
@@ -121,7 +121,6 @@ function Publish(props, ref) {
         else {
         }
         setLoading(false);
-
       });
       // }, 3000);
     },
@@ -137,6 +136,22 @@ function Publish(props, ref) {
       Path[0] === "editRecruit" && Path[1] && Path[1] !== ID && setID(Path[1]);
 
       // 请求
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // 给tab设置动态title
+  const getData = useCallback((data) => {
+    if (data) {
+      if (data.ID) {
+        dispatch(
+          handleActions.setTabMsg({
+            ["editTrain|" + data.ID]: {
+              name: "编辑: " + data.Title,
+              title: "编辑招聘计划：" + data.Title,
+            },
+          })
+        );
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -160,7 +175,9 @@ function Publish(props, ref) {
             </div>
             <Editor
               fileid={ID}
+              contentHW={contentHW}
               schema={"edit"}
+              getData={getData}
               error={() => {
                 removeTab("", "", "teacherRecruit", "", (active, param) => {});
               }}

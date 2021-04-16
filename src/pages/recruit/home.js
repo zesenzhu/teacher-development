@@ -171,7 +171,9 @@ function Home(props, ref) {
 
       // dataIndex: "time",
       render: (data) => {
-        return (
+        let { FromEdu } = data;
+
+        return !FromEdu ? (
           <span className="table-handle">
             <span
               className="table-btn btn-edit"
@@ -188,6 +190,7 @@ function Home(props, ref) {
                   title: "确定删除该招聘计划?",
                   type: "btn-warn",
                   cancelShow: true,
+                  abstract: "删除后不可恢复......",
                   onOk: () => {
                     DeleteRecruit(
                       { RIDs: data.RID },
@@ -200,6 +203,8 @@ function Home(props, ref) {
               删除
             </span>
           </span>
+        ) : (
+          <></>
         );
       },
     },
@@ -368,7 +373,7 @@ function Home(props, ref) {
             history.push("/publishRecruit");
           },
         }}
-        searchTips={'输入招聘计划标题搜索...'}
+        searchTips={"输入招聘计划标题搜索..."}
         draft={topDraft}
         search={{
           onSearch: (value) => {

@@ -96,7 +96,6 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
   };
   let loop = 0;
   // 第一步：验证token
-
   let isComplete = false; //是否完成
 //   // 同时检测token
 //   let propmiseList = tokenList.map((child, index) => {
@@ -116,16 +115,13 @@ export const TokenCheck = async ({ sysID, callback, firstLoad }) => {
 //           if (!UserInfo || firstLoad) {
 //             //不存在就获取
 //             UserInfo = await getUserInfo();
-
 //             if (!UserInfo) {
 //               callback(false);
 //               // myTokenError();
 //               resolve(false);
-
 //               return false;
 //             }
 //           }
-
 //           // 最后，执行回调
 //           callback(UserInfo, child);
 //           // 通过后需要轮询是否在线
@@ -165,7 +161,6 @@ for(let index =0;index<len;index++){
       console.log(++loop, child);
     }
   );
-
   if (result) {
     //验证通过
     // 第二步：获取用户信息
@@ -181,7 +176,6 @@ for(let index =0;index<len;index++){
         return;
       }
     }
-
     // 最后，执行回调
     callback(UserInfo, child);
     // 通过后需要轮询是否在线
@@ -215,7 +209,6 @@ for(let index =0;index<len;index++){
   //       console.log(++loop, child);
   //     }
   //   );
-
   //   if (result) {
   //     //验证通过
   //     // 第二步：获取用户信息
@@ -224,14 +217,12 @@ for(let index =0;index<len;index++){
   //     if (!UserInfo || firstLoad) {
   //       //不存在就获取
   //       UserInfo = await getUserInfo();
-
   //       if (!UserInfo) {
   //         callback(false);
   //         // myTokenError();
   //         return;
   //       }
   //     }
-
   //     // 最后，执行回调
   //     callback(UserInfo, child);
   //     // 通过后需要轮询是否在线
@@ -255,7 +246,6 @@ for(let index =0;index<len;index++){
   //   return result;
   // });
 };
-
 // 使用动态加载js
 // http://192.168.129.1:8033/showdoc/web/#/6?page_id=2015
 function CheckIsOnline(baseIP, token, sysID) {
@@ -264,7 +254,6 @@ function CheckIsOnline(baseIP, token, sysID) {
     id: "check_script_CheckIsOnline2",
     onLoad: () => {
       // alert(baseIP + "," + token + "," + sysID);
-
       window._LgBase_initCheck(baseIP, token, sysID);
     },
   });
@@ -276,7 +265,6 @@ function CheckIsOnline(baseIP, token, sysID) {
  */
 export async function LogOut({ baseIP, sysID }) {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
-
   if (sysID) {
     sysID = "L10";
   }
@@ -290,7 +278,6 @@ export async function LogOut({ baseIP, sysID }) {
     baseIP = BasicWebRootUrl;
   }
   let token = URL_TOKEN || SESSION_TOKEN || LOCAL_TOKEN;
-
   setDataStorage("LogOuting", true);
   loginApi({
     token,
@@ -303,14 +290,12 @@ export async function LogOut({ baseIP, sysID }) {
 
       if (json.data.result) {
         //result为true
-
         sessionStorage.setItem("LogOuting", false);
         tokenError(baseIP, false);
       }
     },
     error: (err) => {
       //请求失败后调用的函数
-
       alert(err);
     },
   });
@@ -320,13 +305,11 @@ export async function LogOut({ baseIP, sysID }) {
  * @param {*}
  * @return {*}
  */
-
 const loginApi = async ({ baseIP, token, method, sysID, success, error }) => {
   if (!baseIP) {
     const { BasicWebRootUrl } = await getBasePlatformMsg(["BasicWebRootUrl"]);
     baseIP = BasicWebRootUrl;
   }
-
   const ajax = $.ajax({
     url: `${baseIP}/UserMgr/Login/Api/Login.ashx?method=${method}&params=${sysID}${
       token ? "&token=" + token : ""

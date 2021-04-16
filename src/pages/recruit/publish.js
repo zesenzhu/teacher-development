@@ -139,6 +139,7 @@ function Publish(props, ref) {
               <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
             </div>
             <Editor
+            contentHW={contentHW}
               preview={{
                 onClick: (data) => {
                   // data:{title, source, main}

@@ -55,7 +55,7 @@ import React, {
 import "./index.scss";
 import { Carousel } from "antd";
 import { withRouter } from "react-router-dom";
-// import { handleActions } from "../../redux/actions";
+import { handleActions } from "../../redux/actions";
 import Editor from "../../component/editor";
 import { Context } from "./reducer";
 import { Loading } from "../../component/common";
@@ -87,24 +87,45 @@ function Datail(props, ref) {
   useEffect(() => {
     if (location.pathname) {
       let Path = handleRoute(location.pathname);
- 
+
       // 第一次进来赋值id
       Path[0] === "recruitDetail" && Path[1] && ID === "" && setID(Path[1]);
       // 第二次之后进来判断是否是本页在reload
-      if (Path[0] === "recruitDetail" && ID===Path[1] && detailRef.current) {
+      if (Path[0] === "recruitDetail" && ID === Path[1] && detailRef.current) {
         //刷新
         detailRef.current.reload();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+  // 给tab设置动态title
+  const getData = useCallback((data) => {
+    if (data) {
+      if (data.ID) {
+        dispatch(
+          handleActions.setTabMsg({
+            ["recruitDetail|" + data.ID]: {
+              name:"查看: " + data.Title,
+              title: "教师招聘计划详情：" + data.Title,
+            },
+          })
+        );
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
-    <Loading opacity={0.5} spinning={loading}>
+    <Loading opacity={1} spinning={loading}>
       <div
         className=" Reacruit-context   Recruit-Datail"
         style={{ height: contentHW.height + "px" }}
       >
-        <FileDetail ref={detailRef} fileid={ID} type={"recruit"}></FileDetail>
+        <FileDetail
+          getData={getData}
+          ref={detailRef}
+          fileid={ID}
+          type={"recruit"}
+        ></FileDetail>
       </div>
     </Loading>
   );

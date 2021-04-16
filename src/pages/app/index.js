@@ -60,6 +60,7 @@ function App(props, ref) {
         tabId: recruitId,
         params: recruitParams,
       },
+      tabMsg,
     },
   } = props;
   let dispatch = useDispatch();
@@ -107,8 +108,16 @@ function App(props, ref) {
         if (btnName && url) {
           // window.open(url);
           // console.log('/notice/'+encodeURIComponent(url))
-
-          history.push("/notice/" + encodeURIComponent(url));
+          let Url = encodeURIComponent(url);
+          dispatch(
+            handleActions.setTabMsg({
+              ["notice|" + Url]: {
+                name: "查看: " + btnName,
+                title: "通知公告详情：" + btnName,
+              },
+            })
+          );
+          history.push("/notice/" + Url);
         }
       } catch (e) {}
     });
@@ -119,6 +128,7 @@ function App(props, ref) {
   //  提前检查路由
   useEffect(() => {
     let Path = handleRoute(location.pathname);
+    // 在教育局中默认传了edu，现在还没有要使用这个的功能，因为教育局就只有一个角色，不用身份验证，模块id一般用来验证身份权限
     let moduleType =
       getQueryVariable("moduleType") || getQueryVariable("ModuleType"); //模块类型：*admin或缺省：管理员，*teacher:教师
     // 单页面
@@ -280,8 +290,7 @@ function App(props, ref) {
             commonActions.SetLeftMenu(
               data.role.productLevel,
               !!data.systemServer[400],
-              !!data.systemServer['E34'],
-
+              !!data.systemServer["E34"] || data.role.selectLevel === 1 //教育局没有导入
             )
           );
 
@@ -298,6 +307,14 @@ function App(props, ref) {
           //在单页面page的时候做用户信息处理，看是否合法，不合法跳转，只做page的检测，再具体的就由内部做
           // 刚开始的page只有新版教师个人画像，所以会有多种角色查看该界面，暂不做当前登陆用户角色
           if (Path[0] === "page" && Path[1]) {
+            // 教育局，没有自己的个人画像
+            if (data.role.IsEdu) {
+              // 个人画像详情界面
+              if (Path[1] === "personalDetail") {
+                // 回首页
+                window.location.replace("");
+              }
+            }
             //先获取所看的用户id，检查是否有效
             if (Path[1] === "personalDetail" && Path[2]) {
               let res = await GetUserDetailForHX({
@@ -320,10 +337,23 @@ function App(props, ref) {
             } else {
               isInit = false;
               // return ;
-              window.location.href =
+              window.location.replace(
                 data.basePlatformMsg.BasicWebRootUrl +
-                "/Error.aspx?errcode=E012"; //缺参数
+                  "/Error.aspx?errcode=E012"
+              ); //缺参数
             }
+          }
+
+          // 解决地夜歌标签页是各校/各院的标签页名字不对bug
+          if (Path[0] === "schoolResource") {
+            dispatch(
+              handleActions.setTabMsg({
+                schoolResource: {
+                  name: NameData.schoolList,
+                  title: NameData.schoolList,
+                },
+              })
+            );
           }
         }
       }
@@ -399,6 +429,7 @@ function App(props, ref) {
       leftMenu={leftMenu}
       moduleID={ModuleID}
       onlyBase={OnlyBase}
+      tabMsg={tabMsg}
       search={
         <Search
           api={searchApi}

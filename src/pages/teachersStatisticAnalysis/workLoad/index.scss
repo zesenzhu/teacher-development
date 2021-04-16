@@ -32,7 +32,8 @@
 // 教师人数
 @import "../../../component/common/mixin.scss";
 .TeacherPeriod,
-.TeacherGanger {
+.TeacherGanger,
+.TeacherRatio {
     .tp-tilte {
         margin-top: 16px;
         line-height: 20px;
@@ -113,7 +114,7 @@
                 background-color: #0099ff;
                 color: #fff;
                 &::before {
-                    content: '';
+                    content: "";
                     position: absolute;
                     bottom: -4px;
                     left: 50%;
@@ -137,5 +138,152 @@
         height: 230px;
         display: inline-block;
         vertical-align: top;
+    }
+}
+
+.TeacherRatio {
+    .ter-left {
+        position: relative;
+        display: inline-block;
+        width: 42%;
+        vertical-align: top;
+        height: 280px;
+        .tb-tip {
+            // margin-top: 10px;
+            padding-left: 5px;
+            text-align: left;
+        }
+        .ter-echarts {
+            height: 220px;
+            margin-top: 10px;
+        }
+        .ter-all {
+            position: absolute;
+            font-size: 12px;
+            left: 50%;
+            text-align: center;
+            transform: translateX(-50%);
+            line-height: 20px;
+            color: #333333;
+            top: 120px;
+            -webkit-transform: translateX(-50%);
+            -moz-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            -o-transform: translateX(-50%);
+            span {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+    }
+    .ter-title {
+        position: absolute;
+        bottom: 15px;
+        width: 100%;
+        left: 0;
+        // position: relative;
+        font-size: 14px;
+        line-height: 20px;
+        // margin-bottom: 0;
+        text-align: center;
+        color: #333333;
+    }
+    .ter-right {
+        width: 58%;
+        background-color: #fff;
+        position: relative;
+        min-height: 280px;
+        padding-top: 15px;
+        .bar-content {
+            position: relative;
+            line-height: 28px;
+            .bar-name {
+                font-size: 14px;
+                display: inline-block;
+                width: 107px;
+                color: #666666;
+                padding-right: 10px;
+                text-align: right;
+                vertical-align: top;
+            }
+            .bar-box {
+                // vertical-align: top;
+                margin: 0;
+                width: calc(100% - 200px);
+                height: 12px;
+                border-radius: 6px;
+                display: inline-block;
+                position: relative;
+                overflow: hidden;
+                // top: 50%;
+                // transform: translateY(-50%);
+                // -webkit-transform: translateY(-50%);
+                // -moz-transform: translateY(-50%);
+                // -ms-transform: translateY(-50%);
+                // -o-transform: translateY(-50%);
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba($color: #fff, $alpha: 0.7);
+                }
+            }
+            .bar-tea {
+                position: absolute;
+                height: 100%;
+                left: 0;
+                top: 0;
+                border-radius: 6px;
+                width: 0;
+                transition: width 2s ease;
+                -webkit-transition: width 2s ease;
+                -moz-transition: width 2s ease;
+                -ms-transition: width 2s ease;
+                -o-transition: width 2s ease;
+            }
+            .bar-ratio {
+                padding-left: 10px;
+            }
+        }
+    }
+    .ter-pie-left,
+    .ter-pie-right {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        width: 50%;
+        .ter-echarts {
+            height: 200px;
+        }
+        .ter-all {
+            top: 90px;
+            font-size: 12px;
+            color: #333333;
+            span {
+                font-size: 16px;
+            }
+        }
+    }
+    .ter-echarts {
+        &::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            width: 0;
+            height: 140px;
+            border-left: 1px solid #e6e6e6;
+        }
+    }
+    p {
+        margin: 0;
     }
 }

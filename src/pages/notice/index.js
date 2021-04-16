@@ -99,7 +99,7 @@ function Notice(props, ref) {
   useLayoutEffect(() => {
     let Path = handleRoute(location.pathname);
 
-    if (!Path[1]) {
+    if (!Path[1]&&systemServer[400]) {
       setUrl(
         systemServer[400].WebSvrAddr +
           "/WebPage/html/notice/?lg_tk=" +

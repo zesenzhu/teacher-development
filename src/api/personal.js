@@ -903,6 +903,18 @@ export function GetTeacherWork(payload = {}) {
           // totalCount: 1
           //data:[{}]
           // json.data.data为数组，拿第一个
+
+//           academyId: "S-8888-10"
+// academyName: "建筑学院"
+// administrativeClassData: []
+// administrativeClassNum: 0
+// courseClassData: (3) [{…}, {…}, {…}]
+// courseClassNum: 3
+// courseData: (3) [{…}, {…}, {…}]
+// courseNum: 3
+// photoPath: "http://192.168.122.110:10103/http_basic/UserInfo/Avatar/Default/Nopic111.jpg"
+// userId: "1001003"
+// userName: "老师1001003"
           let {
             administrativeClassNum, //行政班数
             classNum, //教学班数

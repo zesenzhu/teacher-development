@@ -45,7 +45,7 @@ export function getSchoolList(payload = {}) {
     pageSize,
     keyword,
     schoolID,
-    term,
+    term,stageID,
     // nodeID,
     sortFiled,
     sortType,
@@ -58,7 +58,7 @@ export function getSchoolList(payload = {}) {
       pageIndex ? pageIndex : 1
     }&PageSize=${pageSize ? pageSize : 10}${keyword ?'&Keyword='+ keyword : ""}${
       sortFiled ? "&SortFiled=" + sortFiled : ""
-    }${sortType ? "&SortType=" + sortType : ""}`;
+    }${sortType ? "&SortType=" + sortType : ""}${stageID?'&stageID='+stageID:''}`;
 
   return fetch
     .get({ url, securityLevel: 2 })
@@ -127,6 +127,39 @@ export function getSchoolMsg(payload = {}) {
     .then((res) => res.json())
     .then((json) => {
       if (json.StatusCode === 200&&json.Data) {
+         
+        return {
+          StatusCode: json.StatusCode,
+          Data:  json.Data
+        };
+      } else {
+        return {
+          StatusCode: 400,
+        };
+      }
+    });
+}
+
+/**
+ * @description: 获取学段
+ * @param {*http://192.168.129.1:8033/showdoc/web/#/21?page_id=2338}
+ * @return {*}
+ */
+export function GetStage(payload = {}) {
+  let {
+   
+    nodeID,
+ 
+  } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/Basic/GetStage?`;
+
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200&&json.Data instanceof Array) {
          
         return {
           StatusCode: json.StatusCode,

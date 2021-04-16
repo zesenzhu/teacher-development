@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2020-12-10 16:22:02
+ * @LastEditTime: 2021-03-29 16:21:28
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\handleData\index.js
  */
@@ -29,10 +29,15 @@ const handleData = (
       ],
     },
     activeTab: "",
+    tabMsg: {},
   },
   actions
 ) => {
   switch (actions.type) {
+    case handleActions.HANDLE_SET_TAB_MSG:
+      return Object.assign({}, state, {
+        tabMsg: { ...state.tabMsg, ...actions.data },
+      });
     case handleActions.COMMON_SET_ACTIVE_TAB:
       return Object.assign({}, state, {
         activeTab: actions.data,

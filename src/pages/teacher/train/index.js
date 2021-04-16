@@ -63,7 +63,7 @@ function Train(props, ref) {
       selectLevel,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectLevel, collegeID, schoolID,keyword]);
+  }, [selectLevel, collegeID, schoolID, keyword]);
   const [SearchValue, setSearchValue] = useState("");
   // 获取table组件的ref
   const tableRef = useRef({});
@@ -141,8 +141,10 @@ function Train(props, ref) {
           return (
             <span
               onClick={() => {
-                let { origin, search,pathname } = window.location;
-                window.open(origin +pathname+ search + "#/trainDetail/" + TID);
+                let { origin, search, pathname } = window.location;
+                window.open(
+                  origin + pathname + search + "#/trainDetail/" + TID
+                );
               }}
               className="table-title"
               title={title}
@@ -263,7 +265,7 @@ function Train(props, ref) {
 
         // dataIndex: "time",
         render: (data) => {
-          let { ApplyStatus, ApplyFlag } = data;
+          let { ApplyStatus, ApplyFlag, FromEdu } = data;
           let type = typeList[ApplyStatus];
           //   console.log(type, typeList, ApplyStatus, data);
           return (
@@ -273,15 +275,22 @@ function Train(props, ref) {
                   className={`table-apply-btn ${type.handleClassName}`}
                   onClick={() => {
                     //   history.push("/editTrain/" + data.TID);
-                    ApplyTrain({ TID: data.TID, Action: type.action }, () => {
-                      autoAlert({
-                        title: type.handleTitle + "成功",
-                        type: "warn",
-                        autoHide: true,
-                        // cancelShow: true,
-                      });
-                      tableRef.current.reloadList();
-                    });
+                    ApplyTrain(
+                      {
+                        TID: data.TID,
+                        Action: type.action,
+                        FromEdu: FromEdu ? 1 : 0,
+                      },
+                      () => {
+                        autoAlert({
+                          title: type.handleTitle + "成功",
+                          type: "warn",
+                          autoHide: true,
+                          // cancelShow: true,
+                        });
+                        tableRef.current.reloadList();
+                      }
+                    );
                   }}
                 >
                   {type.handleTitle}

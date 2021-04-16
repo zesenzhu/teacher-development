@@ -168,7 +168,9 @@ function PersonalDetail(props, ref) {
       versions: { trident },
     } = BrowserMsg;
     // console.log(isIE, ieVersion(), isWebkit);
-    return isIE || trident;
+    let IsIE = isIE || trident;
+    IsIE && setZoomType("ratio");
+    return IsIE;
   }, []);
   // 获取各平台地址
   useEffect(() => {
@@ -234,99 +236,99 @@ function PersonalDetail(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SysUrl, teacherid]);
   // 获取接口
-  useEffect(() => {
-    let baseIP = basePlatFormMsg.BasicWebRootUrl;
-    let userID = teacherid;
-    if (SysUrl) {
-      // 档案啊
-      if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
-        // 获取档案-教务
-        // getTeacherDetailIntroduction({
-        //   userID,
-        //   baseIP: SysUrl["E34"].WebSvrAddr,
-        //   isUniversity,
-        // }).then((res) => {
-        //   if (res.StatusCode === 200) {
-        //     setArchives({ ...archives, ...res.Data });
-        //   }
-        // });
-        // 获取教师工作量学期
-        GetAllTerm({ proxy: SysUrl["E34"].WsSvrAddr }).then((res) => {
-          if (res.StatusCode === 200) {
-            // console.log(res.Data)
-            setWorkTermList(res.Data);
-            setWorkTerm(res.Data[0]);
-          } else {
-            setWorkTerm(false);
-          }
-        });
-      } else {
-        //当E34不存在，使用师资自己的
-        GetTeacherWorkByBase({ userID }).then((res) => {
-          if (res.StatusCode === 200) {
-            setWork(res.Data);
-            // changeData({ ResView: res.Data });
-          } else {
-            setWork(false);
-          }
-        });
-      }
-      // 教研
-      if (true) {
-        // setTeach([96, 18, 13]);
-        // setWork([96, 2, 18, 13]);
-        // setHistory([
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
-        // ]);
-        // changeData({
-        //   // ResView: {
-        //   //   AllCount: 456,
-        //   //   UseCount: 135,
-        //   //   AllScale: 100,
-        //   //   AllSubject: [
-        //   //     // { SubjectName: "英语", SUbjectID: "1", Scale: null },
-        //   //     { SubjectName: "语文", SUbjectID: "2", Scale: 10 },
-        //   //     { SubjectName: "数学", SUbjectID: "3", Scale: 50 },
-        //   //   ],
-        //   // }, //电子资源
-        //   // Data?...Data:{},
-        //   Percentage: {
-        //     AllCount: 12,
-        //     UseCount: 154,
-        //     AllScale: 95,
-        //     AllSubject: [
-        //       { SubjectName: "英语", SUbjectID: "1", Scale: 60 },
-        //       { SubjectName: "语文", SUbjectID: "2", Scale: 100 },
-        //       { SubjectName: "数学", SUbjectID: "3", Scale: 50 },
-        //     ],
-        //   }, //精品课程
-        //   // TeachPlan: {
-        //   //   AllCount: 1222,
-        //   //   UseCount: 10,
-        //   //   AllScale: 50,
-        //   //   AllSubject: [
-        //   //     { SubjectName: "英语", SUbjectID: "1", Scale: 6 },
-        //   //     { SubjectName: "语文", SUbjectID: "2", Scale: 30 },
-        //   //     { SubjectName: "数学", SUbjectID: "3", Scale: 80 },
-        //   //   ],
-        //   // }, //教学方案
-        //   SubjectList: [
-        //     // { key: "same", value: "同学科" },
-        //     { key: "1", value: "英语" },
-        //     { key: "2", value: "语文" },
-        //     { key: "3", value: "数学" },
-        //   ],
-        // });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SysUrl]);
+  // useEffect(() => {
+  //   let baseIP = basePlatFormMsg.BasicWebRootUrl;
+  //   let userID = teacherid;
+  //   if (SysUrl) {
+  //   // 档案啊
+  //   if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr) {
+  //     // 获取档案-教务
+  //     // getTeacherDetailIntroduction({
+  //     //   userID,
+  //     //   baseIP: SysUrl["E34"].WebSvrAddr,
+  //     //   isUniversity,
+  //     // }).then((res) => {
+  //     //   if (res.StatusCode === 200) {
+  //     //     setArchives({ ...archives, ...res.Data });
+  //     //   }
+  //     // });
+  //     // 获取教师工作量学期
+  //     GetAllTerm({ proxy: SysUrl["E34"].WsSvrAddr }).then((res) => {
+  //       if (res.StatusCode === 200) {
+  //         // console.log(res.Data)
+  //         setWorkTermList(res.Data);
+  //         setWorkTerm(res.Data[0]);
+  //       } else {
+  //         setWorkTerm(false);
+  //       }
+  //     });
+  //   } else {
+  //当E34不存在，使用师资自己的
+  // GetTeacherWorkByBase({ userID }).then((res) => {
+  //   if (res.StatusCode === 200) {
+  //     setWork(res.Data);
+  //     // changeData({ ResView: res.Data });
+  //   } else {
+  //     setWork(false);
+  //   }
+  // });
+  // }
+  // 教研
+  // if (true) {
+  // setTeach([96, 18, 13]);
+  // setWork([96, 2, 18, 13]);
+  // setHistory([
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  //   { time: "2020-1", title: "荣获“三育人”先进个人称号" },
+  // ]);
+  // changeData({
+  //   // ResView: {
+  //   //   AllCount: 456,
+  //   //   UseCount: 135,
+  //   //   AllScale: 100,
+  //   //   AllSubject: [
+  //   //     // { SubjectName: "英语", SUbjectID: "1", Scale: null },
+  //   //     { SubjectName: "语文", SUbjectID: "2", Scale: 10 },
+  //   //     { SubjectName: "数学", SUbjectID: "3", Scale: 50 },
+  //   //   ],
+  //   // }, //电子资源
+  //   // Data?...Data:{},
+  //   Percentage: {
+  //     AllCount: 12,
+  //     UseCount: 154,
+  //     AllScale: 95,
+  //     AllSubject: [
+  //       { SubjectName: "英语", SUbjectID: "1", Scale: 60 },
+  //       { SubjectName: "语文", SUbjectID: "2", Scale: 100 },
+  //       { SubjectName: "数学", SUbjectID: "3", Scale: 50 },
+  //     ],
+  //   }, //精品课程
+  //   // TeachPlan: {
+  //   //   AllCount: 1222,
+  //   //   UseCount: 10,
+  //   //   AllScale: 50,
+  //   //   AllSubject: [
+  //   //     { SubjectName: "英语", SUbjectID: "1", Scale: 6 },
+  //   //     { SubjectName: "语文", SUbjectID: "2", Scale: 30 },
+  //   //     { SubjectName: "数学", SUbjectID: "3", Scale: 80 },
+  //   //   ],
+  //   // }, //教学方案
+  //   SubjectList: [
+  //     // { key: "same", value: "同学科" },
+  //     { key: "1", value: "英语" },
+  //     { key: "2", value: "语文" },
+  //     { key: "3", value: "数学" },
+  //   ],
+  // });
+  // }
+  // }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [SysUrl]);
 
   // 不需要系统url的接口
   useEffect(() => {
@@ -401,6 +403,16 @@ function PersonalDetail(props, ref) {
             setInformation(false);
           }
         });
+        //工作量
+        GetTeacherWorkByBase({ userID }).then((res) => {
+          if (res.StatusCode === 200) {
+            setWork(res.Data);
+            // changeData({ ResView: res.Data });
+          } else {
+            setWork(false);
+          }
+        });
+
         // setInformation({
         //   TimeSpan: 48, //累计上机时长
         //   DayAvgTimeSpan: 1.2, //累计上机时长
@@ -456,34 +468,34 @@ function PersonalDetail(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teacherid]);
   // 工作量，依赖学期和sysurl
-  useEffect(() => {
-    if (!SysUrl || !WorkTerm || !teachermsg) {
-      return;
-    }
-    let userID = teacherid;
-    if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WorkTerm) {
-      // 可能teachermsg会慢
-      let { CollegeID } = teachermsg || {};
+  // useEffect(() => {
+  //   if (!SysUrl || !WorkTerm || !teachermsg) {
+  //     return;
+  //   }
+  //   let userID = teacherid;
+  //   if (SysUrl["E34"] && SysUrl["E34"].WebSvrAddr && WorkTerm) {
+  //     // 可能teachermsg会慢
+  //     let { CollegeID } = teachermsg || {};
 
-      GetTeacherWork({
-        userName: userID,
-        baseIP: DataParams.baseIP,
-        proxy: SysUrl["E34"].WebSvrAddr,
-        token,
-        academyId: CollegeID,
-        isUniversity,
-        semester: WorkTerm.value,
-      }).then((res) => {
-        if (res.StatusCode === 200) {
-          setWork(res.Data);
-          // changeData({ ResView: res.Data });
-        } else {
-          setWork(false);
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SysUrl, WorkTerm, teachermsg]);
+  //     GetTeacherWork({
+  //       userName: userID,
+  //       baseIP: DataParams.baseIP,
+  //       proxy: SysUrl["E34"].WebSvrAddr,
+  //       token,
+  //       academyId: CollegeID,
+  //       isUniversity,
+  //       semester: WorkTerm.value,
+  //     }).then((res) => {
+  //       if (res.StatusCode === 200) {
+  //         setWork(res.Data);
+  //         // changeData({ ResView: res.Data });
+  //       } else {
+  //         setWork(false);
+  //       }
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [SysUrl, WorkTerm, teachermsg]);
   // 教学资料需要依赖周次和sysURl
   useEffect(() => {
     let userID = teacherid;
@@ -527,7 +539,7 @@ function PersonalDetail(props, ref) {
           SysUrl["310"] && SysUrl["310"].WebSvrAddr
             ? SysUrl["310"].WebSvrAddr
             : "",
-        urlProxy: SysUrl["300"].WebSvrAddr,
+        urlProxy: SysUrl["300"] && SysUrl["300"].WebSvrAddr,
         token,
         // schoolID: DataParams.schoolID,
         subjectIDs: DataParams.subjectIDs,
@@ -664,22 +676,26 @@ function PersonalDetail(props, ref) {
       ref={personalRef}
       className={`lg-PersonalDetail ${className ? className : ""}`}
     >
-      <div className={`control-rate control-rate-${zoomType}`}>
-        <i
-          className={`ct-box ct-full ${zoomType === "full" ? "ct-select" : ""}`}
-          onClick={() => {
-            setZoomType("full");
-          }}
-        ></i>
-        <i
-          className={`ct-box ct-ratio ${
-            zoomType === "ratio" ? "ct-select" : ""
-          }`}
-          onClick={() => {
-            setZoomType("ratio");
-          }}
-        ></i>
-      </div>
+      {!isIE && (
+        <div className={`control-rate control-rate-${zoomType}`}>
+          <i
+            className={`ct-box ct-full ${
+              zoomType === "full" ? "ct-select" : ""
+            }`}
+            onClick={() => {
+              setZoomType("full");
+            }}
+          ></i>
+          <i
+            className={`ct-box ct-ratio ${
+              zoomType === "ratio" ? "ct-select" : ""
+            }`}
+            onClick={() => {
+              setZoomType("ratio");
+            }}
+          ></i>
+        </div>
+      )}
       {rate ? (
         <div
           className="pd-content"
@@ -864,6 +880,7 @@ function PersonalDetail(props, ref) {
                     cardid={"history"}
                     height={315}
                     component={HistoryDom}
+                    className={"HistoryDom"}
                     loading={History === null}
                     data={
                       History instanceof Array && History.length > 0 && History
@@ -889,10 +906,16 @@ function PersonalDetail(props, ref) {
                   height={217}
                   component={Work}
                   loading={
-                    !SysUrl ||
-                    (SysUrl["E34"] && (WorkTerm === null || work === null))
+                    // !SysUrl ||
+                    // (SysUrl["E34"] && (WorkTerm === null ||
+                    work === null
+                    //  ))
                   }
-                  data={SysUrl && ((SysUrl["E34"] && WorkTerm && work) || work)}
+                  data={
+                    // SysUrl && ((SysUrl["E34"] && WorkTerm && work) ||
+                    work
+                    //  )
+                  }
                   componentProps={{
                     onTermSelect: (e) => {
                       setWorkTerm(e);

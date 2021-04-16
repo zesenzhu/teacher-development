@@ -289,7 +289,7 @@ function TeacherTitle(props, ref) {
         left: "center",
         top: 20,
         textStyle: {
-          color: "#333333",
+          color: "#333",
           fontSize: 14,
           fontWeight:100
         },

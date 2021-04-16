@@ -60,6 +60,7 @@ function Tab(props, ref) {
     // 传回来的tab的props，跟antd的Tab一样
     tabPorps,
     search,
+    tabMsg, //标签头部的信息{id:title},id:为tabid|param组合
   } = props;
   const history = useHistory();
   const location = useLocation();
@@ -336,6 +337,23 @@ function Tab(props, ref) {
     >
       {TabList.map((child, index) => {
         let { children, props } = child;
+        let tabname = props.tabname;
+        let tabtitle = props.tabname;
+        //处理动态tab
+        if (tabMsg && tabMsg[child.props.tabkey]) {
+          let msg = tabMsg[child.props.tabkey];
+          if (typeof msg === "string") {
+            tabname = msg;
+            tabtitle = msg;
+          } else if (msg.$$typeof) {
+            tabtitle = "";
+            tabname = msg;
+          } else if (typeof msg === "object") {
+            tabtitle = msg.title || tabtitle;
+            tabname = msg.name || tabname;
+          }
+        }
+
         return (
           <TabPane
             forceRender={true}
@@ -343,7 +361,7 @@ function Tab(props, ref) {
               // <NavLink to={"/" + props.tabid} className="tab-name">
               <div
                 className="tabname"
-                title={props.tabname}
+                title={tabtitle}
                 onClick={(key, e) => {
                   // setTabActive(key);
                   // let route = key.split("|");
@@ -363,7 +381,7 @@ function Tab(props, ref) {
                   // });
                 }}
               >
-                {props.tabname}
+                <span className='tab-bar'>{tabname}</span>
                 <i
                   className="tab-close-btn"
                   onClick={(e) => {

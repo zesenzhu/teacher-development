@@ -203,8 +203,10 @@ export default function useUEditorLaod(id, config) {
               // "insertvideo",
             ],
           ],
+          // enableAutoSave: false,//自动保存
+          // maxInputCount:10000,
           // 字数统计
-
+          autoHeightEnabled:false,
           wordCount: false,
 
           // 元素路径
