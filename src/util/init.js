@@ -94,9 +94,10 @@ export const init = (params, success = () => {}, error = () => {}) => {
       let IsEduCenter = false;
       // data.ProductUseRange = 4//测试用
       if (
-        data.IsEduCenter ||
-        data.ProductUseRange === 4 ||
-        data.ProductUseRange === 8  
+        data.IsEduCenter 
+        // ||
+        // data.ProductUseRange === 4 ||
+        // data.ProductUseRange === 8  
       ) {
         IsEduCenter = true;
       }
@@ -328,7 +329,9 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         selectLevel = 2;
         productLevel = 3;
         //非g管理员
-        if (IdentityCode.includes("IC000")) {
+        // IC0101:教育局管理员
+        //IC0102:教育局领导
+        if (IdentityCode.includes("IC010")) {
           //code之后会有
           //教育局
           version = "education";
@@ -345,6 +348,19 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         break;
       default:
         version = "noPower";
+    }
+    // 教育局的
+    if(IsEdu){
+     
+       // IC0101:教育局管理员
+        //IC0102:教育局领导
+      if (IdentityCode.includes("IC010")) {
+        //code之后会有
+        //教育局
+        version = "education";
+        selectLevel = 1;
+        productLevel = 1;
+      }
     }
     // Role.version = version;
     //2,3为学生家长，没有权限进来
