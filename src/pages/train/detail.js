@@ -62,6 +62,8 @@ import { Loading } from "../../component/common";
 import FileDetail from "../../component/fileDetail";
 import { handleRoute } from "../../util/public";
 import useDetailRequest from "../../hooks/useDetailRequest";
+import { autoAlert } from "@/util/public";
+import { applyTrain } from "@/api/train";
 // import { getCruitList } from "../../api/train";
 //   import { NavLink } from "react-router-dom";
 function Datail(props, ref) {
@@ -71,6 +73,7 @@ function Datail(props, ref) {
     contentHW,
     location,
     id,
+    frametype,
     history,
     controlSize,
     dispatch,
@@ -97,22 +100,43 @@ function Datail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
-    // 给tab设置动态title
-    const getData = useCallback((data) => {
-      if (data) {
-        if (data.ID) {
-          dispatch(
-            handleActions.setTabMsg({
-              ["trainDetail|" + data.ID]: {
-                name: "查看: " +data.Title,
-                title: "教师培训计划详情：" + data.Title,
-              },
-            })
-          );
-        }
+  // 给tab设置动态title
+  const getData = useCallback((data) => {
+    if (data) {
+      if (data.ID) {
+        dispatch(
+          handleActions.setTabMsg({
+            ["trainDetail|" + data.ID]: {
+              name: "查看: " + data.Title,
+              title: "教师培训计划详情：" + data.Title,
+            },
+          })
+        );
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onApplyClick = useCallback((data, title, callback) => {
+    applyTrain(data).then((res) => {
+      if (res.result) {
+        autoAlert({
+          title: title + "成功",
+          type: "success",
+          autoHide: true,
+          // cancelShow: true,
+        });
+        callback();
+      } else {
+        autoAlert({
+          title: title + "失败",
+          type: "error",
+          autoHide: true,
+          // cancelShow: true,
+        });
+      }
+    });
+  }, []);
   return (
     <Loading opacity={1} spinning={loading}>
       <div
@@ -124,7 +148,8 @@ function Datail(props, ref) {
         }
       >
         <FileDetail
-        getData={getData}
+          canControlApply={frametype === "teacher" ? onApplyClick : false}
+          getData={getData}
           ref={detailRef}
           useScrollbars={useScrollbars}
           fileid={ID}

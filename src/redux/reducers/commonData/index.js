@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-11-17 14:10:48
- * @LastEditTime: 2021-03-18 21:05:43
+ * @LastEditTime: 2021-04-28 15:17:28
  * @Description:
  * @FilePath: \teacher-development\src\redux\reducers\commonData\index.js
  */
@@ -97,6 +97,21 @@ const commonData = (
     },
     contentHW: { height: 0, width: 0 },
     systemServer: {},
+    StandardRadio:{
+      // 标准
+    // 高中教职工与学生比为1：12.5、初中为1：13.5、小学为1：19。
+    // 中职为1：20（尽量达到1:16）、高职为1:18、高校为：1:18。
+    // 幼儿园1:7（1:5~1:10）。
+    // 以NodeID判断是什么学段
+    // 0：幼儿园，1：小学，2：初中，3：高中，4：中职，5：高职，6：大学
+      0: 7,
+      1: 19,
+      2: 13.5,
+      3: 12.5,
+      4: 20,
+      5: 18,
+      6: 18,
+    }
   },
   actions
 ) => {

@@ -95,7 +95,12 @@ function TopBar(props, ref) {
     //       }
     //     });
     // }
-    if (!Identity.IsEdu&&initData && initData.systemServer && initData.systemServer[200]) {
+    if (
+      !Identity.IsEdu &&
+      initData &&
+      initData.systemServer &&
+      initData.systemServer[200]
+    ) {
       let wsAddr = initData.systemServer[200].WebSvrAddr;
       let {
         token,
@@ -177,6 +182,25 @@ function TopBar(props, ref) {
     $(msgRef.current).click();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [MsgInit]);
+  // 点击跳到个人账号
+  const onPersonClick = useCallback(() => {
+    if (!BasePlatFormMsg) {
+      return;
+    }
+    let url =
+      BasePlatFormMsg.BasicWebRootUrl +
+      "/html/personalMgr/?lg_tk=" +
+      initData.token +
+      "#/";
+    if (Identity.IsEdu) {
+      url =
+        BasePlatFormMsg.BasicWebRootUrl +
+        "usermgr/personalmgr/default.aspx?lg_tk=" +
+        initData.token;
+    }
+
+    window.open(url);
+  }, [Identity, BasePlatFormMsg, initData]);
   return (
     <div
       className={` Frame-topBar ${
@@ -198,48 +222,34 @@ function TopBar(props, ref) {
                   background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
                   cursor: BasePlatFormMsg ? "pointer" : "auto",
                 }}
-                onClick={() => {
-                  BasePlatFormMsg &&
-                    window.open(
-                      BasePlatFormMsg.BasicWebRootUrl +
-                        "/html/personalMgr/?lg_tk=" +
-                        initData.token +
-                        "#/"
-                    );
-                }}
+                onClick={onPersonClick}
               >
                 {" "}
               </i>
               <span
-                onClick={() => {
-                  BasePlatFormMsg &&
-                    window.open(
-                      BasePlatFormMsg.BasicWebRootUrl +
-                        "/html/personalMgr/?lg_tk=" +
-                        initData.token +
-                        "#/"
-                    );
-                }}
+                onClick={onPersonClick}
                 title={UserInfo.UserName}
                 className={"user-name"}
-                style={Identity.IsEdu?{marginRight:'5px'}:{}}
-
+                style={Identity.IsEdu ? { marginRight: "5px" } : {}}
               >
                 {UserInfo.UserName}
               </span>
-             {!Identity.IsEdu&& <span
-                className="user-iden"
-                style={{
-                  background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
-                }}
-              >
-                {Identity.IdentityCode && Identity.IdentityCode.includes("IC1")
-                  ? Identity.IdentityName
-                  : ""}
-              </span>}
+              {!Identity.IsEdu && (
+                <span
+                  className="user-iden"
+                  style={{
+                    background: `url(${Identity.IconUrl}) no-repeat center center/contain  `,
+                  }}
+                >
+                  {Identity.IdentityCode &&
+                  Identity.IdentityCode.includes("IC1")
+                    ? Identity.IdentityName
+                    : ""}
+                </span>
+              )}
               <span
                 className="logout"
-                style={Identity.IsEdu?{marginLeft:'5px'}:{}}
+                style={Identity.IsEdu ? { marginLeft: "5px" } : {}}
                 onClick={() => {
                   autoAlert({
                     title: "确定要退出登录吗?",
@@ -311,28 +321,12 @@ function TopBar(props, ref) {
                     background: `url(${UserInfo.PhotoPath}) no-repeat center center/28px 28px`,
                     cursor: BasePlatFormMsg ? "pointer" : "auto",
                   }}
-                  onClick={() => {
-                    BasePlatFormMsg &&
-                      window.open(
-                        BasePlatFormMsg.BasicWebRootUrl +
-                          "/html/personalMgr/?lg_tk=" +
-                          initData.token +
-                          "#/"
-                      );
-                  }}
+                  onClick={onPersonClick}
                 >
                   {" "}
                 </i>
                 <span
-                  onClick={() => {
-                    BasePlatFormMsg &&
-                      window.open(
-                        BasePlatFormMsg.BasicWebRootUrl +
-                          "/html/personalMgr/?lg_tk=" +
-                          initData.token +
-                          "#/"
-                      );
-                  }}
+                  onClick={onPersonClick}
                   title={UserInfo.UserName}
                   className={"user-name"}
                 >
@@ -361,7 +355,6 @@ function TopBar(props, ref) {
             )}
             {MsgInit ? (
               <div className="Frame-open Frame-devide">
-                
                 <span className="open-msg" onClick={onMsgClick}>
                   <i
                     ref={msgRef}
@@ -370,7 +363,6 @@ function TopBar(props, ref) {
                   ></i>
                   {/* 消息 */}
                 </span>
-                
               </div>
             ) : (
               ""

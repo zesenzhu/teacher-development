@@ -241,7 +241,8 @@ function TeacherEC(props, ref) {
         {
           name: "精品课程制作参与率",
           type: "pie",
-          radius: ["40%", "75%"],
+          // radius: ["40%", "75%"],
+          radius: ["50%", "80%"],
           minAngle:4,
           top: 10,
           height: "90%",
@@ -253,7 +254,7 @@ function TeacherEC(props, ref) {
           },
           avoidLabelOverlap: true,
           label: {
-            show: false,
+            show: true,
             // color: null,
             formatter: (params) => {
               let colorIndex = 0;
@@ -476,14 +477,14 @@ function TeacherEC(props, ref) {
     //     dataset_tpr.push([NodeName, Total]);
     //   });
 
-    if (!myEchart_tpr) {
-      // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
-      myEchart_tpr = echarts.init(tprRef.current);
-      // 保存echart实例
-      setTprRchart(myEchart_tpr);
-      // 对界面resize进行监听重绘echart
-      resizeForEcharts(myEchart_tpr);
-    }
+    // if (!myEchart_tpr) {
+    //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
+    //   myEchart_tpr = echarts.init(tprRef.current);
+    //   // 保存echart实例
+    //   setTprRchart(myEchart_tpr);
+    //   // 对界面resize进行监听重绘echart
+    //   resizeForEcharts(myEchart_tpr);
+    // }
     if (!myEchart_tpl) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_tpl = echarts.init(tplRef.current);
@@ -500,11 +501,11 @@ function TeacherEC(props, ref) {
       // 对界面resize进行监听重绘echart
       resizeForEcharts(myEchart_sub);
     }
-    let tprOption = deepCopy(pieOption);
+    // let tprOption = deepCopy(pieOption);
     let tplOption = deepCopy(pieOption);
 
-    tprOption.dataset.source = dataset_tpr;
-    tprOption.tooltip.show = false;
+    // tprOption.dataset.source = dataset_tpr;
+    // tprOption.tooltip.show = false;
     tplOption.dataset.source = dataset_tpl;
     // tprOption.title.text = "教师教龄段人数分布";
 
@@ -512,13 +513,13 @@ function TeacherEC(props, ref) {
 
     // 设置option
     // myEchart_avg.setOption(avgOption);
-    myEchart_tpr.setOption(tprOption);
+    // myEchart_tpr.setOption(tprOption);
     myEchart_tpl.setOption(tplOption);
     myEchart_sub.setOption(subOption);
     return () => {
       // 卸载echarts实例的事件
       // myEchart_avg.off();
-      myEchart_tpr.off();
+      // myEchart_tpr.off();
       myEchart_tpl.off();
       myEchart_sub.off();
     };
@@ -535,7 +536,7 @@ function TeacherEC(props, ref) {
           <span className="tb-tip-2">{AvgCount}</span>
           节精品课程
         </p>
-        <div className="ter-pie-left">
+        {/* <div className="ter-pie-left"> */}
           <div ref={tplRef} className="ter-echarts"></div>
           <p className="ter-all">
             <span>{correctNumber(HasECPercent * 100)||0}</span>%
@@ -552,8 +553,8 @@ function TeacherEC(props, ref) {
               <i className="tb-show-detail" onClick={() => {}}></i>
             </Tooltip>
           </p>
-        </div>
-        <div className="ter-pie-right">
+        {/* </div> */}
+        {/* <div className="ter-pie-right">
           <div ref={tprRef} className="ter-echarts"></div>
           <p className="ter-all">
             <span>{correctNumber(AvgECPercent * 100)}</span>%
@@ -570,7 +571,7 @@ function TeacherEC(props, ref) {
               <i className="tb-show-detail" onClick={() => {}}></i>
             </Tooltip>
           </p>
-        </div>
+        </div> */}
       </div>
 
       <div ref={subRef} className="tb-right ter-right"></div>

@@ -60,7 +60,8 @@ function TeacherRatio(props, ref) {
   let {
     className,
     levelHash,
-    productMsg,
+    productMsg,StandardRadio,
+    isEdu, //不是教育局用学校的结构
     data: {
       DayAvgTimeSpan,
       MinRatio,
@@ -70,6 +71,19 @@ function TeacherRatio(props, ref) {
       TeacherCount,
       Ratio,
       SubSet,
+
+      // 学校端才有
+      SchoolType, //中小学：
+      //1表示只有小学；
+      //2表示只有初中；
+      //4表示只有高中；
+      //如：3=1+2表示小学和初中；
+      //7=1+2+4表示小学初中高中
+      //5=2+3表示初中和高中
+      //大学：年制
+      SchoolLevel,
+      //学校阶段等级，1表示高教（大学），2表示普教（中小学）
+      TeaSthRatio,
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -83,7 +97,7 @@ function TeacherRatio(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if (TeacherCount === undefined || StudentCount === undefined) {
+    if (!isEdu || TeacherCount === undefined || StudentCount === undefined) {
       return;
     }
     let myEchart_ta = taEchart;
@@ -230,7 +244,7 @@ function TeacherRatio(props, ref) {
     };
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SubSet, productMsg]);
+  }, [SubSet, productMsg, isEdu]);
   const TransTime = useCallback((time) => {
     let tTime = transTime(time, "m");
     if (tTime.time < 1) {
@@ -241,98 +255,252 @@ function TeacherRatio(props, ref) {
   }, []);
 
   const Colors = useMemo(() => {
-    return ["#ffb487", "#879bff", "#67d4d8", "#ff8787", "#51c2fd", "#88d35a"];
+    return [
+      "#51c2fd",
+      "#ff6d6d",
+      // , "#67d4d8", "#ff8787", "#51c2fd", "#88d35a"
+    ];
   }, []);
   // SubSet = SubSet.concat(SubSet).slice(0,4)
+ 
+  // 处理达标情况
+  const getStandardMsg = useCallback(
+    (ratio, standardRatio, teacher = 0, school = false) => {
+      // 提示语模板：
+      // 1）未达标(师生比小于国家标准，即分母较大)：未符合1:xx的标准，建议补编n人；
+      // 2）刚好达标(与标准相等)：符合1:xx的标准；
+      // 3）超标：优于1:xx的标准。
+
+      // 注1）学校为多学段时，即最高标准值；
+      // 注2）补编人数算法为：n=m*(yy-xx)/xx的值向上取整，
+      // 其中，m为教师现有人数，yy为现有师生比的学生比值（即1：14中的14），
+      // xx为标准师生比中的学生比值(即1：12中的12)。
+      let standardBol = false;
+      let color = Colors[1];
+      let standard = 0;
+      let title = "";
+      if (!(!ratio || isNaN(ratio))) {
+        standardBol = ratio <= standardRatio;
+        standard = standardRatio - ratio;
+        color = standardBol ? Colors[0] : Colors[1];
+        if (standard < 0) {
+          title = (
+            <>
+              {"师生比未符合1:" + standardRatio + "的标准"}
+              {school ? "，" : <br />}
+              {"建议补编" +
+                Math.ceil((teacher * (ratio - standardRatio)) / standardRatio) +
+                "人"}
+            </>
+          );
+        } else if (standard > 0) {
+          title = "师生比优于1:" + standardRatio + "的标准";
+        } else {
+          title = "师生比符合1:" + standardRatio + "的标准";
+        }
+      }
+      return { color, standardBol, title };
+    },
+    [Colors]
+  );
+  const { StandardTitle, Dom, SchoolStandard } = useMemo(() => {
+    let StandardTitle = "";
+    let Dom = "";
+    let SchoolStandard = { standardRatio: 1, name: "" };
+    if (isEdu && SubSet instanceof Array) {
+      Dom = SubSet.map((child, index) => {
+        let {
+          NodeName,
+          Ratio,
+          TeacherCount,
+          Total,
+          NodeID,
+          StudentCount,
+        } = child;
+        let width = 0;
+        // 提示语模板：
+        // 1）未达标(师生比小于国家标准，即分母较大)：未符合1:xx的标准，建议补编n人；
+        // 2）刚好达标(与标准相等)：符合1:xx的标准；
+        // 3）超标：优于1:xx的标准。
+
+        // 注1）学校为多学段时，即最高标准值；
+        // 注2）补编人数算法为：n=m*(yy-xx)/xx的值向上取整，
+        // 其中，m为教师现有人数，yy为现有师生比的学生比值（即1：14中的14），
+        // xx为标准师生比中的学生比值(即1：12中的12)。
+
+        // 标准
+        // 高中教职工与学生比为1：12.5、初中为1：13.5、小学为1：19。
+        // 中职为1：20（尽量达到1:16）、高职为1:18、高校为：1:18。
+        // 幼儿园1:7（1:5~1:10）。
+        // 以NodeID判断是什么学段
+        // 0：幼儿园，1：小学，2：初中，3：高中，4：中职，5：高职，
+        Total = Total || StudentCount + TeacherCount;
+        width = Total ? (TeacherCount / Total) * 100 + "%" : 0;
+        // 比例,比后面的就好了
+        // Ratio = "1:13.5";
+        let ratio = parseFloat(Ratio.split(":")[1]);
+        let standard = StandardRadio[NodeID];
+
+        const { standardBol, color, title } = getStandardMsg(
+          ratio,
+          standard,
+          TeacherCount
+        );
+        if (!standardBol) {
+          StandardTitle += StandardTitle ? "、" + NodeName : NodeName;
+        }
+
+        return (
+          <div
+            key={NodeID}
+            className="bar-content"
+            style={{ lineHeight: 210 / SubSet.length + "px" }}
+          >
+            <span className="bar-name" title={NodeName}>
+              {NodeName}
+            </span>
+            <Tooltip
+              title={
+                <p>
+                  <span style={{ color: "#fffd64" }}>{title}</span>
+                  <br />
+                  {/* 师生总人数：{Total}人<br /> */}
+                  教师人数：{TeacherCount}
+                  人<br />
+                  学生人数：{StudentCount}人
+                </p>
+              }
+              color={"rgba(0,0,0,0.7)"}
+              overlayClassName="show-bar"
+              getPopupContainer={(e) => e.parentNode}
+              trigger={["hover"]}
+            >
+              <p className="bar-box" style={{ backgroundColor: color }}>
+                <span
+                  className="bar-tea"
+                  style={{
+                    backgroundColor: color,
+                    width: width,
+                  }}
+                ></span>
+              </p>
+            </Tooltip>
+            <span style={{ color: color }} className="bar-ratio" title={Ratio}>
+              {Ratio}
+            </span>
+            {!standardBol && <i className="standard-warn"></i>}
+          </div>
+        );
+      });
+    } else {
+      // 大学，学院用一个标准18，中小学要看Subset
+      if (productMsg.productLevel === 3) {
+        //中小学：
+        //1表示只有小学；
+        //2表示只有初中；
+        //4表示只有高中；
+        //如：3=1+2表示小学和初中；
+        //7=1+2+4表示小学初中高中
+        //5=2+3表示初中和高中
+        //大学：年制
+        let nodeID = [];
+        switch (SchoolType) {
+          case 1:
+            nodeID.push(1);
+            break;
+          case 2:
+            nodeID.push(2);
+
+            break;
+          case 4:
+            nodeID.push(3);
+
+            break;
+          case 3:
+            nodeID.push(1, 2);
+
+            break;
+          case 5:
+            nodeID.push(2, 3);
+
+            break;
+          case 7:
+            nodeID.push(1, 2, 3);
+
+            break;
+          default:
+        }
+        nodeID.forEach((c) => {
+          SchoolStandard =
+            SchoolStandard.standardRatio < StandardRadio[c]
+              ? {
+                  standardRatio: StandardRadio[c],
+                  name: c.NodeName,
+                }
+              : SchoolStandard;
+        });
+      } else {
+        SchoolStandard = {
+          standardRatio: StandardRadio[6],
+          name: productMsg.title,
+        };
+      }
+    }
+    return {
+      StandardTitle,
+      Dom,
+      SchoolStandard,
+    };
+  }, [isEdu, SubSet, StandardRadio, getStandardMsg,  SchoolType]);
   return (
     <div className={`teacher-bar TeacherRatio ${className ? className : ""} `}>
-      <p className="tb-tip">
-        {productMsg && productMsg.title ? productMsg.title : ""}
-        整体师生比
-        <span className="tb-tip-2">{Ratio}</span>
-        ，其中
-        <span className="tb-tip-2">{MinRatio}学段 </span>
-        师生比最小，其中
-        <span className="tb-tip-2">{MaxRatio}学段 </span>师生比最大
-      </p>
-      <div className="ter-left">
-        <div ref={taRef} className="ter-echarts"></div>
-        {/* <p className="ter-all">
+      {isEdu ? (
+        <>
+          <p className="tb-tip">
+            {productMsg && productMsg.title ? productMsg.title : ""}
+            整体师生比
+            <span className="tb-tip-2">{Ratio}</span>
+            ，其中
+            {StandardTitle ? (
+              <>
+                <span className="tb-tip-2" style={{ color: Colors[1] }}>
+                  {StandardTitle}学段未达标
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="tb-tip-2">{MinRatio}学段 </span>
+                师生比最小，其中
+                <span className="tb-tip-2">{MaxRatio}学段 </span>师生比最大
+              </>
+            )}
+          </p>
+          <div className="ter-left">
+            <div ref={taRef} className="ter-echarts"></div>
+            {/* <p className="ter-all">
           教师总人数
           <br />
           <span>{TotalTeacher}</span>人
         </p> */}
-        <p className="ter-title">
-          师生人数占比图
-          <Tooltip
-            title="疑问"
-            color={"#0249a5"}
-            overlayClassName="show-detail"
-            getPopupContainer={(e) => e.parentNode}
-            trigger={["hover"]}
-          >
-            <i className="tb-show-detail" onClick={() => {}}></i>
-          </Tooltip>
-        </p>
-      </div>
+            <p className="ter-title">
+              师生人数占比图
+              <Tooltip
+                title="疑问"
+                color={"#0249a5"}
+                overlayClassName="show-detail"
+                getPopupContainer={(e) => e.parentNode}
+                trigger={["hover"]}
+              >
+                <i className="tb-show-detail" onClick={() => {}}></i>
+              </Tooltip>
+            </p>
+          </div>
 
-      <div ref={subRef} className="tb-right ter-right">
-        {SubSet instanceof Array &&
-          SubSet.map((child, index) => {
-            let {
-              NodeName,
-              Ratio,
-              TeacherCount,
-              Total,
-              NodeID,
-              StudentCount,
-            } = child;
-            let width = 0;
-            Total = Total||(StudentCount+TeacherCount)
-            width = Total?(TeacherCount / Total)*100+'%':0
-            
-            return (
-              <div key={NodeID} className='bar-content' style={{ lineHeight:210/(SubSet.length)+'px'   }}>
-                <span className='bar-name' title={NodeName}>{NodeName}</span>
-                <Tooltip
-                  title={
-                    <p>
-                      <span style={{color: "#fffd64"}}>{NodeName}</span>< br />
-                      师生总人数：{Total}人< br />教师人数：{TeacherCount}
-                      人< br />学生人数：{StudentCount}人
-                    </p>
-                  }
-                  color={"rgba(0,0,0,0.7)"}
-                  overlayClassName="show-bar"
-                  getPopupContainer={(e) => e.parentNode}
-                  trigger={["hover"]}
-                >
-                  <p
-                    className="bar-box"
-                    style={{ backgroundColor: Colors[index] }}
-                  >
-                    <span
-                      className="bar-tea"
-                      style={{
-                        backgroundColor: Colors[index],
-                        width: width,
-                      }}
-                    ></span>
-                  </p>
-                </Tooltip>
-                <span
-                  style={{ color: Colors[index] }}
-                  className="bar-ratio"
-                  title={Ratio}
-                >
-                  {Ratio}
-                </span>
-              </div>
-            );
-          })}
-        <p className="ter-title">
-          各学段师生比统计
-          {/* <Tooltip
+          <div ref={subRef} className="tb-right ter-right">
+            {Dom}
+            <p className="ter-title">
+              各学段师生比统计
+              {/* <Tooltip
             title="疑问"
             color={"#0249a5"}
             overlayClassName="show-detail"
@@ -341,16 +509,76 @@ function TeacherRatio(props, ref) {
           >
             <i className="tb-show-detail" onClick={() => {}}></i>
           </Tooltip> */}
-        </p>
-      </div>
+            </p>
+          </div>
+        </>
+      ) : (
+        <div className="school-ratio-box">
+          {(() => {
+            let Total = TeacherCount + StudentCount;
+            let teacherWidth = 0.5;
+            let studentWidth = 0.5;
+            if (Total > 0) {
+              let t = TeacherCount / Total;
+              let s = StudentCount / Total;
+              teacherWidth = t > 0.1 ? t : 0.1;
+              studentWidth = s > 0.1 ? s : 0.1;
+            }
+            // Ratio = "1:100";
+            let ratio =
+              typeof TeaSthRatio === "string" ? TeaSthRatio.split(":")[1] : 0;
+            let { standardBol, color, title } = getStandardMsg(
+              ratio,
+              SchoolStandard.standardRatio,
+              TeacherCount,
+              true
+            );
+            return (
+              <>
+                {" "}
+                <span
+                  className="bar teacher-ratio-bar"
+                  style={{
+                    width: 600 * teacherWidth,
+                  }}
+                >
+                  <span>{TeacherCount}人</span>
+                </span>
+                <span
+                  className="bar student-ratio-bar"
+                  style={{
+                    width: 600 * studentWidth,
+                  }}
+                >
+                  <span>{StudentCount}人</span>
+                </span>
+                <span
+                  className="ratio-msg"
+                  style={{ color: !standardBol ? "#ff0000" : "#009900" }}
+                >
+                  {TeaSthRatio}
+                </span>
+                {!standardBol && <i className="icon-error"></i>}
+                <span
+                  className="ratio-title"
+                  style={{ color: !standardBol ? "#ff0000" : "#009900" }}
+                >
+                  ({title})
+                </span>
+              </>
+            );
+          })()}
+        </div>
+      )}
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
   let {
-    commonData: { levelHash },
+    commonData: { levelHash,StandardRadio },
   } = state;
-  return { levelHash };
+  // console.log(111)
+  return { levelHash,StandardRadio };
 };
 export default connect(mapStateToProps)(memo(forwardRef(TeacherRatio)));

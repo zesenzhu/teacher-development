@@ -219,7 +219,7 @@ function TeacherCount(props, ref) {
           axisLabel: {
             color: "#7c7c7c",
             fontSize: 12,
-            margin:12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 6) {
@@ -323,16 +323,17 @@ function TeacherCount(props, ref) {
       {/* <Loading spinning={!tcEchart} tip={"加载中..."} opacity={false}> */}
       <p className="tc-tip">
         {productMsg && productMsg.title ? productMsg.title : ""}
-        教师总人数<span className="tc-tip-1">{Total}</span>人，其中
+        教师总人数<span className="tc-tip-1">{Total}</span>人，
         {productMsg && productMsg.productLevel === 1 ? (
           <>
+            其中
             {SubSet instanceof Array && SubSet.length > 0
               ? SubSet.map((child, index) => {
                   return (
                     <React.Fragment key={index}>
                       {child.NodeName}教师
                       <span className="tc-tip-2">{child.Total}</span>人
-                      {index !== SubSet.length - 1  ||index === 0 ? "，" : ""}
+                      {index !== SubSet.length - 1 || index === 0 ? "，" : ""}
                     </React.Fragment>
                   );
                 })
@@ -340,9 +341,10 @@ function TeacherCount(props, ref) {
           </>
         ) : (
           <>
-            男性教师<span className="tc-tip-2">{MaleCount}</span>人，女性教师
-            <span className="tc-tip-2">{FemaleCount}</span>人，师生比例
-            <span className="tc-tip-2">{TeaSthRatio}</span>
+            师生比例
+            <span className="tc-tip-2">{TeaSthRatio}</span>，其中男性教师
+            <span className="tc-tip-2">{MaleCount}</span>人，女性教师
+            <span className="tc-tip-2">{FemaleCount}</span>人
           </>
         )}
       </p>

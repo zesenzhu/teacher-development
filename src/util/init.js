@@ -85,6 +85,13 @@ export const init = (params, success = () => {}, error = () => {}) => {
     if (onlyBase) {
       success({
         basePlatformMsg: data,
+        role: {
+          type: "visitor",
+        },
+        userInfo: {},
+        termInfo: {},
+        systemServer: {},
+        identityDetail: {},
       });
       return;
     }
@@ -94,10 +101,10 @@ export const init = (params, success = () => {}, error = () => {}) => {
       let IsEduCenter = false;
       // data.ProductUseRange = 4//测试用
       if (
-        data.IsEduCenter 
+        data.IsEduCenter
         // ||
         // data.ProductUseRange === 4 ||
-        // data.ProductUseRange === 8  
+        // data.ProductUseRange === 8
       ) {
         IsEduCenter = true;
       }
@@ -130,8 +137,8 @@ export const init = (params, success = () => {}, error = () => {}) => {
               : getIdentityDetail(moduleID);
             if (IsEduCenter) {
               //教育局的学校ID固定传EduCenterRoot
-               
-              userInfo.SchoolID = "EduCenterRoot"
+
+              userInfo.SchoolID = "EduCenterRoot";
             }
             let termInfo = getTermInfo({
               SchoolID: userInfo.SchoolID || "",
@@ -274,7 +281,7 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
   };
   try {
     let { ProductUseRange } = baseMsg;
-    let { IdentityCode, IdentityName ,IsEdu} = identity;
+    let { IdentityCode, IdentityName, IsEdu } = identity;
     Role.userType = parseInt(userInfo.UserType);
     Role.userClass = parseInt(userInfo.UserClass);
     Role.identityCode = IdentityCode;
@@ -350,10 +357,9 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
         version = "noPower";
     }
     // 教育局的
-    if(IsEdu){
-     
-       // IC0101:教育局管理员
-        //IC0102:教育局领导
+    if (IsEdu) {
+      // IC0101:教育局管理员
+      //IC0102:教育局领导
       if (IdentityCode.includes("IC010")) {
         //code之后会有
         //教育局
@@ -369,7 +375,8 @@ const setUnifyRole = (userInfo, identity, baseMsg) => {
     //   return;
     // }
     Role = {
-      ...Role,IsEdu,
+      ...Role,
+      IsEdu,
       version,
       isUniversity: version.indexOf("university") !== -1,
       selectLevel,
@@ -407,17 +414,40 @@ const getIdentityDetail = async (moduleID = "") => {
     : false;
   let identityList = [];
   if (lg_ic) {
+    // 使用这个歌，直接校验是否合法
+    if (moduleID) {
+      let res = await ValidateIdentity(lg_ic, moduleID);
+      if (res) {
+        identityList = await GetIdentityTypeByCode(lg_ic);
+        setDataStorage("IdentityMsg", identityList[0]);
+      } else {
+        return false;
+      }
+    } else {
+      // 假的
+      // identityList = await GetIdentityTypeByCode(lg_ic);
+      let data = {
+        IconUrl: false,
+        IdentityCode: lg_ic || "",
+        IdentityName: "普通用户",
+        IsPreset: true,
+      };
+      setDataStorage("IdentityMsg", data);
+      return data;
+    }
+
+    // 下面的方法废弃
     //存在，进行身份信息获取
     // lg_ic可能有误，要进行用户所拥有的的身份列表验证
-    identityList = await getIdentityList();
-    identityList.forEach((child) => {});
-    if (
-      identityList.some((child) => {
-        return child.IdentityCode === lg_ic;
-      })
-    ) {
-      identityList = await GetIdentityTypeByCode(lg_ic);
-    }
+    // identityList = await getIdentityList();
+    // // identityList.forEach((child) => {});
+    // if (
+    //   identityList.some((child) => {
+    //     return child.IdentityCode === lg_ic;
+    //   })
+    // ) {
+    //   identityList = await GetIdentityTypeByCode(lg_ic);
+    // }
     // identityDetail = data[0];
   } else if (identityDetail && identityDetail.IdentityCode) {
     //不存在，获取session上存的身份信息,存在本次用这个

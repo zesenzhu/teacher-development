@@ -366,3 +366,132 @@ function construtorEduAndTitleData(Data) {
   });
   return data;
 }
+
+/**
+ * @description:获取师生比  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2259
+ * @param {*}
+ * @return {*}
+ */
+export function TeaStuCount(payload = {}) {
+  let { schoolID, collegeID, selectLevel, term } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/Basic/TeaStuCount?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }&Term=${term ? term : ""}`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200) {
+        // "Year": "2020-202101",
+        //     "TeacherCount": 404,    //教师人数
+        //     "StudentCount": 122,    //学生人数
+        //     "TeaSthRatio": "1:0.3",
+        //     "SchoolLevel": 2,        //学校阶段等级，1表示高教（大学），2表示普教（中小学）
+        //     "SchoolType": 7            //学校类型；
+        //                         //中小学：
+        //                         //1表示只有小学；
+        //                         //2表示只有初中；
+        //                         //4表示只有高中；
+        //                         //如：3=1+2表示小学和初中；
+        //                         //7=1+2+4表示小学初中高中
+        //                         //5=2+3表示初中和高中
+        //                         //大学：年制
+        return json.Data ? json.Data : {};
+      } else {
+        return false;
+      }
+    });
+}
+
+
+
+/**
+ * @description:历史课时统计  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2094
+ * @param {*}
+ * @return {*}
+ */
+export function getHistoryTeaStuCount(payload = {}) {
+  // *RStatus:状态：0草稿；1正式发布
+  let { schoolID, collegeID, selectLevel } = payload;
+  let url =
+    BasicProxy +
+    `/Statistics/Basic/History/TeaStuCount?SchoolID=${
+      schoolID ? schoolID : ""
+    }&CollegeID=${collegeID ? collegeID : ""}&SelectLevel=${
+      selectLevel ? selectLevel : ""
+    }`;
+  // "?" +
+  // (pageIndex ? "pageIndex=" + pageIndex : "") +
+  // (keyword ? "&keyword=" + keyword : "") +
+  // (pageSize ? "&pageSize=" + pageSize : "");
+  return fetch
+    .get({ url, securityLevel: 2 })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.StatusCode === 200 && json.Data instanceof Array) {
+        return construtorTeaStuRatio(json.Data);
+      } else {
+        return false;
+      }
+    });
+}
+
+function construtorTeaStuRatio(Data) {
+  if (!(Data instanceof Array) || Data.length === 0) {
+    return [];
+  }
+  let data = [];
+
+  Data.forEach((c) => {
+    let { NodeName, NodeID, History } = c;
+    let children = [];
+    History instanceof Array &&
+      History.forEach((h, i) => {
+        let {
+          Year,
+
+          TeacherCount,
+          StudentCount,
+          // TeaPercent,
+          TeaSthRatio,
+        } = h;
+        let total = TeacherCount + StudentCount
+      let  TeaPercent = TeacherCount/total*100
+        children.push({
+          nodeName: Year,
+          nodeID: Year,
+          source: [TeaPercent],
+          dataList: [
+            [Year, NodeName, TeaSthRatio],
+            [total],
+            [TeacherCount],
+            [StudentCount],
+          ],
+        });
+      });
+    data.push({
+      nodeName: NodeName,
+      nodeID: NodeID,
+      yType: "percent",
+      titleList: [
+        ["", "学期", "师生比为", ""],
+        ["师生总人数：", "人"],
+        ["教师人数：", "人"],
+        ["学生人数：", "人"],
+      ],
+      xName: "学期",
+      yName: "比例",
+      type: ["year"],
+      children,
+    });
+  });
+  return data;
+}

@@ -85,7 +85,7 @@ function PersonalList(props, ref) {
   let {
     location,
     history,
-    roleMsg: { productLevel, schoolID, collegeID, IsEdu },
+    roleMsg: { productLevel, schoolID, collegeID, IsEdu, userType },
     levelHash,
     contentHW: { height },
   } = props;
@@ -131,19 +131,23 @@ function PersonalList(props, ref) {
     nodeID: "",
     nodeType: "-1",
   });
-  const onClickName = useCallback((data) => {
-    let ip = IsEdu ? data.TGServerAddr : "";
-    // TGServerAddr有值表明是教育局
+  const onClickName = useCallback(
+    (data) => {
+      let ip = IsEdu ? data.TGServerAddr : "";
+      // TGServerAddr有值表明是教育局
 
-    window.open(
-      ip +
-        "?lg_tk=" +
-        getToken() +
-        (IsEdu ? "_Edu" : "") +
-        "#/page/personalDetail/" +
-        data.UserID
-    );
-  }, [IsEdu]);
+      window.open(
+        ip +
+          "?lg_tk=" +
+          getToken() +
+          (IsEdu ? "_Edu" : "") +
+          (IsEdu ? "&lg_ic=" + (userType === 6 ? "IC0101" : "IC0102") : "") +
+          "#/page/personalDetail/" +
+          data.UserID
+      );
+    },
+    [IsEdu, userType]
+  );
   // 初始化列表
   useEffect(() => {
     // 非教育局，使用node

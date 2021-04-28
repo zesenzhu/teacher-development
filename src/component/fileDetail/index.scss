@@ -132,6 +132,44 @@
                     opacity: 1;
                 }
             }
+            .train-apply-btn {
+                display: inline-block;
+                position: relative;
+                border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                -ms-border-radius: 3px;
+                -o-border-radius: 3px;
+                cursor: pointer;
+                opacity: 0.9;
+                &:hover {
+                    opacity: 1;
+                }
+                color: #fff;
+                background-image: linear-gradient(90deg, #39d7ff 0%, #009cff 100%),
+                linear-gradient(#a1adb4, #a1adb4);
+                padding: 0 10px;
+                // height: 300px;
+                line-height: 30px;
+                position: absolute;
+                right: 42px;
+                top: 47px;
+                font-size: 14px;
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    vertical-align: top;
+                    width: 20px;
+                    height: 30px;
+                    background: url(./images/img-apply.png) no-repeat center center / 16px 14px;
+                }
+                &.train-apply-cancel {
+                    background-image: linear-gradient(90deg, #ff586c 0%, #ff7b9d 100%), linear-gradient(#a1adb4, #a1adb4);
+                    &::before {
+                        background: url(./images/img-cancel.png) no-repeat center center / 14px 14px;
+                    }
+                }
+            }
         }
         .detail-content {
             margin-top: 8px;

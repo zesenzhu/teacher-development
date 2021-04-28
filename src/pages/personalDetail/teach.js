@@ -164,6 +164,7 @@ function Teach(props, ref) {
         type={1}
         className="teach-modal"
         title={Title}
+        modalStyle={'dark'}
       >
         {List instanceof Array && List.length > 0 ? (
           <div className='ct-modal-table'>

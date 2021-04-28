@@ -36,7 +36,7 @@ export default function useDetailRequest(query, api) {
     // IsLoaded>IsExist>IsError,判断级别
     ID: "", //ID，唯一标识
     Title: "", //标题
-    Issue: "", //来源
+    Issue: "", //发布单位
     Status: 0, //状态：0草稿；1正式发布
     Content: "", //正文
     CreatorID: "", //发布者工号

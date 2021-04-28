@@ -62,11 +62,15 @@ import Table from "../../component/table";
 import { Context } from "./reducer";
 import { getCruitList, deleteRecruit } from "../../api/recruit";
 import { autoAlert } from "../../util/public";
+import { getTeaStuRatio } from "@/api/workMsg";
+import { TeaStuCount } from "@/api/baseMsg";
 //   import { NavLink } from "react-router-dom";
 function Home(props, ref) {
   let {
     teacherRecruitMsg: { tabId },
-    roleMsg: { schoolID, collegeID, selectLevel },
+    roleMsg: { schoolID, collegeID, selectLevel, productLevel },
+    termInfo,
+    StandardRadio,
     // history,
     activeTab,
     dispatch,
@@ -126,7 +130,7 @@ function Home(props, ref) {
       },
     },
     {
-      title: "来源",
+      title: "发布单位",
       align: "center",
       width: 128 * widthRate,
       dataIndex: "source",
@@ -204,7 +208,7 @@ function Home(props, ref) {
             </span>
           </span>
         ) : (
-          <></>
+          <span className="table-handle"></span>
         );
       },
     },
@@ -363,8 +367,131 @@ function Home(props, ref) {
   }));
   //
   const homeTopRef = useRef(null);
+  const [AddCount, setAddCount] = useState(0);
+  const [Count, setCount] = useState(0);
+  useEffect(() => {
+    let count = 0;
+    function getCount(teacher, ratio, standardRatio) {
+      // ratio = 20;
+      // console.log(teacher, ratio, standardRatio)
+      return Math.ceil((teacher * (ratio - standardRatio)) / standardRatio);
+    }
+    if (
+      productLevel &&
+      termInfo &&
+      termInfo.TermInfo instanceof Array &&
+      termInfo.TermInfo[0] &&
+      termInfo.TermInfo[0].Term
+    ) {
+      productLevel === 1
+        ? getTeaStuRatio({
+            term: termInfo.TermInfo[0].Term,
+            schoolID,
+            collegeID,
+            selectLevel,
+          }).then((data) => {
+            if (data) {
+              // setTeaStuRatio(data);
+              // StandardRadio
+              let ratio = 0;
+              try {
+                data.SubSet.forEach((c) => {
+                  ratio = Math.max(ratio, StandardRadio[c.NodeID]);
+                });
+                let Ratio = data.Ratio.split(":")[1];
+                let count = getCount(data.TeacherCount, Ratio, ratio);
+                setCount(data.Ratio);
+                setAddCount(count);
+              } catch (e) {}
+            }
+          })
+        : TeaStuCount({
+            term: termInfo.TermInfo[0].Term,
+            schoolID,
+            collegeID,
+            selectLevel,
+          }).then((data) => {
+            if (data) {
+              // setTeaStuRatio(data);
+              // 大学，学院用一个标准18，中小学要看Subset
+              let ratio = 0;
+              try {
+                if (data.SchoolLevel === 2) {
+                  //中小学：
+                  //1表示只有小学；
+                  //2表示只有初中；
+                  //4表示只有高中；
+                  //如：3=1+2表示小学和初中；
+                  //7=1+2+4表示小学初中高中
+                  //5=2+3表示初中和高中
+                  //大学：年制
+                  let nodeID = [];
+                  switch (data.SchoolType) {
+                    case 1:
+                      nodeID.push(1);
+                      break;
+                    case 2:
+                      nodeID.push(2);
+
+                      break;
+                    case 4:
+                      nodeID.push(3);
+
+                      break;
+                    case 3:
+                      nodeID.push(1, 2);
+
+                      break;
+                    case 5:
+                      nodeID.push(2, 3);
+
+                      break;
+                    case 7:
+                      nodeID.push(1, 2, 3);
+
+                      break;
+                    default:
+                  }
+                  nodeID.forEach((c) => {
+                    ratio = Math.max(ratio, StandardRadio[c]);
+                  });
+                } else {
+                  ratio = StandardRadio[6];
+                }
+                let Ratio = data.TeaSthRatio.split(":")[1];
+
+                let count = getCount(data.TeacherCount, Ratio, ratio);
+                setCount(data.TeaSthRatio);
+                setAddCount(count);
+              } catch (e) {}
+            }
+          });
+    }
+    // return count;
+  }, [productLevel, termInfo, schoolID, collegeID, selectLevel, StandardRadio]);
+
   return (
     <div className="Reacruit-context Recruit-home">
+      {AddCount > 0 && (
+        <span className="go-teaStuRatio">
+          当前
+          {/* <span
+            className="go"
+            onClick={() => {
+              history.push("/workMsg");
+            }}
+          > */}
+            师生比
+          {/* </span> */}
+          <span className="num">{Count}</span>，低于国家标准 ，建议补编
+          <span className="num">{AddCount}人</span>
+          <i
+            onClick={() => {
+              history.push("/workMsg");
+            }}
+          ></i>
+        </span>
+      )}
       <HomeTop
         ref={homeTopRef}
         publish={{
@@ -406,9 +533,9 @@ function Home(props, ref) {
 const mapStateToProps = (state) => {
   let {
     handleData: { teacherRecruitMsg, activeTab },
-    commonData: { roleMsg },
+    commonData: { roleMsg, termInfo, StandardRadio },
   } = state;
-  return { teacherRecruitMsg, roleMsg, activeTab };
+  return { teacherRecruitMsg, roleMsg, activeTab, termInfo, StandardRadio };
 };
 export default connect(mapStateToProps, null, null, { forwardRef: true })(
   memo(forwardRef(Home))

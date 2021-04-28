@@ -233,7 +233,6 @@ export function getTeaStuRatio(payload = {}) {
     });
 }
 
-
 /**
  * @description:历史课时统计  http://192.168.129.1:8033/showdoc/web/#/21?page_id=2094
  * @param {*}
@@ -279,17 +278,18 @@ function construtorTeaStuRatio(Data) {
         let {
           Year,
 
-          TeaCount,StuCount,TeaPercent,
+          TeaCount,
+          StuCount,
+          TeaPercent,
           TeaStuRatio,
-    
         } = h;
         children.push({
           nodeName: Year,
           nodeID: Year,
-          source: [TeaPercent.substr(0,TeaPercent.length-1)],
+          source: [TeaPercent.substr(0, TeaPercent.length - 1)],
           dataList: [
             [Year, NodeName, TeaStuRatio],
-            [TeaCount+StuCount],
+            [TeaCount + StuCount],
             [TeaCount],
             [StuCount],
           ],
@@ -313,3 +313,4 @@ function construtorTeaStuRatio(Data) {
   });
   return data;
 }
+

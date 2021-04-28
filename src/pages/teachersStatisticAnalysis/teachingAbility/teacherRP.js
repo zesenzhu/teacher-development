@@ -49,7 +49,11 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy ,correctNumber} from "../../../util/public";
+import {
+  resizeForEcharts,
+  deepCopy,
+  correctNumber,
+} from "../../../util/public";
 function TeacherRP(props, ref) {
   let {
     className,
@@ -58,14 +62,14 @@ function TeacherRP(props, ref) {
     data: {
       ProjectCount,
       AvgJoinCount,
-       CompletedCount,
-       AvgResultCount,
+      CompletedCount,
+      ResultCount,
+      AvgResultCount,
       TotalTeacher,
       HasJoinTeaCount,
       NoJoinTeaCount,
       HasJoinPercent,
       SubSet,
- 
     },
   } = props;
   productMsg = productMsg ? productMsg : {};
@@ -79,7 +83,7 @@ function TeacherRP(props, ref) {
   const taRef = useRef(null);
   const subRef = useRef(null);
   useLayoutEffect(() => {
-    if(NoJoinTeaCount===undefined||HasJoinTeaCount===undefined){
+    if (NoJoinTeaCount === undefined || HasJoinTeaCount === undefined) {
       return;
     }
     let myEchart_ta = taEchart;
@@ -126,9 +130,11 @@ function TeacherRP(props, ref) {
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
-          // let { percent, value, dataIndex } = params;
-
-          return `教研课题参与率${!isNaN(HasJoinPercent) ?correctNumber( HasJoinPercent * 100) : 0}%`;
+          let { percent, value, dataIndex } = params;
+// console.log(params)
+          return `教研课题参与率${
+            !isNaN(HasJoinPercent) ? correctNumber(HasJoinPercent * 100) : 0
+          }%`;
         },
         textStyle: {
           color: "#fffd64",
@@ -136,7 +142,7 @@ function TeacherRP(props, ref) {
       },
       grid: {
         height: 220,
-        
+
         containLabel: true,
       },
       legend: {
@@ -157,7 +163,7 @@ function TeacherRP(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
-          minAngle:4,
+          minAngle: 4,
 
           height: "90%",
           itemStyle: {
@@ -196,13 +202,15 @@ function TeacherRP(props, ref) {
           NodeName,
           TotalTeacher,
           HasJoinTeaCount,
-          HasJoinPercent,NoJoinTeaCount
+          HasJoinPercent,
+          NoJoinTeaCount,
         } = child;
         dataset_sub.push([
           NodeName,
           HasJoinPercent,
           TotalTeacher,
-          HasJoinTeaCount,NoJoinTeaCount
+          HasJoinTeaCount,
+          NoJoinTeaCount,
         ]);
       });
     let subOption = {
@@ -214,7 +222,7 @@ function TeacherRP(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
-          fontWeight:100
+          fontWeight: 100,
         },
       },
       // backgroundColor: "#f5f5f5",
@@ -230,19 +238,18 @@ function TeacherRP(props, ref) {
         borderColor: "transparent",
         borderWidth: 0,
         formatter: (params) => {
-        
           let row = params[0];
           let { data } = row;
 
           return `<div  class="t-tooltip">
-                <p class="nodename">教研课题参与率${
-                  correctNumber(data[1] * 100)
-                }%</p><p class='msg msg-2'>教师总人数<span>${
+                <p class="nodename">教研课题参与率${correctNumber(
+                  data[1] * 100
+                )}%</p><p class='msg msg-2'>教师总人数<span>${
             data[2]
           }人</span></p><p class='msg msg-2'>已参加人数<span>${
             data[3]
           }人</span></p><p class='msg msg-2'>未参加人数<span>${
-            data[4]  
+            data[4]
           }人</span></p></div>
             `;
         },
@@ -287,12 +294,12 @@ function TeacherRP(props, ref) {
       },
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length > 6,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -331,7 +338,8 @@ function TeacherRP(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 5) {
@@ -371,7 +379,7 @@ function TeacherRP(props, ref) {
           type: "bar",
           barGap: "4%",
           // barWidth: 5,
-          barMaxWidth:24,
+          barMaxWidth: 24,
           itemStyle: {
             color: {
               type: "linear",
@@ -384,7 +392,7 @@ function TeacherRP(props, ref) {
                   offset: 0,
                   color: "#80c35c", // 0% 处的颜色
                 },
-                 
+
                 {
                   offset: 1,
                   color: "#b3f093", // 100% 处的颜色
@@ -403,7 +411,7 @@ function TeacherRP(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_ta.push([NodeName, Total]);
     //   });
-    
+
     // if (!myEchart_avg) {
     //   // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
     //   myEchart_avg = echarts.init(avgRef.current);
@@ -458,9 +466,10 @@ function TeacherRP(props, ref) {
           个，教师人均参与
           <span className="tb-tip-2">{AvgJoinCount}</span>
           份，教师人均课题成果
-          <span className="tb-tip-2">{AvgResultCount}</span>个；<br />
+          <span className="tb-tip-2">{AvgResultCount}</span>个；
+          <br />
           其中已结题课题<span className="tb-tip-2">{CompletedCount}</span>
-          个，已评定成果<span className="tb-tip-2">{ CompletedCount}</span>个
+          个，已评定成果<span className="tb-tip-2">{ResultCount}</span>个
         </p>
         <div ref={taRef} className="ter-echarts"></div>
         <p className="ter-all">
@@ -469,7 +478,7 @@ function TeacherRP(props, ref) {
           <span>{TotalTeacher}</span>人
         </p>
         <p className="ter-title">
-        教研课题参与率
+          教研课题参与率
           <Tooltip
             title="疑问"
             color={"#0249a5"}

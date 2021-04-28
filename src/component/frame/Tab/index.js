@@ -61,6 +61,7 @@ function Tab(props, ref) {
     tabPorps,
     search,
     tabMsg, //标签头部的信息{id:title},id:为tabid|param组合
+    controlCancelTab,//控制标签是否关闭
   } = props;
   const history = useHistory();
   const location = useLocation();
@@ -381,7 +382,7 @@ function Tab(props, ref) {
                   // });
                 }}
               >
-                <span className='tab-bar'>{tabname}</span>
+                <span className="tab-bar">{tabname}</span>
                 <i
                   className="tab-close-btn"
                   onClick={(e) => {
@@ -390,8 +391,16 @@ function Tab(props, ref) {
                     // 阻止与原生事件的冒泡
                     e.nativeEvent.stopImmediatePropagation();
                     // console.log(e);
-
-                    removeTab(props.tabid, props.param);
+                    // 给外界控制tab是否关闭
+                    if (typeof controlCancelTab === "function") {
+                      let data = controlCancelTab(
+                        props,
+                        removeTab.bind(this, props.tabid, props.param)
+                      );
+                      if (data === undefined || data === true) {
+                        removeTab(props.tabid, props.param);
+                      }
+                    } else removeTab(props.tabid, props.param);
                     // // 一个不许删
                     // if (TabList.length <= 1) {
                     //   return;

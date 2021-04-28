@@ -1342,7 +1342,8 @@ class Search extends React.Component {
       placeHolder,
       selectOptions,
       onClickSearch,
-      onCancelSearch,inputTitle,
+      onCancelSearch,
+      inputTitle,
       className,
       CancelBtnShow,
       Value,
@@ -2154,7 +2155,12 @@ class OldModal extends React.Component {
     );
   }
 }
-
+/**
+ * @description: 最新的modal
+ * @param {*} props
+ * @param {*} ref
+ * @return {*}
+ */
 function LgModal(props, ref) {
   let {
     className,
@@ -2172,9 +2178,13 @@ function LgModal(props, ref) {
     destroyOnClose,
     visible,
     maskClosable,
+    modalStyle, //modal的风格，默认，和黑暗：dark
     ...reset
   } = props;
   const [Footer, setFooter] = useState(footer);
+  useEffect(() => {
+    setFooter(footer)
+  }, [footer]);
   const [Width, setWidth] = useState(width);
   const [Height, setHeight] = useState(height);
   const [ModalClassName, setModalClassName] = useState("");
@@ -2246,7 +2256,9 @@ function LgModal(props, ref) {
   }));
   return (
     <AntdModal
-      className={`initModel ${ModalClassName} ${className || ""}`}
+      className={`initModel ${
+        modalStyle ? "modalStyle-" + modalStyle : ""
+      } ${ModalClassName} ${className || ""}`}
       visible={Visible}
       closeIcon={
         ModalClassName === "Modal-1" ? (

@@ -52,7 +52,7 @@ function App(props, ref) {
       leftMenu,
       params,
       basePlatFormMsg: { ProVersion },
-      roleMsg: { schoolID, collegeID, selectLevel, productLevel },
+      roleMsg: { schoolID, collegeID, selectLevel, productLevel,userType },
     },
     handleData: {
       teacherRecruitMsg: {
@@ -333,6 +333,7 @@ function App(props, ref) {
                 // }
               }
             } else if (Path[1] === "recruit" && Path[2]) {
+              document.title = "教师发展培训";
               setRecruitID(Path[2]);
             } else {
               isInit = false;
@@ -422,6 +423,11 @@ function App(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  const controlCancelTab = useCallback((tab, cancel) => {
+    // console.log(tab)
+    // cancel()
+    // return false
+  }, []);
   return (
     <Frame
       pageInit={pageInit}
@@ -435,7 +441,7 @@ function App(props, ref) {
           api={searchApi}
           // overlayStyle={{width:'402px'}}
           searchResult={(res, keyword) => {
-            return <SearchchAll keyword={keyword} data={res}></SearchchAll>;
+            return <SearchchAll userType={userType} keyword={keyword} data={res}></SearchchAll>;
           }}
           className="frame-search-all"
         ></Search>
@@ -461,6 +467,7 @@ function App(props, ref) {
         otherProps: {},
         children: <LastTime onReload={onReload}></LastTime>,
       }}
+      controlCancelTab={controlCancelTab}
     >
       {/* <Analysis
         tabid={"schoolResource"}

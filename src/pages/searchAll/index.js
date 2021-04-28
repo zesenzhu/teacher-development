@@ -60,7 +60,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 //   import { Search, Empty } from "../common";
 import Bar from "./bar";
 function SearchAll(props, ref) {
-  let { className, data, keyword, ...reset } = props;
+  let { className,userType, data, keyword, ...reset } = props;
   const [List, setList] = useState([]);
   // 是否为空
   const [empty, setEmpty] = useState(true);
@@ -173,7 +173,7 @@ function SearchAll(props, ref) {
         {!empty ? (
           List.map((child, index) => {
             return child.List.length > 0 ? (
-              <Bar key={index} data={child}></Bar>
+              <Bar userType={userType} key={index} data={child}></Bar>
             ) : (
               <React.Fragment key={index}></React.Fragment>
             );

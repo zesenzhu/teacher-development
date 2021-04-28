@@ -75,7 +75,7 @@ export function getCruitList(payload = {}) {
                 ? json.Data.List.map((child, index) => {
                     // child:[{"TID":"xxxxxxxxxxxxxxxxxxx",        //ID，唯一标识
                     // "Title":"关于2020年白云区教师培招聘划",    //标题
-                    // "Issue":"白云中学",                    //来源
+                    // "Issue":"白云中学",                    //发布单位
                     // "TStatus":0,                        //状态：0草稿；1正式发布
                     // "ReleaseTime":"2020-01-01 12:00",    //发布时间
                     // "CreatorName":"张老师",            //发布者
@@ -156,7 +156,7 @@ export function getCruitListByTeacher(payload = {}) {
                 ? json.Data.List.map((child, index) => {
                     // child:[{"TID":"xxxxxxxxxxxxxxxxxxx",        //ID，唯一标识
                     // "Title":"关于2020年白云区教师培招聘划",    //标题
-                    // "Issue":"白云中学",                    //来源
+                    // "Issue":"白云中学",                    //发布单位
                     // "TStatus":0,                        //状态：0草稿；1正式发布
                     // "ReleaseTime":"2020-01-01 12:00",    //发布时间
                     // "CreatorName":"张老师",            //发布者
@@ -237,7 +237,7 @@ export function publishTrain(payload = {}) {
   //     "SchoolID":"xxx",    //发布者所属学校ID
   //     "CollegeID":"xxx",    //发布者所属学院ID
   //     "Title":"关于2020年白云区教师培训计划",    //标题
-  //     "Issue":"白云中学",                    //来源
+  //     "Issue":"白云中学",                    //发布单位
   //     "TStatus":0,                        //状态：0草稿；1正式发布
   //     "Content":"关于2020年白云区教师培训计划如下",    //正文
   //     "FileList":[{
@@ -313,7 +313,7 @@ export function editTrain(payload = {}) {
   //     "SchoolID":"xxx",    //发布者所属学校ID
   //     "CollegeID":"xxx",    //发布者所属学院ID
   //     "Title":"关于2020年白云区教师培训计划",    //标题
-  //     "Issue":"白云中学",                    //来源
+  //     "Issue":"白云中学",                    //发布单位
   //     "TStatus":0,                        //状态：0草稿；1正式发布
   //     "Content":"关于2020年白云区教师培训计划如下",    //正文
   //     "FileList":[{
@@ -417,7 +417,7 @@ export function deleteTrain(payload = {}) {
  * @return {*}
  */
 export function applyTrain(payload = {}) {
-  let { TID,Action } = payload;
+  let { TID,Action,FromEdu } = payload;
   let url = BasicProxy + `/Train/Teacher/Apply`;
 
   return fetch
@@ -425,7 +425,7 @@ export function applyTrain(payload = {}) {
       url,
       securityLevel: 2,
       body: {
-        TID:TID,Action
+        TID:TID,Action,FromEdu
       },
     })
     .then((res) => res.json())

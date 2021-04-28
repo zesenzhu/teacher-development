@@ -59,12 +59,14 @@ import "./index.scss";
 import Bar from "../../../component/bar";
 import TeacherPeriod from "./teacherPeriod";
 import TeacherGanger from "./teacherGanger";
-import TeacherRatio from "./teacherRatio";
+// import TeacherRatio from "./teacherRatio";
+import TeacherRatio from "./teacherRatio.js";
 import {
   getClassHour,
   getTeacherGanger,
   getHistoryClassHour,getTeaStuRatio,getHistoryTeaStuRatio
-} from "../../../api/workMsg";
+} from "@/api/workMsg";
+import {TeaStuCount,getHistoryTeaStuCount} from '@/api/baseMsg';
 import HistoryModal from "../historyModal";
 
 // import TeacherCount from "./teacherCount";
@@ -73,6 +75,8 @@ import HistoryModal from "../historyModal";
 // import TeacherTitle from "./teacherTitle";
 const ApiList = {
   TeaStuRatio: { api: getHistoryTeaStuRatio, title: "历年师生比变化" },
+  TeaStuCount: { api: getHistoryTeaStuCount, title: "历年师生比变化" },
+
   ClassHour: { api: getHistoryClassHour, title: "历年人均周课时变化" },
 };
 function WorkLoad(props, ref) {
@@ -139,45 +143,55 @@ function WorkLoad(props, ref) {
           setTeacherGanger(data);
         }
       });
-      getTeaStuRatio({
-        term: term.value,
-        schoolID,
-        collegeID,
-        selectLevel,
-      }).then((data) => {
-        if (data) {
-          setTeaStuRatio(data);
-        }
-      });
+      if(productLevel){
+        productLevel === 1? getTeaStuRatio({
+          term: term.value,
+          schoolID,
+          collegeID,
+          selectLevel,
+        }).then((data) => {
+          if (data) {
+            setTeaStuRatio(data);
+          }
+        }):TeaStuCount({ term: term.value,
+          schoolID,
+          collegeID,
+          selectLevel,}).then(data=>{
+            if (data) {
+            setTeaStuRatio(data);}
+        });
+      }
+      
     }
-  }, [term, schoolID, collegeID, selectLevel,reload]);
+  }, [term, schoolID, collegeID, selectLevel,reload,productLevel]);
+
 
   return (
     <div className="WorkLoad">
       {/* {tabid === "teacherBaseMsg" ? <div></div> : ""} */}
-      {productLevel === 1 ? (
+      {/* {productLevel === 1 ? ( */}
         <Bar
           barName={"师生比统计"}
           ref={ratioRef}
           loading={!teacherStuRatio}
           topContext={
-            HasHistory
+            HasHistory 
               ? {
                   title: "查看历年师生比变化",
                   onClick: () => {
-                    setApiSelect("TeaStuRatio");
+                    setApiSelect(productLevel === 1?"TeaStuRatio":'TeaStuCount');
                     historyRef.current.controlVisible();
                   },
                 }
               : false
           }
         >
-          <TeacherRatio  data={teacherStuRatio}
+          <TeacherRatio isEdu={productLevel === 1}  data={teacherStuRatio}
           productMsg={productMsg}></TeacherRatio>
         </Bar>
-      ) : (
+      {/* ) : (
         ""
-      )}
+      )} */}
       <Bar
         topContext={
           HasHistory

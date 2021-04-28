@@ -19,7 +19,7 @@
  */
 
 import {
-  connect,
+  connect,useCallback
   // useSelector,
   //   useDispatch,
 } from "react-redux";
@@ -40,15 +40,41 @@ import FileDetail from "@/component/fileDetail";
 import { getCruitList } from "@/api/train";
 import moment from "moment";
 import { Search } from "@/component/common";
+import { autoAlert } from "@/util/public";
+import {  applyTrain } from "@/api/train";
+
 function Train(props, ref) {
   let {
     history,
     roleMsg: { schoolID, collegeID, selectLevel },
   } = props;
- 
+ const onApplyClick = useCallback(
+   (data,title,callback) => {
+    applyTrain(data).then((res) => {
+      if (res.result) {
+        autoAlert({
+          title: title + "成功",
+          type: "success",
+          autoHide: true,
+          // cancelShow: true,
+        });
+        callback();
+      } else {
+        autoAlert({
+          title: title + "失败",
+          type: "error",
+          autoHide: true,
+          // cancelShow: true,
+        });
+      }
+    });
+   
+   },
+   [],
+ )
   return (
     <div className="frame-type-route teacher-train-details">
-       <FileDetail></FileDetail>
+       <FileDetail canControlApply={onApplyClick}></FileDetail>
     </div>
   );
 }

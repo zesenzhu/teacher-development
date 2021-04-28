@@ -99,16 +99,16 @@ function Editor(props, ref) {
     ...reset
   } = props;
   type = type || "recruitment";
-  let sourceName = type === "recruitment" ? "来源" : "发布单位";
+  let sourceName = type === "recruitment" ? "发布单位" : "发布单位";
   // 标题
   const [title, setTitle] = useState("");
   // 标题错误显示
   const [titleVisible, setTitleVisible] = useState(false);
   const [titleTip, setTitleTip] = useState("请输入标题");
 
-  // 来源
+  // 发布单位
   const [source, setSource] = useState("");
-  // 来源错误显示
+  // 发布单位错误显示
   const [sourceVisible, setSourceVisible] = useState(false);
   const [sourceTip, setSourceTip] = useState("请输入" + sourceName);
 
@@ -264,7 +264,7 @@ function Editor(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [title]
   );
-  // 检查来源,返回结果是否对错
+  // 检查发布单位,返回结果是否对错
   const checkSource = useCallback(
     (value) => {
       let result = true;

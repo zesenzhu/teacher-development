@@ -80,6 +80,7 @@ function FileDetail(props, ref) {
     previewData,
     useScrollbars,
     getData,
+    canControlApply, //是否可控制报名
     ...reset
   } = props;
   // 获取数据
@@ -102,7 +103,18 @@ function FileDetail(props, ref) {
   useEffect(() => {
     typeof getData === "function" && getData(detailData);
   }, [getData, detailData]);
-  let { IsLoaded, IsExist, Title, Issue, ReleaseTime, Content, FileList } =
+  let {
+    IsLoaded,
+    IsExist,
+    Title,
+    FromEdu,
+    Issue,
+    ApplyFlag,
+    ApplyStatus,
+    ReleaseTime,
+    Content,
+    FileList,
+  } =
     schema !== "preview"
       ? detailData
       : {
@@ -126,7 +138,22 @@ function FileDetail(props, ref) {
     let BasePlatformMsg = getDataStorage("BasePlatformMsg");
     return BasePlatformMsg instanceof Object && BasePlatformMsg.ResHttpRootUrl;
   }, []);
+  const ApplyMsg = useMemo(() => {
+    let data = false;
+  // ApplyStatus= 5
 
+    if ((ApplyStatus === 1 || ApplyStatus === 5) && ApplyFlag) {
+      data = {
+        className: ApplyStatus === 1 ? "train-apply" : "train-apply-cancel",
+        Action: ApplyStatus === 1 ? 1 : 0,
+        title: ApplyStatus === 1 ? "报名" : "取消报名",
+      };
+    }
+    // console.log(data,canControlApply)
+    return data;
+  }, [ApplyStatus, ApplyFlag]);
+  // 报名节流
+  const [CanClick, setCanClick] = useState(true);
   useImperativeHandle(ref, () => ({
     reload,
     detailData,
@@ -181,6 +208,41 @@ function FileDetail(props, ref) {
                   ) : (
                     ""
                   )}
+
+                  {
+                    //当前报名状态：1可报名，2人数达到上限，3未开始，4已结束，5已报名
+
+                    canControlApply && ApplyMsg ? (
+                      <span
+                        className={`train-apply-btn ${ApplyMsg.className}`}
+                        onClick={() => {
+                          if (!CanClick) {
+                            return;
+                          }
+                          if (typeof canControlApply === "function") {
+                            setCanClick(false);
+                            canControlApply(
+                              {
+                                TID: fileid,
+                                Action: ApplyMsg.Action,
+                                FromEdu: FromEdu ? 1 : 0,
+                              },
+                              ApplyMsg.title,
+                              () => {
+                                reload();
+                                setCanClick(true);
+                              }
+                            );
+                          }
+                        }}
+                        title={ApplyMsg.title}
+                      >
+                        {ApplyMsg.title}
+                      </span>
+                    ) : (
+                      ""
+                    )
+                  }
                 </div>
                 <pre
                   ref={preRef}
@@ -210,7 +272,7 @@ function FileDetail(props, ref) {
                         filename[0] = FileName.slice(0, Index);
                         filename[1] = FileName.slice(Index);
                         let enFileName = encodeURIComponent(FileName);
-                        let enFileUrl = encodeURIComponent(FileUrl);
+                        let enFileUrl = FileUrl;
                         return (
                           <div
                             key={index}
@@ -231,9 +293,12 @@ function FileDetail(props, ref) {
                               // 下载用ashx
                               // 下载附件路径改为：{资源服务器地址}+
                               // download.ashx?FileUrl={路径参数}&FileName={文件名称}
+
+                              // 上面的弃掉，改为直接使用enFileUrl
                               href={
-                                fileIP +
-                                `download.ashx?FileUrl=${enFileUrl}&FileName=${enFileName}`
+                                // fileIP +
+                                // `download.ashx?FileUrl=${enFileUrl}&FileName=${enFileName}`
+                                enFileUrl
                               }
                               rel={"noreferrer"}
                               // ref={'noreferrer'}

@@ -116,6 +116,7 @@ function Frame(props, ref) {
     otherMsg, //左侧菜单底部的其它信息区域
     tabMsg, //标签头部的信息{id:title},id:为tabid|param组合
     search,
+    controlCancelTab,//控制标签是否关闭,方法，返回true或不返回表示自动关闭，返回false表示自己控制，第二个参数是关闭回调，具体tab数据是第一个参数，自己输出调试
   } = props;
   // 是否初始化
   let [Init, setInit] = useState(false);
@@ -429,6 +430,7 @@ function Frame(props, ref) {
                           componentList={ComponentList}
                           search={search}
                           type={type}
+                          controlCancelTab= {controlCancelTab}//控制标签是否关闭
                           onContentresize={onContentresize}
                         >
                           {children}

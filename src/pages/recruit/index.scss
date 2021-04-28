@@ -28,7 +28,42 @@
 
 .Recruit-home {
     padding: 0 20px;
+    position: relative;
     height: 100%;
+    .go-teaStuRatio {
+        padding-left: 10px;
+        position: absolute;
+        top: 12px;
+        line-height: 30px;
+        font-size: 14px;
+        color: #666;
+        .go {
+            text-decoration: underline;
+            cursor: pointer;
+            color: #0249a5;
+            opacity: 0.9;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        .num {
+            color: red;
+            font-weight: bold;
+        }
+        i {
+            display: inline-block;
+            margin-left: 3px;
+            width: 16px;
+            height: 30px;
+            background: url(./images/icon-go-detail.png)no-repeat center center /contain;
+            opacity: 0.9;
+            cursor: pointer;
+            vertical-align: top;
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
     .ant-spin-nested-loading {
         height: calc(100% - 54px);
     }
@@ -53,6 +88,7 @@
             }
             .table-handle {
                 display: none !important;
+                height: 48px;
             }
         }
     }
@@ -121,6 +157,6 @@
 
 .draft-box {
     .table-title {
-        cursor: auto!important;
+        cursor: auto !important;
     }
 }

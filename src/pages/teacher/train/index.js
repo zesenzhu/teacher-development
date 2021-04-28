@@ -284,7 +284,7 @@ function Train(props, ref) {
                       () => {
                         autoAlert({
                           title: type.handleTitle + "成功",
-                          type: "warn",
+                          type: "success",
                           autoHide: true,
                           // cancelShow: true,
                         });

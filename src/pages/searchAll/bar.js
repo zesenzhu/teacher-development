@@ -39,7 +39,7 @@ import {
 import { getToken } from "@/util/public";
 import $ from "jquery";
 function Bar(props, ref) {
-  const { data } = props;
+  const { data,userType } = props;
   const [select, setSelect] = useState(true);
   const [height, setHeight] = useState(0);
   const contentRef = useRef(null);
@@ -79,6 +79,8 @@ function Bar(props, ref) {
                           "?lg_tk=" +
                           getToken() +
                           (child.TGServerAddr ? "_Edu" : "") +
+                          // 教育局领导不是6，教育局管理员是6
+                          (child.TGServerAddr  ? "&lg_ic=" + (userType === 6 ? "IC0101" : "IC0102") : "") +
                           "#/page/personalDetail/" +
                           child.id
                       );

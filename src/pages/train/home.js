@@ -126,7 +126,7 @@ function Home(props, ref) {
       },
     },
     {
-      title: "来源",
+      title: "发布单位",
       align: "center",
       width: 128 * widthRate,
       dataIndex: "source",
@@ -178,8 +178,8 @@ function Home(props, ref) {
       dataIndex: "ActivityFlag",
       render: (data) => {
         let ActivityList = [
-          { value: 1, title: "线上" },
           { value: 0, title: "线下" },
+          { value: 1, title: "线上" },
         ];
         let title = ActivityList[parseInt(data)]
           ? ActivityList[parseInt(data)].title
@@ -234,7 +234,7 @@ function Home(props, ref) {
             </span>
           </span>
         ) : (
-          <></>
+          <span className="table-handle"></span>
         );
       },
     },

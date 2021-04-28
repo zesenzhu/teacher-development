@@ -157,7 +157,11 @@ function PersonalDetail(props, ref) {
   ];
   // 是否是本人
   const IsSelf = useMemo(() => {
-    return UserID === teacherid;
+    let self  =UserID === teacherid
+    if(self){
+      document.title='我的个人画像'
+    }
+    return self;
   }, [teacherid, UserID]);
   // 保存浏览器版本，如果是ie不要动画
   const isIE = useMemo(() => {
@@ -712,7 +716,7 @@ function PersonalDetail(props, ref) {
           }
         >
           <div className="pd-top" style={{ ...getPX([1920, 85]) }}>
-            <div className="pd-top-bg" style={{ ...getPX([1920, 343]) }}></div>
+            <div className={`pd-top-bg ${IsSelf?'pd-top-bg-self':''}`} style={{ ...getPX([1920, 343]) }}></div>
           </div>
           <div className="pd-center" style={{ ...getPX([1920, 995]) }}>
             <div
