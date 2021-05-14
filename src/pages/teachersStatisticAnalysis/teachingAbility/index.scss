@@ -1,4 +1,4 @@
-    /*
+/*
  *                        _oo0oo_
  *                       o8888888o
  *                       88" . "88
@@ -30,115 +30,126 @@
  * @Description: 
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\teachingAbility\index.scss
  */
-    
-    .TeacherER,
-    .TeacherTP,
-    .TeacherEC,
-    .TeacherRA,
-    .TeacherRP,
-    .TeacherECourse {
-        .ter-left {
-            position: relative;
-            display: inline-block;
-            width: 50%;
-            vertical-align: top;
-            min-height: 280px;
-            .tb-tip {
-                // margin-top: 10px;
-                padding-left: 5px;
-                text-align: left;
-            }
-            .ter-echarts {
-                height: 220px;
-                margin-top: 10px;
-            }
-            .ter-all {
-                position: absolute;
-                font-size: 12px;
-                left: 50%;
-                text-align: center;
-                transform: translateX(-50%);
-                line-height: 20px;
-                color: #333333;
-                top: 120px;
-                -webkit-transform: translateX(-50%);
-                -moz-transform: translateX(-50%);
-                -ms-transform: translateX(-50%);
-                -o-transform: translateX(-50%);
-                span {
-                    font-size: 16px;
-                    font-weight: bold;
-                }
-            }
-            .ter-title {
-                position: relative;
-                font-size: 14px;
-                line-height: 20px;
-                margin-bottom: 0;
-                text-align: center;
-                color: #333333;
-            }
+
+.TeacherER,
+.TeacherTP,
+.TeacherEC,
+.TeacherRA,
+.TeacherRP,
+.TeacherECourse {
+    .ter-left {
+        position: relative;
+        display: inline-block;
+        width: 50%;
+        vertical-align: top;
+        min-height: 280px;
+        .tb-tip {
+            // margin-top: 10px;
+            padding-left: 5px;
+            text-align: left;
         }
-        .ter-right {
-            height: 280px;
-        }
-        .ter-pie-left,
-        .ter-pie-right {
-            position: relative;
-            display: inline-block;
-            vertical-align: top;
-            width: 50%;
-            .ter-echarts {
-                height: 200px;
-            }
-            .ter-all {
-                top: 90px;
-                font-size: 12px;
-                color: #333333;
-                span {
-                    font-size: 16px;
-                }
-            }
-        }
-    }
-    
-    .TeacherECourse {
         .ter-echarts {
-            text-align: center;
-            line-height: 220px;
+            height: 220px;
+            margin-top: 10px;
         }
-        .pentacle {
-            position: relative;
-            width: 54px;
-            height: 51px;
-            margin: 0 10px;
-            vertical-align: middle;
-            display: inline-block;
-            background: url(./images/img-pentacle.png) no-repeat center center / contain;
-        }
-        .pentacle-active {
+        .ter-all {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 54px;
-            height: 51px;
-            display: inline-block;
-            background: url(./images/img-pentacle-active.png) no-repeat left center / 54px 51px;
+            font-size: 12px;
+            left: 50%;
+            text-align: center;
+            transform: translateX(-50%);
+            line-height: 20px;
+            color: #333333;
+            top: 120px;
+            -webkit-transform: translateX(-50%);
+            -moz-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            -o-transform: translateX(-50%);
+            span {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+        .ter-title {
+            position: relative;
+            font-size: 14px;
+            line-height: 20px;
+            margin-bottom: 0;
+            text-align: center;
+            color: #333333;
         }
     }
-    
-    .TeacherRP {
-        .ter-left {
-            .ter-all {
-                top: 140px;
+    .ter-right {
+        height: 280px;
+    }
+    .ter-pie-left,
+    .ter-pie-right {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        width: 50%;
+        .ter-echarts {
+            height: 200px;
+        }
+        .ter-all {
+            top: 90px;
+            font-size: 12px;
+            color: #333333;
+            span {
+                font-size: 16px;
             }
         }
     }
-    
-    .TeacherEC {
-        .ter-left {
-            .ter-all {
-                top: 130px;
-            }
+}
+
+.TeacherECourse {
+    .ter-echarts {
+        text-align: center;
+        line-height: 220px;
+    }
+    .pentacle {
+        position: relative;
+        width: 54px;
+        height: 51px;
+        margin: 0 10px;
+        vertical-align: middle;
+        display: inline-block;
+        background: url(./images/img-pentacle.png) no-repeat center center / contain;
+    }
+    .pentacle-active {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 54px;
+        height: 51px;
+        display: inline-block;
+        background: url(./images/img-pentacle-active.png) no-repeat left center / 54px 51px;
+    }
+    .ec-count {
+        margin-left: 10px;
+        vertical-align: middle;
+        font-size: 30px;
+        color: #ed810d;
+        // font-weight: bold;
+        span {
+            // font-weight: 100;
+            font-size: 18px;
         }
     }
+}
+
+.TeacherRP {
+    .ter-left {
+        .ter-all {
+            top: 140px;
+        }
+    }
+}
+
+.TeacherEC {
+    .ter-left {
+        .ter-all {
+            // top: 130px;
+        }
+    }
+}

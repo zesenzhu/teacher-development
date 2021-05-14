@@ -40,18 +40,25 @@ import Table from "@/component/table";
 import { getCruitListByTeacher, applyTrain } from "@/api/train";
 import moment from "moment";
 import { autoAlert } from "@/util/public";
-import { Search } from "@/component/common";
+import { Search, Dropdown } from "@/component/common";
 function Train(props, ref) {
   let {
     history,
     roleMsg: { schoolID, collegeID, selectLevel },
   } = props;
   const [keyword, setKeyword] = useState("");
+  const [ApplyTypeList] = useState([
+    { value: -1, title: "全部" },
+    { value: 0, title: "未报名" },
+    { value: 1, title: "已报名" },
+  ]);
+  const [ApplyTypeSelect, setApplyTypeSelect] = useState(ApplyTypeList[0]);
   const [query, setQuery] = useState({
     keyword,
     schoolID,
     collegeID,
     selectLevel,
+    hasApplied: ApplyTypeSelect.value,
   });
   // console.log(selectLevel);
   useEffect(() => {
@@ -61,9 +68,10 @@ function Train(props, ref) {
       schoolID,
       collegeID,
       selectLevel,
+      hasApplied: ApplyTypeSelect.value,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectLevel, collegeID, schoolID, keyword]);
+  }, [selectLevel, collegeID, schoolID, keyword, ApplyTypeSelect]);
   const [SearchValue, setSearchValue] = useState("");
   // 获取table组件的ref
   const tableRef = useRef({});
@@ -242,8 +250,8 @@ function Train(props, ref) {
         dataIndex: "ActivityFlag",
         render: (data) => {
           let ActivityList = [
-            { value: 1, title: "线上" },
-            { value: 0, title: "线下" },
+            { value: 1, title: "线下" },
+            { value: 0, title: "线上" },
           ];
           let title = ActivityList[parseInt(data)]
             ? ActivityList[parseInt(data)].title
@@ -322,6 +330,19 @@ function Train(props, ref) {
   return (
     <div className="frame-type-route teacher-train">
       <div className="tt-handle-top">
+        <Dropdown
+          width={120}
+          height={240}
+          dropList={ApplyTypeList}
+          title={"筛选"}
+          value={ApplyTypeSelect.value}
+          className={`applyType-dropdown  `}
+          onChange={(e) => {}}
+          onSelect={(e, option) => {
+            // console.log(option);
+            setApplyTypeSelect(option);
+          }}
+        ></Dropdown>
         <Search
           width={264}
           placeHolder={"请输入培训标题进行搜索..."}

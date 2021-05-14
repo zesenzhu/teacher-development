@@ -479,11 +479,11 @@ export async function GetTeacherResView(payload = {}) {
     subjectNames,
     startTime,
     subjectIDs,
-    endTime,
+    endTime,schoolLevel
   } = payload;
   let url =
     proxy +
-    `/api/Public/GetTeacherResView?SchoolID=${schoolID}&TeacherID=${userID}&Token=${token}&SubjectIDs=${subjectIDs}&SubjectNames=${subjectNames}&startTime=${startTime}&endTime=${endTime}`;
+    `/api/Public/GetTeacherResView?SchoolID=${schoolID}&TeacherID=${userID}&Token=${token}&SubjectIDs=${subjectIDs}&SubjectNames=${subjectNames}&startTime=${startTime}&endTime=${endTime}&SchoolLevel=${schoolLevel}`;
   let promise = "";
   let isError = false;
 

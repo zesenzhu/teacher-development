@@ -57,7 +57,9 @@ function TeacherECourse(props, ref) {
     productMsg,
     data: {
       AvgScore,
-
+      CourseCount,
+      MaxScore,
+      MinScore,
       SubSet,
     },
   } = props;
@@ -72,10 +74,10 @@ function TeacherECourse(props, ref) {
 
     let dataset_sub = [["nodeName", "平均年龄", "平均教龄"]];
     SubSet instanceof Array &&
-    SubSet.forEach((child, index) => {
-      let { NodeName, AvgScore } = child;
-      dataset_sub.push([NodeName, AvgScore]);
-    });
+      SubSet.forEach((child, index) => {
+        let { NodeName, AvgScore } = child;
+        dataset_sub.push([NodeName, AvgScore]);
+      });
     let subOption = {
       title: {
         text: "各" + productMsg.sub + "统计信息",
@@ -85,7 +87,7 @@ function TeacherECourse(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
-          fontWeight:100
+          fontWeight: 100,
         },
       },
       // backgroundColor: "#f5f5f5",
@@ -149,12 +151,12 @@ function TeacherECourse(props, ref) {
       },
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>6,
+        show: dataset_sub.length > 6,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (4 /(dataset_sub.length-1  )) * 100,
-        maxSpan: (4 /(dataset_sub.length-1  )) * 100,
+        minSpan: (4 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (4 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -193,7 +195,8 @@ function TeacherECourse(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 5) {
@@ -265,7 +268,6 @@ function TeacherECourse(props, ref) {
     //     let { NodeName, Total } = child;
     //     dataset_tpr.push([NodeName, Total]);
     //   });
-   
 
     if (!myEchart_sub) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
@@ -295,13 +297,17 @@ function TeacherECourse(props, ref) {
       className={`teacher-bar TeacherECourse ${className ? className : ""} `}
     >
       <div className="ter-left">
-        <p className="tb-tip">教师总体平均估值得分:</p>
+        <p className="tb-tip">
+          {productMsg.sub}总体督课总课数<span className="tb-tip-2">{CourseCount}</span>
+          节，最高分<span className="tb-tip-2">{MaxScore}</span>分，最低分
+          <span className="tb-tip-3">{MinScore}</span>分，教师总体平均估值得分:
+        </p>
         <div className="ter-echarts">
           {[1, 2, 3, 4, 5].map((child, index) => {
             let width = 54;
             if (child >= AvgScore + 1) {
               width = 0;
-            } else if (child - AvgScore < 1&&child - AvgScore>0) {
+            } else if (child - AvgScore < 1 && child - AvgScore > 0) {
               width = width * (AvgScore + 1 - child);
             }
             return (
@@ -313,6 +319,10 @@ function TeacherECourse(props, ref) {
               </span>
             );
           })}
+          <span className="ec-count">
+            {AvgScore}
+            <span>分</span>
+          </span>
         </div>
       </div>
 

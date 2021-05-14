@@ -94,11 +94,11 @@ function TeacherER(props, ref) {
       "#2d3047",
       "#71add8",
     ];
-
+let per = !isNaN(UploadedPercent) ? correctNumber(UploadedPercent * 100) : 0
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["未参与上传人数", NoUploadedCount],
-      ["已参与上传人数", HasUploadedCount],
+      ["未参与上传", NoUploadedCount,100-per ],
+      ["已参与上传", HasUploadedCount,per],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -124,11 +124,14 @@ function TeacherER(props, ref) {
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
-          // let { percent, value, dataIndex } = params;
+          let { data, name } = params;
 
-          return `电子资源上传参与率${
-            !isNaN(UploadedPercent) ?correctNumber( UploadedPercent * 100) : 0
-          }%`;
+          // return `电子资源上传参与率${
+          //   value[2]
+          // }%`;
+          return `电子资源${data[0]}人数${
+            data[1]
+          }人`;
         },
         textStyle: {
           color: "#fffd64",
@@ -177,7 +180,7 @@ function TeacherER(props, ref) {
                 }
               });
 
-              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[1]}}{${colorIndex}|人}`;
+              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[2]}}{${colorIndex}|%}`;
             },
             rich: {
               ...labelColor,

@@ -49,7 +49,12 @@ import "echarts/lib/component/tooltip";
 import "echarts/lib/component/title";
 import "echarts/lib/component/legend";
 import "echarts/lib/component/markPoint";
-import { resizeForEcharts, deepCopy, transTime,correctNumber } from "../../../util/public";
+import {
+  resizeForEcharts,
+  deepCopy,
+  transTime,
+  correctNumber,
+} from "../../../util/public";
 function TeacherInternet(props, ref) {
   let {
     className,
@@ -94,11 +99,11 @@ function TeacherInternet(props, ref) {
       "#2d3047",
       "#71add8",
     ];
-
+    let per = correctNumber(DayAvgOnlinePercent * 100);
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["平均每日不上机人数", DayAvgOfflineUser],
-      ["平均每日上机人数", DayAvgOnlineUser],
+      ["平均每日不上机", DayAvgOfflineUser, 100 - per],
+      ["平均每日上机", DayAvgOnlineUser, per],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -124,9 +129,9 @@ function TeacherInternet(props, ref) {
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
-          // let { percent, value, dataIndex } = params;
+          let { percent, value, dataIndex } = params;
 
-          return `平均每日上机人数占比${correctNumber(DayAvgOnlinePercent * 100)}%`;
+          return `${value[0]}人数${value[1]}人`;
         },
         textStyle: {
           color: "#fffd64",
@@ -151,7 +156,7 @@ function TeacherInternet(props, ref) {
           type: "pie",
           radius: ["50%", "80%"],
           top: "10",
-          minAngle:4,
+          minAngle: 4,
 
           // center: ["50% ", "50%"],
           height: "90%",
@@ -175,7 +180,7 @@ function TeacherInternet(props, ref) {
                 }
               });
 
-              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[1]}}{${colorIndex}|人}`;
+              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[2]}}{${colorIndex}|%}`;
             },
             rich: {
               ...labelColor,
@@ -196,10 +201,10 @@ function TeacherInternet(props, ref) {
         } = child;
         dataset_sub.push([
           NodeName,
-          transTime(DayAvgTimeSpan,'m','h').time, //每人每日平均上机时长
+          transTime(DayAvgTimeSpan, "m", "h").time, //每人每日平均上机时长
           DayAvgLoginCount, //每人每日平均上机次数
-          transTime(AvgLoginTimeSpan,'m','h').time, //平均每次时间
-          correctNumber(DayAvgOnlinePercent*100), //平均每日上机百分比
+          transTime(AvgLoginTimeSpan, "m", "h").time, //平均每次时间
+          correctNumber(DayAvgOnlinePercent * 100), //平均每日上机百分比
         ]);
       });
     let subOption = {
@@ -211,7 +216,7 @@ function TeacherInternet(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
-          fontWeight:100
+          fontWeight: 100,
         },
       },
       // backgroundColor: "#f5f5f5",
@@ -319,7 +324,8 @@ function TeacherInternet(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 5) {
@@ -435,17 +441,14 @@ function TeacherInternet(props, ref) {
     // 依赖数据的变化重绘界面
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [SubSet, productMsg]);
-const TransTime = useCallback(
-  (time) => {
-    let tTime = transTime(time,'m')
-    if(tTime.time<1){
-      return '小于1分钟'
+  const TransTime = useCallback((time) => {
+    let tTime = transTime(time, "m");
+    if (tTime.time < 1) {
+      return "小于1分钟";
     }
 
-    return tTime.Time_zh
-  },
-  [],
-)
+    return tTime.Time_zh;
+  }, []);
   return (
     <div
       className={`teacher-bar TeacherInternet ${className ? className : ""} `}

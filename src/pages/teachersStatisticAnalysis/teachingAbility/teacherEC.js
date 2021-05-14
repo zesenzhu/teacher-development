@@ -108,7 +108,7 @@ function TeacherEC(props, ref) {
         "拥有精品课程",
         HasECTeaCount,
         // "拥有精品课程人数比例",
-        HasECPercent,
+        parseInt(!isNaN(HasECPercent) ? correctNumber(HasECPercent * 100) : 0),
         // "教师总人数",
         TotalTeacher,
         // "拥有精品课程人数",
@@ -117,7 +117,11 @@ function TeacherEC(props, ref) {
       [
         "未拥有精品课程",
         TotalTeacher - HasECTeaCount,
-        HasECPercent,
+
+        100 -
+          parseInt(
+            !isNaN(HasECPercent) ? correctNumber(HasECPercent * 100) : 0
+          ),
         // "教师总人数",
         TotalTeacher,
         // "拥有精品课程人数",
@@ -171,53 +175,59 @@ function TeacherEC(props, ref) {
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
-          let { data } = params;
-          return `<div  class="t-tooltip">
-                <p class="nodename" style='color:#fffd64;margin-bottom:0px'>拥有精品课程人数比例<span style='color:#fffd64;font-size:14px'>${parseInt(
-                  !isNaN(data[2]) ? correctNumber(data[2] * 100) : 0
-                )}</span>%</p>
-                <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'  ><i style='position: absolute;
-                width: 5px;
-                height: 5px;
-                left: 0;
-                border-radius: 50%;
-                background-color: #ffffff;
-                -webkit-border-radius: 50%;
-                -moz-border-radius: 50%;
-                -ms-border-radius: 50%;
-                -o-border-radius: 50%;
-                top: 50%;
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);'></i>教师总人数<span style='color:#ffffff; '>${
-      data[3]
-    }人</span></p>
-          <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'   style='color:#ffffff; '>
-          <i style='position: absolute;
-                width: 5px;
-                height: 5px;
-                left: 0;
-                border-radius: 50%;
-                background-color: #ffffff;
-                -webkit-border-radius: 50%;
-                -moz-border-radius: 50%;
-                -ms-border-radius: 50%;
-                -o-border-radius: 50%;
-                top: 50%;
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);'></i>拥有精品课程人数<span>${
-      data[4]
-    }人</span></p> </div>
-            `;
+          let { data, name } = params;
+          // console.log(data)
+          return `${data[0]}人数${
+            data[1]
+          }人`;
+    //       `<div  class="t-tooltip">
+    //             <p class="nodename" style='color:#fffd64;margin-bottom:0px'>${name}人数比例<span style='color:#fffd64;font-size:14px'>
+    //             ${
+    //               data[2]
+    //               // parseInt(!isNaN(data[2]) ? correctNumber(data[2] * 100) : 0)
+    //             }</span>%</p>
+    //             <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'  ><i style='position: absolute;
+    //             width: 5px;
+    //             height: 5px;
+    //             left: 0;
+    //             border-radius: 50%;
+    //             background-color: #ffffff;
+    //             -webkit-border-radius: 50%;
+    //             -moz-border-radius: 50%;
+    //             -ms-border-radius: 50%;
+    //             -o-border-radius: 50%;
+    //             top: 50%;
+    // transform: translateY(-50%);
+    // -webkit-transform: translateY(-50%);
+    // -moz-transform: translateY(-50%);
+    // -ms-transform: translateY(-50%);
+    // -o-transform: translateY(-50%);'></i>未拥有精品课程人数<span style='color:#ffffff; '>${
+    //   data[3]-data[4]
+    // }人</span></p>
+    //       <p class="nodename" style='position:relative;color:#cccccc;margin-bottom:0px;padding-left: 12px;'   style='color:#ffffff; '>
+    //       <i style='position: absolute;
+    //             width: 5px;
+    //             height: 5px;
+    //             left: 0;
+    //             border-radius: 50%;
+    //             background-color: #ffffff;
+    //             -webkit-border-radius: 50%;
+    //             -moz-border-radius: 50%;
+    //             -ms-border-radius: 50%;
+    //             -o-border-radius: 50%;
+    //             top: 50%;
+    // transform: translateY(-50%);
+    // -webkit-transform: translateY(-50%);
+    // -moz-transform: translateY(-50%);
+    // -ms-transform: translateY(-50%);
+    // -o-transform: translateY(-50%);'></i>拥有精品课程人数<span>${
+    //   data[4]
+    // }人</span></p> </div>
+    //         `;
         },
 
         textStyle: {
-          // color: "#fffd64",
+          color: "#fffd64",
         },
       },
       grid: {
@@ -243,7 +253,7 @@ function TeacherEC(props, ref) {
           type: "pie",
           // radius: ["40%", "75%"],
           radius: ["50%", "80%"],
-          minAngle:4,
+          minAngle: 4,
           top: 10,
           height: "90%",
           itemStyle: {
@@ -265,8 +275,10 @@ function TeacherEC(props, ref) {
                   sizeIndex = index + "16";
                 }
               });
-
-              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[1]}}{${colorIndex}|人}`;
+              // let per = parseInt(
+              //   !isNaN(params.data[2]) ? correctNumber(params.data[2] * 100) : 0
+              // );
+              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[2]}}{${colorIndex}|%}`;
             },
             rich: {
               ...labelColor,
@@ -304,7 +316,7 @@ function TeacherEC(props, ref) {
         textStyle: {
           color: "#333333",
           fontSize: 14,
-          fontWeight:100
+          fontWeight: 100,
         },
       },
       // backgroundColor: "#f5f5f5",
@@ -404,7 +416,8 @@ function TeacherEC(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 5) {
@@ -537,22 +550,27 @@ function TeacherEC(props, ref) {
           节精品课程
         </p>
         {/* <div className="ter-pie-left"> */}
-          <div ref={tplRef} className="ter-echarts"></div>
-          <p className="ter-all">
-            <span>{correctNumber(HasECPercent * 100)||0}</span>%
-          </p>
-          <p className="ter-title">
-            拥有精品课程人数比例
-            <Tooltip
-              title="疑问"
-              color={"#0249a5"}
-              overlayClassName="show-detail"
-              getPopupContainer={(e) => e.parentNode}
-              trigger={["hover"]}
-            >
-              <i className="tb-show-detail" onClick={() => {}}></i>
-            </Tooltip>
-          </p>
+        <div ref={tplRef} className="ter-echarts"></div>
+        {/* <p className="ter-all">
+          <span>{correctNumber(HasECPercent * 100) || 0}</span>%
+        </p> */}
+        <p className="ter-all">
+          教师总人数
+          <br />
+          <span>{TotalTeacher}</span>人
+        </p>
+        <p className="ter-title">
+          拥有精品课程人数比例
+          <Tooltip
+            title="疑问"
+            color={"#0249a5"}
+            overlayClassName="show-detail"
+            getPopupContainer={(e) => e.parentNode}
+            trigger={["hover"]}
+          >
+            <i className="tb-show-detail" onClick={() => {}}></i>
+          </Tooltip>
+        </p>
         {/* </div> */}
         {/* <div className="ter-pie-right">
           <div ref={tprRef} className="ter-echarts"></div>

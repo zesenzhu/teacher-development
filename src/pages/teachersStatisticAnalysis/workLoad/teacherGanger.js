@@ -89,8 +89,24 @@ function TeacherGanger(props, ref) {
     deepMap(
       SubSet,
       ({ child, level, parent }) => {
-        let { NodeName, Total, NodeID } = child;
-        dataList.push([NodeName, Total, NodeID]);
+        let {
+          NodeName,
+          Total,
+          NodeID,
+          ClassCount,
+          GangerCount,
+          MaxClassCount,
+          AvgClass,
+        } = child;
+        dataList.push([
+          NodeName,
+          Total,
+          NodeID,
+          ClassCount,
+          GangerCount,
+          MaxClassCount,
+          AvgClass,
+        ]);
       },
       "SubSet"
     );
@@ -98,7 +114,6 @@ function TeacherGanger(props, ref) {
     setDataList(dataList);
   }, [SubSet]);
   useLayoutEffect(() => {
- 
     let myEchart_sub = subEchart;
     let subOption = {
       // title: {
@@ -114,12 +129,12 @@ function TeacherGanger(props, ref) {
       // backgroundColor: "#f5f5f5",
       dataZoom: {
         type: "slider",
-        show: dataList.length>11,
+        show: dataList.length > 11,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (10 / (dataList.length-1  )) * 100,
-        maxSpan: (10 / (dataList.length-1  )) * 100,
+        minSpan: (10 / (dataList.length - 1)) * 100,
+        maxSpan: (10 / (dataList.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -144,9 +159,8 @@ function TeacherGanger(props, ref) {
           let dom = "";
           params.forEach((child, index) => {
             let { seriesName, data } = child;
-            dom += `<p class='msg '>平均管理班级数量:<span>${
-              data[index + 1]
-            }个</span></p>`;
+            // console.log(child);
+            dom += `<p class='msg '>行政班数量:<span>${data[3]}个</span></p><p class='msg '>班主任数量:<span>${data[4]}个</span></p><p class='msg '>平均管理班级数量:<span>${data[1]}个</span></p>`;
           });
           return `<div  class="t-tooltip">
               <p class="nodename">${name}</p>${dom}</div>
@@ -223,7 +237,8 @@ function TeacherGanger(props, ref) {
           },
           axisLabel: {
             color: "#7c7c7c",
-            fontSize: 12,margin:12,
+            fontSize: 12,
+            margin: 12,
             formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 6) {
@@ -320,7 +335,7 @@ function TeacherGanger(props, ref) {
           行政班共有<span className="tb-tip-1">{ClassCount}</span>
           个，班主任共有
           <span className="tb-tip-2">{GangerCount}</span>名，每名班主任平均管理
-          <span className="tb-tip-2">{ AvgClass}</span>个行政班，
+          <span className="tb-tip-2">{AvgClass}</span>个行政班，
           最大管理班级数量者共负责
           <span className="tb-tip-2">{MaxClass}</span>个行政班
         </p>

@@ -154,9 +154,9 @@ function construtorWorkload(Data) {
       History.forEach((h, i) => {
         let {
           Year,
-
-          TermAvgCH,
           WeekAvgCH,
+          TermAvgCH,
+          // WeekAvgCH,
           AvgTeachClass,
           AvgTeachStu,
         } = h;
@@ -167,6 +167,7 @@ function construtorWorkload(Data) {
           dataList: [
             [Year, NodeName, WeekAvgCH],
             [TermAvgCH],
+            // [WeekAvgCH],
             [AvgTeachClass],
             [AvgTeachStu],
           ],
@@ -178,6 +179,7 @@ function construtorWorkload(Data) {
       titleList: [
         ["", "学期", "教师人均周课时", "节"],
         ["人均学期总课时：", "节"],
+        // ["人均周课时：", "节"],
         ["人均任教班级数：", "个"],
         ["人均任教学生人数：", "人"],
       ],

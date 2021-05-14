@@ -157,9 +157,9 @@ function PersonalDetail(props, ref) {
   ];
   // 是否是本人
   const IsSelf = useMemo(() => {
-    let self  =UserID === teacherid
-    if(self){
-      document.title='我的个人画像'
+    let self = UserID === teacherid;
+    if (self) {
+      document.title = "我的个人画像";
     }
     return self;
   }, [teacherid, UserID]);
@@ -524,6 +524,7 @@ function PersonalDetail(props, ref) {
         subjectNames: DataParams.subjectNames,
         startTime: WeekData.startTime,
         endTime: WeekData.endTime,
+        schoolLevel: isUniversity ? "S1" : "S2", //大学S1，中小学S2
       }).then((res) => {
         if (res.StatusCode === 200) {
           setResView(res.Data);
@@ -716,7 +717,10 @@ function PersonalDetail(props, ref) {
           }
         >
           <div className="pd-top" style={{ ...getPX([1920, 85]) }}>
-            <div className={`pd-top-bg ${IsSelf?'pd-top-bg-self':''}`} style={{ ...getPX([1920, 343]) }}></div>
+            <div
+              className={`pd-top-bg ${IsSelf ? "pd-top-bg-self" : ""}`}
+              style={{ ...getPX([1920, 343]) }}
+            ></div>
           </div>
           <div className="pd-center" style={{ ...getPX([1920, 995]) }}>
             <div

@@ -128,16 +128,15 @@ export function getCruitListByTeacher(payload = {}) {
     collegeID,
     selectLevel,
     rStatus,
+    hasApplied,
   } = payload;
   let url =
     BasicProxy +
-    `/Train/Teacher/List?SchoolID=${schoolID ? schoolID : ""}&TStatus=${
-      parseInt(rStatus) === 0 ? 0 : 1
-    }&PageIndex=${pageIndex ? pageIndex : 1}&PageSize=${
-      pageSize ? pageSize : 10
-    }&Keyword=${keyword ? keyword : ""}&CollegeID=${
-      collegeID ? collegeID : ""
-    }&SelectLevel=${selectLevel ? selectLevel : ""}`;
+    `/Train/Teacher/List?SchoolID=${schoolID ? schoolID : ""}&PageIndex=${
+      pageIndex ? pageIndex : 1
+    }&hasApplied=${hasApplied}&PageSize=${pageSize ? pageSize : 10}&Keyword=${
+      keyword ? keyword : ""
+    }`;
   // "?" +
   // (pageIndex ? "pageIndex=" + pageIndex : "") +
   // (keyword ? "&keyword=" + keyword : "") +
@@ -410,14 +409,13 @@ export function deleteTrain(payload = {}) {
     });
 }
 
-
 /**
  * @description: 教师报名
  * @param {*}
  * @return {*}
  */
 export function applyTrain(payload = {}) {
-  let { TID,Action,FromEdu } = payload;
+  let { TID, Action, FromEdu } = payload;
   let url = BasicProxy + `/Train/Teacher/Apply`;
 
   return fetch
@@ -425,7 +423,9 @@ export function applyTrain(payload = {}) {
       url,
       securityLevel: 2,
       body: {
-        TID:TID,Action,FromEdu
+        TID: TID,
+        Action,
+        FromEdu,
       },
     })
     .then((res) => res.json())

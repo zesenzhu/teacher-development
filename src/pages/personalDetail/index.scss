@@ -969,8 +969,25 @@
     padding: 69px 16px 0;
 }
 
-.ant-select-dropdown.Dropdown {
-    width: 190px!important;
+.Dropdown {
+    background: rgba(#1b2f58, 1);
+    .ant-select-item {
+        color: #7bb8f0;
+    }
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+        font-weight: 600;
+        color: #7bb8f0;
+        background-color: rgba(#273e6e, 1);
+    }
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+        // color: inherit
+        // background-color: inherit;
+        background-color: rgba(#273e6e, 1);
+    }
+}
+
+.ant-select-dropdown.term-Dropdown {
+    width: 190px !important;
 }
 
 .teach-modal {
@@ -1501,7 +1518,7 @@
 .card-content {
     .lg-dropdown {
         .ant-select-selector {
-            background-color: transparent !important;
+            background-color: rgba(#1e3f7f, 0.3) !important;
             border: none !important;
             box-shadow: none;
             // .ant-select-selection-item {
@@ -1509,14 +1526,49 @@
             // }
         }
         .ant-select-arrow {
-            color: #235987;
+            color: #4a78d0;
         }
         .ant-select-selector {
             padding: 0;
             box-shadow: none;
             .ant-select-selection-item {
                 font-size: 12px;
-                color: #5fa1d9;
+                color: #7bb8f0;
+            }
+        }
+    }
+}
+
+.modalStyle-dark {
+    background: url(./images/img-dark-all-bg.png) no-repeat -65px -70px/116% 124%;
+    .ant-modal-close .ant-modal-close-x .modal-close-icon {
+        background: url(./images/icon-dark-close.png) no-repeat center;
+    }
+    .ant-modal-content {
+        padding-top: 48px;
+        background: transparent;
+        .ant-modal-body {
+            thead {
+                // background-color: transparent;
+                background-color: rgba(#001230, 0.2);
+                border-color: transparent;
+                th {
+                    color: #4889c0;
+                    font-size: 14px;
+                    font-weight: 100;
+                }
+            }
+            .ct-modal-table-tbody tr {
+                background: transparent;
+                border-color: rgba(255, 255, 255, 0.16);
+                .table-time {
+                    font-size: 12px;
+                    color: #6ba4d5;
+                }
+                .table-name {
+                    font-size: 14px;
+                    color: #fefefe;
+                }
             }
         }
     }

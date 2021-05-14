@@ -13,7 +13,8 @@ import "./index.scss";
 import { getLastTime, executeDataCollect } from "@/api/app";
 
 function LastTime(props, ref) {
-  const { onReload } = props;
+  // canControl:控制是否可刷新，这个教育局不能刷新
+  const { onReload,canControl } = props;
   // 禁止重复点击
   const [Reload, setReload] = useState(false);
   const [Time, setTime] = useState(false);
@@ -29,7 +30,7 @@ function LastTime(props, ref) {
     Time && (
       <div className="reload-data" title={Time}>
         最后刷新：{Time}
-        <i
+        {canControl!==false&&<i
           className={`btn-reload ${Reload?'btn-reload-animation':''}`}
           title={"刷新时间"}
           onClick={() => {
@@ -44,7 +45,7 @@ function LastTime(props, ref) {
             });
             // setReload(pre=>!pre)
           }}
-        ></i>
+        ></i>}
       </div>
     )
   );

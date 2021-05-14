@@ -114,17 +114,19 @@
                 .table-apply-btn {
                     text-decoration: underline;
                     cursor: pointer;
-                    color: #9a1601;
+                    color: #9a1601!important;
                     opacity: 0.9;
                     line-height: 22px;
                     padding-left: 18px;
                     background: url(./images/icon-apply-cancel.png)no-repeat left center /15px 15px;
                     &:hover {
                         opacity: 1;
+                        // color: #9a1601!important;
                     }
                 }
                 .table-apply-btn-no {
                     padding-left: 21px;
+                    color: #0249a5!important;
                     background: url(./images/icon-apply.png)no-repeat left center /18px 15px;
                 }
             }

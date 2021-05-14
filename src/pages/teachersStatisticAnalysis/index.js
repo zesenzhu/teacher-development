@@ -69,6 +69,7 @@ import AnalysisTop from "./analysisTop";
 import { handleRoute } from "../../util/public";
 import { Scrollbars } from "react-custom-scrollbars";
 import Anchor from "../../component/anchor";
+import {Empty} from '@/component/common';
 require("echarts");
 function Analysis(props, ref) {
   let {
@@ -167,7 +168,7 @@ function Analysis(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div className="Analysis">
+    TermInfo instanceof Array&&TermInfo.length>0? <div className="Analysis">
       <AnalysisTop
         // type={Path[0] === "schoolDetail" ? "module" : "tab"}
         getHeight={(height) => {
@@ -288,7 +289,7 @@ function Analysis(props, ref) {
         list={anchorList}
         scrollref={scrollRef}
       ></Anchor>
-    </div>
+    </div>:<Empty style={{marginTop:'200px'}} type={'4'} title={'暂未收集到各校师资信息'}></Empty>
   );
 }
 

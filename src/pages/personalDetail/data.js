@@ -636,10 +636,12 @@ function Data(props, ref) {
       <div className="ca-drop-box cd-week-box">
         {weekList instanceof Array && weekList.length > 0 ? (
           <Dropdown
-            width={70}
+            width={100}
             height={120}
             dropList={weekList}
             // title={""}
+            dropdownClassName={'Dropdown'}
+
             value={weekSelect.value}
             className="week-dropdown"
             onChange={(e) => {}}

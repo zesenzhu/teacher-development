@@ -144,6 +144,7 @@ export const init = (params, success = () => {}, error = () => {}) => {
               SchoolID: userInfo.SchoolID || "",
               CollegeID: userInfo.CollegeID || "",
             });
+            // termInfo=null
             let systemServer = getSystemServer([
               310, //教学方案
               // 300, //教学方案
@@ -151,7 +152,7 @@ export const init = (params, success = () => {}, error = () => {}) => {
               "E34", //档案
               "C10", //电子资源
               // todo
-              //400,//消息中心，教育局现在还没有，去掉
+              400,//消息中心，教育局现在还没有，去掉
             ]);
             // 多个接口，不能用await阻塞，要用Promise
             // let identityDetail = getPromise(

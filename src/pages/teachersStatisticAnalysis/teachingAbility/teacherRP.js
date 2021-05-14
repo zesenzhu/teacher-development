@@ -100,11 +100,11 @@ function TeacherRP(props, ref) {
       "#2d3047",
       "#71add8",
     ];
-
+    let per = !isNaN(HasJoinPercent) ? correctNumber(HasJoinPercent * 100) : 0
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["未参加人数", NoJoinTeaCount],
-      ["已参加人数", HasJoinTeaCount],
+      ["未参加", NoJoinTeaCount,100-per],
+      ["已参加", HasJoinTeaCount,per],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -132,9 +132,9 @@ function TeacherRP(props, ref) {
         formatter: (params) => {
           let { percent, value, dataIndex } = params;
 // console.log(params)
-          return `教研课题参与率${
-            !isNaN(HasJoinPercent) ? correctNumber(HasJoinPercent * 100) : 0
-          }%`;
+          return `教研课题${value[0]}人数${
+            value[1]
+          }人`;
         },
         textStyle: {
           color: "#fffd64",
@@ -186,7 +186,7 @@ function TeacherRP(props, ref) {
                 }
               });
 
-              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[1]}}{${colorIndex}|人}`;
+              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[2]}}{${colorIndex}|%}`;
             },
             rich: {
               ...labelColor,

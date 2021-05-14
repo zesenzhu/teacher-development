@@ -98,11 +98,11 @@ function TeacherTP(props, ref) {
       "#2d3047",
       "#71add8",
     ];
-
+   let per = !isNaN(UploadedPercent) ? correctNumber(UploadedPercent * 100) : 0
     let dataset_ta = [
       ["nodeName", "Count"],
-      ["未参与制作人数", NoUploadedCount],
-      ["已参与制作人数", HasUploadedCount],
+      ["未参与制作", NoUploadedCount,100-per],
+      ["已参与制作", HasUploadedCount,per],
     ];
     let labelColor = {};
     let labelSize = {};
@@ -128,11 +128,11 @@ function TeacherTP(props, ref) {
         trigger: "item",
         backgroundColor: "rgba(0,0,0,0.7)",
         formatter: (params) => {
-          // let { percent, value, dataIndex } = params;
+          let { percent, value, dataIndex } = params;
 
-          return `电子教案制作参与率${
-            !isNaN(UploadedPercent) ? correctNumber(UploadedPercent * 100) : 0
-          }%`;
+          return `电子教案${value[0]}人数${
+            value[1]
+          }人`;
         },
         textStyle: {
           color: "#fffd64",
@@ -184,7 +184,7 @@ function TeacherTP(props, ref) {
                 }
               });
 
-              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[1]}}{${colorIndex}|人}`;
+              return `{${colorIndex}|${params.name}}\n{${sizeIndex}|${params.value[2]}}{${colorIndex}|%}`;
             },
             rich: {
               ...labelColor,

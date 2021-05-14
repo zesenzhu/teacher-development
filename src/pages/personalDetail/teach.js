@@ -158,12 +158,12 @@ function Teach(props, ref) {
         })}
       <Modal
         footer={null}
-        height={432}
-        width={720}
+        height={618}
+        width={947}
         ref={ModalRef}
         type={1}
         className="teach-modal"
-        title={Title}
+        // title={Title}
         modalStyle={'dark'}
       >
         {List instanceof Array && List.length > 0 ? (

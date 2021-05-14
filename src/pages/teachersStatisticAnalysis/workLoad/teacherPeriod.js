@@ -91,7 +91,15 @@ function TeacherPeriod(props, ref) {
     deepMap(
       SubSet,
       ({ child, level, parent }) => {
-        let { NodeName, Total, NodeID } = child;
+        let {
+          NodeName,
+          Total,
+          NodeID,
+          TermAvgCH,
+          WeekAvgCH,
+          AvgTeachClass,
+          AvgTeachStu,
+        } = child;
         if (level === 1) {
           typeList.push(child);
         }
@@ -102,13 +110,21 @@ function TeacherPeriod(props, ref) {
           if (!dataInType[parentID]) {
             dataInType[parentID] = [];
           }
-          dataInType[parentID].push([NodeName, Total, parentID]);
+          dataInType[parentID].push([
+            NodeName,
+            Total,
+            parentID,
+            TermAvgCH,
+            WeekAvgCH,
+            AvgTeachClass,
+            AvgTeachStu,
+          ]);
         }
       },
       "SubSet"
     );
-    if(typeList.length===0){
-      return 
+    if (typeList.length === 0) {
+      return;
     }
     setTypeList(typeList);
     setDataInType(dataInType);
@@ -122,7 +138,7 @@ function TeacherPeriod(props, ref) {
 
     let dataset_sub = [["nodeName", "count"]];
     dataInType[typeSelect] instanceof Array &&
-    dataInType[typeSelect].forEach((child, index) => {
+      dataInType[typeSelect].forEach((child, index) => {
         dataset_sub.push(child);
       });
     let subOption = {
@@ -139,12 +155,12 @@ function TeacherPeriod(props, ref) {
       // backgroundColor: "#f5f5f5",
       dataZoom: {
         type: "slider",
-        show: dataset_sub.length>11,
+        show: dataset_sub.length > 11,
         // xAxisIndex: [0],
         // start: 0,
         // end: 10/(dataset.length-1)*100,
-        minSpan: (10 / (dataset_sub.length-1  )) * 100,
-        maxSpan: (10 / (dataset_sub.length-1  )) * 100,
+        minSpan: (10 / (dataset_sub.length - 1)) * 100,
+        maxSpan: (10 / (dataset_sub.length - 1)) * 100,
         zoomLock: true,
         showDetail: false,
         showDataShadow: false,
@@ -169,9 +185,7 @@ function TeacherPeriod(props, ref) {
           let dom = "";
           params.forEach((child, index) => {
             let { seriesName, data } = child;
-            dom += `<p class='msg '>人均周课时:<span>${
-              data[index + 1]
-            }节</span></p>`;
+            dom += `<p class='msg '>学期总课时:<span>${data[3]}节</span></p><p class='msg '>人均周课时:<span>${data[1]}节</span></p><p class='msg '>平均教学班班级:<span>${data[5]}个</span></p></p><p class='msg '>平均教学学生:<span>${data[6]}人</span></p>`;
           });
           return `<div  class="t-tooltip">
               <p class="nodename">${name}</p>${dom}</div>
@@ -208,7 +222,7 @@ function TeacherPeriod(props, ref) {
       grid: {
         left: 28,
         top: 40,
-        height: 'auto',
+        height: "auto",
         // 190
         right: 58,
         bottom: 20,
@@ -248,8 +262,10 @@ function TeacherPeriod(props, ref) {
             },
           },
           axisLabel: {
-            color: "#7c7c7c",margin:12,
-            fontSize: 12,formatter: (value) => {
+            color: "#7c7c7c",
+            margin: 12,
+            fontSize: 12,
+            formatter: (value) => {
               let data = value;
               if (typeof value === "string" && value.length > 6) {
                 data = value.slice(0, 4) + "...";
@@ -311,8 +327,7 @@ function TeacherPeriod(props, ref) {
         },
       ],
     };
- 
-   
+
     if (!myEchart_sub) {
       // 数据更新后，防止二次初始化echarts，第一次进来初始化echarts
       myEchart_sub = echarts.init(subRef.current);
@@ -355,25 +370,24 @@ function TeacherPeriod(props, ref) {
 
             <Scrollbars autoWidthMax={800}>
               <p className="tph-p"> */}
-                {typeList.map((child, index) => {
-                  return (
-                    <span
-                      key={index}
-                      className={`tph-type ${
-                        typeSelect === child.NodeID ? "tph-type-select" : ""
-                      }`}
-                      onClick={() => {
-                        setTypeSelect(child.NodeID);
-                      }}
-                    >
-                      {child.NodeName}
-                    </span>
-                  );
-                })}
-              {/* </p>
+            {typeList.map((child, index) => {
+              return (
+                <span
+                  key={index}
+                  className={`tph-type ${
+                    typeSelect === child.NodeID ? "tph-type-select" : ""
+                  }`}
+                  onClick={() => {
+                    setTypeSelect(child.NodeID);
+                  }}
+                >
+                  {child.NodeName}
+                </span>
+              );
+            })}
+            {/* </p>
             </Scrollbars>
             </span> */}
-
           </div>
         ) : (
           ""

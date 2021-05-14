@@ -62,6 +62,8 @@ import Table from "../../component/table";
 import { Context } from "./reducer";
 import { getCruitList, deleteTrain } from "../../api/train";
 import { autoAlert } from "../../util/public";
+import Config from "../../util/ipConfig";
+const { BasicProxy } = Config;
 //   import { NavLink } from "react-router-dom";
 function Home(props, ref) {
   let {
@@ -201,10 +203,23 @@ function Home(props, ref) {
 
       // dataIndex: "time",
       render: (data) => {
-        let { FromEdu } = data;
-
+        let { FromEdu, ApplyFlag, HasApplied } = data;
+        let canExport = ApplyFlag && HasApplied;
         return !FromEdu ? (
           <span className="table-handle">
+            <span
+              className="table-btn btn-edit"
+              style={canExport ? {} : { cursor: "no-drop" }}
+              onClick={() => {
+                // history.push("/editTrain/" + data.TID);
+                canExport &&
+                  window.open(
+                    BasicProxy + "/Train/Teacher/AppliedExport?TID=" + data.TID
+                  );
+              }}
+            >
+              导出
+            </span>
             <span
               className="table-btn btn-edit"
               onClick={() => {

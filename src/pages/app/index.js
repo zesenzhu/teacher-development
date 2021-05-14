@@ -52,7 +52,7 @@ function App(props, ref) {
       leftMenu,
       params,
       basePlatFormMsg: { ProVersion },
-      roleMsg: { schoolID, collegeID, selectLevel, productLevel,userType },
+      roleMsg: { schoolID, collegeID, selectLevel, productLevel,userType,IsEdu },
     },
     handleData: {
       teacherRecruitMsg: {
@@ -465,7 +465,7 @@ function App(props, ref) {
       }}
       otherMsg={{
         otherProps: {},
-        children: <LastTime onReload={onReload}></LastTime>,
+        children: <LastTime canControl={!IsEdu} onReload={onReload}></LastTime>,
       }}
       controlCancelTab={controlCancelTab}
     >
