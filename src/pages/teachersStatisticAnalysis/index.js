@@ -168,7 +168,7 @@ function Analysis(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    TermInfo instanceof Array&&TermInfo.length>10? <div className="Analysis">
+    TermInfo instanceof Array&&TermInfo.length>0? <div className="Analysis">
       <AnalysisTop
         // type={Path[0] === "schoolDetail" ? "module" : "tab"}
         getHeight={(height) => {
