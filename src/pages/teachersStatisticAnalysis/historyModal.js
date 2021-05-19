@@ -12,7 +12,7 @@
  * @Author: zhuzesen
  * @LastEditors: zhuzesen
  * @Date: 2020-12-29 16:47:13
- * @LastEditTime: 2021-02-24 14:14:05
+ * @LastEditTime: 2021-05-18 15:18:34
  * @Description:
  * @FilePath: \teacher-development\src\pages\teachersStatisticAnalysis\historyModal.js
  */
@@ -637,8 +637,9 @@ function MyEcharts(props) {
           formatter: (value) => {
             return source.yType === "percent" ? `${value}%` : value;
           },
-        },
+        },axisPointer:{show:false},
         splitLine: {
+          // show:false,
           lineStyle: {
             type: "dashed",
           },

@@ -120,7 +120,6 @@ function Publish(props, ref) {
         else {
         }
         setLoading(false);
-
       });
       // }, 3000);
     },
@@ -139,22 +138,22 @@ function Publish(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-    // 给tab设置动态title
-    const getData = useCallback((data) => {
-      if (data) {
-        if (data.ID) {
-          dispatch(
-            handleActions.setTabMsg({
-              ["editTrain|" + data.ID]: {
-                name: "编辑: " +data.Title,
-                title: "编辑培训计划：" + data.Title,
-              },
-            })
-          );
-        }
+  // 给tab设置动态title
+  const getData = useCallback((data) => {
+    if (data) {
+      if (data.ID) {
+        dispatch(
+          handleActions.setTabMsg({
+            ["editTrain|" + data.ID]: {
+              name: "编辑: " + data.Title,
+              title: "编辑培训计划：" + data.Title,
+            },
+          })
+        );
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     // <Carousel ref={CarouselRef} dots={false}>
     <Loading opacity={0.5} spinning={loading}>
@@ -174,9 +173,9 @@ function Publish(props, ref) {
               <span className=" title-2">(提示: 发布后将在各校官网显示)</span>
             </div>
             <Editor
-            type={'train'}
-            contentHW={contentHW}
-            getData={getData}
+              type={"train"}
+              contentHW={contentHW}
+              getData={getData}
               fileid={ID}
               schema={"edit"}
               error={() => {
@@ -184,24 +183,13 @@ function Publish(props, ref) {
               }}
               preview={{
                 onClick: (data) => {
-                  // data:{title, source, main}
-                  // setPreviewData({Title:data.title, Issue:'测试', ReleaseTime:'测试', Content:'测试', FileList:[]})
                   setPreviewData(data);
                   setPreview(true);
                   setActiveTab("preview");
-
-                  // CarouselRef.current.next();
                 },
               }}
               draft={{
                 onClick: (data) => {
-                  // setLoading(true);
-
-                  // setTimeout(() => {
-                  //   removeTab("", "", "teacherTrain");
-                  // }, 3000);
-                  // setPreviewData(data);
-
                   publish({ ...data, TStatus: 0 });
                 },
               }}

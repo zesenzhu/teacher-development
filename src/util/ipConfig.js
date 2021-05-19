@@ -56,10 +56,10 @@ const RootUrl = protocol + "//" + host + pathFolder;
 if (process.env.NODE_ENV === "development") {
   // 129.64:20103/Web_TeacherGrow/
   //  129.1:8023
-  let baseIP = "http://192.168.129.1:10103/Web_TeacherGrow"; //基础平台服务器
+  // let baseIP = "http://192.168.129.1:10103/Web_TeacherGrow"; //基础平台服务器
   // let baseIP = "http://192.168.129.3:10107/Web_TeacherGrow"; //基础平台服务器
   // let baseIP = 'http://192.168.129.2:30104/Web_TeacherGrow';//中小学服务器
-  // let baseIP = "http://192.168.122.100:20103/Web_TeacherGrow/"; //集成服务器
+  let baseIP = "http://192.168.122.100:20103/Web_TeacherGrow/"; //集成服务器
   // let baseIP = 'http://192.168.129.2:30104/Web_TeacherGrowEdu';//教育局服务器
   // let baseIP = 'http://192.168.129.2:30104/Web_TeacherGrow';//教育局学校服务器
   config = {

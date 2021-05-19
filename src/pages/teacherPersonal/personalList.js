@@ -444,6 +444,7 @@ function PersonalList(props, ref) {
             onDataChange={(data) => {}}
             ref={tableRef}
             api={getTeacherList}
+            emptyParams={{title:'暂未找到相关的教师数据'}}
           ></Table>
         </Scrollbars>
       </div>

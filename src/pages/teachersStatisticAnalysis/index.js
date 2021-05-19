@@ -117,7 +117,7 @@ function Analysis(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
   // console.log({ schoolID, collegeID, selectLevel, productLevel });
-  //刷新
+  //刷新,当再次进入该标签页刷新数据
   const initGet = useRef(false);
   const [ReloadTeacherBaseMsg, setReloadTeacherBaseMsg] = useState(false);
   const [ReloadWorkMsg, setReloadWorkMsg] = useState(false);
@@ -168,7 +168,7 @@ function Analysis(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    TermInfo instanceof Array&&TermInfo.length>0? <div className="Analysis">
+    TermInfo instanceof Array&&TermInfo.length>10? <div className="Analysis">
       <AnalysisTop
         // type={Path[0] === "schoolDetail" ? "module" : "tab"}
         getHeight={(height) => {
@@ -289,7 +289,7 @@ function Analysis(props, ref) {
         list={anchorList}
         scrollref={scrollRef}
       ></Anchor>
-    </div>:<Empty style={{marginTop:'200px'}} type={'4'} title={'暂未收集到各校师资信息'}></Empty>
+    </div>:<Empty style={{marginTop:'200px'}} type={'4'} title={'暂未收集到各'+(productLevel===2?'院':'校')+'师资信息'}></Empty>
   );
 }
 

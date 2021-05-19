@@ -76,7 +76,7 @@ import { handleRoute } from "../../util/public";
 import { withRouter } from "react-router-dom";
 import SchoolList from "./schoolList";
 import SchoolDetail from "./schoolDetail";
-import { Loading } from "@/component/common";
+import { Loading,Empty } from "@/component/common";
 import { getSchoolMsg } from "@/api/school";
 import { getTermInfo } from "@/util/init";
 import { commonActions, handleActions } from "../../redux/actions";
@@ -89,12 +89,14 @@ function School(props, ref) {
     levelHash,
     removeTab,
     roleMsg: { productLevel, schoolID, collegeID },
-    tabid,
+    tabid,termInfo,
     contentHW: { height },
-    schoolMsg,
+    schoolMsg, 
     dispatch,
     param, //param控制显示的模块
   } = props;
+  let { TermInfo:myTermInfo, HasHistory } = termInfo?termInfo:{};
+
   const [Component, setComponent] = useState("");
   const [ID, setID] = useState("");
   const [SchoolMsg, setSchoolMsg] = useState(null);
@@ -112,7 +114,7 @@ function School(props, ref) {
           title: "",
           sub: "",
           belong: "",
-          belondName: "",
+          belondName: "",nextTitle:''
         };
   }, [levelHash, productLevel]);
   useEffect(() => {
@@ -152,6 +154,7 @@ function School(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // 每个学校的不一样
   useEffect(() => {
     if (SchoolMsg && productLevel) {
       // 教育局的学校为nodeid
@@ -165,13 +168,14 @@ function School(props, ref) {
       });
     }
   }, [SchoolMsg, productLevel, schoolID]);
+  
   return (
     <Loading
       spinning={Component === "detail" && loading}
       tip={"加载中..."}
       opacity={false}
     >
-      <div className="School" style={{ height: height }}>
+      {myTermInfo instanceof Array&&myTermInfo.length>0?<div className="School" style={{ height: height }}>
         {Component === "list" ? (
           <SchoolList levelMsg={levelMsg}></SchoolList>
         ) : (
@@ -187,7 +191,7 @@ function School(props, ref) {
         ) : (
           <></>
         )}
-      </div>
+      </div>:<Empty style={{marginTop:'200px'}} type={'4'} title={'暂未收集到各'+(productLevel===2?'院':'校')+'师资信息'}></Empty>}
     </Loading>
   );
 }
@@ -195,8 +199,8 @@ function School(props, ref) {
 const mapStateToProps = (state) => {
   let {
     handleData: { teacherRecruitMsg },
-    commonData: { roleMsg, contentHW, levelHash },
+    commonData: { roleMsg, contentHW, levelHash,termInfo },
   } = state;
-  return { teacherRecruitMsg, roleMsg, contentHW, levelHash };
+  return { teacherRecruitMsg, roleMsg, contentHW, levelHash,termInfo };
 };
 export default connect(mapStateToProps)(withRouter(memo(forwardRef(School))));

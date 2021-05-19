@@ -265,7 +265,7 @@ function CheckIsOnline(baseIP, token, sysID) {
  */
 export async function LogOut({ baseIP, sysID }) {
   const { SESSION_TOKEN, URL_TOKEN, LOCAL_TOKEN } = getToken();
-  if (sysID) {
+  if (!sysID) {
     sysID = "L10";
   }
   // baseIP = baseIP

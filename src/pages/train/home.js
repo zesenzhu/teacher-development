@@ -438,6 +438,7 @@ function Home(props, ref) {
         }}
         ref={tableRef}
         api={getCruitList}
+        emptyParams={{title:'暂未找到相关的培训计划'}}
       ></Table>
       {/* <div style={{height:'20px',width:'100px',background:'#a6a6a6'}} onClick={()=>{
       history.push(`/${tabId}/publish`  );

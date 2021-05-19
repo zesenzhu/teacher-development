@@ -332,18 +332,19 @@ function construtorEduAndTitleData(Data) {
           BenkeValue,MiddleTitleValue
         } = h;
         let dataList = [[Year, NodeName, BenkePercent, MiddleTitlePercent]];
-        titleList[0].push(
+        // 只要第一个生成titleList就行
+        i===0&& titleList[0].push(
           "," + (MiddleTitleName || "一级教师及以上占比") + " "
         );
         EduList.forEach((edu) => {
           let { NodeName, NodeID, Total } = edu;
           dataList.push([Total]);
-          titleList.push([NodeName + "：", "人"]);
+          i===0&& titleList.push([NodeName + "：", "人"]);
         });
         TitleList.forEach((edu) => {
           let { NodeName, NodeID, Total } = edu;
           dataList.push([Total]);
-          titleList.push([NodeName + "：", "人"]);
+          i===0&& titleList.push([NodeName + "：", "人"]);
         });
         children.push({
           nodeName: Year,
@@ -352,6 +353,7 @@ function construtorEduAndTitleData(Data) {
           dataList: dataList,
         });
       });
+      console.log(titleList,children)
     data.push({
       nodeName: NodeName,
       nodeID: NodeID,

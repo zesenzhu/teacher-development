@@ -69,6 +69,7 @@ function $Table(props, ref) {
     api,
     prepare,
     onDataChange,
+    emptyParams,
     ...reset
   } = props;
   // let { dataSource } = reset;
@@ -105,6 +106,9 @@ function $Table(props, ref) {
     // 实时更新data给使用者
     typeof onDataChange === "function" && onDataChange(tableData);
   }, [tableData, onDataChange]);
+  const EmptyParams = useMemo(()=>{
+    return typeof emptyParams === 'object'?emptyParams:{}
+  },[emptyParams])
   return (
     <Loading
       spinning={
@@ -168,6 +172,7 @@ function $Table(props, ref) {
             className={"lg-table-empty"}
             type={"4"}
             title={"暂无数据"}
+            {...EmptyParams}
           ></Empty>
         )}
       </div>
