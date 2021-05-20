@@ -333,7 +333,7 @@ function App(props, ref) {
                 // }
               }
             } else if (Path[1] === "recruit" && Path[2]) {
-              document.title = "教师发展培训";
+              // document.title = "教师发展培训";
               setRecruitID(Path[2]);
             } else {
               isInit = false;

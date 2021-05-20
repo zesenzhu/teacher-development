@@ -73,6 +73,8 @@ function Train(props, ref) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectLevel, collegeID, schoolID, keyword, ApplyTypeSelect]);
   const [SearchValue, setSearchValue] = useState("");
+  document.title = "教师发展培训";
+
   // 获取table组件的ref
   const tableRef = useRef({});
   const typeList = {

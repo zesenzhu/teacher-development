@@ -48,6 +48,8 @@ function Train(props, ref) {
     history,
     roleMsg: { schoolID, collegeID, selectLevel },
   } = props;
+  document.title = "教师发展培训";
+
  const onApplyClick = useCallback(
    (data,title,callback) => {
     applyTrain(data).then((res) => {
