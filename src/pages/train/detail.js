@@ -116,7 +116,11 @@ function Datail(props, ref) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  useEffect(() => {
+    if (frametype === "teacher") {
+      document.title = "教师发展培训";
+    }
+  }, [frametype]);
   const onApplyClick = useCallback((data, title, callback) => {
     applyTrain(data).then((res) => {
       if (res.result) {
